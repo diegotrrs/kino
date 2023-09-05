@@ -1,0 +1,45 @@
+# THIS IS CURRENTLY INTENTIONALLY BROKEN
+# In MW-1588 we needed to remove the env var mapping for tables names (as we hit the 4kb Lambda env var limit)
+# We chose to move fast and have the generated Lambda DynamoDB code assume what the table name will be, rather than accept it as an env var
+# This means that we have hardcoded the prefix to be the coreAPI, not the notesAPI.
+#
+# We will need to revisit this in future, but for now, usage of the generated Lambda DynamoDB code for this datasource will not work
+# as it will try to access a table name by the wrong prefix, which is unlikely to exist (or worse, have different data, if core also has that table suffix).
+
+type Note {
+  id: ID!
+  name: String!
+  completed: Boolean!
+}
+
+input NoteInput {
+  id: ID!
+  name: String!
+  completed: Boolean!
+}
+
+input UpdateNoteInput {
+  id: ID!
+  name: String
+  completed: Boolean
+}
+
+type Query {
+  getNoteById(noteId: String!): Note
+  listNotes: [Note]
+}
+
+type Mutation {
+  createNote(note: NoteInput!): Note
+  updateNote(note: UpdateNoteInput!): Note
+  deleteNote(noteId: String!): String
+}
+
+type Subscription {
+  onCreateNote: Note
+    @aws_subscribe(mutations: ["createNote"])
+  onDeleteNote: String
+    @aws_subscribe(mutations: ["deleteNote"])
+  onUpdateNote: Note
+    @aws_subscribe(mutations: ["updateNote"])
+}
