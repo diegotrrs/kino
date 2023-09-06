@@ -1,9 +1,8 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const AWS = require("aws-sdk")
+import * as AWS from 'aws-sdk'
 const docClient = new AWS.DynamoDB.DocumentClient()
 
 type Params = {
-  TableName: string | undefined,
+  TableName: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Key: string | any,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,6 +15,8 @@ type Params = {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function updateNote(note: any) {
+  if (!process.env.NOTES_TABLE) return
+
   const params: Params = {
     TableName: process.env.NOTES_TABLE,
     Key: {
