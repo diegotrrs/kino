@@ -1,3 +1,2 @@
-[] Amplify https://aws.amazon.com/getting-started/guides/deploy-webapp-amplify/
-[] Basic setup: App sync + DynamoDB
 [] Add ts-prune in backend
+[] Research again "aws-cdk-lib.CfnResource#addDependsOn is deprecated" warning during cdk deploy
