@@ -1,0 +1,6 @@
+schema: ../graphql/schema/notes.graphql
+generates:
+  common/generated/types.ts:
+    plugins:
+      - typescript
+      - typescript-operations

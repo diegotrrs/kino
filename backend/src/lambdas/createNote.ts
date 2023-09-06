@@ -1,8 +1,8 @@
+import { Note } from "../../common/generated/types"
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const AWS = require("aws-sdk")
 const docClient = new AWS.DynamoDB.DocumentClient()
-
-import Note from "./Note"
 
 async function createNote(note: Note) {
   const params = {

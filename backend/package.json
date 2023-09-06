@@ -13,7 +13,10 @@
     "check-outdated-dependencies": "ncu -e 2"
   },
   "devDependencies": {
-    "@aws-cdk/aws-appsync-alpha": "^2.59.0-alpha.0",
+    "@aws-cdk/aws-appsync-alpha": "^2.54.0-alpha.0",
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/typescript": "^4.0.1",
+    "@graphql-codegen/typescript-operations": "^4.0.1",
     "@types/jest": "^29.5.4",
     "@types/node": "20.5.9",
     "@typescript-eslint/eslint-plugin": "^6.6.0",
