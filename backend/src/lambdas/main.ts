@@ -1,4 +1,4 @@
-import { Note } from "../../common/generated/types"
+import { Note, CreateNoteInput } from "../../common/generated/types"
 import { createItem, deleteItem, getItemById, listTableItems, updateItem } from "./util/dynamoDBUtils"
 
 type AppSyncEvent = {
@@ -6,8 +6,8 @@ type AppSyncEvent = {
     fieldName: string,
   },
   arguments: {
-    noteId: string,
-    note: Note,
+    noteId: string | undefined,
+    note: Note | CreateNoteInput,
   },
 }
 

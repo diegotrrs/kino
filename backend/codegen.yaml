@@ -1,4 +1,4 @@
-schema: ../graphql/schema/notes.graphql
+schema: ../graphql/schema/core.graphql
 generates:
   common/generated/types.ts:
     plugins:

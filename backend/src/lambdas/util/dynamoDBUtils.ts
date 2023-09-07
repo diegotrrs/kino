@@ -1,26 +1,35 @@
 import * as AWS from 'aws-sdk'
 const docClient = new AWS.DynamoDB.DocumentClient()
+import { v4 as uuidv4 } from 'uuid'
 
 type DbTableName = string | undefined
 type DbItem = { [key: string]: unknown | null }
+type DbItemId = string | undefined
 
 export const createItem = async (tableName: DbTableName, item: DbItem) => {
   if (!tableName) return
 
+  const newItemId = uuidv4()
   const params = {
     TableName: tableName,
-    Item: item,
+    Item: { ...item, id: newItemId },   
   }
+
+  const newItem = {
+    ...item,
+    id: newItemId,
+  }
+
   try {
     await docClient.put(params).promise()
-    return item
+    return newItem
   } catch (err) {
     console.log("DynamoDB error: ", err)
     return null
   }
 }
 
-export const deleteItem = async (tableName: DbTableName, itemId: string) => {
+export const deleteItem = async (tableName: DbTableName, itemId: DbItemId) => {
   if (!tableName) return
 
   const params = {
@@ -38,7 +47,7 @@ export const deleteItem = async (tableName: DbTableName, itemId: string) => {
   }
 }
 
-export const getItemById = async (tableName: DbTableName, itemId: string) => {
+export const getItemById = async (tableName: DbTableName, itemId: DbItemId) => {
   if (!tableName) return
 
   const params = {

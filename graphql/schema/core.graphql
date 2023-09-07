@@ -12,8 +12,8 @@ type Note {
   completed: Boolean!
 }
 
-input NoteInput {
-  id: ID!
+input CreateNoteInput {
+  id: ID
   name: String!
   completed: Boolean!
 }
@@ -30,7 +30,7 @@ type Query {
 }
 
 type Mutation {
-  createNote(note: NoteInput!): Note
+  createNote(note: CreateNoteInput!): Note
   updateNote(note: UpdateNoteInput!): Note
   deleteNote(noteId: String!): String
 }

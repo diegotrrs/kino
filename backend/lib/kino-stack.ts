@@ -3,11 +3,12 @@ import { Construct } from 'constructs'
 import * as lambda from 'aws-cdk-lib/aws-lambda'
 import * as appsync from '@aws-cdk/aws-appsync-alpha'
 import * as ddb from 'aws-cdk-lib/aws-dynamodb'
+import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs'
 
 const createAppSyncSchema = (scope: Construct) => {
   const api = new appsync.GraphqlApi(scope, 'Api', {
-    name: 'cdk-notes-appsync-api',
-    schema: appsync.Schema.fromAsset('../graphql/schema/notes.graphql'),
+    name: 'cdk-kino-appsync-api',
+    schema: appsync.Schema.fromAsset('../graphql/schema/core.graphql'),
     authorizationConfig: {
       defaultAuthorization: {
         authorizationType: appsync.AuthorizationType.API_KEY,
@@ -22,15 +23,44 @@ const createAppSyncSchema = (scope: Construct) => {
   return { api }
 }
 
+export const defaultNodeJsFunctionProps: NodejsFunctionProps = {
+  memorySize: 1024,
+  timeout: cdk.Duration.seconds(5),
+  environment: {
+    NODE_OPTIONS: '--enable-source-maps',
+  },
+  bundling: {
+    minify: false,
+    sourceMap: true,
+    externalModules: [
+      'aws-sdk',
+      'node:tls',
+      'node:buffer',
+      'node:http',
+      'node:https',
+      'node:stream',
+      'node:url',
+      'node:events',
+      'node:process',
+      'node:util',
+      'node:net',      
+    ],
+  },
+}
 const createLambda = (scope: Construct) => {
-  const notesLambda = new lambda.Function(scope, 'AppSyncNotesHandler', {
+  const appSyncKinoHandlerLambda = new NodejsFunction(scope, 'AppSyncKinoHandler', {
     runtime: lambda.Runtime.NODEJS_16_X,
-    handler: 'main.handler',
-    code: lambda.Code.fromAsset('src/lambdas'),
-    memorySize: 1024,
+    entry: 'src/lambdas/main.ts',
+    handler: 'handler',
+    bundling: {
+      // Exclude the following modules
+      externalModules: [
+        'aws-sdk',
+      ],
+    },
   })
   
-  return { notesLambda }
+  return { appSyncKinoHandlerLambda }
 }
 
 export class KinoStack extends cdk.Stack {
@@ -39,9 +69,9 @@ export class KinoStack extends cdk.Stack {
 
     const { api }  = createAppSyncSchema(this)
 
-    const { notesLambda } = createLambda(this)
+    const { appSyncKinoHandlerLambda } = createLambda(this)
 
-    const lambdaDs = api.addLambdaDataSource('lambdaDatasource', notesLambda)
+    const lambdaDs = api.addLambdaDataSource('lambdaDatasource', appSyncKinoHandlerLambda)
 
     lambdaDs.createResolver({
       typeName: "Query",
@@ -77,10 +107,10 @@ export class KinoStack extends cdk.Stack {
     })
 
     // enable the Lambda function to access the DynamoDB table (using IAM)
-    notesTable.grantFullAccess(notesLambda)
+    notesTable.grantFullAccess(appSyncKinoHandlerLambda)
 
     // Create an environment variable that we will use in the function code
-    notesLambda.addEnvironment('NOTES_TABLE', notesTable.tableName)
+    appSyncKinoHandlerLambda.addEnvironment('NOTES_TABLE', notesTable.tableName)
 
     // Prints out the AppSync GraphQL endpoint to the terminal
     new cdk.CfnOutput(this, "GraphQLAPIURL", { value: api.graphqlUrl })

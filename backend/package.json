@@ -8,8 +8,10 @@
     "build": "tsc && npm run lint",
     "watch": "tsc -w",
     "test": "jest",
-    "deploy": "cdk deploy",    
+    "deploy": "cdk deploy",
     "lint": "npx eslint src lib",
+    "synth": "cdk synth",
+    "codegen": "npx graphql-codegen",
     "check-outdated-dependencies": "ncu -e 2"
   },
   "devDependencies": {
@@ -19,6 +21,7 @@
     "@graphql-codegen/typescript-operations": "^4.0.1",
     "@types/jest": "^29.5.4",
     "@types/node": "20.5.9",
+    "@types/uuid": "^9.0.3",
     "@typescript-eslint/eslint-plugin": "^6.6.0",
     "@typescript-eslint/parser": "^6.6.0",
     "aws-cdk": "2.94.0",
@@ -33,6 +36,7 @@
     "aws-cdk-lib": "2.94.0",
     "aws-sdk": "^2.1213.0",
     "constructs": "^10.2.70",
-    "source-map-support": "^0.5.21"
+    "source-map-support": "^0.5.21",
+    "uuid": "^9.0.0"
   }
 }

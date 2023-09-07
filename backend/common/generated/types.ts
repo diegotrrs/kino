@@ -14,6 +14,12 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type CreateNoteInput = {
+  completed: Scalars['Boolean']['input'];
+  id?: InputMaybe<Scalars['ID']['input']>;
+  name: Scalars['String']['input'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createNote?: Maybe<Note>;
@@ -23,7 +29,7 @@ export type Mutation = {
 
 
 export type MutationCreateNoteArgs = {
-  note: NoteInput;
+  note: CreateNoteInput;
 };
 
 
@@ -41,12 +47,6 @@ export type Note = {
   completed: Scalars['Boolean']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
-};
-
-export type NoteInput = {
-  completed: Scalars['Boolean']['input'];
-  id: Scalars['ID']['input'];
-  name: Scalars['String']['input'];
 };
 
 export type Query = {
