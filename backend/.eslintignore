@@ -4,6 +4,7 @@ jest.config.js
 package-lock.json
 package.json
 scripts/
+common/generated
 
 **/*.*
 !**/*.tsx

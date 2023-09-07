@@ -5,10 +5,10 @@
     "backend": "bin/backend.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run lint",
     "watch": "tsc -w",
     "test": "jest",
-    "deploy": "cdk deploy",
+    "deploy": "cdk deploy",    
     "lint": "npx eslint src lib",
     "check-outdated-dependencies": "ncu -e 2"
   },

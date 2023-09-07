@@ -1,9 +1,5 @@
-import createNote from "./createNote"
-import deleteNote from "./deleteNote"
-import getNoteById from "./getNoteById"
-import listNotes from "./listNotes"
-import updateNote from "./updateNote"
-import Note from "./Note"
+import { Note } from "../../common/generated/types"
+import { createItem, deleteItem, getItemById, listTableItems, updateItem } from "./util/dynamoDBUtils"
 
 type AppSyncEvent = {
   info: {
@@ -18,15 +14,15 @@ type AppSyncEvent = {
 exports.handler = async (event: AppSyncEvent) => {
   switch (event.info.fieldName) {
     case "getNoteById":
-      return await getNoteById(event.arguments.noteId)
+      return await getItemById(process.env.NOTES_TABLE, event.arguments.noteId)
     case "createNote":
-      return await createNote(event.arguments.note)
+      return await createItem(process.env.NOTES_TABLE, event.arguments.note)
     case "listNotes":
-      return await listNotes()
+      return await listTableItems(process.env.NOTES_TABLE)
     case "deleteNote":
-      return await deleteNote(event.arguments.noteId)
+      return await deleteItem(process.env.NOTES_TABLE, event.arguments.noteId)
     case "updateNote":
-      return await updateNote(event.arguments.note)
+      return await updateItem(process.env.NOTES_TABLE, event.arguments.note)
     default:
       return null
   }

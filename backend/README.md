@@ -25,4 +25,5 @@ cdk.json - This file tells the toolkit how to run your application and also cont
 
 ## References 
 https://aws.amazon.com/getting-started/guides/setup-cdk/module-three/
+https://aws.amazon.com/blogs/mobile/building-scalable-graphql-apis-on-aws-with-cdk-and-aws-appsync/
 
