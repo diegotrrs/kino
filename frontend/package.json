@@ -43,6 +43,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@floating-ui/dom": "1.5.1"
+    "@floating-ui/dom": "1.5.1",
+    "@tanstack/svelte-query": "^4.20.0"
   }
 }
