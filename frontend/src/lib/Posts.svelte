@@ -17,7 +17,7 @@
 
 <div>
   <div>
-    {#if $posts.status === 'pending'}
+    {#if $posts.status === 'loading'}
       <span>Loading...</span>
     {:else if $posts.status === 'error'}
       <span>Error: {$posts.error.message}</span>

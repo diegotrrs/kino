@@ -44,6 +44,7 @@
   "type": "module",
   "dependencies": {
     "@floating-ui/dom": "1.5.1",
-    "@tanstack/svelte-query": "^4.20.0"
+    "@tanstack/svelte-query": "^4.20.0",
+    "graphql-request": "^6.1.0"
   }
 }
