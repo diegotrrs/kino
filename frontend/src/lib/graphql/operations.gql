@@ -1,0 +1,226 @@
+query ListNotes {
+    listNotes {
+        id
+        name
+        completed
+    }
+}
+
+
+# query listMyChatRooms {
+#   listMyChatRooms {
+#     id
+#     chatRoomId
+#     chatRoom {
+#       id
+#       name
+#       icon
+#       lastMessageAt,
+#       _lastMessageContent,
+#       myChatRoomStats {
+#         unreadMessagesCount
+#       }
+#       messages {
+#         sentAt,
+#         content,
+#       },
+#     }
+#   }
+# }
+
+# query listAvailableChatRooms {
+#   listAvailableChatRooms {
+#     id
+#     name
+#     icon
+#     lastMessageAt
+#   }
+# }
+
+# query getChatRoomWithMyMessages($chatRoomId: ID!, $config: DownloadConfigInput) {
+#   getChatRoom(id: $chatRoomId) {
+#     id
+#     name
+#     icon
+#     lastMessageAt
+#     messages {
+#       id
+#       idFromClient
+#       content
+#       documentCount
+#       sentAt
+#       sentByIndividual {
+#         id
+#         givenName
+#         familyName
+#         pictureURL
+#       }
+#       receivedByIndividual {
+#         id
+#         givenName
+#         familyName
+#         pictureURL
+#       }
+#       documents {
+#         id
+#         status
+#         fileName
+#         fileContentType
+#         fileSizeInBytes
+#         signedUrlForDownload(config: $config) {
+#           status
+#           url
+#         }
+#         signedUrlForUpload {
+#           status
+#           url
+#         }
+#         updatedAt
+#       }
+#       readAt
+#     }
+#   }
+# }
+
+# query getChatRoom($chatRoomId: ID!) {
+#   getChatRoom(id: $chatRoomId) {
+#     id
+#     name
+#     icon
+#     lastMessageAt
+#     project {
+#       id
+#     }
+#   }
+# }
+
+# query getChatRoomTeamConnections($chatRoomId: ID!) {
+#   getChatRoom(id: $chatRoomId) {
+#     project {
+#       id
+#       title
+#       members {
+#         team {
+#           id
+#           type
+#         }
+#       }
+#       partnerReferralStatus {
+#         reason
+#         createdAt
+#       }
+#     }
+#     teamConnections {
+#       team {
+#         id
+#         name
+#         type
+#       }
+#     }
+#   }
+# }
+
+# query getAllIndividualsWithTeamTypeInChatRoom($chatRoomId: ID!) {
+#   getAllIndividualsWithTeamTypeInChatRoom(chatRoomId: $chatRoomId){
+#     individualId
+#     teamType
+#     teamId
+#     teamName
+#     givenName
+#     familyName
+#   }
+# }
+
+# query getChatRoomForProjectTeams($teamIds: [ID!]!, $projectId: ID) {
+#   getChatRoomForProjectTeams(teamIds: $teamIds, projectId: $projectId){
+#     id
+#   }
+# }
+
+# mutation createChatRoom($input: CreateChatRoom!) {
+#   createChatRoom(input: $input) {
+#     id
+#   }
+# }
+
+# mutation updateChatRoom($input: UpdateChatRoom!) {
+#   updateChatRoom(input: $input) {
+#     id
+#   }
+# }
+
+# mutation joinChatRoom($chatRoomId: ID!) {
+#   joinChatRoom(chatRoomId: $chatRoomId) {
+#     id
+#   }
+# }
+
+# mutation joinVideoChat($roomName: String!) {
+#   joinVideoChat(roomName: $roomName)
+# }
+
+# mutation sendChatRoomMessage($message: SendChatRoomMessage!) {
+#   sendChatRoomMessage(message: $message) {
+#     recipients {
+#       individualId,
+#       teamId,
+#       familyName,
+#       givenName,
+#     }
+#   }
+# }
+
+# mutation createChatRoomMessageUploadedFile($input: CreateUploadedFileInput!){
+#   createUploadedFile(input: $input){
+#     id
+#     status
+#     fileName
+#     fileContentType
+#     fileSizeInBytes
+#     signedUrlForUpload {
+#       url
+#       status
+#     }
+#     signedUrlForDownload {
+#       url
+#       status
+#     }
+#     updatedAt
+#   }
+# }
+
+# mutation updateChatRoomMessageUploadedFile($input: UpdateUploadedFileInput!){
+#   updateUploadedFile(input: $input){
+#     id
+#     status
+#     fileName
+#     fileContentType
+#     fileSizeInBytes
+#     updatedAt
+#   }
+# }
+
+# mutation markChatRoomMessageAsRead($chatRoomMessageId: ID!){
+#   markChatRoomMessageAsRead(chatRoomMessageId: $chatRoomMessageId)
+# }
+
+# mutation reWriteChatRoomMessageForAi($input: ReWriteChatRoomMessageForAi!){
+#   reWriteChatRoomMessageForAi(input: $input)
+# }
+
+
+# mutation setProjectPartnerReferralStatus($projectId: ID!, $reason: QualifiedReason!) {
+#   setProjectPartnerReferralStatus(projectId: $projectId, reason: $reason) {
+#     reason
+#     createdAt
+#   }
+# }
+
+# mutation createAudioCall($individualId: ID!, $callRecipientGivenName: String!, $callRecipientTeamName: String!, $phoneNumber: String!, $chatRoomId: ID!) {
+#   createAudioCall(individualId: $individualId, callRecipientGivenName: $callRecipientGivenName, callRecipientTeamName: $callRecipientTeamName, phoneNumber: $phoneNumber, chatRoomId: $chatRoomId) {
+#     id
+#     createdAt
+#     callRecipientGivenName
+#     callRecipientTeamName
+#   }
+# }

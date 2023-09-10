@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "codegen": "npx graphql-codegen",
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
@@ -16,6 +17,9 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.28.1",
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/typescript": "^4.0.1",
+    "@graphql-codegen/typescript-operations": "^4.0.1",
     "@skeletonlabs/skeleton": "2.0.0",
     "@skeletonlabs/tw-plugin": "0.1.0",
     "@sveltejs/adapter-auto": "^2.0.0",

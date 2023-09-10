@@ -1,53 +1,19 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
-  import { gql, GraphQLClient } from 'graphql-request'
+  import { api } from './graphql/api'
+	import { alwaysArray } from './util/alwaysArray';
 
-  const endpoint = 'https://ssm2qgborzcrlpdbjga75gejem.appsync-api.us-east-1.amazonaws.com/graphql'
-  // x-api-key
-  const key = "da2-or7ya2fmnvhqhbbvykq5rso3z4"
-
-  //const client = useQueryClient()
-  const client = new GraphQLClient(endpoint)
-
-  let limit = 10
-
-
-  const query = gql`
-    query ListNotes {
-      listNotes {
-        id
-        name
-        completed
-      }
-    }`
-
-  const requestHeaders = {
-    'x-api-key': key
-  }
-
-  type ResponseType = {
-    listNotes:  {
-       id: string; name: string; completed: boolean
-    }[]
-  }
-  const notes = createQuery<
-    ResponseType,
-    Error
-  >({
-    queryKey: ['listNotes', limit],
-    queryFn: () => client.request(query, {}, requestHeaders),
-  })
+  const notesQuery = api.createListNotesQuery()
 </script>
 
 <div>
   <div>
-    {#if $notes.status === 'loading'}
+    {#if $notesQuery.status === 'loading'}
       <span>Loading...</span>
-    {:else if $notes.status === 'error'}
-      <span>Error: {$notes.error.message}</span>
+    {:else if $notesQuery.status === 'error'}
+      <span>Error: {$notesQuery.error.message}</span>
     {:else}
       <ul>
-        {#each $notes.data.listNotes as note}
+        {#each alwaysArray($notesQuery.data.listNotes) as note}
           <article>
             <!-- <a
               href={`/${note.id}`}
@@ -63,7 +29,7 @@
           </article>
         {/each}
       </ul>
-      {#if $notes.isFetching}
+      {#if $notesQuery.isFetching}
         <div style="color:darkgreen; font-weight:700">
           Background Updating...
         </div>
