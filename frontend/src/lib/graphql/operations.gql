@@ -6,6 +6,13 @@ query ListNotes {
     }
 }
 
+query GetNoteById($noteId: String!) {
+  getNoteById(noteId: $noteId) {
+    id
+    name
+    completed
+  }
+}
 
 # query listMyChatRooms {
 #   listMyChatRooms {

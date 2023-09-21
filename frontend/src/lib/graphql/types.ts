@@ -77,3 +77,10 @@ export type ListNotesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ListNotesQuery = { __typename?: 'Query', listNotes?: Array<{ __typename?: 'Note', id: string, name: string, completed: boolean } | null> | null };
+
+export type GetNoteByIdQueryVariables = Exact<{
+  noteId: Scalars['String']['input'];
+}>;
+
+
+export type GetNoteByIdQuery = { __typename?: 'Query', getNoteById?: { __typename?: 'Note', id: string, name: string, completed: boolean } | null };

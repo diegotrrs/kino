@@ -1,34 +1,79 @@
-import { createQuery } from '@tanstack/svelte-query';
 import { gql, GraphQLClient } from 'graphql-request';
-import type { ListNotesQuery } from '../graphql/types';
+import type { GetNoteByIdQuery, ListNotesQuery } from '../graphql/types';
 
 // Import env variables from vite's context.
-const GRAPHQL_API_KEY = import.meta.env.VITE_GRAPHQL_API_KEY
-const GRAPHQL_ENDPOINT = import.meta.env.VITE_GRAPHQL_ENDPOINT
+const GRAPHQL_API_KEY = import.meta.env.VITE_GRAPHQL_API_KEY;
+const GRAPHQL_ENDPOINT = import.meta.env.VITE_GRAPHQL_ENDPOINT;
 
-const DEFAULT_RESULT_LIMIT = 100
+export const DEFAULT_RESULT_LIMIT = 100;
 
-const client = new GraphQLClient(GRAPHQL_ENDPOINT, { headers: { 'x-api-key': GRAPHQL_API_KEY }});
+const client = new GraphQLClient(GRAPHQL_ENDPOINT, { headers: { 'x-api-key': GRAPHQL_API_KEY } });
 
 export enum OperationIds {
-  ListNotes = 'listNotes'
+	ListNotes = 'listNotes',
+	GetNoteById = 'getNoteById',
 }
 
-const createListNotesQuery = (limit = DEFAULT_RESULT_LIMIT) =>
-	createQuery<ListNotesQuery, Error>({
+const fetchNotes = (): Promise<ListNotesQuery> => {
+	return client.request(
+		gql`
+			query ListNotes {
+				listNotes {
+					id
+					name
+					completed
+				}
+			}
+		`
+	);
+};
+
+const fetchNote = (noteId: string): Promise<GetNoteByIdQuery> => {
+	return client.request(
+		gql`
+			query GetNoteById {
+				getNoteById(noteId: "${noteId}") {
+					id
+					name
+					completed
+				}
+			}
+		`
+	);
+};
+
+  // await queryClient.prefetchQuery({
+  //   queryKey: ['post', noteId],
+  //   queryFn: () => api(fetch).getPostById(postId),
+  // })
+
+export const getListNotesQueryOptions = (limit = DEFAULT_RESULT_LIMIT) => {
+	return {
 		queryKey: [OperationIds.ListNotes, limit],
-		queryFn: () =>
-			client.request(
-				gql`query ListNotes {
-						listNotes {
-							id
-							name
-							completed
-						}
-					}`,				
-			)
-	});
+		queryFn: () => fetchNotes()
+	};
+};
+
+export const getGetNoteByIdQueryOptions = (noteId: string) => {
+	return {
+		queryKey: [OperationIds.GetNoteById, noteId],
+		queryFn: () => fetchNote(noteId)
+	};
+};
+
+export const getQueryOptions = <T>(
+	queryId: string,
+	fn: () => Promise<T>,
+	limit = DEFAULT_RESULT_LIMIT
+) => {
+	return {
+		queryKey: [queryId, limit],
+		queryFn: () => fn()
+	};
+};
 
 export const api = {
-	createListNotesQuery,
-}
+	getListNotesQueryOptions,
+	getQueryOptions,
+	getGetNoteByIdQueryOptions,
+};
