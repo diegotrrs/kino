@@ -5,6 +5,8 @@
 	// Floating UI for Popups
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
+	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools';
+
 
 	import { QueryClientProvider } from '@tanstack/svelte-query'
   import type { PageData } from './$types'
@@ -14,7 +16,9 @@
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 </script>
 
-<QueryClientProvider client={data.queryClient}>
+<QueryClientProvider client={data.queryClient} >
+	<SvelteQueryDevtools />
+
 	<AppShell slotSidebarLeft="w-56 p-4">
 		<svelte:fragment slot="sidebarLeft">
 			<!-- Insert the list: -->
@@ -23,6 +27,7 @@
 					<li><a href="/">Home</a></li>
 					<li><a href="/notes">Notes</a></li>
 					<li><a href="/about">About</a></li>
+					<li><a href="/dev">Dev</a></li>
 				</ul>
 			</nav>
 			<!-- --- -->
