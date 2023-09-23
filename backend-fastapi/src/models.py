@@ -1,8 +1,9 @@
 from src.database import Base
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, String, Boolean
+import uuid
 
-class User(Base):
-    __tablename__ = "users"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
+class Note(Base):
+    __tablename__ = "notes"
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()), unique=True, nullable=False)
+    name = Column(String)
+    completed = Column(Boolean, unique=False, default=True)
