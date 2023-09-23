@@ -34,3 +34,10 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+
+## Code generation
+The [graphql-codegen](https://the-guild.dev/graphql/codegen) library is used to generate Types and code from the GraphQL schema. The file codegen.ts corresponds to the configuration for this library.
+
+There is a [known issue](https://github.com/dotansimha/graphql-code-generator/issues/9046) for the typescript-graphql-request plugin. That's why there is a task that is executed after the file is generated. Check out the hook section in the codegen.ts file.
+
