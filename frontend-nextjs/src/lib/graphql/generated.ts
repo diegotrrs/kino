@@ -1,3 +1,6 @@
+import { GraphQLClient } from 'graphql-request';
+import { GraphQLClientRequestHeaders } from 'graphql-request/build/cjs/types';
+import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -78,3 +81,40 @@ export type GetNoteByIdQueryVariables = Exact<{
 
 
 export type GetNoteByIdQuery = { __typename?: 'Query', getNoteById: { __typename?: 'Note', id: string, name: string, completed: boolean } | null };
+
+
+export const GetAllNotesDocument = gql`
+    query getAllNotes {
+  getAllNotes {
+    id
+    name
+    completed
+  }
+}
+    `;
+export const GetNoteByIdDocument = gql`
+    query getNoteById($noteId: String!) {
+  getNoteById(noteId: $noteId) {
+    id
+    name
+    completed
+  }
+}
+    `;
+
+export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
+
+
+const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationType) => action();
+
+export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
+  return {
+    getAllNotes(variables?: GetAllNotesQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetAllNotesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetAllNotesQuery>(GetAllNotesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getAllNotes', 'query');
+    },
+    getNoteById(variables: GetNoteByIdQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetNoteByIdQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetNoteByIdQuery>(GetNoteByIdDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getNoteById', 'query');
+    }
+  };
+}
+export type Sdk = ReturnType<typeof getSdk>;

@@ -4,10 +4,12 @@ const config: CodegenConfig = {
 	schema: '../backend-fastapi/src/graphql/schema.graphql',
 	documents: ['src/**/*.gql'],
 	generates: {
-		'src/lib/graphql/types.ts': {
+		'src/lib/graphql/generated.ts': {
 			plugins: [
         'typescript',
-        'typescript-operations'
+        'typescript-operations',
+				'typescript-graphql-request',
+				
       ],
 			config: {
 				avoidOptionals: true
