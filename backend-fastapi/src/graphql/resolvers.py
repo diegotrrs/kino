@@ -1,6 +1,6 @@
 from ariadne import (
     MutationType,
-    QueryType, 
+    QueryType,
     convert_kwargs_to_snake_case,
 )
 from ..models import Note
@@ -10,12 +10,14 @@ from ..database import SessionLocal
 query = QueryType()
 mutation = MutationType()
 
+
 @query.field("getAllNotes")
 def resolve_getAllNotes(*_):
     db = SessionLocal()
     notes = db.query(Note).all()
     db.close()
     return notes
+
 
 @query.field("getNoteById")
 @convert_kwargs_to_snake_case
@@ -24,6 +26,7 @@ def resolve_getNoteById(*_, note_id):
     note = db.query(Note).filter(Note.id == note_id).first()
     db.close()
     return note
+
 
 @mutation.field("createNote")
 def resolve_createNote(*_, input):
@@ -36,6 +39,7 @@ def resolve_createNote(*_, input):
     db.commit()
     db.refresh(note)
     return note
+
 
 @mutation.field("updateNote")
 def resolve_updateNote(*_, input):
@@ -56,9 +60,10 @@ def resolve_updateNote(*_, input):
         db.refresh(note)
     return note
 
+
 @mutation.field("deleteNote")
 @convert_kwargs_to_snake_case
-def resolve_deleteNote(*_, note_id):   
+def resolve_deleteNote(*_, note_id):
     db = SessionLocal()
     note = db.query(Note).filter(Note.id == note_id).first()
     if note:
