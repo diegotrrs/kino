@@ -1,12 +1,12 @@
-query ListNotes {
-    listNotes {
+query getAllNotes {
+    getAllNotes {
         id
         name
         completed
     }
 }
 
-query GetNoteById($noteId: String!) {
+query getNoteById($noteId: String!) {
   getNoteById(noteId: $noteId) {
     id
     name

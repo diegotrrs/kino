@@ -28,7 +28,7 @@ export default async function NotesPage() {
     <div>
       <h1>Notes</h1>
       <div className={styles.grid}>
-        {alwaysArray(response.listNotes).map((note) => {
+        {alwaysArray(response.getAllNotes).map((note) => {
           return <NoteCard key={note.id} note={note} />;
         })}
       </div>

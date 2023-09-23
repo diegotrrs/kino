@@ -1,5 +1,5 @@
 import { gql, GraphQLClient } from 'graphql-request';
-import type { GetNoteByIdQuery, ListNotesQuery } from '../graphql/types';
+import type { GetNoteByIdQuery, GetAllNotesQuery } from '../graphql/types';
 
 // Import env variables from vite's context.
 const GRAPHQL_API_KEY = process.env.GRAPHQL_API_KEY || ""
@@ -10,18 +10,18 @@ export const DEFAULT_RESULT_LIMIT = 100;
 const client = new GraphQLClient(GRAPHQL_ENDPOINT, { headers: { 'x-api-key': GRAPHQL_API_KEY } });
 
 export enum OperationIds {
-	ListNotes = 'listNotes',
+	GetAllNotes = 'getAllNotes',
 	GetNoteById = 'getNoteById',
 }
 
-export const fetchNotes = (): Promise<ListNotesQuery> => {
+export const fetchNotes = (): Promise<GetAllNotesQuery> => {
 	return client.request(
 		gql`
-			query ListNotes {
-				listNotes {
-					id
-					name
-					completed
+			query getAllNotes {
+				getAllNotes {
+						id
+						name
+						completed
 				}
 			}
 		`
@@ -31,7 +31,7 @@ export const fetchNotes = (): Promise<ListNotesQuery> => {
 export const fetchNote = (noteId: string): Promise<GetNoteByIdQuery> => {
 	return client.request(
 		gql`
-			query GetNoteById {
+			query getNoteById {
 				getNoteById(noteId: "${noteId}") {
 					id
 					name
@@ -42,9 +42,9 @@ export const fetchNote = (noteId: string): Promise<GetNoteByIdQuery> => {
 	);
 };
 
-export const getListNotesQueryOptions = (limit = DEFAULT_RESULT_LIMIT) => {
+export const getGetAllNotesQueryOptions = (limit = DEFAULT_RESULT_LIMIT) => {
 	return {
-		queryKey: [OperationIds.ListNotes, limit],
+		queryKey: [OperationIds.GetAllNotes, limit],
 		queryFn: () => fetchNotes()
 	};
 };
@@ -68,7 +68,7 @@ export const getQueryOptions = <T>(
 };
 
 export const api = {
-	getListNotesQueryOptions,
+	getListNotesQueryOptions: getGetAllNotesQueryOptions,
 	getQueryOptions,
 	getGetNoteByIdQueryOptions,
 };

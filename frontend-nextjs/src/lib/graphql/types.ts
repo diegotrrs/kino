@@ -29,7 +29,7 @@ export type Mutation = {
 
 
 export type MutationCreateNoteArgs = {
-  note: CreateNoteInput;
+  input: CreateNoteInput;
 };
 
 
@@ -39,7 +39,7 @@ export type MutationDeleteNoteArgs = {
 
 
 export type MutationUpdateNoteArgs = {
-  note: UpdateNoteInput;
+  input: UpdateNoteInput;
 };
 
 export type Note = {
@@ -51,20 +51,14 @@ export type Note = {
 
 export type Query = {
   __typename?: 'Query';
+  getAllNotes: Maybe<Array<Maybe<Note>>>;
   getNoteById: Maybe<Note>;
-  listNotes: Maybe<Array<Maybe<Note>>>;
+  users: Maybe<Scalars['String']['output']>;
 };
 
 
 export type QueryGetNoteByIdArgs = {
   noteId: Scalars['String']['input'];
-};
-
-export type Subscription = {
-  __typename?: 'Subscription';
-  onCreateNote: Maybe<Note>;
-  onDeleteNote: Maybe<Scalars['String']['output']>;
-  onUpdateNote: Maybe<Note>;
 };
 
 export type UpdateNoteInput = {
@@ -73,12 +67,14 @@ export type UpdateNoteInput = {
   name: InputMaybe<Scalars['String']['input']>;
 };
 
-export type ListNotesQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetAllNotesQueryVariables = Exact<{ [key: string]: never; }>;
 
-export type ListNotesQuery = { __typename?: 'Query', listNotes: Array<{ __typename?: 'Note', id: string, name: string, completed: boolean } | null> | null };
+
+export type GetAllNotesQuery = { __typename?: 'Query', getAllNotes: Array<{ __typename?: 'Note', id: string, name: string, completed: boolean } | null> | null };
 
 export type GetNoteByIdQueryVariables = Exact<{
   noteId: Scalars['String']['input'];
 }>;
+
 
 export type GetNoteByIdQuery = { __typename?: 'Query', getNoteById: { __typename?: 'Note', id: string, name: string, completed: boolean } | null };
