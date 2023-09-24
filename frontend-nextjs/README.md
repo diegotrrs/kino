@@ -41,3 +41,7 @@ The [graphql-codegen](https://the-guild.dev/graphql/codegen) library is used to 
 
 There is a [known issue](https://github.com/dotansimha/graphql-code-generator/issues/9046) for the typescript-graphql-request plugin. That's why there is a task that is executed after the file is generated. Check out the hook section in the codegen.ts file.
 
+## Linting
+The rule is ignore for the components under components/chart /* eslint-disable react-hooks/exhaustive-deps */. These specific components were imported from Mosaic and fixing them involved the risk of breaking their functionality. 
+
+
