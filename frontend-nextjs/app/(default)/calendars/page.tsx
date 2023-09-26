@@ -5,7 +5,7 @@ export const metadata = {
 
 import SearchForm from '@/components/search-form'
 import FilterButton from '@/components/dropdown-filter'
-import CalendarCard from './calendar-card'
+import CalendarCard from './CalendarCard'
 import PaginationNumeric from '@/components/pagination-numeric'
 
 export default function MyCalendars() {
@@ -191,7 +191,7 @@ export default function MyCalendars() {
         {calendars.map(calendar => (
           <CalendarCard
             key={calendar.id}
-            campaign={calendar} />
+            calendar={calendar} />
         ))}
       </div>
 
