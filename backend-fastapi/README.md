@@ -11,6 +11,15 @@ A couple of libraries the generate generic Python models from a GraphQL schema a
 Another option would be to implement it as part of this project, a high level description of the steps can be found [here](https://chat.openai.com/share/f0802204-b2f8-4b39-b262-96c383c7dc83).
 
 
+# Folder structure
+
+As mentioned in [NextJs's documentation](https://nextjs.org/docs/app/building-your-application/routing/route-groups):
+```
+To organize routes without affecting the URL, create a group to keep related routes together. The folders in parenthesis will be omitted from the URL (e.g. (marketing) or (shop)).
+```
+The project has a (default) and (auth) folders, among others, that follow the approach mentioned above.
+
+
 # Format code
 ```
 poetry run black ./src
