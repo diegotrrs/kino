@@ -1,39 +1,12 @@
 import Link from 'next/link'
 import { CalendarProperties } from './CalendarProperties'
+import { Calendar } from '@/lib/graphql/generated'
 
-type CalendarProps = {
-  id: number
-  category: string
-  title: string
-  link: string
-  content: string
-  dates: {
-    from: string
-    to: string
-  }
-  type: string
-}
-
-//export default function CalendarCard({ calendar}: { calendar: CalendarProps }) {
-  export default function CalendarCard(props: any) {
+export default function CalendarCard({ calendar}: { calendar: Calendar }) {
   const {
     typeColor,
     categoryIcon,
   } = CalendarProperties() 
-
-  const calendar = {
-    id: 0,
-    category: '1',      
-    title: 'Monitor progress in Real Time Value',
-    link: '#0',
-    content: 'Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts.',
-    dates: {
-      from: 'Jan 20',
-      to: 'Jan 27'
-    },
-    type: 'One-Time'
-  }
-  
 
   return (
     <div className="col-span-full sm:col-span-6 xl:col-span-4 bg-white dark:bg-slate-800 shadow-lg rounded-sm border border-slate-200 dark:border-slate-700">

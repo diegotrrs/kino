@@ -6,161 +6,16 @@ export const metadata = {
 import SearchForm from '@/components/search-form'
 import FilterButton from '@/components/dropdown-filter'
 import CalendarCard from './CalendarCard'
-import PaginationNumeric from '@/components/pagination-numeric'
+import CalendarFactory from './CalendarCardFactory'
+
+
 
 export default function MyCalendars() {
-
   // Some dummy calendars data
-  const calendars = [
-    {
-      id: 0,
-      category: '1',      
-      title: 'Monitor progress in Real Time Value',
-      link: '#0',
-      content: 'Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts.',
-      dates: {
-        from: 'Jan 20',
-        to: 'Jan 27'
-      },
-      type: 'One-Time'
-    },
-    {
-      id: 1,
-      category: '2',     
-      title: 'Monitor progress in Real Time Value',
-      link: '#0',
-      content: 'Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts.',
-      dates: {
-        from: 'Jan 20',
-        to: 'Jan 27'
-      },
-      type: 'Off-Track'
-    },
-    {
-      id: 3,
-      category: '3',      
-      title: 'Monitor progress in Real Time Value',
-      link: '#0',
-      content: 'Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts.',
-      dates: {
-        from: 'Jan 20',
-        to: 'Jan 27'
-      },
-      type: 'At Risk'
-    },
-    {
-      id: 4,
-      category: '1',      
-      title: 'Monitor progress in Real Time Value',
-      link: '#0',
-      content: 'Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts.',
-      dates: {
-        from: 'Jan 20',
-        to: 'Jan 27'
-      },
-      type: 'At Risk'
-    },
-    {
-      id: 5,
-      category: '4',      
-      title: 'Monitor progress in Real Time Value',
-      link: '#0',
-      content: 'Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts.',
-      dates: {
-        from: 'Jan 20',
-        to: 'Jan 27'
-      },
-      type: 'One-Time'
-    },
-    {
-      id: 6,
-      category: '2',     
-      title: 'Monitor progress in Real Time Value',
-      link: '#0',
-      content: 'Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts.',
-      dates: {
-        from: 'Jan 20',
-        to: 'Jan 27'
-      },
-      type: 'At Risk'
-    },
-    {
-      id: 7,
-      category: '4',     
-      title: 'Monitor progress in Real Time Value',
-      link: '#0',
-      content: 'Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts.',
-      dates: {
-        from: 'Jan 20',
-        to: 'Jan 27'
-      },
-      type: 'One-Time'
-    },
-    {
-      id: 8,
-      category: '1',      
-      title: 'Monitor progress in Real Time Value',
-      link: '#0',
-      content: 'Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts.',
-      dates: {
-        from: 'Jan 20',
-        to: 'Jan 27'
-      },
-      type: 'Off-Track'
-    },
-    {
-      id: 9,
-      category: '3',      
-      title: 'Monitor progress in Real Time Value',
-      link: '#0',
-      content: 'Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts.',
-      dates: {
-        from: 'Jan 20',
-        to: 'Jan 27'
-      },
-      type: 'One-Time'
-    },
-    {
-      id: 10,
-      category: '4',     
-      title: 'Monitor progress in Real Time Value',
-      link: '#0',
-      content: 'Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts.',
-      dates: {
-        from: 'Jan 20',
-        to: 'Jan 27'
-      },
-      type: 'Off-Track'
-    },
-    {
-      id: 11,
-      category: '2',  
-      title: 'Monitor progress in Real Time Value',
-      link: '#0',
-      content: 'Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts.',
-      dates: {
-        from: 'Jan 20',
-        to: 'Jan 27'
-      },
-      type: 'Off-Track'
-    },
-    {
-      id: 12,
-      category: '3',      
-      title: 'Monitor progress in Real Time Value',
-      link: '#0',
-      content: 'Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts.',
-      dates: {
-        from: 'Jan 20',
-        to: 'Jan 27'
-      },
-      type: 'At Risk'
-    },
-  ]
-
+  const calendars = CalendarFactory.buildList(10)
+ 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-[96rem] mx-auto">
-
       {/* Page header */}
       <div className="sm:flex sm:justify-between sm:items-center mb-8">
 
@@ -194,12 +49,6 @@ export default function MyCalendars() {
             calendar={calendar} />
         ))}
       </div>
-
-      {/* Pagination */}
-      <div className="mt-8">
-        <PaginationNumeric />
-      </div>
-
     </div>
   )
 }

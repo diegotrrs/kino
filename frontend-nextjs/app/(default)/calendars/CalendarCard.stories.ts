@@ -2,22 +2,12 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import CalendarCard from './CalendarCard';
 import '@/app/css/style.css'
+import CalendarFactory from './CalendarCardFactory';
 
 
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 
-const calendar = {
-  id: 0,
-  category: '1',      
-  title: 'Monitor progress in Real Time Value',
-  link: '#0',
-  content: 'Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts.',
-  dates: {
-    from: 'Jan 20',
-    to: 'Jan 27'
-  },
-  type: 'One-Time'
-}
+const calendar = CalendarFactory.build()
 
 const meta = {
   title: 'kino/CalendarCard',

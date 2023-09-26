@@ -17,6 +17,23 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type Calendar = {
+  __typename?: 'Calendar';
+  category: Scalars['String']['output'];
+  content: Maybe<Scalars['String']['output']>;
+  dates: CalendarDateRange;
+  id: Scalars['ID']['output'];
+  link: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+};
+
+export type CalendarDateRange = {
+  __typename?: 'CalendarDateRange';
+  from: Scalars['String']['output'];
+  to: Scalars['String']['output'];
+};
+
 export type CreateNoteInput = {
   completed: Scalars['Boolean']['input'];
   id: InputMaybe<Scalars['ID']['input']>;

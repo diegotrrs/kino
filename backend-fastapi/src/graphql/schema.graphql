@@ -1,3 +1,18 @@
+type CalendarDateRange {
+  from: String!,
+  to: String!,
+}
+
+type Calendar {
+  id: ID!
+  category: String!,
+  title: String!
+  link: String!,
+  content: String,
+  dates: CalendarDateRange!,
+  type: String!,  
+}
+
 
 type Note {
   id: ID!

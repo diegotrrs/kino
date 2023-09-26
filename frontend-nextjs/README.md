@@ -45,3 +45,5 @@ There is a [known issue](https://github.com/dotansimha/graphql-code-generator/is
 The rule is ignore for the components under components/chart /* eslint-disable react-hooks/exhaustive-deps */. These specific components were imported from Mosaic and fixing them involved the risk of breaking their functionality. 
 
 
+## Storybook
+https://fakerjs.dev/api/
