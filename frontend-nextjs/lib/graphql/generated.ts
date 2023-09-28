@@ -19,13 +19,10 @@ export type Scalars = {
 
 export type Calendar = {
   __typename?: 'Calendar';
-  category: Scalars['String']['output'];
-  content: Maybe<Scalars['String']['output']>;
   dates: CalendarDateRange;
+  description: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
-  link: Scalars['String']['output'];
-  title: Scalars['String']['output'];
-  type: Scalars['String']['output'];
+  name: Scalars['String']['output'];
 };
 
 export type CalendarDateRange = {
@@ -34,17 +31,29 @@ export type CalendarDateRange = {
   to: Scalars['String']['output'];
 };
 
+export type CreateCalendarInput = {
+  description: InputMaybe<Scalars['String']['input']>;
+  from: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  to: Scalars['String']['input'];
+};
+
 export type CreateNoteInput = {
   completed: Scalars['Boolean']['input'];
-  id: InputMaybe<Scalars['ID']['input']>;
   name: Scalars['String']['input'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createCalendar: Maybe<Calendar>;
   createNote: Maybe<Note>;
   deleteNote: Maybe<Scalars['String']['output']>;
   updateNote: Maybe<Note>;
+};
+
+
+export type MutationCreateCalendarArgs = {
+  input: CreateCalendarInput;
 };
 
 

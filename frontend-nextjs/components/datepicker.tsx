@@ -1,12 +1,15 @@
 'use client'
 
+import React from 'react';
 import Flatpickr from 'react-flatpickr'
 import { Hook, Options } from 'flatpickr/dist/types/options'
 
-export default function Datepicker({ align }: {
-  align?: 'left' | 'right'
-}) {
+type DatepickerProps = {
+  align?: 'left' | 'right',
+  onDatesChanged?: (date1: Date, date2: Date) => void,
+}
 
+const Datepicker: React.FC<DatepickerProps> = ({ align, onDatesChanged })=>{
   const onReady: Hook = (selectedDates, dateStr, instance) => {
     (instance.element as HTMLInputElement).value = dateStr.replace('to', '-')
     const customClass = align ?? ''
@@ -15,6 +18,8 @@ export default function Datepicker({ align }: {
 
   const onChange: Hook = (selectedDates, dateStr, instance) => {
     (instance.element as HTMLInputElement).value = dateStr.replace('to', '-')
+    console.log('>> onChange', selectedDates, dateStr, instance)
+    onDatesChanged && onDatesChanged(selectedDates[0], selectedDates[1])
   }
 
   const options: Options = {
@@ -40,3 +45,5 @@ export default function Datepicker({ align }: {
     </div>
   )
 }
+
+export default Datepicker

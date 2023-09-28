@@ -1,18 +1,13 @@
-type CalendarDateRange {
-  from: String!,
-  to: String!,
-}
+
+scalar Date
 
 type Calendar {
   id: ID!
-  category: String!,
-  title: String!
-  link: String!,
-  content: String,
-  dates: CalendarDateRange!,
-  type: String!,  
+  name: String! 
+  description: String,
+  startDate: Date!,
+  endDate: Date!,
 }
-
 
 type Note {
   id: ID!
@@ -21,7 +16,6 @@ type Note {
 }
 
 input CreateNoteInput {
-  id: ID
   name: String!
   completed: Boolean!
 }
@@ -32,13 +26,21 @@ input UpdateNoteInput {
   completed: Boolean
 }
 
+input CreateCalendarInput {
+  name: String!  
+  description: String,
+  startDate: Date!,
+  endDate: Date!,
+}
+
 type Query {
   getNoteById(noteId: String!): Note
   getAllNotes: [Note]
-  users: String
+  getAllCalendars: [Calendar]
 }
 
 type Mutation {
+  createCalendar(input: CreateCalendarInput!): Calendar
   createNote(input: CreateNoteInput!): Note
   updateNote(input: UpdateNoteInput!): Note
   deleteNote(noteId: String!): String

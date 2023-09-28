@@ -13,23 +13,23 @@ export default function CalendarCard({ calendar}: { calendar: Calendar }) {
       <div className="flex flex-col h-full p-5">
         <header>
           <div className="flex items-center justify-between">
-            {categoryIcon(calendar.category)}        
+            {categoryIcon("1")}        
           </div>
         </header>
         <div className="grow mt-2">
-          <Link className="inline-flex text-slate-800 dark:text-slate-100 hover:text-slate-900 dark:hover:text-white mb-1" href={calendar.link}>
-            <h2 className="text-xl leading-snug font-semibold">{calendar.title}</h2>
+          <Link className="inline-flex text-slate-800 dark:text-slate-100 hover:text-slate-900 dark:hover:text-white mb-1" href={calendar.id}>
+            <h2 className="text-xl leading-snug font-semibold">{calendar.name}</h2>
           </Link>
-          <div className="text-sm">{calendar.content}</div>
+          <div className="text-sm">{calendar.description}</div>
         </div>
         <footer className="mt-5">
           <div className="text-sm font-medium text-slate-500 mb-2">{calendar.dates.from} <span className="text-slate-400 dark:text-slate-600">-&gt;</span> {calendar.dates.to}</div>
           <div className="flex justify-between items-center">
             <div>
-              <div className={`text-xs inline-flex font-medium rounded-full text-center px-2.5 py-1 ${typeColor(calendar.type)}`}>{calendar.type}</div>
+              <div className={`text-xs inline-flex font-medium rounded-full text-center px-2.5 py-1 ${typeColor("One-Time")}`}>{"One-Time"}</div>
             </div>
             <div>
-              <Link className="text-sm font-medium text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400" href={calendar.link}>View -&gt;</Link>
+              <Link className="text-sm font-medium text-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400" href={calendar.id}>View -&gt;</Link>
             </div>
           </div>
         </footer>

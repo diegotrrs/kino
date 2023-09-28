@@ -14,6 +14,12 @@ query getNoteById($noteId: String!) {
   }
 }
 
+mutation createCalendar($input: CreateCalendarInput!) {
+  createCalendar(input: $input) {
+    id
+  }
+}
+
 # query listMyChatRooms {
 #   listMyChatRooms {
 #     id
