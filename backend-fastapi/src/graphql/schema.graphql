@@ -4,7 +4,7 @@ scalar Date
 type Calendar {
   id: ID!
   name: String! 
-  description: String,
+  location: String,
   startDate: Date!,
   endDate: Date!,
 }
@@ -28,15 +28,16 @@ input UpdateNoteInput {
 
 input CreateCalendarInput {
   name: String!  
-  description: String,
+  location: String,
   startDate: Date!,
   endDate: Date!,
 }
 
 type Query {
   getNoteById(noteId: String!): Note
+  getCalendarById(calendarId: String!): Calendar
   getAllNotes: [Note]
-  getAllCalendars: [Calendar]
+  getAllCalendars: [Calendar!]!
 }
 
 type Mutation {

@@ -6,12 +6,14 @@ export const metadata = {
 import SearchForm from '@/components/search-form'
 import FilterButton from '@/components/dropdown-filter'
 import CalendarCard from './CalendarCard'
-import CalendarFactory from './CalendarCardFactory'
 import Link from 'next/link'
+import api from '@/lib/graphql/api'
+import { alwaysArray } from '@/lib/util/alwaysArray'
 
-export default function MyCalendars() {
-  // Some dummy calendars data
-  const calendars = CalendarFactory.buildList(10)
+export default async function MyCalendarsPage() {
+  const response = await api.getAllCalendars();
+
+  const calendars = alwaysArray(response.getAllCalendars)
  
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-[96rem] mx-auto">
@@ -41,11 +43,11 @@ export default function MyCalendars() {
 
       {/* Cards */}
       <div className="grid grid-cols-12 gap-6">
-        {calendars.map(calendar => (
-          <CalendarCard
-            key={calendar.id}
-            calendar={calendar} />
-        ))}
+        {calendars.length > 0 ? (
+          calendars.map(calendar =>  <CalendarCard key={calendar.id} calendar={calendar} />)
+        ) : (
+          <p>No calendars found.</p>
+        )}
       </div>
     </div>
   )

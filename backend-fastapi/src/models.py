@@ -26,6 +26,6 @@ class Calendar(Base):
         nullable=False,
     )
     name = Column(String)
-    description = Column(String(100), nullable=False)
+    location = Column(String(100), nullable=False)
     start_date = Column(Date, nullable=False)
     end_date = Column(Date, nullable=False)

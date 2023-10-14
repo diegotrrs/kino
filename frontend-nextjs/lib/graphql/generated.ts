@@ -15,27 +15,23 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  Date: { input: any; output: any; }
 };
 
 export type Calendar = {
   __typename?: 'Calendar';
-  dates: CalendarDateRange;
-  description: Maybe<Scalars['String']['output']>;
+  endDate: Scalars['Date']['output'];
   id: Scalars['ID']['output'];
+  location: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
-};
-
-export type CalendarDateRange = {
-  __typename?: 'CalendarDateRange';
-  from: Scalars['String']['output'];
-  to: Scalars['String']['output'];
+  startDate: Scalars['Date']['output'];
 };
 
 export type CreateCalendarInput = {
-  description: InputMaybe<Scalars['String']['input']>;
-  from: Scalars['String']['input'];
+  endDate: Scalars['Date']['input'];
+  location: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
-  to: Scalars['String']['input'];
+  startDate: Scalars['Date']['input'];
 };
 
 export type CreateNoteInput = {
@@ -80,9 +76,15 @@ export type Note = {
 
 export type Query = {
   __typename?: 'Query';
+  getAllCalendars: Array<Calendar>;
   getAllNotes: Maybe<Array<Maybe<Note>>>;
+  getCalendarById: Maybe<Calendar>;
   getNoteById: Maybe<Note>;
-  users: Maybe<Scalars['String']['output']>;
+};
+
+
+export type QueryGetCalendarByIdArgs = {
+  calendarId: Scalars['String']['input'];
 };
 
 
@@ -108,6 +110,25 @@ export type GetNoteByIdQueryVariables = Exact<{
 
 export type GetNoteByIdQuery = { __typename?: 'Query', getNoteById: { __typename?: 'Note', id: string, name: string, completed: boolean } | null };
 
+export type GetCalendarByIdQueryVariables = Exact<{
+  calendarId: Scalars['String']['input'];
+}>;
+
+
+export type GetCalendarByIdQuery = { __typename?: 'Query', getCalendarById: { __typename?: 'Calendar', id: string, name: string, location: string | null, startDate: any, endDate: any } | null };
+
+export type GetAllCalendarsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllCalendarsQuery = { __typename?: 'Query', getAllCalendars: Array<{ __typename?: 'Calendar', id: string, location: string | null, name: string, startDate: any, endDate: any }> };
+
+export type CreateCalendarMutationVariables = Exact<{
+  input: CreateCalendarInput;
+}>;
+
+
+export type CreateCalendarMutation = { __typename?: 'Mutation', createCalendar: { __typename?: 'Calendar', id: string } | null };
+
 
 export const GetAllNotesDocument = gql`
     query getAllNotes {
@@ -127,6 +148,35 @@ export const GetNoteByIdDocument = gql`
   }
 }
     `;
+export const GetCalendarByIdDocument = gql`
+    query getCalendarById($calendarId: String!) {
+  getCalendarById(calendarId: $calendarId) {
+    id
+    name
+    location
+    startDate
+    endDate
+  }
+}
+    `;
+export const GetAllCalendarsDocument = gql`
+    query getAllCalendars {
+  getAllCalendars {
+    id
+    location
+    name
+    startDate
+    endDate
+  }
+}
+    `;
+export const CreateCalendarDocument = gql`
+    mutation createCalendar($input: CreateCalendarInput!) {
+  createCalendar(input: $input) {
+    id
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
@@ -140,6 +190,15 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getNoteById(variables: GetNoteByIdQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetNoteByIdQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetNoteByIdQuery>(GetNoteByIdDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getNoteById', 'query');
+    },
+    getCalendarById(variables: GetCalendarByIdQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetCalendarByIdQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetCalendarByIdQuery>(GetCalendarByIdDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getCalendarById', 'query');
+    },
+    getAllCalendars(variables?: GetAllCalendarsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetAllCalendarsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetAllCalendarsQuery>(GetAllCalendarsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getAllCalendars', 'query');
+    },
+    createCalendar(variables: CreateCalendarMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CreateCalendarMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateCalendarMutation>(CreateCalendarDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createCalendar', 'mutation');
     }
   };
 }
