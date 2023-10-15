@@ -11,23 +11,18 @@ export interface Event {
   eventColor: string
 }
 
-export default function CalendarTable({ events }: { events: Event[] }) {
+export default function CalendarTable() {
 
   const {
+    name,
     dayNames,
-    currentYear,
-    currentMonth,
     daysInMonth,
     startingBlankDays,
     endingBlankDays,
-    eventColor,
     isToday,
     renderDays,
   } = CalendarProperties()  
 
-  const getEvents = (date: number) => {
-    return events.filter(e => new Date(e.eventStart).toDateString() === new Date(currentYear, currentMonth, date).toDateString())
-  }  
 
   useEffect(() => {
     renderDays()
@@ -80,41 +75,11 @@ export default function CalendarTable({ events }: { events: Event[] }) {
                 <div className="h-full flex flex-col justify-between">
                   {/* Events */}
                   <div className="grow flex flex-col relative p-0.5 sm:p-1.5 overflow-hidden">
-                    {
-                      getEvents(day).map(event => {
-                        return (
-                          <button className="relative w-full text-left mb-1" key={event.eventName}>
-                            <div className={`px-2 py-0.5 rounded overflow-hidden ${eventColor(event.eventColor)}`}>
-                              {/* Event name */}
-                              <div className="text-xs font-semibold truncate">{event.eventName}</div>
-                              {/* Event time */}
-                              <div className="text-xs uppercase truncate hidden sm:block">
-                                {/* Start date */}
-                                {event.eventStart &&
-                                  <span>{event.eventStart.toLocaleTimeString([], { hour12: true, hour: 'numeric', minute: 'numeric' })}</span>
-                                }
-                                {/* End date */}
-                                {event.eventEnd &&
-                                  <span>
-                                    - <span>{event.eventEnd.toLocaleTimeString([], { hour12: true, hour: 'numeric', minute: 'numeric' })}</span>
-                                  </span>
-                                }
-                              </div>
-                            </div>
-                          </button>
-                        )
-                      })
-                    }
+                  
                     <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white dark:from-slate-800 to-transparent pointer-events-none" aria-hidden="true"></div>
                   </div>
                   {/* Cell footer */}
-                  <div className="flex justify-between items-center p-0.5 sm:p-1.5">
-                    {/* More button (if more than 2 events) */}
-                    {getEvents(day).length > 2 &&
-                      <button className="text-xs text-slate-500 dark:text-slate-300 font-medium whitespace-nowrap text-center sm:py-0.5 px-0.5 sm:px-2 border border-slate-200 dark:border-slate-700 rounded">
-                        <span className="md:hidden">+</span><span>{getEvents(day).length - 2}</span> <span className="hidden md:inline">more</span>
-                      </button>
-                    }
+                  <div className="flex justify-between items-center p-0.5 sm:p-1.5">                   
                     {/* Day number */}
                     <button className={`inline-flex ml-auto w-6 h-6 items-center justify-center text-xs sm:text-sm dark:text-slate-300 font-medium text-center rounded-full hover:bg-indigo-100 dark:hover:bg-slate-600 ${isToday(day) && 'text-indigo-500'}`}>{day}</button>
                   </div>

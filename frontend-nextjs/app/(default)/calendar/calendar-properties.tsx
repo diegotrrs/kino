@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useCalendarContext } from './calendar-context'
 
 export const CalendarProperties = () => {
@@ -8,6 +8,9 @@ export const CalendarProperties = () => {
   const dayNames: string[] = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
   const {
     today,
+    name,
+    startDate,
+    endDate,
     currentMonth,
     setCurrentMonth,
     currentYear,
@@ -40,10 +43,11 @@ export const CalendarProperties = () => {
   }
 
   const renderDays = (): void => {
-    const days = new Date(currentYear, currentMonth + 1, 0).getDate()
+    const daysCurrentMonth = new Date(currentYear, currentMonth + 1, 0).getDate()
 
     // starting empty cells (previous month)
     const startingDayOfWeek: number = new Date(currentYear, currentMonth).getDay()
+    
     let startingBlankDaysArray: number[] = []
     for (let i = 1; i <= startingDayOfWeek; i++) {
       startingBlankDaysArray.push(i)
@@ -56,11 +60,23 @@ export const CalendarProperties = () => {
       endingBlankDaysArray.push(i)
     }
 
+   
+
     // current month cells
     let daysArray: number[] = []
-    for (let i = 1; i <= days; i++) {
+    for (let i = 1; i <= daysCurrentMonth; i++) {
       daysArray.push(i)
     }
+
+    console.log('***************************')
+    console.log('> currentYear', currentYear)
+    console.log('> currentMonth', currentMonth)
+    console.log('> startingDayOfWeek', startingDayOfWeek)
+    console.log('> endingDayOfWeek', endingDayOfWeek)
+    console.log('> daysCurrentMonth', daysCurrentMonth)
+    console.log('> startingBlankDaysArray', startingBlankDaysArray)
+    console.log('> endingBlankDaysArray', endingBlankDaysArray)
+    console.log('> daysArray', daysArray)
 
     setStartingBlankDays(startingBlankDaysArray)
     setEndingBlankDays(endingBlankDaysArray)
@@ -69,6 +85,9 @@ export const CalendarProperties = () => {
 
   return {
     today,
+    startDate,
+    endDate,
+    name,
     monthNames,
     dayNames,
     currentMonth,

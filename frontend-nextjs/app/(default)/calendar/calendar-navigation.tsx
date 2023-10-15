@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect } from 'react'
 import { CalendarProperties } from './calendar-properties'
 
 export interface Event {
