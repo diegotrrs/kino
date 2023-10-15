@@ -6,9 +6,9 @@
 [x] Add aws-cdk to external modules https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_lambda_nodejs-readme.html
 
 # Front-end
-[] Fix linting: Inconsitents in linting between frontend and backend.
-[] Add operator de retrieve specific note
-[] How to unit test
+[x] Fix linting: Inconsitents in linting between frontend and backend.
+[x] Add operator de retrieve specific note
+[x] How to unit test
 
 
 Nice to have

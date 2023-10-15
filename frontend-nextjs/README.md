@@ -47,3 +47,4 @@ The rule is ignore for the components under components/chart /* eslint-disable r
 
 ## Storybook
 https://fakerjs.dev/api/
+

@@ -1,8 +1,7 @@
 {
     "editor.tabSize": 2,
     "files.exclude": {
-        "**/*__pycache__": true,
-        "**/*.js": true,
+        "**/*__pycache__": true,        
         "**/*.d.ts": true
     }
 }
