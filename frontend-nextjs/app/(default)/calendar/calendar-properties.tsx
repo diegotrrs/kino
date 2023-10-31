@@ -46,7 +46,10 @@ export const CalendarProperties = () => {
     const daysCurrentMonth = new Date(currentYear, currentMonth + 1, 0).getDate()
 
     // starting empty cells (previous month)
+    //  Sunday is 0 and Saturday is 6.
     const startingDayOfWeek: number = new Date(currentYear, currentMonth).getDay()
+
+    console.log('startingDayOfWeek', startingDayOfWeek)
     
     let startingBlankDaysArray: number[] = []
     for (let i = 1; i <= startingDayOfWeek; i++) {

@@ -14,7 +14,6 @@ export interface Event {
 export default function CalendarTable() {
 
   const {
-    name,
     dayNames,
     daysInMonth,
     startingBlankDays,

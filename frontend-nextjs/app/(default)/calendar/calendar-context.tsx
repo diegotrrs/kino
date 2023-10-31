@@ -25,9 +25,10 @@ export const CalendarProvider = ({
 }) => {
   const today = new Date()
   const name = "My first trip"
-  const startDate = new Date('2023-10-15')
-  const endDate = new Date('2023-11-16')
-  const [currentMonth, setCurrentMonth] = useState<number>(today.getMonth())
+  const startDate = new Date('2023-09-15')
+  const endDate = new Date('2023-10-16')
+  //const [currentMonth, setCurrentMonth] = useState<number>(today.getMonth())
+  const [currentMonth, setCurrentMonth] = useState<number>(8) // 0 based, 8 is September
   const [currentYear, setCurrentYear] = useState<number>(today.getFullYear())
   return (
     <CalendarContext.Provider value={{ name, today, startDate, endDate, currentMonth, setCurrentMonth, currentYear, setCurrentYear }}>

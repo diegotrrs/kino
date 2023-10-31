@@ -25,6 +25,13 @@ export default function CalendarTable({ events }: { events: Event[] }) {
     renderDays,
   } = CalendarProperties()  
 
+  console.log(' dayNames ', dayNames)
+  console.log(' currentYear ', currentYear)
+  console.log(' currentMonth ', currentMonth)
+  console.log(' daysInMonth ', daysInMonth)
+  console.log(' startingBlankDays ', startingBlankDays)
+  console.log( ' endingBlankDays ', endingBlankDays)
+
   const getEvents = (date: number) => {
     return events.filter(e => new Date(e.eventStart).toDateString() === new Date(currentYear, currentMonth, date).toDateString())
   }  
