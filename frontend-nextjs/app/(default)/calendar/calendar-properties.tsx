@@ -42,14 +42,21 @@ export const CalendarProperties = () => {
     return today.toDateString() === day.toDateString()
   }
 
+  
+
+  // TODO: [] From now if the start date is 15-09-2023 and the end date is 16-10-2023, the first days of the month are grayed out.
   const renderDays = (): void => {
-    const daysCurrentMonth = new Date(currentYear, currentMonth + 1, 0).getDate()
+    const numberOfDaysCurrentMonth = new Date(currentYear, currentMonth + 1, 0).getDate()
+    console.log("🚀 ~ renderDays ~ numberOfDaysCurrentMonth:", numberOfDaysCurrentMonth)
 
     // starting empty cells (previous month)
     //  Sunday is 0 and Saturday is 6.
+    // startingDayOfWeek = first day week of the month
+    // 5 is Friday
     const startingDayOfWeek: number = new Date(currentYear, currentMonth).getDay()
+    console.log("🚀 ~ renderDays ~ startingDayOfWeek:", startingDayOfWeek)
 
-    console.log('startingDayOfWeek', startingDayOfWeek)
+    // 0 ... 4 => startingBlankDaysArray
     
     let startingBlankDaysArray: number[] = []
     for (let i = 1; i <= startingDayOfWeek; i++) {
@@ -58,29 +65,26 @@ export const CalendarProperties = () => {
 
     // ending empty cells (next month)
     const endingDayOfWeek: number = new Date(currentYear, currentMonth + 1, 0).getDay()
+    // day that the month ends on
     let endingBlankDaysArray: number[] = []
     for (let i = 1; i < 7 - endingDayOfWeek; i++) {
       endingBlankDaysArray.push(i)
     }
 
-   
-
     // current month cells
     let daysArray: number[] = []
-    for (let i = 1; i <= daysCurrentMonth; i++) {
+    for (let i = 1; i <= numberOfDaysCurrentMonth; i++) {
       daysArray.push(i)
     }
 
-    console.log('***************************')
-    console.log('> currentYear', currentYear)
-    console.log('> currentMonth', currentMonth)
-    console.log('> startingDayOfWeek', startingDayOfWeek)
-    console.log('> endingDayOfWeek', endingDayOfWeek)
-    console.log('> daysCurrentMonth', daysCurrentMonth)
-    console.log('> startingBlankDaysArray', startingBlankDaysArray)
-    console.log('> endingBlankDaysArray', endingBlankDaysArray)
-    console.log('> daysArray', daysArray)
+    // startingBlankDaysArray [1, 2, 3, 4, 5]
+    console.log("🚀 ~ renderDays ~ startingBlankDaysArray:", startingBlankDaysArray)
+    // endingBlankDaysArray []
+    console.log("🚀 ~ renderDays ~ endingBlankDaysArray:", endingBlankDaysArray)
 
+    // daysInMonth  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+
+    
     setStartingBlankDays(startingBlankDaysArray)
     setEndingBlankDays(endingBlankDaysArray)
     setDaysInMonth(daysArray)

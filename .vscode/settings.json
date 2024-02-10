@@ -3,5 +3,6 @@
     "files.exclude": {
         "**/*__pycache__": true,        
         "**/*.d.ts": true
-    }
+    },
+    "jest.rootPath": "frontend-nextjs",
 }

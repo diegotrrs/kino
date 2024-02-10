@@ -1,6 +1,8 @@
 # Kino
 
 
-# Glossary
+## Glossary
 
-## Trip Calendar: a calendar to plan a trip. Avoid terms like *table* or *trip*.
+# Calendar range: 
+The days included in the calendar, from startDate to endDate
+
