@@ -1,5 +1,5 @@
-import { CalendarDataModel, CalendarViewModel, DayNames, MonthNames } from "../types"
-import { getDayNames, getDaysTranslated, getMonthNames, getMonthsTranslated } from "@/lib/i18n/util"
+import { CalendarDataModel, CalendarViewModel } from "../types"
+import { getDayNames, getMonthNames } from "@/lib/i18n/util"
 import { Language } from "@/lib/i18n"
 import { getStartingBlankDays } from "./getStartingBlankDays"
 import { getEndingBlankDays } from "./getEndingBlankDays"
@@ -29,8 +29,8 @@ export const buildCalendarViewModel = (calendarDataModel: CalendarDataModel, lan
 
   return  {
     data: calendarDataModel,
-    startingBlankDaysIds: startingBlankDays,
-    endingBlankDaysIds: endingBlankDays,
+    startingBlankDays,
+    endingBlankDays,
     globalData: {
       monthNames,
       dayNames,

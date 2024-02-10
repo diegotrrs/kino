@@ -4,12 +4,11 @@ import { Calendar } from "@/lib/graphql/generated";
 
 const CalendarFactory = Factory.define<Calendar>(() => ({
   id: faker.string.uuid(),
+  location: faker.location.city(),
   name: faker.lorem.sentence(3),
   description: faker.lorem.paragraphs(),
-  dates: {
-    to: "Jan 20",
-    from: "Jan 27",
-  },
+  startDate: faker.date.past(),
+  endDate: faker.date.future(),  
 }));
 
 export default CalendarFactory;

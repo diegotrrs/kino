@@ -1,11 +1,13 @@
 import { buildCalendarViewModel } from "./buildCalendarViewModel";
 
-jest.mock('@/lib/i18n/util');
 
-import * as util from '@/lib/i18n/util'
+jest.mock('../../../../lib/i18n/util');
+
+//import * as util from '@/lib/i18n/util'
+import * as util from '../../../../lib/i18n/util'
 import { CalendarDataModel, CalendarViewModel, Friday, Saturday, September, Thursday, Wednesday } from "../types";
 
-// TODO This test is too general. It should be more specific. The functions used in the buildCalendarViewModel are tested separately so this test might be redundant.
+// TODO This test is too general. It should be more specific.
 describe("buildCalendarViewModel", () => {
   describe("When passed a CalendarModel", () => {
     let calendarModel: CalendarDataModel;
@@ -78,8 +80,8 @@ describe("buildCalendarViewModel", () => {
       
       const expectedViewModel: CalendarViewModel = {
         data: calendarModel,
-        startingBlankDaysIds: [1,2],
-        endingBlankDaysIds: [1],
+        startingBlankDays: [1,2],
+        endingBlankDays: [1],
         globalData: {
           monthNames: {
             1: 'January',
@@ -106,8 +108,8 @@ describe("buildCalendarViewModel", () => {
           }
         },
       }
-
       expect(viewModel).toEqual(expectedViewModel);
     });
+      
   });
 });

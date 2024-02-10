@@ -46,8 +46,8 @@ export type CalendarViewModel = {
     monthNames: MonthNames
     dayNames: DayNames
   }
-  startingBlankDaysIds: number[],
-  endingBlankDaysIds: number[],
+  startingBlankDays: number[],
+  endingBlankDays: number[],
   data: CalendarEntry[] // This might need to diverge from the CalendarDataModel (something like a CalendarEntry with additional properties)
 }
 

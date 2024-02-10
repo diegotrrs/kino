@@ -22,7 +22,7 @@ import { FormEvent, useState } from "react"
     sdk.createCalendar({
       input: {
         name: "",
-        description: "",
+        location: "",
         startDate: "",
         endDate: "",
       }
