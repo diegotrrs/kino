@@ -7,8 +7,10 @@ const CalendarFactory = Factory.define<Calendar>(() => ({
   location: faker.location.city(),
   name: faker.lorem.sentence(3),
   description: faker.lorem.paragraphs(),
-  startDate: faker.date.past(),
-  endDate: faker.date.future(),  
+  //startDate: faker.date.past(),
+  //endDate: faker.date.future(),  
+  startDate: '2023-05-20',
+  endDate: '2023-05-22',  
 }));
 
 export default CalendarFactory;

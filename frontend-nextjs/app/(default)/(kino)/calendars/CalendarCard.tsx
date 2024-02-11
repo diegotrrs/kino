@@ -12,6 +12,10 @@ const CalendarCard: React.FC<CalendarCardProps> = ({ calendar }) => {
     categoryIcon,
   } = CalendarProperties() 
 
+  //const date = DateTime.fromJSDate(new Date(calendar.startDate));
+  //const formattedDate = date.toFormat('yyyy-MM-dd');
+
+  console.log('>>> calendar', calendar.startDate);
   return (
     <div className="col-span-full sm:col-span-6 xl:col-span-4 bg-white dark:bg-slate-800 shadow-lg rounded-sm border border-slate-200 dark:border-slate-700">
       <div className="flex flex-col h-full p-5">
