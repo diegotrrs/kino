@@ -25,29 +25,31 @@ export function EventView({ event }: EventViewProps) {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex flex-row justify-between items-center">
-              <h1>{event?.title}</h1>
+              <span>{event?.title}</span>
               <AlertDialogCancel onClick={() => setEventViewOpen(false)}>
                 <X className="h-5 w-5" />
               </AlertDialogCancel>
             </AlertDialogTitle>
             <table>
-              <tr>
-                <th>Time:</th>
-                <td>{`${event?.start.toLocaleTimeString()} - ${event?.end.toLocaleTimeString()}`}</td>
-              </tr>
-              <tr>
-                <th>Description:</th>
-                <td>{event?.description}</td>
-              </tr>
-              <tr>
-                <th>Color:</th>
-                <td>
-                  <div
-                    className="rounded-full w-5 h-5"
-                    style={{ backgroundColor: event?.backgroundColor }}
-                  ></div>
-                </td>
-              </tr>
+              <tbody>
+                <tr>
+                  <th>Time:</th>
+                  <td>{`${event?.start.toLocaleTimeString()} - ${event?.end.toLocaleTimeString()}`}</td>
+                </tr>
+                <tr>
+                  <th>Description:</th>
+                  <td>{event?.description}</td>
+                </tr>
+                <tr>
+                  <th>Color:</th>
+                  <td>
+                    <div
+                      className="rounded-full w-5 h-5"
+                      style={{ backgroundColor: event?.backgroundColor }}
+                    ></div>
+                  </td>
+                </tr>
+              </tbody>
             </table>
           </AlertDialogHeader>
           <AlertDialogFooter>
