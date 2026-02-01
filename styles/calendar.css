@@ -1,4 +1,4 @@
-@reference "../app/globals.css";
+@import "../app/globals.css" reference;
 
 :root {
   --fc-border-color: lightgray;
@@ -8,22 +8,32 @@
   --fc-border-color: gray;
 }
 
-/* Removing borders */
+/* Removing external borders */
 
 .fc-scrollgrid {
-  @apply border-none;
+  border: none !important;
 }
 
-.fc tbody tr:last-child td:first-child {
-  @apply border-l-0;
+/* Remove left border on entire first column */
+.fc .fc-scrollgrid-section td:first-child,
+.fc .fc-scrollgrid-section th:first-child {
+  border-left: none !important;
 }
 
-.fc tbody tr:last-child td:last-child {
-  @apply border-r-0 border-b-0;
+/* Remove right border on entire last column */
+.fc .fc-scrollgrid-section td:last-child,
+.fc .fc-scrollgrid-section th:last-child {
+  border-right: none !important;
 }
 
-.fc-theme-standard th {
-  @apply border-r-0;
+/* Remove bottom border on last row */
+.fc .fc-scrollgrid-section:last-child td {
+  border-bottom: none !important;
+}
+
+/* Remove top border from header */
+.fc .fc-scrollgrid-section:first-child th {
+  border-top: none !important;
 }
 
 /* Setting header size */
@@ -49,11 +59,23 @@ td.fc-daygrid-day.fc-day {
 }
 
 td.fc-daygrid-day.fc-day.fc-day-today {
-  @apply bg-secondary-foreground;
+  background-color: inherit !important;
 }
 
 .fc-day-today {
   @apply bg-inherit;
+}
+
+/* Today's day number in a circle */
+.fc-day-today .fc-daygrid-day-number {
+  @apply bg-primary text-primary-foreground rounded-full;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.25rem !important;
+  margin-left: 0.25rem !important;
 }
 
 .fc-day-other {
@@ -61,7 +83,12 @@ td.fc-daygrid-day.fc-day.fc-day-today {
 }
 
 .fc-daygrid-day-top {
-  @apply flex flex-row h-8 w-full items-center ;
+  @apply flex flex-row h-8 w-full items-center justify-start;
+}
+
+.fc-daygrid-day-number {
+  margin-left: 0 !important;
+  margin-right: auto !important;
 }
 
 .fc-daygrid-dot-event {
