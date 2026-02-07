@@ -1,5 +1,5 @@
 import type { Event } from '@/lib/types';
-import { EventCard } from './event-card';
+import { EventCard }  from './event-card';
 
 interface EventListProps {
   events: Event[];

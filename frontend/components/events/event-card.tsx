@@ -1,13 +1,17 @@
-import { format } from 'date-fns';
-import { CalendarIcon, ClockIcon, MapPinIcon } from 'lucide-react';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import type { Event } from '@/lib/types';
+  CardTitle
+}                            from '@/components/ui/card';
+import type { Event }        from '@/lib/types';
+import { format }            from 'date-fns';
+import {
+  CalendarIcon,
+  ClockIcon,
+  MapPinIcon
+}                            from 'lucide-react';
 import { EventDeleteButton } from './event-delete-button';
 
 interface EventCardProps {

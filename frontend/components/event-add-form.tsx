@@ -1,24 +1,4 @@
 'use client';
-
-import { useEffect } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { useToast } from '@/hooks/use-toast';
-import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from './ui/textarea';
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import { PlusIcon } from 'lucide-react';
-import { HexColorPicker } from 'react-colorful';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,10 +8,33 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger
-} from '@/components/ui/alert-dialog';
+}                         from '@/components/ui/alert-dialog';
+import { Button }         from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+}                         from '@/components/ui/form';
+import { Input }          from '@/components/ui/input';
+import { useEvents }      from '@/context/events-context';
+import { useToast }       from '@/hooks/use-toast';
+import { zodResolver }    from '@hookform/resolvers/zod';
+import { PlusIcon }       from 'lucide-react';
+import { useEffect }      from 'react';
+import { HexColorPicker } from 'react-colorful';
+import { useForm }        from 'react-hook-form';
+import { z }              from 'zod';
 import { DateTimePicker } from './date-picker';
-import { useEvents } from '@/context/events-context';
-import { ToastAction } from './ui/toast';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+}                         from './ui/popover';
+import { Textarea }       from './ui/textarea';
+import { ToastAction }    from './ui/toast';
 
 const eventAddFormSchema = z.object({
   title: z

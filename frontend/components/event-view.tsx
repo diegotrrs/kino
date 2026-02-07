@@ -4,13 +4,13 @@ import {
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { CalendarEvent } from '@/utils/data';
+  AlertDialogTitle
+}                          from '@/components/ui/alert-dialog';
+import { useEvents }       from '@/context/events-context';
+import { CalendarEvent }   from '@/utils/data';
+import { X }               from 'lucide-react';
 import { EventDeleteForm } from './event-delete-form';
-import { EventEditForm } from './event-edit-form';
-import { useEvents } from '@/context/events-context';
-import { X } from 'lucide-react';
+import { EventEditForm }   from './event-edit-form';
 
 interface EventViewProps {
   event?: CalendarEvent;

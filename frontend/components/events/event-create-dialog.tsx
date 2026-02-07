@@ -1,11 +1,7 @@
 'use client';
-
-import { useTransition } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { PlusIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { createEvent }    from '@/app/events/actions';
+import { DateTimePicker } from '@/components/date-picker';
+import { Button }         from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -13,22 +9,25 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose,
-} from '@/components/ui/dialog';
+  DialogClose
+}                         from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { DateTimePicker } from '@/components/date-picker';
-import { useToast } from '@/hooks/use-toast';
-import { ToastAction } from '@/components/ui/toast';
-import { createEvent } from '@/app/events/actions';
+  FormMessage
+}                         from '@/components/ui/form';
+import { Input }          from '@/components/ui/input';
+import { Textarea }       from '@/components/ui/textarea';
+import { ToastAction }    from '@/components/ui/toast';
+import { useToast }       from '@/hooks/use-toast';
+import { zodResolver }    from '@hookform/resolvers/zod';
+import { PlusIcon }       from 'lucide-react';
+import { useTransition }  from 'react';
+import { useForm }        from 'react-hook-form';
+import { z }              from 'zod';
 
 const createEventSchema = z.object({
   title: z

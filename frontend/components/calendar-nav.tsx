@@ -1,9 +1,20 @@
 'use client';
-
-import { cn } from '@/lib/utils';
-import { months } from '@/utils/data';
-import { calendarRef } from '@/utils/data';
-import { Button } from '@/components/ui/button';
+import { Button }       from '@/components/ui/button';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList
+}                       from '@/components/ui/command';
+import { Input }        from '@/components/ui/input';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+}                       from '@/components/ui/popover';
+import { cn }           from '@/lib/utils';
 import {
   generateDaysInMonth,
   goNext,
@@ -11,30 +22,17 @@ import {
   goToday,
   handleDayChange,
   handleMonthChange,
-  handleYearChange,
-} from '@/utils/calendar-utils';
-import { useState } from 'react';
+  handleYearChange
+}                       from '@/utils/calendar-utils';
+import { months }       from '@/utils/data';
+import { calendarRef }  from '@/utils/data';
 import {
   Check,
   ChevronLeft,
   ChevronRight,
   ChevronsUpDown
-} from 'lucide-react';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-
-import { Input } from '@/components/ui/input';
+}                       from 'lucide-react';
+import { useState }     from 'react';
 import { EventAddForm } from './event-add-form';
 
 interface CalendarNavProps {

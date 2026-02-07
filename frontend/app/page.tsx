@@ -1,5 +1,5 @@
-import Calendar from '@/components/calendar';
-import { Separator } from '@/components/ui/separator';
+import Calendar           from '@/components/calendar';
+import { Separator }      from '@/components/ui/separator';
 import { EventsProvider } from '@/context/events-context';
 
 export default function Home() {

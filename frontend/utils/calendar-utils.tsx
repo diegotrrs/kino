@@ -1,6 +1,9 @@
 'use client';
-
-import { ChangeEvent, Dispatch, SetStateAction } from 'react';
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction
+}                      from 'react';
 import { calendarRef } from './data';
 
 export function generateDaysInMonth(daysInMonth: number) {

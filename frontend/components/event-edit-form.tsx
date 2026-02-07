@@ -1,22 +1,4 @@
 'use client';
-
-import React, { useEffect } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { useToast } from '@/hooks/use-toast';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from './ui/textarea';
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import { HexColorPicker } from 'react-colorful';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,13 +7,34 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { DateTimePicker } from './date-picker';
-import { useEvents } from '@/context/events-context';
-import { ToastAction } from './ui/toast';
-import { CalendarEvent } from '@/utils/data';
-import { Button } from './ui/button';
+  AlertDialogTrigger
+}                           from '@/components/ui/alert-dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+}                           from '@/components/ui/form';
+import { Input }            from '@/components/ui/input';
+import { useEvents }        from '@/context/events-context';
+import { useToast }         from '@/hooks/use-toast';
+import { CalendarEvent }    from '@/utils/data';
+import { zodResolver }      from '@hookform/resolvers/zod';
+import React, { useEffect } from 'react';
+import { HexColorPicker }   from 'react-colorful';
+import { useForm }          from 'react-hook-form';
+import { z }                from 'zod';
+import { DateTimePicker }   from './date-picker';
+import { Button }           from './ui/button';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+}                           from './ui/popover';
+import { Textarea }         from './ui/textarea';
+import { ToastAction }      from './ui/toast';
 
 const eventEditFormSchema = z.object({
   id: z.string(),

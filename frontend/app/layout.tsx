@@ -1,8 +1,8 @@
-import type { Metadata } from 'next';
-import { Toaster } from '@/components/ui/toaster';
-import { ThemeProvider } from '@/components/theme-provider';
 import './globals.css';
-import Footer from '@/components/footer';
+import Footer            from '@/components/footer';
+import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster }       from '@/components/ui/toaster';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'ShadCn FullCalendar Example',

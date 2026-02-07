@@ -1,34 +1,44 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
-
-import { Button, buttonVariants } from '@/components/ui/button';
+import {
+  Button,
+  buttonVariants
+}                             from '@/components/ui/button';
 import type { CalendarProps } from '@/components/ui/calendar';
-import { Input } from '@/components/ui/input';
+import { Input }              from '@/components/ui/input';
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
-import { add, format } from 'date-fns';
-import { type Locale, enUS } from 'date-fns/locale';
-import {
-  Calendar as CalendarIcon,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-} from 'lucide-react';
-import * as React from 'react';
-import { useImperativeHandle, useRef } from 'react';
-
+  PopoverTrigger
+}                             from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { DayPicker } from 'react-day-picker';
+  SelectValue
+}                             from '@/components/ui/select';
+import { cn }                 from '@/lib/utils';
+import {
+  add,
+  format
+}                             from 'date-fns';
+import {
+  type Locale,
+  enUS
+}                             from 'date-fns/locale';
+import {
+  Calendar as CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
+  Clock
+}                             from 'lucide-react';
+import * as React             from 'react';
+import {
+  useImperativeHandle,
+  useRef
+}                             from 'react';
+import { DayPicker }          from 'react-day-picker';
 
 // ---------- utils start ----------
 /**

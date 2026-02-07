@@ -1,8 +1,5 @@
 'use client';
-
-import { useTransition } from 'react';
-import { Trash2Icon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { deleteEvent }   from '@/app/events/actions';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -11,11 +8,13 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { useToast } from '@/hooks/use-toast';
-import { ToastAction } from '@/components/ui/toast';
-import { deleteEvent } from '@/app/events/actions';
+  AlertDialogTrigger
+}                        from '@/components/ui/alert-dialog';
+import { Button }        from '@/components/ui/button';
+import { ToastAction }   from '@/components/ui/toast';
+import { useToast }      from '@/hooks/use-toast';
+import { Trash2Icon }    from 'lucide-react';
+import { useTransition } from 'react';
 
 interface EventDeleteButtonProps {
   eventId: number;

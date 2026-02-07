@@ -1,29 +1,34 @@
 'use client';
-
-import { useEvents } from '@/context/events-context';
 import '@/styles/calendar.css';
+import { useEvents }          from '@/context/events-context';
+import { getDateFromMinutes } from '@/lib/utils';
+import {
+  CalendarEvent,
+  earliestTime,
+  latestTime
+}                             from '@/utils/data';
 import {
   DateSelectArg,
   DayCellContentArg,
   DayHeaderContentArg,
   EventChangeArg,
   EventClickArg,
-  EventContentArg,
-} from '@fullcalendar/core/index.js';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import listPlugin from '@fullcalendar/list';
-import multiMonthPlugin from '@fullcalendar/multimonth';
-import FullCalendar from '@fullcalendar/react';
-import timeGridPlugin from '@fullcalendar/timegrid';
-
-import { useRef, useState } from 'react';
-import CalendarNav from './calendar-nav';
-import { CalendarEvent, earliestTime, latestTime } from '@/utils/data';
-import { getDateFromMinutes } from '@/lib/utils';
-import { Card } from './ui/card';
-import { EventEditForm } from './event-edit-form';
-import { EventView } from './event-view';
+  EventContentArg
+}                             from '@fullcalendar/core/index.js';
+import dayGridPlugin          from '@fullcalendar/daygrid';
+import interactionPlugin      from '@fullcalendar/interaction';
+import listPlugin             from '@fullcalendar/list';
+import multiMonthPlugin       from '@fullcalendar/multimonth';
+import FullCalendar           from '@fullcalendar/react';
+import timeGridPlugin         from '@fullcalendar/timegrid';
+import {
+  useRef,
+  useState
+}                             from 'react';
+import CalendarNav            from './calendar-nav';
+import { EventEditForm }      from './event-edit-form';
+import { EventView }          from './event-view';
+import { Card }               from './ui/card';
 
 type EventItemProps = {
   info: EventContentArg;

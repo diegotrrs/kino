@@ -1,7 +1,7 @@
-import { Separator } from '@/components/ui/separator';
-import { EventList } from '@/components/events/event-list';
 import { EventCreateDialog } from '@/components/events/event-create-dialog';
-import type { Event } from '@/lib/types';
+import { EventList }         from '@/components/events/event-list';
+import { Separator }         from '@/components/ui/separator';
+import type { Event }        from '@/lib/types';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 

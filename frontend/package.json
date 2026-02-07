@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "align-imports": "node scripts/dev/align-imports-all.js"
   },
   "dependencies": {
     "@fullcalendar/common": "^5.11.5",

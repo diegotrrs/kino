@@ -1,7 +1,4 @@
 'use client';
-
-import { useToast } from '@/hooks/use-toast';
-import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -9,9 +6,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { useEvents } from '@/context/events-context';
+  AlertDialogTrigger
+}                      from '@/components/ui/alert-dialog';
+import { Button }      from '@/components/ui/button';
+import { useEvents }   from '@/context/events-context';
+import { useToast }    from '@/hooks/use-toast';
 import { ToastAction } from './ui/toast';
 
 interface EventDeleteFormProps {
