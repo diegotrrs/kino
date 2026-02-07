@@ -11,7 +11,10 @@ def get_event(db: connection, event_id: int) -> dict | None:
 
 def get_events(db: connection, skip: int = 0, limit: int = 100) -> list[dict]:
     with db.cursor() as cur:
-        cur.execute("SELECT * FROM events ORDER BY id OFFSET %s LIMIT %s", (skip, limit))
+        cur.execute(
+            "SELECT * FROM events ORDER BY id OFFSET %s LIMIT %s",
+            (skip, limit),
+        )
         return cur.fetchall()
 
 
@@ -20,8 +23,11 @@ def create_event(db: connection, event: EventCreate) -> dict:
     with db.cursor() as cur:
         cur.execute(
             """
-            INSERT INTO events (title, description, start_time, end_time, location)
-            VALUES (%(title)s, %(description)s, %(start_time)s, %(end_time)s, %(location)s)
+            INSERT INTO events
+                (title, description, start_time, end_time, location)
+            VALUES
+                (%(title)s, %(description)s, %(start_time)s,
+                 %(end_time)s, %(location)s)
             RETURNING *
             """,
             data,
@@ -41,7 +47,9 @@ def update_event(db: connection, event_id: int, event: EventUpdate) -> dict | No
 
     with db.cursor() as cur:
         cur.execute(
-            f"UPDATE events SET {set_clause}, updated_at = NOW() WHERE id = %(id)s RETURNING *",
+            f"UPDATE events SET {set_clause},"
+            " updated_at = NOW()"
+            " WHERE id = %(id)s RETURNING *",
             update_data,
         )
         row = cur.fetchone()

@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from psycopg2.extensions import connection
 
-from ..database import get_db
-from ..schemas.event import EventCreate, EventUpdate, EventResponse
 from .. import crud
+from ..database import get_db
+from ..schemas.event import EventCreate, EventResponse, EventUpdate
 
 router = APIRouter()
 

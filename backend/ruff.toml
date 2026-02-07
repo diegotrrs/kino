@@ -1,0 +1,18 @@
+line-length = 88
+target-version = "py312"
+
+[lint]
+select = [
+  "E",   # pycodestyle errors
+  "W",   # pycodestyle warnings
+  "F",   # pyflakes
+  "I",   # isort
+  "UP",  # pyupgrade
+  "B",   # flake8-bugbear
+]
+ignore = [
+  "B008", # function calls in default arguments (needed for FastAPI Depends)
+]
+
+[format]
+quote-style = "double"

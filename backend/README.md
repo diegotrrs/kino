@@ -190,6 +190,21 @@ The server will start at http://localhost:8000 with hot-reload enabled.
 uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
+## Linting & Formatting
+
+This project uses [Ruff](https://docs.astral.sh/ruff/) for linting and formatting.
+
+```bash
+# Check for lint errors
+ruff check app/
+
+# Auto-fix lint errors
+ruff check --fix app/
+
+# Format code
+ruff format app/
+```
+
 ## API Documentation
 
 Once the server is running, interactive API documentation is available at:
