@@ -1,6 +1,6 @@
-"use client";
-import { CalendarEvent, initialEvents } from "@/utils/data";
-import React, { createContext, ReactNode, useContext, useState } from "react";
+'use client';
+import { CalendarEvent, initialEvents } from '@/utils/data';
+import React, { createContext, ReactNode, useContext, useState } from 'react';
 
 interface Event {
   id: string;
@@ -32,7 +32,7 @@ const EventsContext = createContext<EventsContextType | undefined>(undefined);
 export const useEvents = () => {
   const context = useContext(EventsContext);
   if (!context) {
-    throw new Error("useEvents must be used within an EventsProvider");
+    throw new Error('useEvents must be used within an EventsProvider');
   }
   return context;
 };

@@ -1,12 +1,12 @@
-import type { Metadata } from "next";
-import { Toaster } from "@/components/ui/toaster";
-import { ThemeProvider } from "@/components/theme-provider";
-import "./globals.css";
-import Footer from "@/components/footer";
+import type { Metadata } from 'next';
+import { Toaster } from '@/components/ui/toaster';
+import { ThemeProvider } from '@/components/theme-provider';
+import './globals.css';
+import Footer from '@/components/footer';
 
 export const metadata: Metadata = {
-  title: "ShadCn FullCalendar Example",
-  description: "An example template on how to use ShadCn FullCalendar.",
+  title: 'ShadCn FullCalendar Example',
+  description: 'An example template on how to use ShadCn FullCalendar.',
 };
 
 export default function RootLayout({
@@ -15,11 +15,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang='en' suppressHydrationWarning>
       <body>
         <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
+          attribute='class'
+          defaultTheme='system'
           enableSystem
           disableTransitionOnChange
         >

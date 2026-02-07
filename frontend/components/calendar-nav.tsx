@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { cn } from "@/lib/utils";
-import { months } from "@/utils/data";
-import { calendarRef } from "@/utils/data";
-import { Button } from "@/components/ui/button";
+import { cn } from '@/lib/utils';
+import { months } from '@/utils/data';
+import { calendarRef } from '@/utils/data';
+import { Button } from '@/components/ui/button';
 import {
   generateDaysInMonth,
   goNext,
@@ -12,14 +12,14 @@ import {
   handleDayChange,
   handleMonthChange,
   handleYearChange,
-} from "@/utils/calendar-utils";
-import { useState } from "react";
+} from '@/utils/calendar-utils';
+import { useState } from 'react';
 import {
   Check,
   ChevronLeft,
   ChevronRight,
   ChevronsUpDown
-} from "lucide-react";
+} from 'lucide-react';
 import {
   Command,
   CommandEmpty,
@@ -27,15 +27,15 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
+} from '@/components/ui/command';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from '@/components/ui/popover';
 
-import { Input } from "@/components/ui/input";
-import { EventAddForm } from "./event-add-form";
+import { Input } from '@/components/ui/input';
+import { EventAddForm } from './event-add-form';
 
 interface CalendarNavProps {
   calendarRef: calendarRef;
@@ -50,7 +50,7 @@ export default function CalendarNav({
   end,
   viewedDate,
 }: CalendarNavProps) {
-  const [currentView] = useState("dayGridMonth");
+  const [currentView] = useState('dayGridMonth');
 
   const selectedMonth = viewedDate.getMonth() + 1;
   const selectedDay = viewedDate.getDate();
@@ -63,40 +63,40 @@ export default function CalendarNav({
   const [monthSelectOpen, setMonthSelectOpen] = useState(false);
 
   return (
-    <div className="flex flex-wrap min-w-full justify-center gap-3 px-10 ">
-      <div className="flex flex-row space-x-1">
+    <div className='flex flex-wrap min-w-full justify-center gap-3 px-10 '>
+      <div className='flex flex-row space-x-1'>
         {/* Navigate to previous date interval */}
 
         <Button
-          variant="ghost"
-          className="w-8"
+          variant='ghost'
+          className='w-8'
           onClick={() => {
             goPrev(calendarRef);
           }}
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className='h-4 w-4' />
         </Button>
 
         {/* Day Lookup */}
 
-        {currentView == "timeGridDay" && (
+        {currentView == 'timeGridDay' && (
           <Popover open={daySelectOpen} onOpenChange={setDaySelectOpen}>
             <PopoverTrigger asChild>
               <Button
-                variant="outline"
-                role="combobox"
-                className="w-20 justify-between text-xs font-semibold"
+                variant='outline'
+                role='combobox'
+                className='w-20 justify-between text-xs font-semibold'
               >
                 {selectedDay
                   ? dayOptions.find((day) => day.value === String(selectedDay))
                     ?.label
-                  : "Select day..."}
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  : 'Select day...'}
+                <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
+            <PopoverContent className='w-[200px] p-0'>
               <Command>
-                <CommandInput placeholder="Search day..." />
+                <CommandInput placeholder='Search day...' />
                 <CommandList>
                   <CommandEmpty>No day found.</CommandEmpty>
                   <CommandGroup>
@@ -115,10 +115,10 @@ export default function CalendarNav({
                       >
                         <Check
                           className={cn(
-                            "mr-2 h-4 w-4",
+                            'mr-2 h-4 w-4',
                             String(selectedDay) === day.value
-                              ? "opacity-100"
-                              : "opacity-0"
+                              ? 'opacity-100'
+                              : 'opacity-0'
                           )}
                         />
                         {day.label}
@@ -136,20 +136,20 @@ export default function CalendarNav({
         <Popover open={monthSelectOpen} onOpenChange={setMonthSelectOpen}>
           <PopoverTrigger asChild>
             <Button
-              variant="outline"
-              role="combobox"
-              className="flex w-[105px] justify-between overflow-hidden p-2 text-xs font-semibold md:text-sm md:w-[120px]"
+              variant='outline'
+              role='combobox'
+              className='flex w-[105px] justify-between overflow-hidden p-2 text-xs font-semibold md:text-sm md:w-[120px]'
             >
               {selectedMonth
                 ? months.find((month) => month.value === String(selectedMonth))
                   ?.label
-                : "Select month..."}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                : 'Select month...'}
+              <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[200px] p-0">
+          <PopoverContent className='w-[200px] p-0'>
             <Command>
-              <CommandInput placeholder="Search month..." />
+              <CommandInput placeholder='Search month...' />
               <CommandList>
                 <CommandEmpty>No month found.</CommandEmpty>
                 <CommandGroup>
@@ -168,10 +168,10 @@ export default function CalendarNav({
                     >
                       <Check
                         className={cn(
-                          "mr-2 h-4 w-4",
+                          'mr-2 h-4 w-4',
                           String(selectedMonth) === month.value
-                            ? "opacity-100"
-                            : "opacity-0"
+                            ? 'opacity-100'
+                            : 'opacity-0'
                         )}
                       />
                       {month.label}
@@ -186,8 +186,8 @@ export default function CalendarNav({
         {/* Year Lookup */}
 
         <Input
-          className="w-[75px] md:w-[85px] text-xs md:text-sm font-semibold"
-          type="number"
+          className='w-[75px] md:w-[85px] text-xs md:text-sm font-semibold'
+          type='number'
           value={selectedYear}
           onChange={(value) => handleYearChange(calendarRef, viewedDate, value)}
         />
@@ -195,22 +195,22 @@ export default function CalendarNav({
         {/* Navigate to next date interval */}
 
         <Button
-          variant="ghost"
-          className="w-8"
+          variant='ghost'
+          className='w-8'
           onClick={() => {
             goNext(calendarRef);
           }}
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className='h-4 w-4' />
         </Button>
       </div>
 
-      <div className="flex flex-wrap gap-3 justify-center">
+      <div className='flex flex-wrap gap-3 justify-center'>
         {/* Button to go to current date */}
 
         <Button
-          className="w-[90px] text-xs md:text-sm"
-          variant="outline"
+          className='w-[90px] text-xs md:text-sm'
+          variant='outline'
           onClick={() => {
             goToday(calendarRef);
           }}

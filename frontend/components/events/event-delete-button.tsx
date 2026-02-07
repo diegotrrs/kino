@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useTransition } from "react";
-import { Trash2Icon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useTransition } from 'react';
+import { Trash2Icon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -12,10 +12,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useToast } from "@/hooks/use-toast";
-import { ToastAction } from "@/components/ui/toast";
-import { deleteEvent } from "@/app/events/actions";
+} from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
+import { ToastAction } from '@/components/ui/toast';
+import { deleteEvent } from '@/app/events/actions';
 
 interface EventDeleteButtonProps {
   eventId: number;
@@ -34,17 +34,17 @@ export function EventDeleteButton({
       try {
         await deleteEvent(eventId);
         toast({
-          title: "Event deleted!",
+          title: 'Event deleted!',
           action: (
-            <ToastAction altText="Dismiss">Dismiss</ToastAction>
+            <ToastAction altText='Dismiss'>Dismiss</ToastAction>
           ),
         });
       } catch {
         toast({
-          variant: "destructive",
-          title: "Failed to delete event",
+          variant: 'destructive',
+          title: 'Failed to delete event',
           action: (
-            <ToastAction altText="Dismiss">Dismiss</ToastAction>
+            <ToastAction altText='Dismiss'>Dismiss</ToastAction>
           ),
         });
       }
@@ -54,8 +54,8 @@ export function EventDeleteButton({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
-          <Trash2Icon className="h-4 w-4" />
+        <Button variant='ghost' size='icon' className='h-8 w-8 text-muted-foreground hover:text-destructive'>
+          <Trash2Icon className='h-4 w-4' />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -69,11 +69,11 @@ export function EventDeleteButton({
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <Button
-            variant="destructive"
+            variant='destructive'
             onClick={handleDelete}
             disabled={isPending}
           >
-            {isPending ? "Deleting..." : "Delete"}
+            {isPending ? 'Deleting...' : 'Delete'}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

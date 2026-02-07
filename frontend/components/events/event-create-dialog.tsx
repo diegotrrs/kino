@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useTransition } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { PlusIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useTransition } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { PlusIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -22,21 +22,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { DateTimePicker } from "@/components/date-picker";
-import { useToast } from "@/hooks/use-toast";
-import { ToastAction } from "@/components/ui/toast";
-import { createEvent } from "@/app/events/actions";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { DateTimePicker } from '@/components/date-picker';
+import { useToast } from '@/hooks/use-toast';
+import { ToastAction } from '@/components/ui/toast';
+import { createEvent } from '@/app/events/actions';
 
 const createEventSchema = z.object({
   title: z
-    .string({ required_error: "Please enter a title." })
-    .min(1, { message: "Must provide a title for this event." }),
+    .string({ required_error: 'Please enter a title.' })
+    .min(1, { message: 'Must provide a title for this event.' }),
   description: z.string().optional(),
   start: z.date({
-    required_error: "Please select a start time",
+    required_error: 'Please select a start time',
     invalid_type_error: "That's not a date!",
   }),
   end: z.date().optional(),
@@ -52,9 +52,9 @@ export function EventCreateDialog() {
   const form = useForm<CreateEventFormValues>({
     resolver: zodResolver(createEventSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      location: "",
+      title: '',
+      description: '',
+      location: '',
     },
   });
 
@@ -70,19 +70,19 @@ export function EventCreateDialog() {
         });
         form.reset();
         toast({
-          title: "Event created!",
+          title: 'Event created!',
           action: (
-            <ToastAction altText="Dismiss">Dismiss</ToastAction>
+            <ToastAction altText='Dismiss'>Dismiss</ToastAction>
           ),
         });
         // Close the dialog by clicking the hidden close button
-        document.getElementById("create-event-dialog-close")?.click();
+        document.getElementById('create-event-dialog-close')?.click();
       } catch {
         toast({
-          variant: "destructive",
-          title: "Failed to create event",
+          variant: 'destructive',
+          title: 'Failed to create event',
           action: (
-            <ToastAction altText="Dismiss">Dismiss</ToastAction>
+            <ToastAction altText='Dismiss'>Dismiss</ToastAction>
           ),
         });
       }
@@ -93,7 +93,7 @@ export function EventCreateDialog() {
     <Dialog>
       <DialogTrigger asChild>
         <Button>
-          <PlusIcon className="h-4 w-4" />
+          <PlusIcon className='h-4 w-4' />
           New Event
         </Button>
       </DialogTrigger>
@@ -104,16 +104,16 @@ export function EventCreateDialog() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4"
+            className='space-y-4'
           >
             <FormField
               control={form.control}
-              name="title"
+              name='title'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="Standup Meeting" {...field} />
+                    <Input placeholder='Standup Meeting' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -121,14 +121,14 @@ export function EventCreateDialog() {
             />
             <FormField
               control={form.control}
-              name="description"
+              name='description'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Event description"
-                      className="max-h-36"
+                      placeholder='Event description'
+                      className='max-h-36'
                       {...field}
                     />
                   </FormControl>
@@ -138,12 +138,12 @@ export function EventCreateDialog() {
             />
             <FormField
               control={form.control}
-              name="location"
+              name='location'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Location</FormLabel>
                   <FormControl>
-                    <Input placeholder="Conference Room A" {...field} />
+                    <Input placeholder='Conference Room A' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -151,16 +151,16 @@ export function EventCreateDialog() {
             />
             <FormField
               control={form.control}
-              name="start"
+              name='start'
               render={({ field }) => (
-                <FormItem className="flex flex-col">
+                <FormItem className='flex flex-col'>
                   <FormLabel>Start</FormLabel>
                   <FormControl>
                     <DateTimePicker
                       value={field.value}
                       onChange={field.onChange}
                       hourCycle={12}
-                      granularity="minute"
+                      granularity='minute'
                     />
                   </FormControl>
                   <FormMessage />
@@ -169,31 +169,31 @@ export function EventCreateDialog() {
             />
             <FormField
               control={form.control}
-              name="end"
+              name='end'
               render={({ field }) => (
-                <FormItem className="flex flex-col">
+                <FormItem className='flex flex-col'>
                   <FormLabel>End</FormLabel>
                   <FormControl>
                     <DateTimePicker
                       value={field.value}
                       onChange={field.onChange}
                       hourCycle={12}
-                      granularity="minute"
+                      granularity='minute'
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <DialogFooter className="pt-2">
+            <DialogFooter className='pt-2'>
               <DialogClose asChild>
-                <Button type="button" variant="outline">
+                <Button type='button' variant='outline'>
                   Cancel
                 </Button>
               </DialogClose>
-              <DialogClose id="create-event-dialog-close" className="hidden" />
-              <Button type="submit" disabled={isPending}>
-                {isPending ? "Creating..." : "Create Event"}
+              <DialogClose id='create-event-dialog-close' className='hidden' />
+              <Button type='submit' disabled={isPending}>
+                {isPending ? 'Creating...' : 'Create Event'}
               </Button>
             </DialogFooter>
           </form>

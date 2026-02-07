@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
+import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -10,9 +10,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useEvents } from "@/context/events-context";
-import { ToastAction } from "./ui/toast";
+} from '@/components/ui/alert-dialog';
+import { useEvents } from '@/context/events-context';
+import { ToastAction } from './ui/toast';
 
 interface EventDeleteFormProps {
   id?: string;
@@ -30,9 +30,9 @@ export function EventDeleteForm({ id, title }: EventDeleteFormProps) {
     setEventDeleteOpen(false);
     setEventViewOpen(false);
     toast({
-      title: "Event deleted!",
+      title: 'Event deleted!',
       action: (
-        <ToastAction altText={"Dismiss notification."}>Dismiss</ToastAction>
+        <ToastAction altText={'Dismiss notification.'}>Dismiss</ToastAction>
       ),
     });
   }
@@ -40,13 +40,13 @@ export function EventDeleteForm({ id, title }: EventDeleteFormProps) {
   return (
     <AlertDialog open={eventDeleteOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" onClick={() => setEventDeleteOpen(true)}>
+        <Button variant='destructive' onClick={() => setEventDeleteOpen(true)}>
           Delete Event
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle className="flex flex-row justify-between items-center">
+          <AlertDialogTitle className='flex flex-row justify-between items-center'>
             <h1>Delete {title}</h1>
           </AlertDialogTitle>
           Are you sure you want to delete this event?
@@ -55,7 +55,7 @@ export function EventDeleteForm({ id, title }: EventDeleteFormProps) {
           <AlertDialogCancel onClick={() => setEventDeleteOpen(false)}>
             Cancel
           </AlertDialogCancel>
-          <Button variant="destructive" onClick={() => onSubmit()}>
+          <Button variant='destructive' onClick={() => onSubmit()}>
             Delete
           </Button>
         </AlertDialogFooter>

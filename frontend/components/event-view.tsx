@@ -5,12 +5,12 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { CalendarEvent } from "@/utils/data";
-import { EventDeleteForm } from "./event-delete-form";
-import { EventEditForm } from "./event-edit-form";
-import { useEvents } from "@/context/events-context";
-import { X } from "lucide-react";
+} from '@/components/ui/alert-dialog';
+import { CalendarEvent } from '@/utils/data';
+import { EventDeleteForm } from './event-delete-form';
+import { EventEditForm } from './event-edit-form';
+import { useEvents } from '@/context/events-context';
+import { X } from 'lucide-react';
 
 interface EventViewProps {
   event?: CalendarEvent;
@@ -24,10 +24,10 @@ export function EventView({ event }: EventViewProps) {
       <AlertDialog open={eventViewOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="flex flex-row justify-between items-center">
+            <AlertDialogTitle className='flex flex-row justify-between items-center'>
               <span>{event?.title}</span>
               <AlertDialogCancel onClick={() => setEventViewOpen(false)}>
-                <X className="h-5 w-5" />
+                <X className='h-5 w-5' />
               </AlertDialogCancel>
             </AlertDialogTitle>
             <table>
@@ -44,7 +44,7 @@ export function EventView({ event }: EventViewProps) {
                   <th>Color:</th>
                   <td>
                     <div
-                      className="rounded-full w-5 h-5"
+                      className='rounded-full w-5 h-5'
                       style={{ backgroundColor: event?.backgroundColor }}
                     ></div>
                   </td>
