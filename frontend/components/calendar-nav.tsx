@@ -12,17 +12,13 @@ import {
   handleDayChange,
   handleMonthChange,
   handleYearChange,
-  setView,
 } from "@/utils/calendar-utils";
 import { useState } from "react";
 import {
   Check,
   ChevronLeft,
   ChevronRight,
-  ChevronsUpDown,
-  GalleryVertical,
-  Table,
-  Tally3,
+  ChevronsUpDown
 } from "lucide-react";
 import {
   Command,
@@ -39,7 +35,6 @@ import {
 } from "@/components/ui/popover";
 
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EventAddForm } from "./event-add-form";
 
 interface CalendarNavProps {
@@ -55,7 +50,7 @@ export default function CalendarNav({
   end,
   viewedDate,
 }: CalendarNavProps) {
-  const [currentView, setCurrentView] = useState("dayGridMonth");
+  const [currentView] = useState("dayGridMonth");
 
   const selectedMonth = viewedDate.getMonth() + 1;
   const selectedDay = viewedDate.getDate();
@@ -94,7 +89,7 @@ export default function CalendarNav({
               >
                 {selectedDay
                   ? dayOptions.find((day) => day.value === String(selectedDay))
-                      ?.label
+                    ?.label
                   : "Select day..."}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
@@ -115,7 +110,6 @@ export default function CalendarNav({
                             viewedDate,
                             currentValue
                           );
-                          //   setValue(currentValue === selectedMonth ? "" : currentValue);
                           setDaySelectOpen(false);
                         }}
                       >
@@ -148,7 +142,7 @@ export default function CalendarNav({
             >
               {selectedMonth
                 ? months.find((month) => month.value === String(selectedMonth))
-                    ?.label
+                  ?.label
                 : "Select month..."}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
@@ -169,7 +163,6 @@ export default function CalendarNav({
                           viewedDate,
                           currentValue
                         );
-                        //   setValue(currentValue === selectedMonth ? "" : currentValue);
                         setMonthSelectOpen(false);
                       }}
                     >
@@ -226,25 +219,6 @@ export default function CalendarNav({
         </Button>
 
         {/* Change view with tabs */}
-
-        {/* <Tabs defaultValue="dayGridMonth">
-          <TabsList className="flex w-44 md:w-64">
-            <TabsTrigger
-              value="dayGridMonth"
-              onClick={() =>
-                setView(calendarRef, "dayGridMonth", setCurrentView)
-              }
-              className={`space-x-1 ${
-                currentView === "dayGridMonth" ? "w-1/2" : "w-1/4"
-              }`}
-            >
-              <Table className="h-5 w-5 rotate-90" />
-              {currentView === "dayGridMonth" && (
-                <p className="text-xs md:text-sm">Month</p>
-              )}
-            </TabsTrigger>
-          </TabsList>
-        </Tabs> */}
 
         {/* Add event button  */}
 
