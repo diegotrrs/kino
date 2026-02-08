@@ -8,11 +8,6 @@ export default function Footer() {
       <Separator />
       <div className='flex flex-wrap items-center justify-between'>
         <p className='flex-shrink-0'>
-          {'Built with ❤️ by '}
-          <Link href='https://github.com/robskinney' className='underline'>
-            robskinney
-          </Link>
-          .
         </p>
 
         <DarkModeToggle />
