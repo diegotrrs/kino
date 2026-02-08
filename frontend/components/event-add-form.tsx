@@ -130,7 +130,7 @@ export function EventAddForm({ start, end }: EventAddFormProps) {
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input placeholder='Standup Meeting' {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -144,7 +144,6 @@ export function EventAddForm({ start, end }: EventAddFormProps) {
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder='Daily session'
                       className='max-h-36'
                       {...field}
                     />
