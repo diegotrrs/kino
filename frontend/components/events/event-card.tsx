@@ -6,7 +6,7 @@ import {
   CardTitle
 }                            from '@/components/ui/card';
 import type { Event }        from '@/lib/types';
-import { format }            from 'date-fns';
+import { format, parse }     from 'date-fns';
 import {
   CalendarIcon,
   ClockIcon,
@@ -19,8 +19,11 @@ interface EventCardProps {
 }
 
 export function EventCard({ event }: EventCardProps) {
-  const startDate = new Date(event.start_time);
-  const endDate = event.end_time ? new Date(event.end_time) : null;
+  const eventDate = parse(event.date, 'yyyy-MM-dd', new Date());
+  const startTime = parse(event.start_time, 'HH:mm:ss', new Date());
+  const endTime = event.end_time
+    ? parse(event.end_time, 'HH:mm:ss', new Date())
+    : null;
 
   return (
     <Card>
@@ -36,13 +39,13 @@ export function EventCard({ event }: EventCardProps) {
       <CardContent className='space-y-2 text-sm text-muted-foreground'>
         <div className='flex items-center gap-2'>
           <CalendarIcon className='h-4 w-4' />
-          <span>{format(startDate, 'EEEE, MMMM d, yyyy')}</span>
+          <span>{format(eventDate, 'EEEE, MMMM d, yyyy')}</span>
         </div>
         <div className='flex items-center gap-2'>
           <ClockIcon className='h-4 w-4' />
           <span>
-            {format(startDate, 'h:mm a')}
-            {endDate && ` – ${format(endDate, 'h:mm a')}`}
+            {format(startTime, 'h:mm a')}
+            {endTime && ` – ${format(endTime, 'h:mm a')}`}
           </span>
         </div>
         {event.location && (

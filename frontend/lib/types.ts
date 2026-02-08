@@ -1,7 +1,10 @@
 export interface Event {
   id: number;
+  uuid: string;
+  calendar_id: number;
   title: string;
   description: string | null;
+  date: string;
   start_time: string;
   end_time: string | null;
   location: string | null;
@@ -10,8 +13,10 @@ export interface Event {
 }
 
 export interface CreateEventInput {
+  calendar_id: number;
   title: string;
   description?: string | null;
+  date: string;
   start_time: string;
   end_time?: string | null;
   location?: string | null;

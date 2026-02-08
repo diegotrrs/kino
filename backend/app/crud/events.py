@@ -12,8 +12,20 @@ def get_event(db: connection, event_id: int) -> dict | None:
 def get_events(db: connection, skip: int = 0, limit: int = 100) -> list[dict]:
     with db.cursor() as cur:
         cur.execute(
-            "SELECT * FROM events ORDER BY id OFFSET %s LIMIT %s",
+            "SELECT * FROM events ORDER BY date, start_time OFFSET %s LIMIT %s",
             (skip, limit),
+        )
+        return cur.fetchall()
+
+
+def get_events_by_calendar(
+    db: connection, calendar_id: int, skip: int = 0, limit: int = 100
+) -> list[dict]:
+    with db.cursor() as cur:
+        cur.execute(
+            "SELECT * FROM events WHERE calendar_id = %s"
+            " ORDER BY date, start_time OFFSET %s LIMIT %s",
+            (calendar_id, skip, limit),
         )
         return cur.fetchall()
 
@@ -24,10 +36,11 @@ def create_event(db: connection, event: EventCreate) -> dict:
         cur.execute(
             """
             INSERT INTO events
-                (title, description, start_time, end_time, location)
+                (calendar_id, title, description, date, start_time,
+                 end_time, location)
             VALUES
-                (%(title)s, %(description)s, %(start_time)s,
-                 %(end_time)s, %(location)s)
+                (%(calendar_id)s, %(title)s, %(description)s, %(date)s,
+                 %(start_time)s, %(end_time)s, %(location)s)
             RETURNING *
             """,
             data,

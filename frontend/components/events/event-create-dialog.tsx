@@ -24,6 +24,7 @@ import { Textarea }       from '@/components/ui/textarea';
 import { ToastAction }    from '@/components/ui/toast';
 import { useToast }       from '@/hooks/use-toast';
 import { zodResolver }    from '@hookform/resolvers/zod';
+import { format }         from 'date-fns';
 import { PlusIcon }       from 'lucide-react';
 import { useTransition }  from 'react';
 import { useForm }        from 'react-hook-form';
@@ -61,10 +62,12 @@ export function EventCreateDialog() {
     startTransition(async () => {
       try {
         await createEvent({
+          calendar_id: 1,
           title: data.title,
           description: data.description || null,
-          start_time: data.start.toISOString(),
-          end_time: data.end ? data.end.toISOString() : null,
+          date: format(data.start, 'yyyy-MM-dd'),
+          start_time: format(data.start, 'HH:mm:ss'),
+          end_time: data.end ? format(data.end, 'HH:mm:ss') : null,
           location: data.location || null,
         });
         form.reset();
