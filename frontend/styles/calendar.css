@@ -82,6 +82,20 @@ td.fc-daygrid-day.fc-day.fc-day-today {
   @apply bg-gray-200 dark:bg-secondary;
 }
 
+/* Override FullCalendar's opacity dimming on other-month days so the ribbon stays crisp */
+.fc-day-other .fc-daygrid-day-top {
+  opacity: 1 !important;
+}
+
+/* Dim just the day number text via color instead */
+.fc-day-other .fc-daygrid-day-top {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.dark .fc-day-other .fc-daygrid-day-top {
+  color: rgba(255, 255, 255, 0.3);
+}
+
 .fc-daygrid-day-top {
   @apply flex flex-row h-8 w-full items-center justify-start;
 }
@@ -145,7 +159,7 @@ td.fc-daygrid-day.fc-day {
   clip-path: polygon(0 0, 100% 0, 100% 100%);
   background-color: black;
   pointer-events: none;
-  z-index: 5;
+  z-index: 20;
 }
 
 .dark .month-ribbon {
