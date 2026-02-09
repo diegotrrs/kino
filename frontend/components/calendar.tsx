@@ -2,6 +2,7 @@
 import '@/styles/calendar.css';
 import { useEvents }          from '@/context/events-context';
 import { getDateFromMinutes } from '@/lib/utils';
+import { goToday }            from '@/utils/calendar-utils';
 import {
   CalendarEvent,
   earliestTime,
@@ -229,6 +230,16 @@ export default function Calendar() {
         viewedDate={viewedDate}
       />
 
+      <div className='relative'>
+        {(viewedDate.getMonth() !== new Date().getMonth() ||
+          viewedDate.getFullYear() !== new Date().getFullYear()) && (
+          <button
+            onClick={() => goToday(calendarRef)}
+            className='absolute -top-3 left-0 right-0 mx-auto w-fit z-30 rounded-full px-4 py-1 text-xs font-medium shadow-md cursor-pointer back-to-today-pill'
+          >
+            Back to {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+          </button>
+        )}
       <Card className='p-3'>
         <FullCalendar
           ref={calendarRef}
@@ -276,6 +287,7 @@ export default function Calendar() {
           selectable
         />
       </Card>
+      </div>
       <EventEditForm
         oldEvent={selectedOldEvent}
         event={selectedEvent}

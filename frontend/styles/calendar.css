@@ -137,6 +137,17 @@ td.fc-daygrid-day.fc-day {
   pointer-events: none;
 }
 
+/* Back to today floating pill */
+.back-to-today-pill {
+  background-color: black;
+  color: white;
+}
+
+.dark .back-to-today-pill {
+  background-color: white;
+  color: black;
+}
+
 /* Ribbon clips inside the day frame */
 .fc-daygrid-day-frame {
   position: relative;

@@ -204,20 +204,6 @@ export default function CalendarNav({
       </div>
 
       <div className='flex flex-wrap gap-3 justify-center'>
-        {/* Button to go to current date */}
-
-        <Button
-          className='w-[90px] text-xs md:text-sm'
-          variant='outline'
-          onClick={() => {
-            goToday(calendarRef);
-          }}
-        >
-          This Month
-        </Button>
-
-        {/* Change view with tabs */}
-
         {/* Add event button  */}
 
         <EventAddForm start={start} end={end} />
