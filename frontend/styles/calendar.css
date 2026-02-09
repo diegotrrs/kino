@@ -123,6 +123,52 @@ td.fc-daygrid-day.fc-day {
   pointer-events: none;
 }
 
+/* Ribbon clips inside the day frame */
+.fc-daygrid-day-frame {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Force intermediate containers to static so ribbon positions relative to the frame */
+.fc-daygrid-day-top,
+.fc-daygrid-day-number {
+  position: static !important;
+}
+
+/* Triangular corner fold on first day of month */
+.month-ribbon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+  background-color: black;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.dark .month-ribbon {
+  background-color: white;
+}
+
+.month-ribbon span {
+  position: absolute;
+  top: 33%;
+  left: 67%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  color: #fff;
+  font-size: 0.42rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.05em;
+}
+
+.dark .month-ribbon span {
+  color: #000;
+  white-space: nowrap;
+}
+
 .fc-event {
   pointer-events: all;
   cursor: pointer;

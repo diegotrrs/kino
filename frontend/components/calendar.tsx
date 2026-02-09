@@ -169,6 +169,12 @@ export default function Calendar() {
   };
 
   const DayRender = ({ info }: DayRenderProps) => {
+    const isFirstOfMonth = info.date.getDate() === 1 && info.view.type === 'dayGridMonth';
+
+    const getMonthLabel = (date: Date) => {
+      return date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+    };
+
     return (
       <div className='flex'>
         {info.view.type == 'dayGridMonth' && info.isToday ? (
@@ -178,6 +184,11 @@ export default function Calendar() {
         ) : (
           <div className='flex h-7 w-7 rounded-full items-center justify-center text-sm'>
             {info.dayNumberText}
+          </div>
+        )}
+        {isFirstOfMonth && (
+          <div className='month-ribbon'>
+            <span>{getMonthLabel(info.date)}</span>
           </div>
         )}
       </div>
