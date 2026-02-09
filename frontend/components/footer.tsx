@@ -10,7 +10,19 @@ export default function Footer() {
         <p className='flex-shrink-0'>
         </p>
 
-        <DarkModeToggle />
+        <div className='flex items-center gap-2'>
+          {process.env.NODE_ENV === 'development' && (
+            <span className='rounded bg-black px-1.5 py-0.5 text-[0.6rem] font-mono text-white dark:bg-white dark:text-black'>
+              <span className='sm:hidden'>xs</span>
+              <span className='hidden sm:inline md:hidden'>sm</span>
+              <span className='hidden md:inline lg:hidden'>md</span>
+              <span className='hidden lg:inline xl:hidden'>lg</span>
+              <span className='hidden xl:inline 2xl:hidden'>xl</span>
+              <span className='hidden 2xl:inline'>2xl</span>
+            </span>
+          )}
+          <DarkModeToggle />
+        </div>
       </div>
     </div>
   );
