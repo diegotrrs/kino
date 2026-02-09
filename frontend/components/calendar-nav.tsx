@@ -136,7 +136,7 @@ export default function CalendarNav({
             <Button
               variant='outline'
               role='combobox'
-              className='flex w-[105px] justify-between overflow-hidden p-2 text-xs font-semibold md:text-sm md:w-[120px]'
+              className='flex w-[120px] justify-between overflow-hidden p-2 text-base font-semibold md:text-lg md:w-[140px]'
             >
               {selectedMonth
                 ? months.find((month) => month.value === String(selectedMonth))
@@ -184,7 +184,7 @@ export default function CalendarNav({
         {/* Year Lookup */}
 
         <Input
-          className='w-[75px] md:w-[85px] text-xs md:text-sm font-semibold'
+          className='w-[85px] md:w-[95px] text-base md:text-lg font-semibold'
           type='number'
           value={selectedYear}
           onChange={(value) => handleYearChange(calendarRef, viewedDate, value)}
