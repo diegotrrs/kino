@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useToast }         from '@/hooks/use-toast';
 import { EllipsisVertical } from 'lucide-react';
+import Link                  from 'next/link';
 
 export function TopBar() {
   const { toast } = useToast();
@@ -48,6 +49,9 @@ export function TopBar() {
             </DropdownMenuItem>
             <DropdownMenuItem onSelect={() => toast({ title: 'Help clicked' })}>
               Help
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href='/settings'>Settings</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
