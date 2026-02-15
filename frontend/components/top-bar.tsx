@@ -41,12 +41,6 @@ export function TopBar() {
             <DropdownMenuItem onSelect={() => toast({ title: 'Profile clicked' })}>
               Profile
             </DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => toast({ title: 'Notifications clicked' })}>
-              Notifications
-            </DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => toast({ title: 'Help clicked' })}>
-              Help
-            </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link href='/settings'>Settings</Link>
             </DropdownMenuItem>

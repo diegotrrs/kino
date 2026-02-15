@@ -19,7 +19,7 @@ export default function AboutPage() {
 
           <div className='space-y-1'>
             <p className='text-sm'>
-              Kino is a personal calendar app built by{' '}
+              Kino is a calendar app built by{' '}
               <span className='font-medium'>Diego T.</span>
             </p>
             <p className='text-sm text-muted-foreground'>
