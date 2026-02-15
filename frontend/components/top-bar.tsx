@@ -5,13 +5,15 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useToast }         from '@/hooks/use-toast';
 import { EllipsisVertical } from 'lucide-react';
 import Link                  from 'next/link';
+import { logout }            from '@/app/auth/actions';
 
-export function TopBar() {
+export function TopBar({ isLoggedIn }: { isLoggedIn: boolean }) {
   const { toast } = useToast();
 
   return (
@@ -47,6 +49,14 @@ export function TopBar() {
             <DropdownMenuItem asChild>
               <Link href='/about'>About</Link>
             </DropdownMenuItem>
+            {isLoggedIn && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => logout()}>
+                  Log out
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

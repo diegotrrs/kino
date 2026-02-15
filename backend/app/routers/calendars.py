@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from psycopg2.extensions import connection
 
-from backend.app.auth import get_current_user
+from ..auth import get_current_user
 
 from .. import crud
 from ..database import get_db
