@@ -50,6 +50,9 @@ export function TopBar() {
             <DropdownMenuItem asChild>
               <Link href='/settings'>Settings</Link>
             </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href='/about'>About</Link>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
