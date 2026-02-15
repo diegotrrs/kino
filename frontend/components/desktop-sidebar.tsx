@@ -4,6 +4,7 @@ import { navItems }   from '@/lib/nav';
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { cn }          from '@/lib/utils';
@@ -17,6 +18,7 @@ export function DesktopSidebar() {
   const bottomItems = navItems.filter((i) => i.section === 'bottom');
 
   return (
+    <TooltipProvider>
     <aside className='hidden md:flex fixed left-0 top-14 bottom-0 z-40 w-16 flex-col items-center border-r bg-background py-4'>
       <nav className='flex flex-1 flex-col items-center gap-2'>
         {mainItems.map((item) => {
@@ -72,5 +74,6 @@ export function DesktopSidebar() {
         })}
       </nav>
     </aside>
+    </TooltipProvider>
   );
 }
