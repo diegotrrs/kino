@@ -12,7 +12,7 @@ export default function Home() {
         >
           <div className='w-full px-5 space-y-5'>
             <div className='space-y-0'>
-              <h2 className='flex items-center text-2xl font-semibold tracking-tight md:text-3xl'>
+              <h2 className='flex items-center select-none text-2xl font-semibold tracking-tight md:text-3xl'>
                 Calendar
               </h2>
             </div>

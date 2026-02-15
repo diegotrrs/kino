@@ -1,24 +1,23 @@
 'use client';
-
-import { Button }         from '@/components/ui/button';
+import { logout }           from '@/app/auth/actions';
+import { Button }           from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+  DropdownMenuTrigger
+}                           from '@/components/ui/dropdown-menu';
 import { useToast }         from '@/hooks/use-toast';
 import { EllipsisVertical } from 'lucide-react';
-import Link                  from 'next/link';
-import { logout }            from '@/app/auth/actions';
+import Link                 from 'next/link';
 
 export function TopBar({ isLoggedIn }: { isLoggedIn: boolean }) {
   const { toast } = useToast();
 
   return (
     <header className='sticky top-0 z-50 flex h-14 items-center justify-between border-b bg-background px-4'>
-      <span className='text-lg font-bold tracking-tight'>Kino</span>
+      <span className='text-lg font-bold tracking-tight select-none'>Kino</span>
 
       <div className='flex items-center gap-2'>
         {process.env.NODE_ENV === 'development' && (
