@@ -5,11 +5,15 @@ import { Button }         from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useToast }         from '@/hooks/use-toast';
 import { EllipsisVertical } from 'lucide-react';
 
 export function TopBar() {
+  const { toast } = useToast();
+
   return (
     <header className='sticky top-0 z-50 flex h-14 items-center justify-between border-b bg-background px-4'>
       <span className='text-lg font-bold tracking-tight'>Kino</span>
@@ -36,7 +40,15 @@ export function TopBar() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
-            {/* empty for now */}
+            <DropdownMenuItem onSelect={() => toast({ title: 'Profile clicked' })}>
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => toast({ title: 'Notifications clicked' })}>
+              Notifications
+            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => toast({ title: 'Help clicked' })}>
+              Help
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
