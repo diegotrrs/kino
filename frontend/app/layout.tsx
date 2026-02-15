@@ -1,11 +1,11 @@
 import './globals.css';
-import Footer            from '@/components/footer';
+import { AppShell }      from '@/components/app-shell';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster }       from '@/components/ui/toaster';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'ShadCn FullCalendar Example',
+  title: 'Kino',
   description: 'An example template on how to use ShadCn FullCalendar.',
 };
 
@@ -23,9 +23,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <AppShell>{children}</AppShell>
           <Toaster />
-          <Footer />
         </ThemeProvider>
       </body>
     </html>
