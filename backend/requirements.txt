@@ -3,4 +3,7 @@ uvicorn[standard]
 psycopg2-binary
 python-dotenv
 pydantic-settings
+passlib[bcrypt]
+bcrypt<4.1
+PyJWT
 ruff

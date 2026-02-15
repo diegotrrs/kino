@@ -1,11 +1,18 @@
 from psycopg2.extensions import connection
 
+from ..auth import hash_password
 from ..schemas.user import UserCreate
 
 
 def get_user(db: connection, user_id: int) -> dict | None:
     with db.cursor() as cur:
         cur.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+        return cur.fetchone()
+
+
+def get_user_by_email(db: connection, email: str) -> dict | None:
+    with db.cursor() as cur:
+        cur.execute("SELECT * FROM users WHERE email = %s", (email,))
         return cur.fetchone()
 
 
@@ -20,11 +27,12 @@ def get_users(db: connection, skip: int = 0, limit: int = 100) -> list[dict]:
 
 def create_user(db: connection, user: UserCreate) -> dict:
     data = user.model_dump()
+    data["password_hash"] = hash_password(data.pop("password"))
     with db.cursor() as cur:
         cur.execute(
             """
-            INSERT INTO users (name, email)
-            VALUES (%(name)s, %(email)s)
+            INSERT INTO users (name, email, password_hash)
+            VALUES (%(name)s, %(email)s, %(password_hash)s)
             RETURNING *
             """,
             data,

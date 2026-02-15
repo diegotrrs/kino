@@ -5,6 +5,7 @@ from .calendars import (
     get_calendar,
     get_calendar_users,
     get_calendars,
+    get_calendars_by_user,
     remove_user_from_calendar,
     update_calendar,
 )
@@ -20,6 +21,7 @@ from .users import (
     create_user,
     delete_user,
     get_user,
+    get_user_by_email,
     get_users,
 )
 
@@ -34,10 +36,12 @@ __all__ = [
     "get_calendar",
     "get_calendar_users",
     "get_calendars",
+    "get_calendars_by_user",
     "get_event",
     "get_events",
     "get_events_by_calendar",
     "get_user",
+    "get_user_by_email",
     "get_users",
     "remove_user_from_calendar",
     "update_calendar",

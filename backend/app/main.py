@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .routers import calendars_router, events_router, users_router
+from .routers import auth_router, calendars_router, events_router, users_router
 
 app = FastAPI(
     title="Kino API",
@@ -17,6 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 app.include_router(users_router, prefix="/api/users", tags=["users"])
 app.include_router(calendars_router, prefix="/api/calendars", tags=["calendars"])
 app.include_router(events_router, prefix="/api/events", tags=["events"])

@@ -95,6 +95,20 @@ def remove_user_from_calendar(
         return deleted
 
 
+def get_calendars_by_user(db: connection, user_id: int) -> list[dict]:
+    with db.cursor() as cur:
+        cur.execute(
+            """
+            SELECT c.* FROM calendars c
+            JOIN calendar_users cu ON c.id = cu.calendar_id
+            WHERE cu.user_id = %s
+            ORDER BY c.id
+            """,
+            (user_id,),
+        )
+        return cur.fetchall()
+
+
 def get_calendar_users(db: connection, calendar_id: int) -> list[dict]:
     with db.cursor() as cur:
         cur.execute(
