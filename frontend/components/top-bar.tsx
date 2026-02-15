@@ -1,6 +1,5 @@
 'use client';
 
-import { DarkModeToggle } from '@/components/dark-mode-toggle';
 import { Button }         from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -30,8 +29,6 @@ export function TopBar() {
             <span className='hidden 2xl:inline'>2xl</span>
           </span>
         )}
-
-        <DarkModeToggle />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
