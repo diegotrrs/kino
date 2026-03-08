@@ -1,5 +1,8 @@
 'use client';
-import { deleteEvent as deleteEventAction, updateEvent } from '@/app/events/actions';
+import {
+  deleteEvent as deleteEventAction,
+  updateEvent
+}                         from '@/app/events/actions';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -7,8 +10,8 @@ import {
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
-}                           from '@/components/ui/alert-dialog';
+  AlertDialogTitle
+}                         from '@/components/ui/alert-dialog';
 import {
   Form,
   FormControl,
@@ -16,26 +19,29 @@ import {
   FormItem,
   FormLabel,
   FormMessage
-}                           from '@/components/ui/form';
-import { Input }            from '@/components/ui/input';
-import { useEvents }        from '@/context/events-context';
-import { useToast }         from '@/hooks/use-toast';
-import { CalendarEvent }    from '@/utils/data';
-import { zodResolver }      from '@hookform/resolvers/zod';
-import { format }           from 'date-fns';
-import React, { useEffect, useState } from 'react';
-import { HexColorPicker }   from 'react-colorful';
-import { useForm }          from 'react-hook-form';
-import { z }                from 'zod';
-import { DateTimePicker }   from './date-picker';
-import { Button }           from './ui/button';
+}                         from '@/components/ui/form';
+import { Input }          from '@/components/ui/input';
+import { useEvents }      from '@/context/events-context';
+import { useToast }       from '@/hooks/use-toast';
+import { CalendarEvent }  from '@/utils/data';
+import { zodResolver }    from '@hookform/resolvers/zod';
+import { format }         from 'date-fns';
+import React, {
+  useEffect,
+  useState
+}                         from 'react';
+import { HexColorPicker } from 'react-colorful';
+import { useForm }        from 'react-hook-form';
+import { z }              from 'zod';
+import { DateTimePicker } from './date-picker';
+import { Button }         from './ui/button';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger
-}                           from './ui/popover';
-import { Textarea }         from './ui/textarea';
-import { ToastAction }      from './ui/toast';
+}                         from './ui/popover';
+import { Textarea }       from './ui/textarea';
+import { ToastAction }    from './ui/toast';
 
 const eventEditFormSchema = z.object({
   id: z.string(),
@@ -72,7 +78,7 @@ export function EventEditForm({
   isDrag,
 }: EventEditFormProps) {
   const { calendarId, addEvent, deleteEvent } = useEvents();
-  const { eventEditOpen, setEventEditOpen }   = useEvents();
+  const { eventEditOpen, setEventEditOpen } = useEvents();
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   const { toast } = useToast();
@@ -216,7 +222,6 @@ export function EventEditForm({
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder='Daily session'
                       className='resize-none'
                       {...field}
                     />
