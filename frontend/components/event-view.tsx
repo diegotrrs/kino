@@ -34,7 +34,7 @@ export function EventView({ event }: EventViewProps) {
               <tbody>
                 <tr>
                   <th>Time:</th>
-                  <td>{`${event?.start.toLocaleTimeString()} - ${event?.end.toLocaleTimeString()}`}</td>
+                  <td>{`${event?.start?.toLocaleTimeString()} - ${event?.end?.toLocaleTimeString() ?? '—'}`}</td>
                 </tr>
                 <tr>
                   <th>Description:</th>

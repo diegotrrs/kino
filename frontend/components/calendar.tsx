@@ -28,7 +28,6 @@ import {
 }                             from 'react';
 import CalendarNav            from './calendar-nav';
 import { EventEditForm }      from './event-edit-form';
-import { EventView }          from './event-view';
 import { Card }               from './ui/card';
 
 type EventItemProps = {
@@ -72,7 +71,7 @@ export default function Calendar() {
     setIsDrag(false);
     setSelectedOldEvent(event);
     setSelectedEvent(event);
-    setEventViewOpen(true);
+    setEventEditOpen(true);
   };
 
   const handleEventChange = (info: EventChangeArg) => {
@@ -292,9 +291,7 @@ export default function Calendar() {
         oldEvent={selectedOldEvent}
         event={selectedEvent}
         isDrag={isDrag}
-        displayButton={false}
       />
-      <EventView event={selectedEvent} />
     </div>
   );
 }

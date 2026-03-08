@@ -1,4 +1,5 @@
 'use client';
+import { createEvent }    from '@/app/events/actions';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +23,7 @@ import { Input }          from '@/components/ui/input';
 import { useEvents }      from '@/context/events-context';
 import { useToast }       from '@/hooks/use-toast';
 import { zodResolver }    from '@hookform/resolvers/zod';
+import { format }         from 'date-fns';
 import { PlusIcon }       from 'lucide-react';
 import { useEffect }      from 'react';
 import { HexColorPicker } from 'react-colorful';
@@ -64,7 +66,7 @@ interface EventAddFormProps {
 }
 
 export function EventAddForm({ start, end }: EventAddFormProps) {
-  const { events, addEvent } = useEvents();
+  const { calendarId, events, addEvent } = useEvents();
   const { eventAddOpen, setEventAddOpen } = useEvents();
 
   const { toast } = useToast();
@@ -84,15 +86,38 @@ export function EventAddForm({ start, end }: EventAddFormProps) {
   }, [form, start, end]);
 
   async function onSubmit(data: EventAddFormValues) {
-    const newEvent = {
+    const localEvent = {
       id: String(events.length + 1),
       title: data.title,
       description: data.description,
       start: data.start,
       end: data.end,
-      color: data.color
+      backgroundColor: data.color,
     };
-    addEvent(newEvent);
+
+    if (calendarId !== undefined) {
+      try {
+        const created = await createEvent({
+          calendar_id: calendarId,
+          title: data.title,
+          description: data.description,
+          date: format(data.start, 'yyyy-MM-dd'),
+          start_time: format(data.start, 'HH:mm:ss'),
+          end_time: format(data.end, 'HH:mm:ss'),
+        });
+        addEvent({ ...localEvent, id: String(created.id) });
+      } catch {
+        toast({
+          variant: 'destructive',
+          title: 'Failed to save event',
+          action: <ToastAction altText='Dismiss'>Dismiss</ToastAction>,
+        });
+        return;
+      }
+    } else {
+      addEvent(localEvent);
+    }
+
     setEventAddOpen(false);
     toast({
       title: 'Event added!',
@@ -100,7 +125,7 @@ export function EventAddForm({ start, end }: EventAddFormProps) {
         <ToastAction altText={'Click here to dismiss notification'}>
           Dismiss
         </ToastAction>
-      )
+      ),
     });
   }
 

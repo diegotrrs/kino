@@ -9,7 +9,14 @@ router = APIRouter()
 
 
 @router.get("/", response_model=list[EventResponse])
-def list_events(skip: int = 0, limit: int = 100, db: connection = Depends(get_db)):
+def list_events(
+    skip: int = 0,
+    limit: int = 100,
+    calendar_id: int | None = None,
+    db: connection = Depends(get_db),
+):
+    if calendar_id is not None:
+        return crud.get_events_by_calendar(db, calendar_id, skip=skip, limit=limit)
     return crud.get_events(db, skip=skip, limit=limit)
 
 

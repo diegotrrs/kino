@@ -1,4 +1,5 @@
 'use client';
+import { deleteEvent as deleteEventAction, updateEvent } from '@/app/events/actions';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -7,7 +8,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger
 }                           from '@/components/ui/alert-dialog';
 import {
   Form,
@@ -22,7 +22,8 @@ import { useEvents }        from '@/context/events-context';
 import { useToast }         from '@/hooks/use-toast';
 import { CalendarEvent }    from '@/utils/data';
 import { zodResolver }      from '@hookform/resolvers/zod';
-import React, { useEffect } from 'react';
+import { format }           from 'date-fns';
+import React, { useEffect, useState } from 'react';
 import { HexColorPicker }   from 'react-colorful';
 import { useForm }          from 'react-hook-form';
 import { z }                from 'zod';
@@ -63,17 +64,16 @@ interface EventEditFormProps {
   oldEvent?: CalendarEvent;
   event?: CalendarEvent;
   isDrag: boolean;
-  displayButton: boolean;
 }
 
 export function EventEditForm({
   oldEvent,
   event,
   isDrag,
-  displayButton,
 }: EventEditFormProps) {
-  const { addEvent, deleteEvent } = useEvents();
-  const { eventEditOpen, setEventEditOpen } = useEvents();
+  const { calendarId, addEvent, deleteEvent } = useEvents();
+  const { eventEditOpen, setEventEditOpen }   = useEvents();
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   const { toast } = useToast();
 
@@ -95,10 +95,12 @@ export function EventEditForm({
       deleteEvent(oldEvent.id);
       addEvent(resetEvent);
     }
+    setConfirmingDelete(false);
     setEventEditOpen(false);
   };
 
   useEffect(() => {
+    setConfirmingDelete(false);
     form.reset({
       id: event?.id,
       title: event?.title,
@@ -116,8 +118,28 @@ export function EventEditForm({
       description: data.description,
       start: data.start,
       end: data.end,
-      color: data.color,
+      backgroundColor: data.color,
     };
+
+    if (calendarId !== undefined) {
+      try {
+        await updateEvent(Number(data.id), {
+          title: data.title,
+          description: data.description,
+          date: format(data.start, 'yyyy-MM-dd'),
+          start_time: format(data.start, 'HH:mm:ss'),
+          end_time: format(data.end, 'HH:mm:ss'),
+        });
+      } catch {
+        toast({
+          variant: 'destructive',
+          title: 'Failed to save event',
+          action: <ToastAction altText='Dismiss'>Dismiss</ToastAction>,
+        });
+        return;
+      }
+    }
+
     deleteEvent(data.id);
     addEvent(newEvent);
     setEventEditOpen(false);
@@ -132,20 +154,39 @@ export function EventEditForm({
     });
   }
 
+  async function handleDelete() {
+    const id = form.getValues('id');
+    if (!id) return;
+
+    if (calendarId !== undefined) {
+      try {
+        await deleteEventAction(Number(id));
+      } catch {
+        toast({
+          variant: 'destructive',
+          title: 'Failed to delete event',
+          action: <ToastAction altText='Dismiss'>Dismiss</ToastAction>,
+        });
+        return;
+      }
+    }
+
+    deleteEvent(id);
+    setConfirmingDelete(false);
+    setEventEditOpen(false);
+
+    toast({
+      title: 'Event deleted!',
+      action: (
+        <ToastAction altText={'Click here to dismiss notification'}>
+          Dismiss
+        </ToastAction>
+      ),
+    });
+  }
+
   return (
     <AlertDialog open={eventEditOpen}>
-      {displayButton && (
-        <AlertDialogTrigger asChild>
-          <Button
-            className='w-full sm:w-24 text-xs md:text-sm mb-1'
-            variant='default'
-            onClick={() => setEventEditOpen(true)}
-          >
-            Edit Event
-          </Button>
-        </AlertDialogTrigger>
-      )}
-
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Edit {event?.title}</AlertDialogTitle>
@@ -249,11 +290,46 @@ export function EventEditForm({
                 </FormItem>
               )}
             />
+
             <AlertDialogFooter className='pt-2'>
-              <AlertDialogCancel onClick={() => handleEditCancellation()}>
-                Cancel
-              </AlertDialogCancel>
-              <AlertDialogAction type='submit'>Save</AlertDialogAction>
+              {!isDrag && !confirmingDelete && (
+                <Button
+                  type='button'
+                  variant='destructive'
+                  onClick={() => setConfirmingDelete(true)}
+                >
+                  Delete
+                </Button>
+              )}
+              {!isDrag && confirmingDelete && (
+                <>
+                  <span className='text-sm text-muted-foreground self-center'>
+                    Delete this event?
+                  </span>
+                  <Button
+                    type='button'
+                    variant='outline'
+                    onClick={() => setConfirmingDelete(false)}
+                  >
+                    No
+                  </Button>
+                  <Button
+                    type='button'
+                    variant='destructive'
+                    onClick={handleDelete}
+                  >
+                    Yes, Delete
+                  </Button>
+                </>
+              )}
+              {!confirmingDelete && (
+                <>
+                  <AlertDialogCancel onClick={handleEditCancellation}>
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction type='submit'>Save</AlertDialogAction>
+                </>
+              )}
             </AlertDialogFooter>
           </form>
         </Form>

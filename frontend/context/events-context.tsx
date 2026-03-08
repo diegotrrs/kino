@@ -2,18 +2,10 @@
 import { CalendarEvent, initialEvents } from '@/utils/data';
 import React, { createContext, ReactNode, useContext, useState } from 'react';
 
-interface Event {
-  id: string;
-  title: string;
-  description: string;
-  start: Date;
-  end: Date;
-  color: string;
-}
-
 interface EventsContextType {
+  calendarId?: number;
   events: CalendarEvent[];
-  addEvent: (event: Event) => void;
+  addEvent: (event: CalendarEvent) => void;
   deleteEvent: (id: string) => void;
   eventViewOpen: boolean;
   setEventViewOpen: (value: boolean) => void;
@@ -37,22 +29,30 @@ export const useEvents = () => {
   return context;
 };
 
-export const EventsProvider: React.FC<{ children: ReactNode }> = ({
+interface EventsProviderProps {
+  children: ReactNode;
+  calendarId?: number;
+  serverEvents?: CalendarEvent[];
+}
+
+export const EventsProvider: React.FC<EventsProviderProps> = ({
   children,
+  calendarId,
+  serverEvents,
 }) => {
   const [events, setEvents] = useState<CalendarEvent[]>(
-    initialEvents.map((event) => ({
-      ...event,
-      id: String(event.id),
-      color: event.backgroundColor,
-    }))
+    serverEvents ??
+      initialEvents.map((event) => ({
+        ...event,
+        id: String(event.id),
+        color: event.backgroundColor,
+      }))
   );
-  const [eventViewOpen, setEventViewOpen] = useState(false);
-  const [eventAddOpen, setEventAddOpen] = useState(false);
-  const [eventEditOpen, setEventEditOpen] = useState(false);
-  const [eventDeleteOpen, setEventDeleteOpen] = useState(false);
-  const [availabilityCheckerEventAddOpen, setAvailabilityCheckerEventAddOpen] =
-    useState(false);
+  const [eventViewOpen, setEventViewOpen]                               = useState(false);
+  const [eventAddOpen, setEventAddOpen]                                 = useState(false);
+  const [eventEditOpen, setEventEditOpen]                               = useState(false);
+  const [eventDeleteOpen, setEventDeleteOpen]                           = useState(false);
+  const [availabilityCheckerEventAddOpen, setAvailabilityCheckerEventAddOpen] = useState(false);
 
   const addEvent = (event: CalendarEvent) => {
     setEvents((prevEvents) => [...prevEvents, event]);
@@ -67,6 +67,7 @@ export const EventsProvider: React.FC<{ children: ReactNode }> = ({
   return (
     <EventsContext.Provider
       value={{
+        calendarId,
         events,
         addEvent,
         deleteEvent,

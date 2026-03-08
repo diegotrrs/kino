@@ -25,7 +25,11 @@ def list_calendars(
 
 
 @router.get("/{calendar_id}", response_model=CalendarResponse)
-def get_calendar(calendar_id: int):
+def get_calendar(
+    calendar_id: int,
+    db: connection = Depends(get_db),
+    _user: dict = Depends(get_current_user),
+):
     calendar = crud.get_calendar(db, calendar_id)
     if calendar is None:
         raise HTTPException(status_code=404, detail="Calendar not found")
