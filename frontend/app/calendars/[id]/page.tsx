@@ -1,9 +1,11 @@
-import Calendar           from '@/components/calendar';
+import Calendar           from '@/components/calendar-no-ssr';
 import { Separator }      from '@/components/ui/separator';
 import { EventsProvider } from '@/context/events-context';
 import type { Calendar as CalendarType, Event } from '@/lib/types';
 import { CalendarEvent }  from '@/utils/data';
+import { ArrowLeft }      from 'lucide-react';
 import { cookies }        from 'next/headers';
+import Link               from 'next/link';
 import { redirect }       from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
@@ -20,7 +22,7 @@ function dbEventToCalendarEvent(event: Event): CalendarEvent {
     description:     event.description ?? '',
     start,
     end,
-    backgroundColor: '#AEC6E4',
+    backgroundColor: event.color,
   };
 }
 
@@ -78,6 +80,13 @@ export default async function CalendarPage({
         <div className='flex flex-col w-full items-center'>
           <div className='w-full px-5 space-y-5'>
             <div className='space-y-0'>
+              <Link
+                href='/calendars'
+                className='inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-1'
+              >
+                <ArrowLeft className='h-4 w-4' />
+                My Calendars
+              </Link>
               <h2 className='text-2xl font-semibold tracking-tight md:text-3xl select-none cursor-default'>
                 {calendar.name}
               </h2>

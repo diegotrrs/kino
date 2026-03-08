@@ -35,6 +35,7 @@ CREATE TABLE events (
     start_time TIME NOT NULL,
     end_time TIME,
     location VARCHAR(255),
+    color VARCHAR(7) NOT NULL DEFAULT '#AEC6E4',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ
 );

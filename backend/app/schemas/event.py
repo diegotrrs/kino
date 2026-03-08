@@ -14,6 +14,7 @@ class EventBase(BaseModel):
     start_time: Time
     end_time: Time | None = None
     location: str | None = None
+    color: str = '#AEC6E4'
 
 
 class EventCreate(EventBase):
@@ -27,6 +28,7 @@ class EventUpdate(BaseModel):
     start_time: Time | None = None
     end_time: Time | None = None
     location: str | None = None
+    color: str | None = None
 
 
 class EventResponse(EventBase):

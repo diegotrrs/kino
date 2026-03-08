@@ -37,10 +37,10 @@ def create_event(db: connection, event: EventCreate) -> dict:
             """
             INSERT INTO events
                 (calendar_id, title, description, date, start_time,
-                 end_time, location)
+                 end_time, location, color)
             VALUES
                 (%(calendar_id)s, %(title)s, %(description)s, %(date)s,
-                 %(start_time)s, %(end_time)s, %(location)s)
+                 %(start_time)s, %(end_time)s, %(location)s, %(color)s)
             RETURNING *
             """,
             data,

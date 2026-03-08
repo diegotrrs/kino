@@ -129,6 +129,7 @@ export function EventEditForm({
           date: format(data.start, 'yyyy-MM-dd'),
           start_time: format(data.start, 'HH:mm:ss'),
           end_time: format(data.end, 'HH:mm:ss'),
+          color: data.color,
         });
       } catch {
         toast({
@@ -291,11 +292,12 @@ export function EventEditForm({
               )}
             />
 
-            <AlertDialogFooter className='pt-2'>
+            <AlertDialogFooter className='pt-2 flex-row items-center'>
               {!isDrag && !confirmingDelete && (
                 <Button
                   type='button'
                   variant='destructive'
+                  className='mr-auto'
                   onClick={() => setConfirmingDelete(true)}
                 >
                   Delete
@@ -303,7 +305,7 @@ export function EventEditForm({
               )}
               {!isDrag && confirmingDelete && (
                 <>
-                  <span className='text-sm text-muted-foreground self-center'>
+                  <span className='text-sm text-muted-foreground mr-auto'>
                     Delete this event?
                   </span>
                   <Button
