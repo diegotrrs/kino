@@ -18,13 +18,10 @@ router = APIRouter()
 
 @router.get("/", response_model=list[CalendarResponse])
 def list_calendars(
-    skip: int = 0,
-    limit: int = 100,
     db: connection = Depends(get_db),
-    _user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user),
 ):
-
-    return crud.get_calendars(db, skip=skip, limit=limit)
+    return crud.get_calendars_by_user(db, current_user["id"])
 
 
 @router.get("/{calendar_id}", response_model=CalendarResponse)

@@ -1,6 +1,8 @@
 'use client';
 
-import { navItems }   from '@/lib/nav';
+import { navItems }    from '@/lib/nav';
+import type { CurrentUser } from '@/components/app-shell';
+import { UserButton }  from '@/components/user-button';
 import {
   Tooltip,
   TooltipContent,
@@ -11,7 +13,11 @@ import { cn }          from '@/lib/utils';
 import Link            from 'next/link';
 import { usePathname } from 'next/navigation';
 
-export function DesktopSidebar() {
+interface DesktopSidebarProps {
+  user: CurrentUser | null;
+}
+
+export function DesktopSidebar({ user }: DesktopSidebarProps) {
   const pathname = usePathname();
 
   const mainItems   = navItems.filter((i) => i.section === 'main');
@@ -48,6 +54,7 @@ export function DesktopSidebar() {
       </nav>
 
       <nav className='flex flex-col items-center gap-2'>
+        <UserButton user={user} />
         {bottomItems.map((item) => {
           const Icon     = item.icon;
           const isActive = pathname === item.href;

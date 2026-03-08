@@ -1,3 +1,12 @@
+export interface Calendar {
+  id: number;
+  uuid: string;
+  name: string;
+  created_by: number;
+  created_at: string;
+  updated_at: string | null;
+}
+
 export interface Event {
   id: number;
   uuid: string;

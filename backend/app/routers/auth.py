@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from psycopg2.extensions import connection
 
-from ..auth import create_access_token, verify_password
+from ..auth import create_access_token, get_current_user, verify_password
 from ..crud.users import create_user, get_user_by_email
 from ..database import get_db
 from ..schemas.auth import LoginRequest, SignupRequest, TokenResponse
-from ..schemas.user import UserCreate
+from ..schemas.user import UserCreate, UserResponse
 
 router = APIRouter()
 
@@ -20,6 +20,11 @@ def login(body: LoginRequest, db: connection = Depends(get_db)):
         )
     access_token = create_access_token({"sub": str(user["id"])})
     return TokenResponse(access_token=access_token)
+
+
+@router.get("/me", response_model=UserResponse)
+def me(current_user: dict = Depends(get_current_user)):
+    return current_user
 
 
 @router.post("/signup", response_model=TokenResponse, status_code=201)
