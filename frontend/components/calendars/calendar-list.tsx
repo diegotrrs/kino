@@ -1,5 +1,6 @@
-import type { Calendar }  from '@/lib/types';
-import { CalendarCard }   from './calendar-card';
+import { CalendarDeleteButton } from './calendar-delete-button';
+import type { Calendar }        from '@/lib/types';
+import { CalendarIcon }         from 'lucide-react';
 
 interface CalendarListProps {
   calendars: Calendar[];
@@ -18,9 +19,13 @@ export function CalendarList({ calendars }: CalendarListProps) {
   }
 
   return (
-    <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+    <div className='rounded-lg border divide-y'>
       {calendars.map((calendar) => (
-        <CalendarCard key={calendar.id} calendar={calendar} />
+        <div key={calendar.id} className='flex items-center gap-3 px-4 py-3'>
+          <CalendarIcon className='h-4 w-4 shrink-0 text-muted-foreground' />
+          <span className='flex-1 text-sm font-medium'>{calendar.name}</span>
+          <CalendarDeleteButton calendarId={calendar.id} calendarName={calendar.name} />
+        </div>
       ))}
     </div>
   );

@@ -30,6 +30,10 @@ def create_calendar(db: connection, calendar: CalendarCreate) -> dict:
             data,
         )
         row = cur.fetchone()
+        cur.execute(
+            "INSERT INTO calendar_users (calendar_id, user_id) VALUES (%s, %s)",
+            (row["id"], data["created_by"]),
+        )
         db.commit()
         return row
 
