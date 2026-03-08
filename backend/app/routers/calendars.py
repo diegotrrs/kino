@@ -36,8 +36,9 @@ def get_calendar(calendar_id: int):
 def create_calendar(
     calendar: CalendarCreate,
     db: connection = Depends(get_db),
-    _user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user),
 ):
+    calendar.created_by = current_user["id"]
     return crud.create_calendar(db, calendar)
 
 

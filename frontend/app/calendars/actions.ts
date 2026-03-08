@@ -2,6 +2,7 @@
 
 import { cookies }        from 'next/headers';
 import { revalidatePath } from 'next/cache';
+import { redirect }       from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
@@ -17,6 +18,29 @@ export async function deleteCalendar(id: number) {
   if (!res.ok && res.status !== 204) {
     const text = await res.text();
     throw new Error(`Failed to delete calendar: ${text}`);
+  }
+
+  revalidatePath('/calendars');
+}
+
+export async function createCalendar(name: string) {
+  const cookieStore = await cookies();
+  const token       = cookieStore.get('token')?.value;
+
+  if (!token) redirect('/login');
+
+  const res = await fetch(`${API_BASE_URL}/api/calendars/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ name }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Failed to create calendar: ${text}`);
   }
 
   revalidatePath('/calendars');

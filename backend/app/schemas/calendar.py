@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 class CalendarCreate(BaseModel):
     name: str
-    created_by: int
+    created_by: int = 0
 
 
 class CalendarUpdate(BaseModel):

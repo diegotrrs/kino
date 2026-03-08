@@ -1,4 +1,5 @@
-import { Separator } from '@/components/ui/separator';
+import { CalendarCreateForm } from '@/components/calendars/calendar-create-form';
+import { Separator }          from '@/components/ui/separator';
 
 export default function CreateCalendarPage() {
   return (
@@ -16,7 +17,7 @@ export default function CreateCalendarPage() {
 
           <Separator />
 
-          <p className='text-muted-foreground'>Coming soon.</p>
+          <CalendarCreateForm />
         </div>
       </div>
     </div>
