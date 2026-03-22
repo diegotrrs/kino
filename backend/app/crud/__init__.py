@@ -6,7 +6,9 @@ from .calendars import (
     get_calendar_users,
     get_calendars,
     get_calendars_by_user,
+    get_favourite_calendars,
     remove_user_from_calendar,
+    set_calendar_favourite,
     update_calendar,
 )
 from .events import (
@@ -37,6 +39,7 @@ __all__ = [
     "get_calendar_users",
     "get_calendars",
     "get_calendars_by_user",
+    "get_favourite_calendars",
     "get_event",
     "get_events",
     "get_events_by_calendar",
@@ -44,6 +47,7 @@ __all__ = [
     "get_user_by_email",
     "get_users",
     "remove_user_from_calendar",
+    "set_calendar_favourite",
     "update_calendar",
     "update_event",
 ]

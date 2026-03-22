@@ -7,6 +7,7 @@ from .. import crud
 from ..database import get_db
 from ..schemas.calendar import (
     CalendarCreate,
+    CalendarFavouriteUpdate,
     CalendarResponse,
     CalendarUpdate,
     CalendarUserAdd,
@@ -24,13 +25,22 @@ def list_calendars(
     return crud.get_calendars_by_user(db, current_user["id"])
 
 
+# Must be defined before /{calendar_id} to avoid "favourites" matching as an int
+@router.get("/favourites", response_model=list[CalendarResponse])
+def list_favourite_calendars(
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    return crud.get_favourite_calendars(db, current_user["id"])
+
+
 @router.get("/{calendar_id}", response_model=CalendarResponse)
 def get_calendar(
     calendar_id: int,
     db: connection = Depends(get_db),
-    _user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user),
 ):
-    calendar = crud.get_calendar(db, calendar_id)
+    calendar = crud.get_calendar(db, calendar_id, current_user["id"])
     if calendar is None:
         raise HTTPException(status_code=404, detail="Calendar not found")
     return calendar
@@ -57,6 +67,19 @@ def update_calendar(
     if updated is None:
         raise HTTPException(status_code=404, detail="Calendar not found")
     return updated
+
+
+@router.patch("/{calendar_id}/favourite", response_model=CalendarResponse)
+def toggle_calendar_favourite(
+    calendar_id: int,
+    body: CalendarFavouriteUpdate,
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    updated = crud.set_calendar_favourite(db, calendar_id, current_user["id"], body.is_favourite)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Calendar not found")
+    return crud.get_calendar(db, calendar_id, current_user["id"])
 
 
 @router.delete("/{calendar_id}", status_code=204)

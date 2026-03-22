@@ -5,6 +5,7 @@ export interface Calendar {
   created_by: number;
   created_at: string;
   updated_at: string | null;
+  is_favourite: boolean;
 }
 
 export interface Event {

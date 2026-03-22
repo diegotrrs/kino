@@ -22,6 +22,7 @@ CREATE TABLE calendars (
 CREATE TABLE calendar_users (
     calendar_id INTEGER NOT NULL REFERENCES calendars(id) ON DELETE CASCADE,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    is_favourite BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (calendar_id, user_id)
 );
 

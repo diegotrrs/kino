@@ -13,6 +13,10 @@ class CalendarUpdate(BaseModel):
     name: str | None = None
 
 
+class CalendarFavouriteUpdate(BaseModel):
+    is_favourite: bool
+
+
 class CalendarResponse(BaseModel):
     id: int
     uuid: UUID
@@ -20,6 +24,7 @@ class CalendarResponse(BaseModel):
     created_by: int
     created_at: datetime
     updated_at: datetime | None = None
+    is_favourite: bool = False
 
 
 class CalendarUserAdd(BaseModel):

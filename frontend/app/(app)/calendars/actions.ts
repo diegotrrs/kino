@@ -21,6 +21,7 @@ export async function deleteCalendar(id: number) {
   }
 
   revalidatePath('/calendars');
+  revalidatePath('/home');
 }
 
 export async function createCalendar(name: string) {
@@ -44,4 +45,29 @@ export async function createCalendar(name: string) {
   }
 
   revalidatePath('/calendars');
+  revalidatePath('/home');
+}
+
+export async function toggleFavourite(calendarId: number, isFavourite: boolean) {
+  const cookieStore = await cookies();
+  const token       = cookieStore.get('token')?.value;
+
+  if (!token) redirect('/login');
+
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarId}/favourite`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ is_favourite: isFavourite }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Failed to update favourite: ${text}`);
+  }
+
+  revalidatePath('/home');
+  revalidatePath(`/calendars/${calendarId}`);
 }

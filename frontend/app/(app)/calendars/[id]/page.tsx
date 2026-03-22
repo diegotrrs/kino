@@ -1,12 +1,13 @@
-import Calendar           from '@/components/calendar-no-ssr';
-import { Separator }      from '@/components/ui/separator';
-import { EventsProvider } from '@/context/events-context';
+import Calendar                      from '@/components/calendar-no-ssr';
+import { CalendarFavouriteButton }   from '@/components/calendars/calendar-favourite-button';
+import { Separator }                 from '@/components/ui/separator';
+import { EventsProvider }            from '@/context/events-context';
 import type { Calendar as CalendarType, Event } from '@/lib/types';
-import { CalendarEvent }  from '@/utils/data';
-import { ArrowLeft }      from 'lucide-react';
-import { cookies }        from 'next/headers';
-import Link               from 'next/link';
-import { redirect }       from 'next/navigation';
+import { CalendarEvent }             from '@/utils/data';
+import { ArrowLeft }                 from 'lucide-react';
+import { cookies }                   from 'next/headers';
+import Link                          from 'next/link';
+import { redirect }                  from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
@@ -33,7 +34,7 @@ async function getToken(): Promise<string> {
   return token;
 }
 
-async function getCalendar(calendarId: number, token: string): Promise<CalendarType> {
+async function getCalendar(calendarId: number, token: string): Promise<CalendarType & { is_favourite: boolean }> {
   const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarId}`, {
     cache: 'no-store',
     headers: { Authorization: `Bearer ${token}` },
@@ -87,9 +88,15 @@ export default async function CalendarPage({
                 <ArrowLeft className='h-4 w-4' />
                 My Calendars
               </Link>
-              <h2 className='text-2xl font-semibold tracking-tight md:text-3xl select-none cursor-default'>
-                {calendar.name}
-              </h2>
+              <div className='flex items-center gap-1'>
+                <h2 className='text-2xl font-semibold tracking-tight md:text-3xl select-none cursor-default'>
+                  {calendar.name}
+                </h2>
+                <CalendarFavouriteButton
+                  calendarId={calendarId}
+                  isFavourite={calendar.is_favourite}
+                />
+              </div>
             </div>
             <Separator />
             <Calendar />

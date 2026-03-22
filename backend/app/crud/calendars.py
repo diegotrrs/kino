@@ -3,9 +3,20 @@ from psycopg2.extensions import connection
 from ..schemas.calendar import CalendarCreate, CalendarUpdate
 
 
-def get_calendar(db: connection, calendar_id: int) -> dict | None:
+def get_calendar(db: connection, calendar_id: int, user_id: int | None = None) -> dict | None:
     with db.cursor() as cur:
-        cur.execute("SELECT * FROM calendars WHERE id = %s", (calendar_id,))
+        if user_id is not None:
+            cur.execute(
+                """
+                SELECT c.*, COALESCE(cu.is_favourite, FALSE) AS is_favourite
+                FROM calendars c
+                LEFT JOIN calendar_users cu ON c.id = cu.calendar_id AND cu.user_id = %s
+                WHERE c.id = %s
+                """,
+                (user_id, calendar_id),
+            )
+        else:
+            cur.execute("SELECT * FROM calendars WHERE id = %s", (calendar_id,))
         return cur.fetchone()
 
 
@@ -35,7 +46,7 @@ def create_calendar(db: connection, calendar: CalendarCreate) -> dict:
             (row["id"], data["created_by"]),
         )
         db.commit()
-        return row
+        return {**row, "is_favourite": False}
 
 
 def update_calendar(
@@ -103,7 +114,7 @@ def get_calendars_by_user(db: connection, user_id: int) -> list[dict]:
     with db.cursor() as cur:
         cur.execute(
             """
-            SELECT c.* FROM calendars c
+            SELECT c.*, cu.is_favourite FROM calendars c
             JOIN calendar_users cu ON c.id = cu.calendar_id
             WHERE cu.user_id = %s
             ORDER BY c.id
@@ -111,6 +122,36 @@ def get_calendars_by_user(db: connection, user_id: int) -> list[dict]:
             (user_id,),
         )
         return cur.fetchall()
+
+
+def get_favourite_calendars(db: connection, user_id: int) -> list[dict]:
+    with db.cursor() as cur:
+        cur.execute(
+            """
+            SELECT c.*, cu.is_favourite FROM calendars c
+            JOIN calendar_users cu ON c.id = cu.calendar_id
+            WHERE cu.user_id = %s AND cu.is_favourite = TRUE
+            ORDER BY c.id
+            """,
+            (user_id,),
+        )
+        return cur.fetchall()
+
+
+def set_calendar_favourite(
+    db: connection, calendar_id: int, user_id: int, is_favourite: bool
+) -> bool:
+    with db.cursor() as cur:
+        cur.execute(
+            """
+            UPDATE calendar_users SET is_favourite = %s
+            WHERE calendar_id = %s AND user_id = %s
+            """,
+            (is_favourite, calendar_id, user_id),
+        )
+        updated = cur.rowcount > 0
+        db.commit()
+        return updated
 
 
 def get_calendar_users(db: connection, calendar_id: int) -> list[dict]:
