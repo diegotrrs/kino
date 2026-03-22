@@ -1,7 +1,11 @@
-import { CalendarDeleteButton } from './calendar-delete-button';
+import { Button }               from '@/components/ui/button';
 import type { Calendar }        from '@/lib/types';
-import { CalendarIcon }         from 'lucide-react';
+import {
+  CalendarIcon,
+  PlusIcon
+}                               from 'lucide-react';
 import Link                     from 'next/link';
+import { CalendarDeleteButton } from './calendar-delete-button';
 
 interface CalendarListProps {
   calendars: Calendar[];
@@ -10,11 +14,21 @@ interface CalendarListProps {
 export function CalendarList({ calendars }: CalendarListProps) {
   if (calendars.length === 0) {
     return (
-      <div className='flex flex-col items-center justify-center rounded-xl border border-dashed p-12 text-center'>
-        <p className='text-lg font-medium'>No calendars yet</p>
-        <p className='text-sm text-muted-foreground'>
-          Create your first calendar to get started.
-        </p>
+      <div className='flex flex-col items-center justify-center rounded-xl border border-dashed p-12 text-center gap-3'>
+        <div>
+          <p className='text-lg font-medium'>No calendars yet</p>
+          <p className='text-sm text-muted-foreground'>
+            Create your first calendar to get started.
+          </p>
+        </div>
+        {(
+          <Button asChild size='sm'>
+            <Link href='/calendars/create'>
+              <PlusIcon className='h-4 w-4' />
+              Create a calendar
+            </Link>
+          </Button>
+        )}
       </div>
     );
   }

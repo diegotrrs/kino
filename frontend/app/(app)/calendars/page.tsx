@@ -1,7 +1,10 @@
 import { CalendarList }  from '@/components/calendars/calendar-list';
+import { Button }        from '@/components/ui/button';
 import { Separator }     from '@/components/ui/separator';
 import type { Calendar } from '@/lib/types';
+import { PlusIcon }      from 'lucide-react';
 import { cookies }       from 'next/headers';
+import Link              from 'next/link';
 import { redirect }      from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
@@ -33,13 +36,23 @@ export default async function CalendarsPage() {
     <div className='py-4'>
       <div className='flex flex-col w-full items-center cursor-default'>
         <div className='w-full px-5 space-y-5'>
-          <div className='space-y-0 cursor-default'>
-            <h2 className='text-2xl font-semibold tracking-tight md:text-3xl select-none cursor-default'>
-              My Calendars
-            </h2>
-            <p className='text-xs md:text-sm font-medium text-muted-foreground select-none cursor-default'>
-              Manage your calendars.
-            </p>
+          <div className='flex items-start justify-between'>
+            <div className='space-y-0 cursor-default'>
+              <h2 className='text-2xl font-semibold tracking-tight md:text-3xl select-none cursor-default'>
+                My Calendars
+              </h2>
+              <p className='text-xs md:text-sm font-medium text-muted-foreground select-none cursor-default'>
+                Manage your calendars.
+              </p>
+            </div>
+            {calendars.length > 0 && (
+              <Button asChild size='sm' variant='outline'>
+                <Link href='/calendars/create'>
+                  <PlusIcon className='h-4 w-4' />
+                  New Calendar
+                </Link>
+              </Button>
+            )}
           </div>
 
           <Separator />

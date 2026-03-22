@@ -1,8 +1,11 @@
 import { CalendarList } from '@/components/calendars/calendar-list';
-import { Separator }    from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import type { Calendar } from '@/lib/types';
-import { cookies }      from 'next/headers';
-import { redirect }     from 'next/navigation';
+import { PlusIcon } from 'lucide-react';
+import { cookies } from 'next/headers';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
@@ -24,7 +27,7 @@ async function getCalendars(token: string): Promise<Calendar[]> {
 }
 
 export default async function HomePage() {
-  const token     = await getAuthToken();
+  const token = await getAuthToken();
   const calendars = await getCalendars(token);
 
   const favourites = calendars.filter((c) => c.is_favourite);
@@ -63,9 +66,19 @@ export default async function HomePage() {
         </section>
 
         <section className='space-y-3'>
-          <h3 className='text-base font-semibold tracking-tight'>
-            My Calendars
-          </h3>
+          <div className='flex items-center justify-between'>
+            <h3 className='text-base font-semibold tracking-tight'>
+              My Calendars
+            </h3>
+            {calendars.length > 0 && (
+              <Button asChild size='sm' variant='outline'>
+                <Link href='/calendars/create'>
+                  <PlusIcon className='h-4 w-4' />
+                  New Calendar
+                </Link>
+              </Button>
+            )}
+          </div>
           <CalendarList calendars={calendars} />
         </section>
 
