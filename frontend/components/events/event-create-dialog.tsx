@@ -1,5 +1,5 @@
 'use client';
-import { createEvent }    from '@/app/events/actions';
+import { createEvent }    from '@/app/(app)/events/actions';
 import { DateTimePicker } from '@/components/date-picker';
 import { Button }         from '@/components/ui/button';
 import {

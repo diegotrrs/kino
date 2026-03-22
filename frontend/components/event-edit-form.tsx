@@ -2,7 +2,7 @@
 import {
   deleteEvent as deleteEventAction,
   updateEvent
-}                         from '@/app/events/actions';
+}                         from '@/app/(app)/events/actions';
 import {
   AlertDialog,
   AlertDialogAction,

@@ -1,12 +1,11 @@
 import './globals.css';
-import { AppShell }      from '@/components/app-shell';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster }       from '@/components/ui/toaster';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Kino',
-  description: 'An example template on how to use ShadCn FullCalendar.',
+  title: 'Kino Calendars — Plan Your Perfect Holiday',
+  description: 'Create dedicated holiday calendars, map out every day of your trip, and never double-book a beach day again.',
 };
 
 export default function RootLayout({
@@ -23,7 +22,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AppShell>{children}</AppShell>
+          {children}
           <Toaster />
         </ThemeProvider>
       </body>

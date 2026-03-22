@@ -1,6 +1,6 @@
 'use client';
 
-import { createCalendar } from '@/app/calendars/actions';
+import { createCalendar } from '@/app/(app)/calendars/actions';
 import { Button }         from '@/components/ui/button';
 import {
   Form,

@@ -1,6 +1,6 @@
 'use client';
 
-import { deleteCalendar }  from '@/app/calendars/actions';
+import { deleteCalendar }  from '@/app/(app)/calendars/actions';
 import {
   AlertDialog,
   AlertDialogCancel,

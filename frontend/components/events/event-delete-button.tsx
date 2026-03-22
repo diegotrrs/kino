@@ -1,5 +1,5 @@
 'use client';
-import { deleteEvent }   from '@/app/events/actions';
+import { deleteEvent }   from '@/app/(app)/events/actions';
 import {
   AlertDialog,
   AlertDialogCancel,
