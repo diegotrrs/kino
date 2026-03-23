@@ -122,7 +122,11 @@ td.fc-daygrid-day.fc-day.fc-day-today {
 }
 
 .fc-event {
-  @apply flex border-none min-w-full;
+  @apply flex border-none;
+}
+
+.fc-event:not(.fc-event-dragging) {
+  min-width: 100%;
 }
 
 .fc-daygrid-event {

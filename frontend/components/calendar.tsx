@@ -1,6 +1,8 @@
 'use client';
 import '@/styles/calendar.css';
+import { updateEvent }        from '@/app/(app)/events/actions';
 import { useEvents }          from '@/context/events-context';
+import { useToast }           from '@/hooks/use-toast';
 import { getDateFromMinutes } from '@/lib/utils';
 import { goToday }            from '@/utils/calendar-utils';
 import {
@@ -16,6 +18,7 @@ import {
   EventClickArg,
   EventContentArg
 }                             from '@fullcalendar/core/index.js';
+import { format }             from 'date-fns';
 import dayGridPlugin          from '@fullcalendar/daygrid';
 import interactionPlugin      from '@fullcalendar/interaction';
 import listPlugin             from '@fullcalendar/list';
@@ -43,8 +46,9 @@ type DayRenderProps = {
 };
 
 export default function Calendar() {
-  const { events, setEventAddOpen, setEventEditOpen, setEventViewOpen } =
+  const { events, calendarId, addEvent, deleteEvent, setEventAddOpen, setEventEditOpen, setEventViewOpen } =
     useEvents();
+  const { toast } = useToast();
 
   const calendarRef = useRef<FullCalendar | null>(null);
   const [viewedDate, setViewedDate] = useState(new Date());
@@ -74,29 +78,39 @@ export default function Calendar() {
     setEventEditOpen(true);
   };
 
-  const handleEventChange = (info: EventChangeArg) => {
-    const event: CalendarEvent = {
-      id: info.event.id,
-      title: info.event.title,
-      description: info.event.extendedProps.description,
+  const handleEventChange = async (info: EventChangeArg) => {
+    const storedEvent = events.find((e) => e.id === info.event.id);
+    const newStart = info.event.start!;
+    const newEnd   = info.event.end ?? storedEvent?.end ?? new Date(newStart.getTime() + 60 * 60 * 1000);
+
+    const newEvent: CalendarEvent = {
+      id:              info.event.id,
+      title:           info.event.title,
+      description:     info.event.extendedProps.description,
       backgroundColor: info.event.backgroundColor,
-      start: info.event.start!,
-      end: info.event.end!,
+      start:           newStart,
+      end:             newEnd,
     };
 
-    const oldEvent: CalendarEvent = {
-      id: info.oldEvent.id,
-      title: info.oldEvent.title,
-      description: info.oldEvent.extendedProps.description,
-      backgroundColor: info.oldEvent.backgroundColor,
-      start: info.oldEvent.start!,
-      end: info.oldEvent.end!,
-    };
+    if (calendarId !== undefined) {
+      try {
+        await updateEvent(Number(info.event.id), {
+          title:       info.event.title,
+          description: info.event.extendedProps.description,
+          date:        format(newStart, 'yyyy-MM-dd'),
+          start_time:  format(newStart, 'HH:mm:ss'),
+          end_time:    format(newEnd, 'HH:mm:ss'),
+          color:       info.event.backgroundColor,
+        });
+      } catch {
+        info.revert();
+        toast({ variant: 'destructive', title: 'Failed to save event' });
+        return;
+      }
+    }
 
-    setIsDrag(true);
-    setSelectedOldEvent(oldEvent);
-    setSelectedEvent(event);
-    setEventEditOpen(true);
+    deleteEvent(info.event.id);
+    addEvent(newEvent);
   };
 
   const EventItem = ({ info }: EventItemProps) => {
