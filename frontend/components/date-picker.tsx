@@ -35,10 +35,15 @@ import {
 }                             from 'lucide-react';
 import * as React             from 'react';
 import {
+  useEffect,
   useImperativeHandle,
-  useRef
+  useRef,
+  useState
 }                             from 'react';
-import { DayPicker }          from 'react-day-picker';
+import {
+  DayPicker,
+  useDayPicker
+}                             from 'react-day-picker';
 
 // ---------- utils start ----------
 /**
@@ -287,19 +292,16 @@ function Calendar({
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn('p-3', className)}
+      fixedWeeks
       classNames={{
         months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
         month: 'space-y-4',
+        month_caption: 'w-full',
         caption: 'flex justify-center pt-1 relative items-center',
         caption_label: 'text-sm font-medium',
-        nav: 'space-x-1 flex items-center',
-        nav_button: cn(
-          buttonVariants({ variant: 'outline' }),
-          'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100'
-        ),
-        nav_button_previous: 'absolute left-1',
-        nav_button_next: 'absolute right-1',
+        nav: 'hidden',
         table: 'w-full border-collapse space-y-1',
+        month_grid: 'w-full border-collapse space-y-1',
         head_row: 'flex',
         head_cell:
           'text-muted-foreground rounded-md w-8 font-normal text-[0.8rem] text-center',
@@ -318,20 +320,36 @@ function Calendar({
           buttonVariants({ variant: 'ghost' }),
           'h-8 w-8 p-0 font-normal aria-selected:opacity-100'
         ),
+        day_button: cn(
+          buttonVariants({ variant: 'ghost' }),
+          'h-8 w-8 p-0 font-normal aria-selected:opacity-100'
+        ),
         day_range_start: 'day-range-start',
         day_range_end: 'day-range-end',
+        range_start: 'day-range-start',
+        range_end: 'day-range-end',
+        selected:
+          'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-md',
         day_selected:
           'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
+        today: 'bg-accent text-accent-foreground',
         day_today: 'bg-accent text-accent-foreground',
+        outside:
+          'day-outside text-muted-foreground aria-selected:bg-accent/50 aria-selected:text-muted-foreground',
         day_outside:
           'day-outside text-muted-foreground aria-selected:bg-accent/50 aria-selected:text-muted-foreground',
+        disabled: 'text-muted-foreground opacity-50',
         day_disabled: 'text-muted-foreground opacity-50',
+        range_middle:
+          'aria-selected:bg-accent aria-selected:text-accent-foreground',
         day_range_middle:
           'aria-selected:bg-accent aria-selected:text-accent-foreground',
+        hidden: 'invisible',
         day_hidden: 'invisible',
         ...classNames,
       }}
       components={{
+        Nav: () => <></>,
         IconLeft: ({ ...props }) => (
           <ChevronLeft className='h-4 w-4' {...props} />
         ),
@@ -343,49 +361,70 @@ function Calendar({
         }: {
           calendarMonth: { date: Date };
         }) => {
+          const { goToMonth, previousMonth, nextMonth } = useDayPicker();
           return (
-            <div className='inline-flex gap-2'>
-              <Select
-                defaultValue={calendarMonth.date.getMonth().toString()}
-                onValueChange={(value) => {
-                  const newDate = new Date(calendarMonth.date);
-                  newDate.setMonth(Number.parseInt(value, 10));
-                  props.onMonthChange?.(newDate);
-                }}
+            <div className='flex w-full items-center justify-between pt-1'>
+              <Button
+                variant='outline'
+                type='button'
+                className='h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100'
+                onClick={() => previousMonth && goToMonth(previousMonth)}
+                disabled={!previousMonth}
               >
-                <SelectTrigger className='w-fit gap-1 border-none p-0 focus:bg-accent focus:text-accent-foreground'>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {MONTHS.map((month) => (
-                    <SelectItem
-                      key={month.value}
-                      value={month.value.toString()}
-                    >
-                      {month.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select
-                defaultValue={calendarMonth.date.getFullYear().toString()}
-                onValueChange={(value) => {
-                  const newDate = new Date(calendarMonth.date);
-                  newDate.setFullYear(Number.parseInt(value, 10));
-                  props.onMonthChange?.(newDate);
-                }}
+                <ChevronLeft className='h-4 w-4' />
+              </Button>
+              <div className='flex gap-2'>
+                <Select
+                  value={calendarMonth.date.getMonth().toString()}
+                  onValueChange={(value) => {
+                    const newDate = new Date(calendarMonth.date);
+                    newDate.setMonth(Number.parseInt(value, 10));
+                    goToMonth(newDate);
+                  }}
+                >
+                  <SelectTrigger className='w-fit gap-1 border-none pl-2 pr-1 py-0 focus:bg-accent focus:text-accent-foreground'>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MONTHS.map((month) => (
+                      <SelectItem
+                        key={month.value}
+                        value={month.value.toString()}
+                      >
+                        {month.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={calendarMonth.date.getFullYear().toString()}
+                  onValueChange={(value) => {
+                    const newDate = new Date(calendarMonth.date);
+                    newDate.setFullYear(Number.parseInt(value, 10));
+                    goToMonth(newDate);
+                  }}
+                >
+                  <SelectTrigger className='w-fit gap-1 border-none p-0 focus:bg-accent focus:text-accent-foreground'>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {YEARS.map((year) => (
+                      <SelectItem key={year.value} value={year.value.toString()}>
+                        {year.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button
+                variant='outline'
+                type='button'
+                className='h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100'
+                onClick={() => nextMonth && goToMonth(nextMonth)}
+                disabled={!nextMonth}
               >
-                <SelectTrigger className='w-fit gap-1 border-none p-0 focus:bg-accent focus:text-accent-foreground'>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {YEARS.map((year) => (
-                    <SelectItem key={year.value} value={year.value.toString()}>
-                      {year.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                <ChevronRight className='h-4 w-4' />
+              </Button>
             </div>
           );
         },
@@ -742,7 +781,14 @@ const DateTimePicker = React.forwardRef<
     ref
   ) => {
     const [month, setMonth] = React.useState<Date>(value ?? new Date());
+    const [open, setOpen] = useState(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
+
+    // Sync the displayed month when the value changes (e.g. on form reset)
+    useEffect(() => {
+      if (value) setMonth(value);
+    }, [value]);
+
     /**
      * carry over the current time when a user clicks a new day
      * instead of resetting to 00:00
@@ -752,6 +798,7 @@ const DateTimePicker = React.forwardRef<
       if (!value) {
         onChange?.(newDay);
         setMonth(newDay);
+        setOpen(false);
         return;
       }
       const diff = newDay.getTime() - value.getTime();
@@ -759,6 +806,7 @@ const DateTimePicker = React.forwardRef<
       const newDateFull = add(value, { days: Math.ceil(diffInDays) });
       onChange?.(newDateFull);
       setMonth(newDateFull);
+      setOpen(false);
     };
 
     useImperativeHandle(
@@ -791,7 +839,7 @@ const DateTimePicker = React.forwardRef<
     }
 
     return (
-      <Popover>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild disabled={disabled}>
           <Button
             variant='outline'
@@ -824,7 +872,7 @@ const DateTimePicker = React.forwardRef<
             selected={value}
             month={month}
             onSelect={(d) => handleSelect(d)}
-            onMonthChange={handleSelect}
+            onMonthChange={setMonth}
             yearRange={yearRange}
             locale={locale}
             {...props}
