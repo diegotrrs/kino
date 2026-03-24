@@ -163,8 +163,8 @@ export default function Calendar() {
           <div className='flex flex-col space-y-0.5 rounded-sm items-center w-full text-xs sm:text-sm md:text-md'>
             <p className='flex font-semibold'>{weekday}</p>
             {info.isToday ? (
-              <div className='flex bg-black dark:bg-white h-6 w-6 rounded-full items-center justify-center text-xs sm:text-sm md:text-md'>
-                <p className='font-light dark:text-black text-white'>
+              <div className='flex bg-foreground h-6 w-6 rounded-full items-center justify-center text-xs sm:text-sm md:text-md'>
+                <p className='font-light text-background'>
                   {info.date.getDate()}
                 </p>
               </div>
@@ -193,7 +193,7 @@ export default function Calendar() {
     return (
       <div className='flex'>
         {info.view.type == 'dayGridMonth' && info.isToday ? (
-          <div className='flex h-7 w-7 rounded-full bg-black dark:bg-white items-center justify-center text-sm text-white dark:text-black'>
+          <div className='flex h-7 w-7 rounded-full bg-foreground items-center justify-center text-sm text-background'>
             {info.dayNumberText}
           </div>
         ) : (
