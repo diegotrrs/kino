@@ -12,6 +12,7 @@ class EventBase(BaseModel):
     description: str | None = None
     date: Date
     start_time: Time
+    end_date: Date | None = None
     end_time: Time | None = None
     location: str | None = None
     color: str = '#AEC6E4'
@@ -26,6 +27,7 @@ class EventUpdate(BaseModel):
     description: str | None = None
     date: Date | None = None
     start_time: Time | None = None
+    end_date: Date | None = None
     end_time: Time | None = None
     location: str | None = None
     color: str | None = None

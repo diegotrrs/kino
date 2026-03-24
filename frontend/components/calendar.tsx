@@ -99,6 +99,7 @@ export default function Calendar() {
           description: info.event.extendedProps.description,
           date:        format(newStart, 'yyyy-MM-dd'),
           start_time:  format(newStart, 'HH:mm:ss'),
+          end_date:    format(newEnd, 'yyyy-MM-dd'),
           end_time:    format(newEnd, 'HH:mm:ss'),
           color:       info.event.backgroundColor,
         });

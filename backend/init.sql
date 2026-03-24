@@ -34,6 +34,7 @@ CREATE TABLE events (
     description TEXT,
     date DATE NOT NULL,
     start_time TIME NOT NULL,
+    end_date DATE,
     end_time TIME,
     location VARCHAR(255),
     color VARCHAR(7) NOT NULL DEFAULT '#AEC6E4',

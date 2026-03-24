@@ -101,6 +101,7 @@ export function EventAddForm({ start, end }: EventAddFormProps) {
           description: data.description,
           date: format(data.start, 'yyyy-MM-dd'),
           start_time: format(data.start, 'HH:mm:ss'),
+          end_date: format(data.end, 'yyyy-MM-dd'),
           end_time: format(data.end, 'HH:mm:ss'),
           color: data.color,
         });

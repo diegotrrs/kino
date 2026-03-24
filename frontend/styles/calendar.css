@@ -122,11 +122,11 @@ td.fc-daygrid-day.fc-day.fc-day-today {
 }
 
 .fc-event {
-  @apply flex border-none;
+  @apply flex border-none min-w-full;
 }
 
-.fc-event:not(.fc-event-dragging) {
-  min-width: 100%;
+.fc-event.fc-event-dragging {
+  min-width: 0 !important;
 }
 
 .fc-daygrid-event {
@@ -152,10 +152,9 @@ td.fc-daygrid-day.fc-day {
   color: black;
 }
 
-/* Ribbon clips inside the day frame */
+/* Keep position: relative so the month ribbon can be absolutely positioned */
 .fc-daygrid-day-frame {
   position: relative;
-  overflow: hidden;
 }
 
 /* Force intermediate containers to static so ribbon positions relative to the frame */

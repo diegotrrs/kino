@@ -12,9 +12,10 @@ import { redirect }                  from 'next/navigation';
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
 function dbEventToCalendarEvent(event: Event): CalendarEvent {
-  const start = new Date(`${event.date}T${event.start_time}`);
-  const end   = event.end_time
-    ? new Date(`${event.date}T${event.end_time}`)
+  const start   = new Date(`${event.date}T${event.start_time}`);
+  const endDate = event.end_date ?? event.date;
+  const end     = event.end_time
+    ? new Date(`${endDate}T${event.end_time}`)
     : new Date(start.getTime() + 60 * 60 * 1000);
 
   return {
