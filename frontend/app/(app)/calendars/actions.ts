@@ -48,6 +48,31 @@ export async function createCalendar(name: string) {
   revalidatePath('/home');
 }
 
+export async function updateCalendar(id: number, name: string) {
+  const cookieStore = await cookies();
+  const token       = cookieStore.get('token')?.value;
+
+  if (!token) redirect('/login');
+
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ name }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Failed to update calendar: ${text}`);
+  }
+
+  revalidatePath('/calendars');
+  revalidatePath(`/calendars/${id}`);
+  revalidatePath('/home');
+}
+
 export async function toggleFavourite(calendarId: number, isFavourite: boolean) {
   const cookieStore = await cookies();
   const token       = cookieStore.get('token')?.value;

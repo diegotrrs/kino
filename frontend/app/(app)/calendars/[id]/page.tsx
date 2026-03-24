@@ -1,10 +1,11 @@
 import Calendar                      from '@/components/calendar-no-ssr';
 import { CalendarFavouriteButton }   from '@/components/calendars/calendar-favourite-button';
+import { Button }                    from '@/components/ui/button';
 import { Separator }                 from '@/components/ui/separator';
 import { EventsProvider }            from '@/context/events-context';
 import type { Calendar as CalendarType, Event } from '@/lib/types';
 import { CalendarEvent }             from '@/utils/data';
-import { ArrowLeft }                 from 'lucide-react';
+import { ArrowLeft, Pencil }         from 'lucide-react';
 import { cookies }                   from 'next/headers';
 import Link                          from 'next/link';
 import { redirect }                  from 'next/navigation';
@@ -97,6 +98,11 @@ export default async function CalendarPage({
                   calendarId={calendarId}
                   isFavourite={calendar.is_favourite}
                 />
+                <Button variant='ghost' size='icon' asChild>
+                  <Link href={`/calendars/${calendarId}/edit`} aria-label='Edit calendar'>
+                    <Pencil className='h-5 w-5 text-muted-foreground' />
+                  </Link>
+                </Button>
               </div>
             </div>
             <Separator />
