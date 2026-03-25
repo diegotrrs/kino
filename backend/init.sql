@@ -19,6 +19,16 @@ CREATE TABLE calendars (
     updated_at TIMESTAMPTZ
 );
 
+CREATE TABLE deleted_calendars (
+    id INTEGER PRIMARY KEY,
+    uuid UUID NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
+    created_by INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL,
+    updated_at TIMESTAMPTZ,
+    deleted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE calendar_users (
     calendar_id INTEGER NOT NULL REFERENCES calendars(id) ON DELETE CASCADE,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -40,6 +50,23 @@ CREATE TABLE events (
     color VARCHAR(7) NOT NULL DEFAULT '#AEC6E4',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ
+);
+
+CREATE TABLE deleted_events (
+    id INTEGER PRIMARY KEY,
+    uuid UUID NOT NULL UNIQUE,
+    calendar_id INTEGER NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_date DATE,
+    end_time TIME,
+    location VARCHAR(255),
+    color VARCHAR(7) NOT NULL DEFAULT '#AEC6E4',
+    created_at TIMESTAMPTZ NOT NULL,
+    updated_at TIMESTAMPTZ,
+    deleted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- Seed default user and calendar

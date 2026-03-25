@@ -27,5 +27,14 @@ class CalendarResponse(BaseModel):
     is_favourite: bool = False
 
 
+class DeletedCalendarResponse(BaseModel):
+    id: int
+    uuid: UUID
+    name: str
+    created_by: int
+    created_at: datetime
+    deleted_at: datetime
+
+
 class CalendarUserAdd(BaseModel):
     user_id: int

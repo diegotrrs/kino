@@ -11,6 +11,7 @@ from ..schemas.calendar import (
     CalendarResponse,
     CalendarUpdate,
     CalendarUserAdd,
+    DeletedCalendarResponse,
 )
 from ..schemas.user import UserResponse
 
@@ -25,13 +26,21 @@ def list_calendars(
     return crud.get_calendars_by_user(db, current_user["id"])
 
 
-# Must be defined before /{calendar_id} to avoid "favourites" matching as an int
+# Must be defined before /{calendar_id} to avoid string paths matching as an int
 @router.get("/favourites", response_model=list[CalendarResponse])
 def list_favourite_calendars(
     db: connection = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
     return crud.get_favourite_calendars(db, current_user["id"])
+
+
+@router.get("/deleted", response_model=list[DeletedCalendarResponse])
+def list_deleted_calendars(
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    return crud.get_deleted_calendars_by_user(db, current_user["id"])
 
 
 @router.get("/{calendar_id}", response_model=CalendarResponse)
@@ -80,6 +89,16 @@ def toggle_calendar_favourite(
     if not updated:
         raise HTTPException(status_code=404, detail="Calendar not found")
     return crud.get_calendar(db, calendar_id, current_user["id"])
+
+
+@router.post("/{calendar_id}/restore", status_code=204)
+def restore_calendar(
+    calendar_id: int,
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    if not crud.restore_calendar(db, calendar_id, current_user["id"]):
+        raise HTTPException(status_code=404, detail="Deleted calendar not found")
 
 
 @router.delete("/{calendar_id}", status_code=204)

@@ -2,7 +2,8 @@
 
 import { Separator }    from '@/components/ui/separator';
 import { cn }           from '@/lib/utils';
-import { Monitor, Moon, Sun } from 'lucide-react';
+import { ChevronRight, Monitor, Moon, Sun } from 'lucide-react';
+import Link             from 'next/link';
 import { useTheme }     from 'next-themes';
 import { useEffect, useState } from 'react';
 
@@ -55,6 +56,19 @@ export default function SettingsPage() {
             <p className='text-xs text-muted-foreground'>
               System uses your device&apos;s appearance setting.
             </p>
+          </div>
+
+          <Separator />
+
+          <div className='space-y-2'>
+            <h3 className='text-sm font-medium'>Calendars</h3>
+            <Link
+              href='/settings/deleted-calendars'
+              className='flex items-center justify-between rounded-md border px-4 py-3 text-sm hover:bg-accent transition-colors'
+            >
+              <span>Recover deleted calendars</span>
+              <ChevronRight className='h-4 w-4 text-muted-foreground' />
+            </Link>
           </div>
         </div>
       </div>

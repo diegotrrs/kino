@@ -73,10 +73,81 @@ def update_calendar(
 
 def delete_calendar(db: connection, calendar_id: int) -> bool:
     with db.cursor() as cur:
+        # Archive calendar first (check it exists)
+        cur.execute(
+            """
+            INSERT INTO deleted_calendars (id, uuid, name, created_by, created_at, updated_at)
+            SELECT id, uuid, name, created_by, created_at, updated_at
+            FROM calendars WHERE id = %s
+            """,
+            (calendar_id,),
+        )
+        if cur.rowcount == 0:
+            db.rollback()
+            return False
+        # Archive events before deleting calendar (cascade would wipe them)
+        cur.execute(
+            """
+            INSERT INTO deleted_events (id, uuid, calendar_id, title, description, date,
+                start_time, end_date, end_time, location, color, created_at, updated_at)
+            SELECT id, uuid, calendar_id, title, description, date,
+                start_time, end_date, end_time, location, color, created_at, updated_at
+            FROM events WHERE calendar_id = %s
+            """,
+            (calendar_id,),
+        )
+        # Delete calendar — cascade removes events and calendar_users
         cur.execute("DELETE FROM calendars WHERE id = %s", (calendar_id,))
-        deleted = cur.rowcount > 0
         db.commit()
-        return deleted
+        return True
+
+
+def get_deleted_calendars_by_user(db: connection, user_id: int) -> list[dict]:
+    with db.cursor() as cur:
+        cur.execute(
+            """
+            SELECT * FROM deleted_calendars
+            WHERE created_by = %s
+            ORDER BY deleted_at DESC
+            """,
+            (user_id,),
+        )
+        return cur.fetchall()
+
+
+def restore_calendar(db: connection, calendar_id: int, user_id: int) -> bool:
+    with db.cursor() as cur:
+        # Restore calendar row first (events FK requires parent to exist)
+        cur.execute(
+            """
+            INSERT INTO calendars (id, uuid, name, created_by, created_at, updated_at)
+            SELECT id, uuid, name, created_by, created_at, updated_at
+            FROM deleted_calendars WHERE id = %s AND created_by = %s
+            """,
+            (calendar_id, user_id),
+        )
+        if cur.rowcount == 0:
+            db.rollback()
+            return False
+        cur.execute("DELETE FROM deleted_calendars WHERE id = %s", (calendar_id,))
+        cur.execute(
+            "INSERT INTO calendar_users (calendar_id, user_id) VALUES (%s, %s)",
+            (calendar_id, user_id),
+        )
+        # Restore events
+        cur.execute(
+            """
+            INSERT INTO events (id, uuid, calendar_id, title, description, date,
+                start_time, end_date, end_time, location, color, created_at, updated_at)
+            SELECT id, uuid, calendar_id, title, description, date,
+                start_time, end_date, end_time, location, color, created_at, updated_at
+            FROM deleted_events WHERE calendar_id = %s
+            """,
+            (calendar_id,),
+        )
+        cur.execute("DELETE FROM deleted_events WHERE calendar_id = %s", (calendar_id,))
+        db.commit()
+        return True
 
 
 def add_user_to_calendar(
