@@ -1,28 +1,28 @@
-import Calendar                      from '@/components/calendar-no-ssr';
-import { CalendarFavouriteButton }   from '@/components/calendars/calendar-favourite-button';
-import { Button }                    from '@/components/ui/button';
-import { Separator }                 from '@/components/ui/separator';
-import { EventsProvider }            from '@/context/events-context';
+import Calendar from '@/components/calendar-no-ssr';
+import { CalendarFavouriteButton } from '@/components/calendars/calendar-favourite-button';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { EventsProvider } from '@/context/events-context';
 import type { Calendar as CalendarType, Event } from '@/lib/types';
-import { CalendarEvent }             from '@/utils/data';
-import { ArrowLeft, Pencil }         from 'lucide-react';
-import { cookies }                   from 'next/headers';
-import Link                          from 'next/link';
-import { redirect }                  from 'next/navigation';
+import { CalendarEvent } from '@/utils/data';
+import { ArrowLeft, Pencil } from 'lucide-react';
+import { cookies } from 'next/headers';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
 function dbEventToCalendarEvent(event: Event): CalendarEvent {
-  const start   = new Date(`${event.date}T${event.start_time}`);
+  const start = new Date(`${event.date}T${event.start_time}`);
   const endDate = event.end_date ?? event.date;
-  const end     = event.end_time
+  const end = event.end_time
     ? new Date(`${endDate}T${event.end_time}`)
     : new Date(start.getTime() + 60 * 60 * 1000);
 
   return {
-    id:              String(event.id),
-    title:           event.title,
-    description:     event.description ?? '',
+    id: String(event.id),
+    title: event.title,
+    description: event.description ?? '',
     start,
     end,
     backgroundColor: event.color,
@@ -31,7 +31,7 @@ function dbEventToCalendarEvent(event: Event): CalendarEvent {
 
 async function getToken(): Promise<string> {
   const cookieStore = await cookies();
-  const token       = cookieStore.get('token')?.value;
+  const token = cookieStore.get('token')?.value;
   if (!token) redirect('/login');
   return token;
 }
@@ -68,9 +68,9 @@ export default async function CalendarPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id }     = await params;
+  const { id } = await params;
   const calendarId = Number(id);
-  const token      = await getToken();
+  const token = await getToken();
   const [calendar, dbEvents] = await Promise.all([
     getCalendar(calendarId, token),
     getCalendarEvents(calendarId, token),
@@ -79,10 +79,12 @@ export default async function CalendarPage({
 
   return (
     <EventsProvider calendarId={calendarId} serverEvents={events}>
-      <div className='py-4'>
+      <div className='relative py-4'>
         <div className='flex flex-col w-full items-center'>
           <div className='w-full px-5 space-y-5'>
+
             <div className='space-y-0'>
+
               <Link
                 href='/calendars'
                 className='inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-1'
@@ -94,6 +96,7 @@ export default async function CalendarPage({
                 <h2 className='text-2xl font-semibold tracking-tight md:text-3xl select-none cursor-default'>
                   {calendar.name}
                 </h2>
+
                 <CalendarFavouriteButton
                   calendarId={calendarId}
                   isFavourite={calendar.is_favourite}

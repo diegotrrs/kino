@@ -18,13 +18,13 @@ import {
   EventClickArg,
   EventContentArg
 }                             from '@fullcalendar/core/index.js';
-import { format }             from 'date-fns';
 import dayGridPlugin          from '@fullcalendar/daygrid';
 import interactionPlugin      from '@fullcalendar/interaction';
 import listPlugin             from '@fullcalendar/list';
 import multiMonthPlugin       from '@fullcalendar/multimonth';
 import FullCalendar           from '@fullcalendar/react';
 import timeGridPlugin         from '@fullcalendar/timegrid';
+import { format }             from 'date-fns';
 import {
   useRef,
   useState
@@ -81,27 +81,27 @@ export default function Calendar() {
   const handleEventChange = async (info: EventChangeArg) => {
     const storedEvent = events.find((e) => e.id === info.event.id);
     const newStart = info.event.start!;
-    const newEnd   = info.event.end ?? storedEvent?.end ?? new Date(newStart.getTime() + 60 * 60 * 1000);
+    const newEnd = info.event.end ?? storedEvent?.end ?? new Date(newStart.getTime() + 60 * 60 * 1000);
 
     const newEvent: CalendarEvent = {
-      id:              info.event.id,
-      title:           info.event.title,
-      description:     info.event.extendedProps.description,
+      id: info.event.id,
+      title: info.event.title,
+      description: info.event.extendedProps.description,
       backgroundColor: info.event.backgroundColor,
-      start:           newStart,
-      end:             newEnd,
+      start: newStart,
+      end: newEnd,
     };
 
     if (calendarId !== undefined) {
       try {
         await updateEvent(Number(info.event.id), {
-          title:       info.event.title,
+          title: info.event.title,
           description: info.event.extendedProps.description,
-          date:        format(newStart, 'yyyy-MM-dd'),
-          start_time:  format(newStart, 'HH:mm:ss'),
-          end_date:    format(newEnd, 'yyyy-MM-dd'),
-          end_time:    format(newEnd, 'HH:mm:ss'),
-          color:       info.event.backgroundColor,
+          date: format(newStart, 'yyyy-MM-dd'),
+          start_time: format(newStart, 'HH:mm:ss'),
+          end_date: format(newEnd, 'yyyy-MM-dd'),
+          end_time: format(newEnd, 'HH:mm:ss'),
+          color: info.event.backgroundColor,
         });
       } catch {
         info.revert();
@@ -236,7 +236,7 @@ export default function Calendar() {
   const calendarLatestTime = `${latestHour}:${latestMin}`;
 
   return (
-    <div className='space-y-5'>
+    <div className=' space-y-5'>
       <CalendarNav
         calendarRef={calendarRef}
         start={selectedStart}
@@ -247,60 +247,60 @@ export default function Calendar() {
       <div className='relative'>
         {(viewedDate.getMonth() !== new Date().getMonth() ||
           viewedDate.getFullYear() !== new Date().getFullYear()) && (
-          <button
-            onClick={() => goToday(calendarRef)}
-            className='absolute -top-3 left-0 right-0 mx-auto w-fit z-30 rounded-full px-4 py-1 text-xs font-medium shadow-md cursor-pointer back-to-today-pill'
-          >
-            Back to {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-          </button>
-        )}
-      <Card className='p-3'>
-        <FullCalendar
-          ref={calendarRef}
-          timeZone='local'
-          plugins={[
-            dayGridPlugin,
-            timeGridPlugin,
-            multiMonthPlugin,
-            interactionPlugin,
-            listPlugin,
-          ]}
-          initialView='dayGridMonth'
-          headerToolbar={false}
-          slotMinTime={calendarEarliestTime}
-          slotMaxTime={calendarLatestTime}
-          allDaySlot={false}
-          firstDay={1}
-          height={'32vh'}
-          displayEventEnd={true}
-          windowResizeDelay={0}
-          events={events}
-          slotLabelFormat={{
-            hour: 'numeric',
-            minute: '2-digit',
-            hour12: true,
-          }}
-          eventTimeFormat={{
-            hour: 'numeric',
-            minute: '2-digit',
-            hour12: true,
-          }}
-          eventBorderColor={'black'}
-          contentHeight={'auto'}
-          expandRows={true}
-          dayCellContent={(dayInfo) => <DayRender info={dayInfo} />}
-          eventContent={(eventInfo) => <EventItem info={eventInfo} />}
-          dayHeaderContent={(headerInfo) => <DayHeader info={headerInfo} />}
-          eventClick={(eventInfo) => handleEventClick(eventInfo)}
-          eventChange={(eventInfo) => handleEventChange(eventInfo)}
-          select={handleDateSelect}
-          datesSet={(dates) => setViewedDate(dates.view.currentStart)}
-          dateClick={() => setEventAddOpen(true)}
-          nowIndicator
-          editable
-          selectable
-        />
-      </Card>
+            <button
+              onClick={() => goToday(calendarRef)}
+              className='absolute -top-3 left-0 right-0 mx-auto w-fit z-30 rounded-full px-4 py-1 text-xs font-medium shadow-md cursor-pointer back-to-today-pill'
+            >
+              Back to {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+            </button>
+          )}
+        <Card className='p-3'>
+          <FullCalendar
+            ref={calendarRef}
+            timeZone='local'
+            plugins={[
+              dayGridPlugin,
+              timeGridPlugin,
+              multiMonthPlugin,
+              interactionPlugin,
+              listPlugin,
+            ]}
+            initialView='dayGridMonth'
+            headerToolbar={false}
+            slotMinTime={calendarEarliestTime}
+            slotMaxTime={calendarLatestTime}
+            allDaySlot={false}
+            firstDay={1}
+            height={'32vh'}
+            displayEventEnd={true}
+            windowResizeDelay={0}
+            events={events}
+            slotLabelFormat={{
+              hour: 'numeric',
+              minute: '2-digit',
+              hour12: true,
+            }}
+            eventTimeFormat={{
+              hour: 'numeric',
+              minute: '2-digit',
+              hour12: true,
+            }}
+            eventBorderColor={'black'}
+            contentHeight={'auto'}
+            expandRows={true}
+            dayCellContent={(dayInfo) => <DayRender info={dayInfo} />}
+            eventContent={(eventInfo) => <EventItem info={eventInfo} />}
+            dayHeaderContent={(headerInfo) => <DayHeader info={headerInfo} />}
+            eventClick={(eventInfo) => handleEventClick(eventInfo)}
+            eventChange={(eventInfo) => handleEventChange(eventInfo)}
+            select={handleDateSelect}
+            datesSet={(dates) => setViewedDate(dates.view.currentStart)}
+            dateClick={() => setEventAddOpen(true)}
+            nowIndicator
+            editable
+            selectable
+          />
+        </Card>
       </div>
       <EventEditForm
         oldEvent={selectedOldEvent}

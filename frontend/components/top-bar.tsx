@@ -8,18 +8,35 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 }                           from '@/components/ui/dropdown-menu';
-import { useToast }         from '@/hooks/use-toast';
-import { EllipsisVertical } from 'lucide-react';
-import Link                 from 'next/link';
+import { useToast }              from '@/hooks/use-toast';
+import { EllipsisVertical, Moon, Sun } from 'lucide-react';
+import Link                      from 'next/link';
+import { useTheme }              from 'next-themes';
 
 export function TopBar({ isLoggedIn }: { isLoggedIn: boolean }) {
   const { toast } = useToast();
+  const { resolvedTheme, setTheme } = useTheme();
 
   return (
     <header className='sticky top-0 z-50 flex h-14 items-center justify-between border-b bg-background px-4'>
       <span className='text-lg font-bold tracking-tight select-none'>Kino</span>
 
       <div className='flex items-center gap-2'>
+        {process.env.NODE_ENV === 'development' && (
+          <Button
+            variant='ghost'
+            size='icon'
+            onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+            aria-label='Toggle theme'
+          >
+            {resolvedTheme === 'dark' ? (
+              <Sun className='h-4 w-4' />
+            ) : (
+              <Moon className='h-4 w-4' />
+            )}
+          </Button>
+        )}
+
         {process.env.NODE_ENV === 'development' && (
           <span className='rounded bg-black px-1.5 py-0.5 font-mono text-[0.6rem] text-white dark:bg-white dark:text-black'>
             <span className='sm:hidden'>xs</span>
