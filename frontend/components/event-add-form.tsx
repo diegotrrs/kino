@@ -79,7 +79,7 @@ export function EventAddForm({ start, end }: EventAddFormProps) {
       description: '',
       start: start,
       end: end,
-      color: '#76c7ef'
+      color: localStorage.getItem('lastEventColor') ?? '#76c7ef',
     });
   }, [form, start, end]);
 
@@ -118,6 +118,7 @@ export function EventAddForm({ start, end }: EventAddFormProps) {
       addEvent(localEvent);
     }
 
+    localStorage.setItem('lastEventColor', data.color);
     setEventAddOpen(false);
     toast({
       title: 'Event added!',
