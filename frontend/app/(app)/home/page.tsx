@@ -71,7 +71,7 @@ export default async function HomePage() {
               My Calendars
             </h3>
             {calendars.length > 0 && (
-              <Button asChild size='sm' variant='outline'>
+              <Button asChild size='sm'>
                 <Link href='/calendars/create'>
                   <PlusIcon className='h-4 w-4' />
                   New Calendar
