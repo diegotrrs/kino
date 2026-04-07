@@ -57,7 +57,7 @@ export default async function CalendarsPage() {
 
           <Separator />
 
-          <CalendarList calendars={calendars} />
+          <CalendarList calendars={calendars} from='calendars' />
         </div>
       </div>
     </div>

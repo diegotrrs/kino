@@ -61,7 +61,7 @@ export default async function HomePage() {
               </p>
             </div>
           ) : (
-            <CalendarList calendars={favourites} />
+            <CalendarList calendars={favourites} from='home' />
           )}
         </section>
 
@@ -79,7 +79,7 @@ export default async function HomePage() {
               </Button>
             )}
           </div>
-          <CalendarList calendars={calendars} />
+          <CalendarList calendars={calendars} from='home' />
         </section>
 
       </div>

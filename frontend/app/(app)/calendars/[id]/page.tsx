@@ -65,10 +65,15 @@ async function getCalendarEvents(calendarId: number, token: string): Promise<Eve
 
 export default async function CalendarPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ from?: string }>;
 }) {
   const { id } = await params;
+  const { from } = await searchParams;
+  const backHref  = from === 'home' ? '/home' : '/calendars';
+  const backLabel = from === 'home' ? 'Home' : 'My Calendars';
   const calendarId = Number(id);
   const token = await getToken();
   const [calendar, dbEvents] = await Promise.all([
@@ -86,11 +91,11 @@ export default async function CalendarPage({
             <div className='space-y-0'>
 
               <Link
-                href='/calendars'
+                href={backHref}
                 className='inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-1'
               >
                 <ArrowLeft className='h-4 w-4' />
-                My Calendars
+                {backLabel}
               </Link>
               <div className='flex items-center gap-1'>
                 <h2 className='text-2xl font-semibold tracking-tight md:text-3xl select-none cursor-default'>
