@@ -186,6 +186,7 @@ export default function CalendarNav({
         <Input
           className='w-[85px] md:w-[95px] text-base md:text-lg font-semibold'
           type='number'
+          tabIndex={-1}
           value={selectedYear}
           onChange={(value) => handleYearChange(calendarRef, viewedDate, value)}
         />
