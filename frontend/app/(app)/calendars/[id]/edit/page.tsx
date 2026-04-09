@@ -67,7 +67,7 @@ export default async function EditCalendarPage({
               <h3 className='text-sm font-medium'>Members</h3>
               <p className='text-xs text-muted-foreground'>Invite people to collaborate on this calendar.</p>
             </div>
-            <CalendarMembers calendarId={calendarId} members={members} currentUserId={currentUserId} />
+            <CalendarMembers calendarId={calendarId} calendarName={calendar.name} members={members} currentUserId={currentUserId} />
           </div>
 
           <Separator />
