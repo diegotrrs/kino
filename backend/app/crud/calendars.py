@@ -8,7 +8,8 @@ def get_calendar(db: connection, calendar_id: int, user_id: int | None = None) -
         if user_id is not None:
             cur.execute(
                 """
-                SELECT c.*, COALESCE(cu.is_favourite, FALSE) AS is_favourite
+                SELECT c.*, COALESCE(cu.is_favourite, FALSE) AS is_favourite,
+                            cu.role AS role
                 FROM calendars c
                 LEFT JOIN calendar_users cu ON c.id = cu.calendar_id AND cu.user_id = %s
                 WHERE c.id = %s
@@ -42,11 +43,11 @@ def create_calendar(db: connection, calendar: CalendarCreate) -> dict:
         )
         row = cur.fetchone()
         cur.execute(
-            "INSERT INTO calendar_users (calendar_id, user_id) VALUES (%s, %s)",
+            "INSERT INTO calendar_users (calendar_id, user_id, role) VALUES (%s, %s, 'owner')",
             (row["id"], data["created_by"]),
         )
         db.commit()
-        return {**row, "is_favourite": False}
+        return {**row, "is_favourite": False, "role": "owner"}
 
 
 def update_calendar(
@@ -131,7 +132,7 @@ def restore_calendar(db: connection, calendar_id: int, user_id: int) -> bool:
             return False
         cur.execute("DELETE FROM deleted_calendars WHERE id = %s", (calendar_id,))
         cur.execute(
-            "INSERT INTO calendar_users (calendar_id, user_id) VALUES (%s, %s)",
+            "INSERT INTO calendar_users (calendar_id, user_id, role) VALUES (%s, %s, 'owner')",
             (calendar_id, user_id),
         )
         # Restore events
@@ -148,6 +149,36 @@ def restore_calendar(db: connection, calendar_id: int, user_id: int) -> bool:
         cur.execute("DELETE FROM deleted_events WHERE calendar_id = %s", (calendar_id,))
         db.commit()
         return True
+
+
+def get_user_role(db: connection, calendar_id: int, user_id: int) -> str | None:
+    with db.cursor() as cur:
+        cur.execute(
+            "SELECT role FROM calendar_users WHERE calendar_id = %s AND user_id = %s",
+            (calendar_id, user_id),
+        )
+        row = cur.fetchone()
+        return row["role"] if row else None
+
+
+def invite_user_to_calendar(db: connection, calendar_id: int, email: str) -> dict | None:
+    with db.cursor() as cur:
+        cur.execute("SELECT id FROM users WHERE email = %s", (email,))
+        user = cur.fetchone()
+        if not user:
+            return None
+        cur.execute(
+            """
+            INSERT INTO calendar_users (calendar_id, user_id, role)
+            VALUES (%s, %s, 'editor')
+            ON CONFLICT DO NOTHING
+            RETURNING *
+            """,
+            (calendar_id, user["id"]),
+        )
+        row = cur.fetchone()
+        db.commit()
+        return row
 
 
 def add_user_to_calendar(
@@ -185,7 +216,7 @@ def get_calendars_by_user(db: connection, user_id: int) -> list[dict]:
     with db.cursor() as cur:
         cur.execute(
             """
-            SELECT c.*, cu.is_favourite FROM calendars c
+            SELECT c.*, cu.is_favourite, cu.role FROM calendars c
             JOIN calendar_users cu ON c.id = cu.calendar_id
             WHERE cu.user_id = %s
             ORDER BY c.id
@@ -199,7 +230,7 @@ def get_favourite_calendars(db: connection, user_id: int) -> list[dict]:
     with db.cursor() as cur:
         cur.execute(
             """
-            SELECT c.*, cu.is_favourite FROM calendars c
+            SELECT c.*, cu.is_favourite, cu.role FROM calendars c
             JOIN calendar_users cu ON c.id = cu.calendar_id
             WHERE cu.user_id = %s AND cu.is_favourite = TRUE
             ORDER BY c.id
@@ -229,10 +260,10 @@ def get_calendar_users(db: connection, calendar_id: int) -> list[dict]:
     with db.cursor() as cur:
         cur.execute(
             """
-            SELECT u.* FROM users u
+            SELECT u.id, u.name, u.email, cu.role FROM users u
             JOIN calendar_users cu ON u.id = cu.user_id
             WHERE cu.calendar_id = %s
-            ORDER BY u.id
+            ORDER BY cu.role DESC, u.id
             """,
             (calendar_id,),
         )

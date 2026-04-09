@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
 from psycopg2.extensions import connection
 
@@ -5,9 +7,14 @@ from ..auth import get_current_user
 
 from .. import crud
 from ..database import get_db
+from ..email import send_calendar_invite_email
+
+logger = logging.getLogger(__name__)
 from ..schemas.calendar import (
     CalendarCreate,
     CalendarFavouriteUpdate,
+    CalendarInvite,
+    CalendarMemberResponse,
     CalendarResponse,
     CalendarUpdate,
     CalendarUserAdd,
@@ -70,8 +77,10 @@ def update_calendar(
     calendar_id: int,
     calendar: CalendarUpdate,
     db: connection = Depends(get_db),
-    _user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user),
 ):
+    if crud.get_user_role(db, calendar_id, current_user["id"]) != "owner":
+        raise HTTPException(status_code=403, detail="Only the owner can edit this calendar")
     updated = crud.update_calendar(db, calendar_id, calendar)
     if updated is None:
         raise HTTPException(status_code=404, detail="Calendar not found")
@@ -105,22 +114,53 @@ def restore_calendar(
 def delete_calendar(
     calendar_id: int,
     db: connection = Depends(get_db),
-    _user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user),
 ):
+    if crud.get_user_role(db, calendar_id, current_user["id"]) != "owner":
+        raise HTTPException(status_code=403, detail="Only the owner can delete this calendar")
     if not crud.delete_calendar(db, calendar_id):
         raise HTTPException(status_code=404, detail="Calendar not found")
 
 
-@router.get("/{calendar_id}/users", response_model=list[UserResponse])
+@router.get("/{calendar_id}/users", response_model=list[CalendarMemberResponse])
 def list_calendar_users(
     calendar_id: int,
     db: connection = Depends(get_db),
-    _user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user),
 ):
-    calendar = crud.get_calendar(db, calendar_id)
-    if calendar is None:
-        raise HTTPException(status_code=404, detail="Calendar not found")
+    if crud.get_user_role(db, calendar_id, current_user["id"]) is None:
+        raise HTTPException(status_code=403, detail="Not a member of this calendar")
     return crud.get_calendar_users(db, calendar_id)
+
+
+@router.post("/{calendar_id}/invite", response_model=CalendarMemberResponse, status_code=201)
+def invite_user(
+    calendar_id: int,
+    body: CalendarInvite,
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    if crud.get_user_role(db, calendar_id, current_user["id"]) != "owner":
+        raise HTTPException(status_code=403, detail="Only the owner can invite users")
+    result = crud.invite_user_to_calendar(db, calendar_id, body.email)
+    if result is None:
+        raise HTTPException(status_code=404, detail="No user found with that email, or already a member")
+    # Send invite email (best-effort — failure must not affect the response)
+    try:
+        calendar = crud.get_calendar(db, calendar_id)
+        send_calendar_invite_email(
+            to_email=body.email,
+            calendar_name=calendar["name"],
+            inviter_name=current_user["name"],
+        )
+    except Exception:
+        logger.exception("Failed to send invite email to %s", body.email)
+    # Return the full member response
+    users = crud.get_calendar_users(db, calendar_id)
+    with db.cursor() as cur:
+        cur.execute("SELECT id FROM users WHERE email = %s", (body.email,))
+        user = cur.fetchone()
+    return next(m for m in users if m["id"] == user["id"])
 
 
 @router.post("/{calendar_id}/users", status_code=201)
@@ -128,8 +168,10 @@ def add_calendar_user(
     calendar_id: int,
     body: CalendarUserAdd,
     db: connection = Depends(get_db),
-    _user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user),
 ):
+    if crud.get_user_role(db, calendar_id, current_user["id"]) != "owner":
+        raise HTTPException(status_code=403, detail="Only the owner can add users")
     calendar = crud.get_calendar(db, calendar_id)
     if calendar is None:
         raise HTTPException(status_code=404, detail="Calendar not found")
@@ -144,7 +186,9 @@ def remove_calendar_user(
     calendar_id: int,
     user_id: int,
     db: connection = Depends(get_db),
-    _user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_current_user),
 ):
+    if crud.get_user_role(db, calendar_id, current_user["id"]) != "owner":
+        raise HTTPException(status_code=403, detail="Only the owner can remove users")
     if not crud.remove_user_from_calendar(db, calendar_id, user_id):
         raise HTTPException(status_code=404, detail="User not in calendar")

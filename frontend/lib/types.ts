@@ -6,6 +6,14 @@ export interface Calendar {
   created_at: string;
   updated_at: string | null;
   is_favourite: boolean;
+  role?: 'owner' | 'editor';
+}
+
+export interface CalendarMember {
+  id: number;
+  name: string;
+  email: string;
+  role: 'owner' | 'editor';
 }
 
 export interface Event {

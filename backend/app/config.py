@@ -8,6 +8,9 @@ class Settings(BaseSettings):
     debug: bool = False
     jwt_secret_key: str = "dev-secret-key-change-in-production"
     jwt_expiration_minutes: int = 1440  # 24 hours
+    resend_api_key: str = ""
+    resend_from_email: str = "onboarding@resend.dev"
+    app_base_url: str = "http://localhost:3000"
 
     class Config:
         env_file = ".env"

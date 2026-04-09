@@ -94,6 +94,54 @@ export async function updateCalendar(id: number, name: string) {
   revalidatePath("/home");
 }
 
+export async function inviteToCalendar(calendarId: number, email: string) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  if (!token) redirect("/login");
+
+  const res = await fetch(
+    `${API_BASE_URL}/api/calendars/${calendarId}/invite`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ email }),
+    },
+  );
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Failed to invite user: ${text}`);
+  }
+
+  revalidatePath(`/calendars/${calendarId}/edit`);
+}
+
+export async function removeMember(calendarId: number, userId: number) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  if (!token) redirect("/login");
+
+  const res = await fetch(
+    `${API_BASE_URL}/api/calendars/${calendarId}/users/${userId}`,
+    {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
+
+  if (!res.ok && res.status !== 204) {
+    const text = await res.text();
+    throw new Error(`Failed to remove member: ${text}`);
+  }
+
+  revalidatePath(`/calendars/${calendarId}/edit`);
+}
+
 export async function toggleFavourite(
   calendarId: number,
   isFavourite: boolean,

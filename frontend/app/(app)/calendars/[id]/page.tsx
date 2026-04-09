@@ -106,11 +106,13 @@ export default async function CalendarPage({
                   calendarId={calendarId}
                   isFavourite={calendar.is_favourite}
                 />
-                <Button variant='ghost' size='icon' asChild>
-                  <Link href={`/calendars/${calendarId}/edit`} aria-label='Edit calendar'>
-                    <Pencil className='h-5 w-5 text-muted-foreground' />
-                  </Link>
-                </Button>
+                {calendar.role === 'owner' && (
+                  <Button variant='ghost' size='icon' asChild>
+                    <Link href={`/calendars/${calendarId}/edit`} aria-label='Edit calendar'>
+                      <Pencil className='h-5 w-5 text-muted-foreground' />
+                    </Link>
+                  </Button>
+                )}
               </div>
             </div>
             <Separator />

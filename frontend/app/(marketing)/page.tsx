@@ -1,5 +1,5 @@
-import CalendarNoSSR    from '@/components/calendar-no-ssr';
-import { Button }       from '@/components/ui/button';
+import CalendarNoSSR from '@/components/calendar-no-ssr';
+import { Button } from '@/components/ui/button';
 import { EventsProvider } from '@/context/events-context';
 import {
   CalendarDays,
@@ -9,7 +9,7 @@ import {
   ArrowRight,
   CheckCircle2,
 } from 'lucide-react';
-import Link             from 'next/link';
+import Link from 'next/link';
 
 const features = [
   {
@@ -40,7 +40,7 @@ const features = [
 
 const steps = [
   { step: '01', title: 'Create a calendar', body: 'Give your trip a name — "Maldives 2026", "Christmas in Vienna", whatever fits.' },
-  { step: '02', title: 'Add your events',   body: 'Click any day to add flights, hotel check-ins, tours, dinners, and free time.' },
+  { step: '02', title: 'Add your events', body: 'Click any day to add flights, hotel check-ins, tours, dinners, and free time.' },
   { step: '03', title: 'Enjoy your holiday', body: 'Open Kino on your phone and follow the plan. Or ignore it and have fun anyway.' },
 ];
 
@@ -74,7 +74,7 @@ export default function Home() {
               Get started free <ArrowRight className='ml-2 h-4 w-4' />
             </Link>
           </Button>
-          <Button size='lg' variant='outline' asChild>
+          <Button size='lg' asChild>
             <Link href='/login'>Sign in</Link>
           </Button>
         </div>

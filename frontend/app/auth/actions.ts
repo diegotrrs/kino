@@ -56,7 +56,7 @@ export async function login(_prev: AuthState, formData: FormData): Promise<AuthS
     path: '/',
   });
 
-  redirect('/');
+  redirect('/home');
 }
 
 export async function signup(_prev: AuthState, formData: FormData): Promise<AuthState> {
@@ -93,7 +93,7 @@ export async function signup(_prev: AuthState, formData: FormData): Promise<Auth
     path: '/',
   });
 
-  redirect('/');
+  redirect('/home');
 }
 
 export async function logout() {

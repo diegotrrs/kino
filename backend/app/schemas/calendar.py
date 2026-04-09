@@ -25,6 +25,18 @@ class CalendarResponse(BaseModel):
     created_at: datetime
     updated_at: datetime | None = None
     is_favourite: bool = False
+    role: str | None = None
+
+
+class CalendarInvite(BaseModel):
+    email: str
+
+
+class CalendarMemberResponse(BaseModel):
+    id: int
+    name: str
+    email: str
+    role: str
 
 
 class DeletedCalendarResponse(BaseModel):
