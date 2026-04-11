@@ -64,7 +64,7 @@ interface EventAddFormProps {
 }
 
 export function EventAddForm({ start, end }: EventAddFormProps) {
-  const { calendarId, events, addEvent } = useEvents();
+  const { calendarId, readOnly, events, addEvent } = useEvents();
   const { eventAddOpen, setEventAddOpen } = useEvents();
 
   const { toast } = useToast();
@@ -136,7 +136,8 @@ export function EventAddForm({ start, end }: EventAddFormProps) {
         <Button
           className='w-24 md:w-28 text-xs md:text-sm'
           variant='default'
-          onClick={() => setEventAddOpen(true)}
+          disabled={readOnly}
+          onClick={() => { if (!readOnly) setEventAddOpen(true); }}
         >
           <PlusIcon className='md:h-5 md:w-5 h-3 w-3' />
           <p>Add Event</p>

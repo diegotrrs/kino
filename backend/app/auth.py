@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from typing import Optional
 
 import jwt
 from fastapi import Depends, HTTPException, status
@@ -11,6 +12,7 @@ from .database import get_db
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
+security_optional = HTTPBearer(auto_error=False)
 
 
 def hash_password(password: str) -> str:
@@ -64,4 +66,28 @@ def get_current_user(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found"
         )
+    return user
+
+
+def get_optional_user(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_optional),
+    db: connection = Depends(get_db),
+) -> Optional[dict]:
+    if credentials is None:
+        return None
+    settings = get_settings()
+    try:
+        payload = jwt.decode(
+            credentials.credentials, settings.jwt_secret_key, algorithms=["HS256"]
+        )
+        sub = payload.get("sub")
+        if sub is None:
+            return None
+    except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+        return None
+
+    user_id = int(sub)
+    with db.cursor() as cur:
+        cur.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+        user = cur.fetchone()
     return user

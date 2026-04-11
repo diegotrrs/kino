@@ -46,7 +46,7 @@ type DayRenderProps = {
 };
 
 export default function Calendar() {
-  const { events, calendarId, addEvent, deleteEvent, setEventAddOpen, setEventEditOpen, setEventViewOpen } =
+  const { events, calendarId, readOnly, addEvent, deleteEvent, setEventAddOpen, setEventEditOpen, setEventViewOpen } =
     useEvents();
   const { toast } = useToast();
 
@@ -63,6 +63,7 @@ export default function Calendar() {
   const [isDrag, setIsDrag] = useState(false);
 
   const handleEventClick = (info: EventClickArg) => {
+    // Open the dialog in read-only mode too — inputs will be disabled via context
     const event: CalendarEvent = {
       id: info.event.id,
       title: info.event.title,
@@ -79,6 +80,7 @@ export default function Calendar() {
   };
 
   const handleEventChange = async (info: EventChangeArg) => {
+    if (readOnly) { info.revert(); return; }
     const storedEvent = events.find((e) => e.id === info.event.id);
     const newStart = info.event.start!;
     const newEnd = info.event.end ?? storedEvent?.end ?? new Date(newStart.getTime() + 60 * 60 * 1000);
@@ -242,6 +244,7 @@ export default function Calendar() {
         start={selectedStart}
         end={selectedEnd}
         viewedDate={viewedDate}
+        readOnly={readOnly}
       />
 
       <div className='relative'>
@@ -293,12 +296,12 @@ export default function Calendar() {
             dayHeaderContent={(headerInfo) => <DayHeader info={headerInfo} />}
             eventClick={(eventInfo) => handleEventClick(eventInfo)}
             eventChange={(eventInfo) => handleEventChange(eventInfo)}
-            select={handleDateSelect}
+            select={(info) => { if (!readOnly) handleDateSelect(info); }}
             datesSet={(dates) => setViewedDate(dates.view.currentStart)}
-            dateClick={() => setEventAddOpen(true)}
+            dateClick={() => { if (!readOnly) setEventAddOpen(true); }}
             nowIndicator
-            editable
-            selectable
+            editable={!readOnly}
+            selectable={!readOnly}
           />
         </Card>
       </div>

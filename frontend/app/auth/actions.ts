@@ -26,6 +26,13 @@ export type AuthState = {
   fieldErrors?: Record<string, string[]>;
 };
 
+function safeRedirectPath(raw: FormDataEntryValue | null): string {
+  if (typeof raw !== 'string') return '/home';
+  const decoded = decodeURIComponent(raw);
+  // Only allow relative paths starting with /
+  return decoded.startsWith('/') && !decoded.startsWith('//') ? decoded : '/home';
+}
+
 export async function login(_prev: AuthState, formData: FormData): Promise<AuthState> {
   const parsed = loginSchema.safeParse({
     email: formData.get('email'),
@@ -56,7 +63,7 @@ export async function login(_prev: AuthState, formData: FormData): Promise<AuthS
     path: '/',
   });
 
-  redirect('/home');
+  redirect(safeRedirectPath(formData.get('redirect')));
 }
 
 export async function signup(_prev: AuthState, formData: FormData): Promise<AuthState> {
@@ -93,7 +100,7 @@ export async function signup(_prev: AuthState, formData: FormData): Promise<Auth
     path: '/',
   });
 
-  redirect('/home');
+  redirect(safeRedirectPath(formData.get('redirect')));
 }
 
 export async function logout() {

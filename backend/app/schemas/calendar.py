@@ -11,6 +11,7 @@ class CalendarCreate(BaseModel):
 
 class CalendarUpdate(BaseModel):
     name: str | None = None
+    is_public: bool | None = None
 
 
 class CalendarFavouriteUpdate(BaseModel):
@@ -21,6 +22,7 @@ class CalendarResponse(BaseModel):
     id: int
     uuid: UUID
     name: str
+    is_public: bool = False
     created_by: int
     created_at: datetime
     updated_at: datetime | None = None

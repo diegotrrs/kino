@@ -29,11 +29,13 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
   const token       = cookieStore.get('token')?.value;
   const user        = token ? await getCurrentUser(token) : null;
 
+  const isLoggedIn = !!user;
+
   return (
     <>
-      <TopBar isLoggedIn={!!user} />
-      <DesktopSidebar user={user} />
-      <MobileBottomNav />
+      <TopBar isLoggedIn={isLoggedIn} />
+      <DesktopSidebar user={user} isLoggedIn={isLoggedIn} />
+      <MobileBottomNav isLoggedIn={isLoggedIn} />
       <main className='md:ml-16 pb-16 md:pb-0'>{children}</main>
     </>
   );

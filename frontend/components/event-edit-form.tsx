@@ -75,7 +75,7 @@ export function EventEditForm({
   event,
   isDrag,
 }: EventEditFormProps) {
-  const { calendarId, addEvent, deleteEvent } = useEvents();
+  const { calendarId, readOnly, addEvent, deleteEvent } = useEvents();
   const { eventEditOpen, setEventEditOpen } = useEvents();
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
@@ -207,7 +207,7 @@ export function EventEditForm({
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input placeholder='Standup Meeting' {...field} />
+                    <Input placeholder='Standup Meeting' readOnly={readOnly} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -222,6 +222,7 @@ export function EventEditForm({
                   <FormControl>
                     <Textarea
                       className='resize-none'
+                      readOnly={readOnly}
                       {...field}
                     />
                   </FormControl>
@@ -241,6 +242,7 @@ export function EventEditForm({
                       onChange={field.onChange}
                       hourCycle={12}
                       granularity='minute'
+                      disabled={readOnly}
                     />
                   </FormControl>
                   <FormMessage />
@@ -259,6 +261,7 @@ export function EventEditForm({
                       onChange={field.onChange}
                       hourCycle={12}
                       granularity='minute'
+                      disabled={readOnly}
                     />
                   </FormControl>
                   <FormMessage />
@@ -273,13 +276,13 @@ export function EventEditForm({
                   <FormLabel>Color</FormLabel>
                   <FormControl>
                     <Popover>
-                      <PopoverTrigger asChild className='cursor-pointer'>
+                      <PopoverTrigger asChild disabled={readOnly} className={readOnly ? 'cursor-default' : 'cursor-pointer'}>
                         <div className='flex flex-row w-full items-center space-x-2 pl-2'>
                           <div
-                            className={'w-5 h-5 rounded-full cursor-pointer'}
+                            className={'w-5 h-5 rounded-full'}
                             style={{ backgroundColor: field.value }}
                           ></div>
-                          <Input {...field} />
+                          <Input readOnly={readOnly} {...field} />
                         </div>
                       </PopoverTrigger>
                       <PopoverContent className='flex mx-auto items-center justify-center'>
@@ -297,7 +300,7 @@ export function EventEditForm({
             />
 
             <AlertDialogFooter className='pt-2 flex-row items-center'>
-              {!isDrag && !confirmingDelete && (
+              {!readOnly && !isDrag && !confirmingDelete && (
                 <Button
                   type='button'
                   variant='destructive'
@@ -307,7 +310,7 @@ export function EventEditForm({
                   Delete
                 </Button>
               )}
-              {!isDrag && confirmingDelete && (
+              {!readOnly && !isDrag && confirmingDelete && (
                 <>
                   <span className='text-sm text-muted-foreground mr-auto'>
                     Delete this event?
@@ -331,9 +334,11 @@ export function EventEditForm({
               {!confirmingDelete && (
                 <>
                   <AlertDialogCancel onClick={handleEditCancellation}>
-                    Cancel
+                    {readOnly ? 'Close' : 'Cancel'}
                   </AlertDialogCancel>
-                  <AlertDialogAction type='submit'>Save</AlertDialogAction>
+                  {!readOnly && (
+                    <AlertDialogAction type='submit'>Save</AlertDialogAction>
+                  )}
                 </>
               )}
             </AlertDialogFooter>

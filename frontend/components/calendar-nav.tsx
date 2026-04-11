@@ -40,6 +40,7 @@ interface CalendarNavProps {
   start: Date;
   end: Date;
   viewedDate: Date;
+  readOnly?: boolean;
 }
 
 export default function CalendarNav({
@@ -47,6 +48,7 @@ export default function CalendarNav({
   start,
   end,
   viewedDate,
+  readOnly = false,
 }: CalendarNavProps) {
   const [currentView] = useState('dayGridMonth');
 
@@ -204,11 +206,12 @@ export default function CalendarNav({
         </Button>
       </div>
 
-      <div className='flex flex-wrap gap-3 justify-center'>
-        {/* Add event button  */}
-
-        <EventAddForm start={start} end={end} />
-      </div>
+      {!readOnly && (
+        <div className='flex flex-wrap gap-3 justify-center'>
+          {/* Add event button  */}
+          <EventAddForm start={start} end={end} />
+        </div>
+      )}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import React, { createContext, ReactNode, useContext, useState } from 'react';
 
 interface EventsContextType {
   calendarId?: number;
+  readOnly: boolean;
   events: CalendarEvent[];
   addEvent: (event: CalendarEvent) => void;
   deleteEvent: (id: string) => void;
@@ -33,12 +34,14 @@ interface EventsProviderProps {
   children: ReactNode;
   calendarId?: number;
   serverEvents?: CalendarEvent[];
+  readOnly?: boolean;
 }
 
 export const EventsProvider: React.FC<EventsProviderProps> = ({
   children,
   calendarId,
   serverEvents,
+  readOnly = false,
 }) => {
   const [events, setEvents] = useState<CalendarEvent[]>(
     serverEvents ??
@@ -49,8 +52,13 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
       }))
   );
   const [eventViewOpen, setEventViewOpen]                               = useState(false);
-  const [eventAddOpen, setEventAddOpen]                                 = useState(false);
+  const [eventAddOpen, setEventAddOpenState]                            = useState(false);
   const [eventEditOpen, setEventEditOpen]                               = useState(false);
+
+  const setEventAddOpen = (value: boolean) => {
+    if (readOnly && value) return;
+    setEventAddOpenState(value);
+  };
   const [eventDeleteOpen, setEventDeleteOpen]                           = useState(false);
   const [availabilityCheckerEventAddOpen, setAvailabilityCheckerEventAddOpen] = useState(false);
 
@@ -68,6 +76,7 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
     <EventsContext.Provider
       value={{
         calendarId,
+        readOnly,
         events,
         addEvent,
         deleteEvent,

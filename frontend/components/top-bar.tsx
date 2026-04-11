@@ -50,7 +50,12 @@ export function TopBar({ isLoggedIn }: { isLoggedIn: boolean }) {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant='ghost' size='icon'>
+            <Button
+              variant='ghost'
+              size='icon'
+              disabled={!isLoggedIn}
+              className={!isLoggedIn ? 'pointer-events-none opacity-40' : ''}
+            >
               <EllipsisVertical className='h-5 w-5' />
               <span className='sr-only'>Menu</span>
             </Button>

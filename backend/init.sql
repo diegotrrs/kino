@@ -14,6 +14,7 @@ CREATE TABLE calendars (
     id SERIAL PRIMARY KEY,
     uuid UUID NOT NULL DEFAULT gen_random_uuid() UNIQUE,
     name VARCHAR(255) NOT NULL,
+    is_public BOOLEAN NOT NULL DEFAULT FALSE,
     created_by INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ

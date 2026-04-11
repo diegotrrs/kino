@@ -1,5 +1,8 @@
 import Calendar from '@/components/calendar-no-ssr';
 import { CalendarFavouriteButton } from '@/components/calendars/calendar-favourite-button';
+import { PrivateCalendarOverlay } from '@/components/calendars/private-calendar-overlay';
+import { ReadOnlyBanner } from '@/components/calendars/read-only-banner';
+import { CalendarShareButton } from '@/components/calendars/calendar-share-button';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { EventsProvider } from '@/context/events-context';
@@ -29,37 +32,38 @@ function dbEventToCalendarEvent(event: Event): CalendarEvent {
   };
 }
 
-async function getToken(): Promise<string> {
+async function getToken(): Promise<string | null> {
   const cookieStore = await cookies();
-  const token = cookieStore.get('token')?.value;
-  if (!token) redirect('/login');
-  return token;
+  return cookieStore.get('token')?.value ?? null;
 }
 
-async function getCalendar(calendarId: number, token: string): Promise<CalendarType & { is_favourite: boolean }> {
+async function getCalendar(
+  calendarId: number,
+  token: string | null
+): Promise<{ calendar: CalendarType & { is_favourite: boolean }; status: number }> {
+  const headers: Record<string, string> = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
   const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarId}`, {
     cache: 'no-store',
-    headers: { Authorization: `Bearer ${token}` },
+    headers,
   });
 
   if (res.status === 401) redirect('/login');
-  if (!res.ok) throw new Error(`Failed to fetch calendar (${res.status})`);
 
-  return res.json();
+  return { calendar: res.ok ? await res.json() : ({} as CalendarType & { is_favourite: boolean }), status: res.status };
 }
 
-async function getCalendarEvents(calendarId: number, token: string): Promise<Event[]> {
+async function getCalendarEvents(calendarId: number, token: string | null): Promise<Event[]> {
+  const headers: Record<string, string> = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
   const res = await fetch(
     `${API_BASE_URL}/api/events/?calendar_id=${calendarId}`,
-    {
-      cache: 'no-store',
-      headers: { Authorization: `Bearer ${token}` },
-    }
+    { cache: 'no-store', headers }
   );
 
-  if (res.status === 401) redirect('/login');
-  if (!res.ok) throw new Error(`Failed to fetch events (${res.status})`);
-
+  if (!res.ok) return [];
   return res.json();
 }
 
@@ -75,51 +79,97 @@ export default async function CalendarPage({
   const backHref  = from === 'home' ? '/home' : '/calendars';
   const backLabel = from === 'home' ? 'Home' : 'My Calendars';
   const calendarId = Number(id);
-  const token = await getToken();
-  const [calendar, dbEvents] = await Promise.all([
-    getCalendar(calendarId, token),
-    getCalendarEvents(calendarId, token),
-  ]);
-  const events = dbEvents.map(dbEventToCalendarEvent);
 
-  return (
-    <EventsProvider calendarId={calendarId} serverEvents={events}>
+  const token = await getToken();
+  const isAuthenticated = !!token;
+
+  const { calendar, status } = await getCalendar(calendarId, token);
+
+  // Private calendar — unauthenticated user
+  if (status === 403) {
+    return (
       <div className='relative py-4'>
         <div className='flex flex-col w-full items-center'>
           <div className='w-full px-5 space-y-5'>
-
-            <div className='space-y-0'>
-
-              <Link
-                href={backHref}
-                className='inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-1'
-              >
-                <ArrowLeft className='h-4 w-4' />
-                {backLabel}
-              </Link>
-              <div className='flex items-center gap-1'>
-                <h2 className='text-2xl font-semibold tracking-tight md:text-3xl select-none cursor-default'>
-                  {calendar.name}
-                </h2>
-
-                <CalendarFavouriteButton
-                  calendarId={calendarId}
-                  isFavourite={calendar.is_favourite}
-                />
-                {calendar.role === 'owner' && (
-                  <Button variant='ghost' size='icon' asChild>
-                    <Link href={`/calendars/${calendarId}/edit`} aria-label='Edit calendar'>
-                      <Pencil className='h-5 w-5 text-muted-foreground' />
-                    </Link>
-                  </Button>
-                )}
-              </div>
+            <Link
+              href='/login'
+              className='inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-1'
+            >
+              <ArrowLeft className='h-4 w-4' />
+              Sign in
+            </Link>
+            <div className='flex items-center gap-1'>
+              <h2 className='text-2xl font-semibold tracking-tight md:text-3xl select-none cursor-default'>
+                Calendar
+              </h2>
             </div>
             <Separator />
-            <Calendar />
+            <div className='relative min-h-[50vh]'>
+              <PrivateCalendarOverlay />
+            </div>
           </div>
         </div>
       </div>
+    );
+  }
+
+  if (status !== 200) {
+    redirect(isAuthenticated ? '/calendars' : '/login');
+  }
+
+  const dbEvents = await getCalendarEvents(calendarId, token);
+  const events = dbEvents.map(dbEventToCalendarEvent);
+
+  const readOnly = !isAuthenticated;
+  const canShare = calendar.role === 'owner' || calendar.role === 'editor';
+
+  return (
+    <EventsProvider calendarId={calendarId} serverEvents={events} readOnly={readOnly}>
+      <ReadOnlyBanner />
+      <div className='relative py-4'>
+          <div className='flex flex-col w-full items-center'>
+            <div className='w-full px-5 space-y-5'>
+
+              <div className='space-y-0'>
+
+                <Link
+                  href={backHref}
+                  className='inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-1'
+                >
+                  <ArrowLeft className='h-4 w-4' />
+                  {backLabel}
+                </Link>
+                <div className='flex items-center gap-1'>
+                  <h2 className='text-2xl font-semibold tracking-tight md:text-3xl select-none cursor-default'>
+                    {calendar.name}
+                  </h2>
+
+                  <CalendarFavouriteButton
+                    calendarId={calendarId}
+                    isFavourite={calendar.is_favourite}
+                    disabled={readOnly}
+                  />
+                  {canShare && (
+                    <CalendarShareButton
+                      calendarId={calendarId}
+                      calendarName={calendar.name}
+                      isPublic={calendar.is_public}
+                    />
+                  )}
+                  {calendar.role === 'owner' && (
+                    <Button variant='ghost' size='icon' asChild>
+                      <Link href={`/calendars/${calendarId}/edit`} aria-label='Edit calendar'>
+                        <Pencil className='h-5 w-5 text-muted-foreground' />
+                      </Link>
+                    </Button>
+                  )}
+                </div>
+              </div>
+              <Separator />
+              <Calendar />
+            </div>
+          </div>
+        </div>
     </EventsProvider>
   );
 }

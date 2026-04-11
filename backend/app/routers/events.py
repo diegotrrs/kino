@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from psycopg2.extensions import connection
 
-from ..auth import get_current_user
+from ..auth import get_current_user, get_optional_user
 from .. import crud
 from ..database import get_db
 from ..schemas.event import EventCreate, EventResponse, EventUpdate
@@ -15,12 +15,18 @@ def list_events(
     limit: int = 100,
     calendar_id: int | None = None,
     db: connection = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict | None = Depends(get_optional_user),
 ):
     if calendar_id is not None:
-        if crud.get_user_role(db, calendar_id, current_user["id"]) is None:
-            raise HTTPException(status_code=403, detail="Not a member of this calendar")
+        calendar = crud.get_calendar(db, calendar_id, current_user["id"] if current_user else None)
+        if calendar is None:
+            raise HTTPException(status_code=404, detail="Calendar not found")
+        if not calendar["is_public"]:
+            if current_user is None or calendar.get("role") is None:
+                raise HTTPException(status_code=403, detail="Not authorized to view this calendar's events")
         return crud.get_events_by_calendar(db, calendar_id, skip=skip, limit=limit)
+    if current_user is None:
+        raise HTTPException(status_code=401, detail="Authentication required")
     return crud.get_events(db, skip=skip, limit=limit)
 
 

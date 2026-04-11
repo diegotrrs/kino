@@ -9,11 +9,13 @@ import { useOptimistic, useTransition } from 'react';
 interface CalendarFavouriteButtonProps {
   calendarId: number;
   isFavourite: boolean;
+  disabled?: boolean;
 }
 
 export function CalendarFavouriteButton({
   calendarId,
   isFavourite,
+  disabled = false,
 }: CalendarFavouriteButtonProps) {
   const { toast } = useToast();
   const [, startTransition] = useTransition();
@@ -36,6 +38,7 @@ export function CalendarFavouriteButton({
       variant='ghost'
       size='icon'
       onClick={handleClick}
+      disabled={disabled}
       aria-label={optimisticFavourite ? 'Remove from favourites' : 'Add to favourites'}
       className={optimisticFavourite ? 'text-yellow-400 hover:text-yellow-500' : 'text-muted-foreground hover:text-yellow-400'}
     >

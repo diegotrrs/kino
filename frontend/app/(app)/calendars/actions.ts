@@ -69,6 +69,31 @@ export async function createCalendar(name: string) {
   revalidatePath("/home");
 }
 
+export async function updateCalendarVisibility(id: number, isPublic: boolean) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  if (!token) redirect("/login");
+
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ is_public: isPublic }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Failed to update calendar visibility: ${text}`);
+  }
+
+  revalidatePath("/calendars");
+  revalidatePath(`/calendars/${id}`);
+  revalidatePath("/home");
+}
+
 export async function updateCalendar(id: number, name: string) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;

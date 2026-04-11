@@ -15,9 +15,10 @@ import { usePathname } from 'next/navigation';
 
 interface DesktopSidebarProps {
   user: CurrentUser | null;
+  isLoggedIn: boolean;
 }
 
-export function DesktopSidebar({ user }: DesktopSidebarProps) {
+export function DesktopSidebar({ user, isLoggedIn }: DesktopSidebarProps) {
   const pathname = usePathname();
 
   const mainItems   = navItems.filter((i) => i.section === 'main');
@@ -35,12 +36,15 @@ export function DesktopSidebar({ user }: DesktopSidebarProps) {
             <Tooltip key={item.href} delayDuration={0}>
               <TooltipTrigger asChild>
                 <Link
-                  href={item.href}
+                  href={isLoggedIn ? item.href : '#'}
+                  aria-disabled={!isLoggedIn}
                   className={cn(
                     'flex h-10 w-10 items-center justify-center rounded-lg transition-colors',
-                    isActive
-                      ? 'bg-accent text-accent-foreground'
-                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+                    !isLoggedIn
+                      ? 'pointer-events-none opacity-40 text-muted-foreground'
+                      : isActive
+                        ? 'bg-accent text-accent-foreground'
+                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
                   )}
                 >
                   <Icon className='h-5 w-5' />
@@ -63,12 +67,15 @@ export function DesktopSidebar({ user }: DesktopSidebarProps) {
             <Tooltip key={item.href} delayDuration={0}>
               <TooltipTrigger asChild>
                 <Link
-                  href={item.href}
+                  href={isLoggedIn ? item.href : '#'}
+                  aria-disabled={!isLoggedIn}
                   className={cn(
                     'flex h-10 w-10 items-center justify-center rounded-lg transition-colors',
-                    isActive
-                      ? 'bg-accent text-accent-foreground'
-                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+                    !isLoggedIn
+                      ? 'pointer-events-none opacity-40 text-muted-foreground'
+                      : isActive
+                        ? 'bg-accent text-accent-foreground'
+                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
                   )}
                 >
                   <Icon className='h-5 w-5' />

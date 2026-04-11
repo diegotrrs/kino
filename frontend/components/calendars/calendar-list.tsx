@@ -45,7 +45,12 @@ export function CalendarList({ calendars, from }: CalendarListProps) {
             <CalendarIcon className='h-4 w-4 shrink-0 text-muted-foreground' />
             <span className='text-sm font-medium truncate'>{calendar.name}</span>
           </Link>
-          <CalendarDeleteButton calendarId={calendar.id} calendarName={calendar.name} />
+          <CalendarDeleteButton
+            calendarId={calendar.id}
+            calendarName={calendar.name}
+            isPublic={calendar.is_public}
+            role={calendar.role}
+          />
         </div>
       ))}
     </div>

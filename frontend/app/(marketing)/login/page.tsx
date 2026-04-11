@@ -14,10 +14,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useActionState } from 'react';
 
 export default function LoginPage() {
   const [state, formAction, pending] = useActionState<AuthState, FormData>(login, {});
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect') ?? '';
 
   return (
     <div className='flex min-h-svh w-full items-center justify-center p-6 md:p-10'>
@@ -34,6 +37,7 @@ export default function LoginPage() {
               {state.error && (
                 <p className='text-sm text-destructive'>{state.error}</p>
               )}
+              {redirect && <input type='hidden' name='redirect' value={redirect} />}
               <div className='grid gap-2'>
                 <Label htmlFor='email'>Email</Label>
                 <Input id='email' name='email' type='email' required />
@@ -62,7 +66,10 @@ export default function LoginPage() {
             </form>
             <div className='mt-4 text-center text-sm'>
               Don&apos;t have an account?{' '}
-              <Link href='/signup' className='underline underline-offset-4'>
+              <Link
+                href={redirect ? `/signup?redirect=${encodeURIComponent(redirect)}` : '/signup'}
+                className='underline underline-offset-4'
+              >
                 Sign up
               </Link>
             </div>

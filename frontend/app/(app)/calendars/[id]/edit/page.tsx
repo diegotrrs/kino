@@ -39,7 +39,7 @@ export default async function EditCalendarPage({
   if (calendarRes.status === 401) redirect('/login');
   if (!calendarRes.ok) redirect('/calendars');
 
-  const calendar: { name: string } = await calendarRes.json();
+  const calendar: { name: string; is_public: boolean } = await calendarRes.json();
   const members: CalendarMember[] = membersRes.ok ? await membersRes.json() : [];
   const currentUserId = getCurrentUserId(token);
 
@@ -58,7 +58,7 @@ export default async function EditCalendarPage({
 
           <Separator />
 
-          <CalendarEditForm calendarId={calendarId} currentName={calendar.name} />
+          <CalendarEditForm calendarId={calendarId} currentName={calendar.name} isPublic={calendar.is_public} />
 
           <Separator />
 

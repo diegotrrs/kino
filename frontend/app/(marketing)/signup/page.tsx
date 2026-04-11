@@ -13,11 +13,14 @@ import { Input }  from '@/components/ui/input';
 import { Label }  from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import Link       from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 import { signup, type AuthState } from '@/app/auth/actions';
 
 export default function SignupPage() {
   const [state, formAction, pending] = useActionState<AuthState, FormData>(signup, {});
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect') ?? '';
 
   return (
     <div className='flex min-h-svh w-full items-center justify-center p-6 md:p-10'>
@@ -34,6 +37,7 @@ export default function SignupPage() {
               {state.error && (
                 <p className='text-sm text-destructive'>{state.error}</p>
               )}
+              {redirect && <input type='hidden' name='redirect' value={redirect} />}
               <div className='grid gap-2'>
                 <Label htmlFor='name'>Name</Label>
                 <Input id='name' name='name' type='text' placeholder='John Doe' required />
@@ -68,7 +72,10 @@ export default function SignupPage() {
             </form>
             <div className='mt-4 text-center text-sm'>
               Already have an account?{' '}
-              <Link href='/login' className='underline underline-offset-4'>
+              <Link
+                href={redirect ? `/login?redirect=${encodeURIComponent(redirect)}` : '/login'}
+                className='underline underline-offset-4'
+              >
                 Sign in
               </Link>
             </div>

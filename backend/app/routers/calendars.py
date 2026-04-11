@@ -3,7 +3,7 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException
 from psycopg2.extensions import connection
 
-from ..auth import get_current_user
+from ..auth import get_current_user, get_optional_user
 
 from .. import crud
 from ..database import get_db
@@ -54,11 +54,14 @@ def list_deleted_calendars(
 def get_calendar(
     calendar_id: int,
     db: connection = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict | None = Depends(get_optional_user),
 ):
-    calendar = crud.get_calendar(db, calendar_id, current_user["id"])
+    calendar = crud.get_calendar(db, calendar_id, current_user["id"] if current_user else None)
     if calendar is None:
         raise HTTPException(status_code=404, detail="Calendar not found")
+    if not calendar["is_public"]:
+        if current_user is None or calendar.get("role") is None:
+            raise HTTPException(status_code=403, detail="This calendar is private")
     return calendar
 
 
