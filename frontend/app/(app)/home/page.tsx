@@ -48,6 +48,23 @@ export default async function HomePage() {
         <Separator />
 
         <section className='space-y-3'>
+          <div className='flex items-center justify-between'>
+            <h3 className='text-base font-semibold tracking-tight'>
+              My Calendars
+            </h3>
+            {calendars.length > 0 && (
+              <Button asChild size='sm'>
+                <Link href='/calendars/create'>
+                  <PlusIcon className='h-4 w-4' />
+                  New Calendar
+                </Link>
+              </Button>
+            )}
+          </div>
+          <CalendarList calendars={calendars} from='home' />
+        </section>
+
+        <section className='space-y-3'>
           <h3 className='text-base font-semibold tracking-tight'>
             My Favourites
           </h3>
@@ -63,23 +80,6 @@ export default async function HomePage() {
           ) : (
             <CalendarList calendars={favourites} from='home' />
           )}
-        </section>
-
-        <section className='space-y-3'>
-          <div className='flex items-center justify-between'>
-            <h3 className='text-base font-semibold tracking-tight'>
-              My Calendars
-            </h3>
-            {calendars.length > 0 && (
-              <Button asChild size='sm'>
-                <Link href='/calendars/create'>
-                  <PlusIcon className='h-4 w-4' />
-                  New Calendar
-                </Link>
-              </Button>
-            )}
-          </div>
-          <CalendarList calendars={calendars} from='home' />
         </section>
 
       </div>
