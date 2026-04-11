@@ -13,18 +13,18 @@ router = APIRouter()
 def list_events(
     skip: int = 0,
     limit: int = 100,
-    calendar_id: int | None = None,
+    calendar_uuid: str | None = None,
     db: connection = Depends(get_db),
     current_user: dict | None = Depends(get_optional_user),
 ):
-    if calendar_id is not None:
-        calendar = crud.get_calendar(db, calendar_id, current_user["id"] if current_user else None)
+    if calendar_uuid is not None:
+        calendar = crud.get_calendar_by_uuid(db, calendar_uuid, current_user["id"] if current_user else None)
         if calendar is None:
             raise HTTPException(status_code=404, detail="Calendar not found")
         if not calendar["is_public"]:
             if current_user is None or calendar.get("role") is None:
                 raise HTTPException(status_code=403, detail="Not authorized to view this calendar's events")
-        return crud.get_events_by_calendar(db, calendar_id, skip=skip, limit=limit)
+        return crud.get_events_by_calendar(db, calendar["id"], skip=skip, limit=limit)
     if current_user is None:
         raise HTTPException(status_code=401, detail="Authentication required")
     return crud.get_events(db, skip=skip, limit=limit)

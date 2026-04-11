@@ -38,13 +38,13 @@ async function getToken(): Promise<string | null> {
 }
 
 async function getCalendar(
-  calendarId: number,
+  calendarUuid: string,
   token: string | null
 ): Promise<{ calendar: CalendarType & { is_favourite: boolean }; status: number }> {
   const headers: Record<string, string> = {};
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
-  const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarId}`, {
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarUuid}`, {
     cache: 'no-store',
     headers,
   });
@@ -54,12 +54,12 @@ async function getCalendar(
   return { calendar: res.ok ? await res.json() : ({} as CalendarType & { is_favourite: boolean }), status: res.status };
 }
 
-async function getCalendarEvents(calendarId: number, token: string | null): Promise<Event[]> {
+async function getCalendarEvents(calendarUuid: string, token: string | null): Promise<Event[]> {
   const headers: Record<string, string> = {};
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
   const res = await fetch(
-    `${API_BASE_URL}/api/events/?calendar_id=${calendarId}`,
+    `${API_BASE_URL}/api/events/?calendar_uuid=${calendarUuid}`,
     { cache: 'no-store', headers }
   );
 
@@ -71,19 +71,17 @@ export default async function CalendarPage({
   params,
   searchParams,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ uuid: string }>;
   searchParams: Promise<{ from?: string }>;
 }) {
-  const { id } = await params;
+  const { uuid } = await params;
   const { from } = await searchParams;
-  const backHref  = from === 'home' ? '/home' : '/calendars';
-  const backLabel = from === 'home' ? 'Home' : 'My Calendars'; // used as aria-label
-  const calendarId = Number(id);
+  const backHref = from === 'home' ? '/home' : '/calendars';
 
   const token = await getToken();
   const isAuthenticated = !!token;
 
-  const { calendar, status } = await getCalendar(calendarId, token);
+  const { calendar, status } = await getCalendar(uuid, token);
 
   // Private calendar — unauthenticated user
   if (status === 403) {
@@ -117,14 +115,14 @@ export default async function CalendarPage({
     redirect(isAuthenticated ? '/calendars' : '/login');
   }
 
-  const dbEvents = await getCalendarEvents(calendarId, token);
+  const dbEvents = await getCalendarEvents(uuid, token);
   const events = dbEvents.map(dbEventToCalendarEvent);
 
   const readOnly = !isAuthenticated;
   const canShare = calendar.role === 'owner' || calendar.role === 'editor';
 
   return (
-    <EventsProvider calendarId={calendarId} serverEvents={events} readOnly={readOnly}>
+    <EventsProvider calendarId={calendar.id} serverEvents={events} readOnly={readOnly}>
       <ReadOnlyBanner />
       <div className='relative py-4'>
           <div className='flex flex-col w-full items-center'>
@@ -134,7 +132,7 @@ export default async function CalendarPage({
 
                 <Link
                   href={backHref}
-                  aria-label={backLabel}
+                  aria-label='Go back'
                   className='inline-flex items-center text-muted-foreground hover:text-foreground mb-1'
                 >
                   <ArrowLeft className='h-4 w-4' />
@@ -145,20 +143,20 @@ export default async function CalendarPage({
                   </h2>
 
                   <CalendarFavouriteButton
-                    calendarId={calendarId}
+                    calendarUuid={String(calendar.uuid)}
                     isFavourite={calendar.is_favourite}
                     disabled={readOnly}
                   />
                   {canShare && (
                     <CalendarShareButton
-                      calendarId={calendarId}
+                      calendarUuid={String(calendar.uuid)}
                       calendarName={calendar.name}
                       isPublic={calendar.is_public}
                     />
                   )}
                   {calendar.role === 'owner' && (
                     <Button variant='ghost' size='icon' asChild>
-                      <Link href={`/calendars/${calendarId}/edit`} aria-label='Edit calendar'>
+                      <Link href={`/calendars/${calendar.uuid}/edit`} aria-label='Edit calendar'>
                         <Pencil className='h-5 w-5 text-muted-foreground' />
                       </Link>
                     </Button>

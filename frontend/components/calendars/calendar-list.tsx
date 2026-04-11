@@ -39,14 +39,14 @@ export function CalendarList({ calendars, from }: CalendarListProps) {
       {calendars.map((calendar) => (
         <div key={calendar.id} className='flex items-center gap-3 px-4 py-3'>
           <Link
-            href={`/calendars/${calendar.id}${from ? `?from=${from}` : ''}`}
+            href={`/calendars/${calendar.uuid}${from ? `?from=${from}` : ''}`}
             className='flex items-center gap-3 flex-1 min-w-0'
           >
             <CalendarIcon className='h-4 w-4 shrink-0 text-muted-foreground' />
             <span className='text-sm font-medium truncate'>{calendar.name}</span>
           </Link>
           <CalendarDeleteButton
-            calendarId={calendar.id}
+            calendarUuid={String(calendar.uuid)}
             calendarName={calendar.name}
             isPublic={calendar.is_public}
             role={calendar.role}

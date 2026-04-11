@@ -16,7 +16,7 @@ import { useState, useTransition } from 'react';
 interface CalendarShareDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  calendarId: number;
+  calendarUuid: string;
   calendarName: string;
   isPublic: boolean;
 }
@@ -24,7 +24,7 @@ interface CalendarShareDialogProps {
 export function CalendarShareDialog({
   open,
   onOpenChange,
-  calendarId,
+  calendarUuid,
   calendarName,
   isPublic: initialIsPublic,
 }: CalendarShareDialogProps) {
@@ -35,13 +35,13 @@ export function CalendarShareDialog({
 
   const shareUrl =
     typeof window !== 'undefined'
-      ? `${window.location.origin}/calendars/${calendarId}`
-      : `/calendars/${calendarId}`;
+      ? `${window.location.origin}/calendars/${calendarUuid}`
+      : `/calendars/${calendarUuid}`;
 
   function handleVisibilityToggle(checked: boolean) {
     startTransition(async () => {
       try {
-        await updateCalendarVisibility(calendarId, checked);
+        await updateCalendarVisibility(calendarUuid, checked);
         setIsPublic(checked);
         toast({ title: checked ? 'Calendar is now public' : 'Calendar is now private' });
       } catch {

@@ -6,11 +6,11 @@ import { redirect } from "next/navigation";
 
 const API_BASE_URL = process.env.API_BASE_URL ?? "http://localhost:8000";
 
-export async function deleteCalendar(id: number) {
+export async function deleteCalendar(uuid: string) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
-  const res = await fetch(`${API_BASE_URL}/api/calendars/${id}`, {
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${uuid}`, {
     method: "DELETE",
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
@@ -24,13 +24,13 @@ export async function deleteCalendar(id: number) {
   revalidatePath("/home");
 }
 
-export async function restoreCalendar(id: number) {
+export async function restoreCalendar(uuid: string) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
   if (!token) redirect("/login");
 
-  const res = await fetch(`${API_BASE_URL}/api/calendars/${id}/restore`, {
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${uuid}/restore`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -69,13 +69,13 @@ export async function createCalendar(name: string) {
   revalidatePath("/home");
 }
 
-export async function updateCalendarVisibility(id: number, isPublic: boolean) {
+export async function updateCalendarVisibility(uuid: string, isPublic: boolean) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
   if (!token) redirect("/login");
 
-  const res = await fetch(`${API_BASE_URL}/api/calendars/${id}`, {
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${uuid}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -90,17 +90,17 @@ export async function updateCalendarVisibility(id: number, isPublic: boolean) {
   }
 
   revalidatePath("/calendars");
-  revalidatePath(`/calendars/${id}`);
+  revalidatePath(`/calendars/${uuid}`);
   revalidatePath("/home");
 }
 
-export async function updateCalendar(id: number, name: string) {
+export async function updateCalendar(uuid: string, name: string) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
   if (!token) redirect("/login");
 
-  const res = await fetch(`${API_BASE_URL}/api/calendars/${id}`, {
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${uuid}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -115,18 +115,18 @@ export async function updateCalendar(id: number, name: string) {
   }
 
   revalidatePath("/calendars");
-  revalidatePath(`/calendars/${id}`);
+  revalidatePath(`/calendars/${uuid}`);
   revalidatePath("/home");
 }
 
-export async function inviteToCalendar(calendarId: number, email: string) {
+export async function inviteToCalendar(calendarUuid: string, email: string) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
   if (!token) redirect("/login");
 
   const res = await fetch(
-    `${API_BASE_URL}/api/calendars/${calendarId}/invite`,
+    `${API_BASE_URL}/api/calendars/${calendarUuid}/invite`,
     {
       method: "POST",
       headers: {
@@ -142,17 +142,17 @@ export async function inviteToCalendar(calendarId: number, email: string) {
     throw new Error(`Failed to invite user: ${text}`);
   }
 
-  revalidatePath(`/calendars/${calendarId}/edit`);
+  revalidatePath(`/calendars/${calendarUuid}/edit`);
 }
 
-export async function removeMember(calendarId: number, userId: number) {
+export async function removeMember(calendarUuid: string, userId: number) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
   if (!token) redirect("/login");
 
   const res = await fetch(
-    `${API_BASE_URL}/api/calendars/${calendarId}/users/${userId}`,
+    `${API_BASE_URL}/api/calendars/${calendarUuid}/users/${userId}`,
     {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
@@ -164,11 +164,11 @@ export async function removeMember(calendarId: number, userId: number) {
     throw new Error(`Failed to remove member: ${text}`);
   }
 
-  revalidatePath(`/calendars/${calendarId}/edit`);
+  revalidatePath(`/calendars/${calendarUuid}/edit`);
 }
 
 export async function toggleFavourite(
-  calendarId: number,
+  calendarUuid: string,
   isFavourite: boolean,
 ) {
   const cookieStore = await cookies();
@@ -177,7 +177,7 @@ export async function toggleFavourite(
   if (!token) redirect("/login");
 
   const res = await fetch(
-    `${API_BASE_URL}/api/calendars/${calendarId}/favourite`,
+    `${API_BASE_URL}/api/calendars/${calendarUuid}/favourite`,
     {
       method: "PATCH",
       headers: {
@@ -194,5 +194,5 @@ export async function toggleFavourite(
   }
 
   revalidatePath("/home");
-  revalidatePath(`/calendars/${calendarId}`);
+  revalidatePath(`/calendars/${calendarUuid}`);
 }

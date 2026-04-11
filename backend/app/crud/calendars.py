@@ -28,6 +28,31 @@ def get_calendar(db: connection, calendar_id: int, user_id: int | None = None) -
         return cur.fetchone()
 
 
+def get_calendar_by_uuid(db: connection, calendar_uuid: str, user_id: int | None = None) -> dict | None:
+    with db.cursor() as cur:
+        if user_id is not None:
+            cur.execute(
+                """
+                SELECT c.*, COALESCE(cu.is_favourite, FALSE) AS is_favourite,
+                            cu.role AS role
+                FROM calendars c
+                LEFT JOIN calendar_users cu ON c.id = cu.calendar_id AND cu.user_id = %s
+                WHERE c.uuid = %s
+                """,
+                (user_id, calendar_uuid),
+            )
+        else:
+            cur.execute(
+                """
+                SELECT c.*, FALSE AS is_favourite, NULL AS role
+                FROM calendars c
+                WHERE c.uuid = %s
+                """,
+                (calendar_uuid,),
+            )
+        return cur.fetchone()
+
+
 def get_calendars(db: connection, skip: int = 0, limit: int = 100) -> list[dict]:
     with db.cursor() as cur:
         cur.execute(

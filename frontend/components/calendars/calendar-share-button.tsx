@@ -6,13 +6,13 @@ import { Share2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface CalendarShareButtonProps {
-  calendarId: number;
+  calendarUuid: string;
   calendarName: string;
   isPublic: boolean;
 }
 
 export function CalendarShareButton({
-  calendarId,
+  calendarUuid,
   calendarName,
   isPublic,
 }: CalendarShareButtonProps) {
@@ -32,7 +32,7 @@ export function CalendarShareButton({
       <CalendarShareDialog
         open={open}
         onOpenChange={setOpen}
-        calendarId={calendarId}
+        calendarUuid={calendarUuid}
         calendarName={calendarName}
         isPublic={isPublic}
       />

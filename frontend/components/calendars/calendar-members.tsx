@@ -19,13 +19,13 @@ import { X } from 'lucide-react';
 import { useTransition, useRef, useState } from 'react';
 
 interface CalendarMembersProps {
-  calendarId: number;
+  calendarUuid: string;
   calendarName: string;
   members: CalendarMember[];
   currentUserId: number;
 }
 
-export function CalendarMembers({ calendarId, calendarName, members, currentUserId }: CalendarMembersProps) {
+export function CalendarMembers({ calendarUuid, calendarName, members, currentUserId }: CalendarMembersProps) {
   const [isPending, startTransition] = useTransition();
   const [memberToRemove, setMemberToRemove] = useState<CalendarMember | null>(null);
   const { toast } = useToast();
@@ -38,7 +38,7 @@ export function CalendarMembers({ calendarId, calendarName, members, currentUser
 
     startTransition(async () => {
       try {
-        await inviteToCalendar(calendarId, email);
+        await inviteToCalendar(calendarUuid, email);
         toast({ title: `An email has been sent to ${email}` });
         if (emailRef.current) emailRef.current.value = '';
       } catch {
@@ -50,7 +50,7 @@ export function CalendarMembers({ calendarId, calendarName, members, currentUser
   function handleRemove(userId: number) {
     startTransition(async () => {
       try {
-        await removeMember(calendarId, userId);
+        await removeMember(calendarUuid, userId);
         toast({ title: 'Member removed.' });
       } catch {
         toast({ variant: 'destructive', title: 'Failed to remove member' });

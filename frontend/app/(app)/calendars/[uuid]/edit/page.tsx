@@ -16,21 +16,20 @@ function getCurrentUserId(token: string): number {
 export default async function EditCalendarPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ uuid: string }>;
 }) {
-  const { id } = await params;
-  const calendarId = Number(id);
+  const { uuid } = await params;
 
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
   if (!token) redirect('/login');
 
   const [calendarRes, membersRes] = await Promise.all([
-    fetch(`${API_BASE_URL}/api/calendars/${calendarId}`, {
+    fetch(`${API_BASE_URL}/api/calendars/${uuid}`, {
       cache: 'no-store',
       headers: { Authorization: `Bearer ${token}` },
     }),
-    fetch(`${API_BASE_URL}/api/calendars/${calendarId}/users`, {
+    fetch(`${API_BASE_URL}/api/calendars/${uuid}/users`, {
       cache: 'no-store',
       headers: { Authorization: `Bearer ${token}` },
     }),
@@ -58,7 +57,7 @@ export default async function EditCalendarPage({
 
           <Separator />
 
-          <CalendarEditForm calendarId={calendarId} currentName={calendar.name} isPublic={calendar.is_public} />
+          <CalendarEditForm calendarUuid={uuid} currentName={calendar.name} isPublic={calendar.is_public} />
 
           <Separator />
 
@@ -67,7 +66,7 @@ export default async function EditCalendarPage({
               <h3 className='text-sm font-medium'>Members</h3>
               <p className='text-xs text-muted-foreground'>Invite people to collaborate on this calendar.</p>
             </div>
-            <CalendarMembers calendarId={calendarId} calendarName={calendar.name} members={members} currentUserId={currentUserId} />
+            <CalendarMembers calendarUuid={uuid} calendarName={calendar.name} members={members} currentUserId={currentUserId} />
           </div>
 
           <Separator />
@@ -78,7 +77,7 @@ export default async function EditCalendarPage({
                 <p className='text-sm font-medium'>Delete this calendar</p>
                 <p className='text-xs text-muted-foreground'>You can recover it later from Settings.</p>
               </div>
-              <CalendarDeleteButton calendarId={calendarId} calendarName={calendar.name} variant='button' />
+              <CalendarDeleteButton calendarUuid={uuid} calendarName={calendar.name} variant='button' />
             </div>
           </div>
         </div>

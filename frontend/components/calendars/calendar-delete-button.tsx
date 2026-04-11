@@ -26,7 +26,7 @@ import { useRouter }       from 'next/navigation';
 import { useState, useTransition } from 'react';
 
 interface CalendarDeleteButtonProps {
-  calendarId: number;
+  calendarUuid: string;
   calendarName: string;
   isPublic?: boolean;
   role?: string;
@@ -34,7 +34,7 @@ interface CalendarDeleteButtonProps {
 }
 
 export function CalendarDeleteButton({
-  calendarId,
+  calendarUuid,
   calendarName,
   isPublic = false,
   role,
@@ -51,7 +51,7 @@ export function CalendarDeleteButton({
   function handleDelete() {
     startTransition(async () => {
       try {
-        await deleteCalendar(calendarId);
+        await deleteCalendar(calendarUuid);
         setDeleteDialogOpen(false);
         toast({ title: 'Calendar deleted' });
         router.push('/calendars');
@@ -127,7 +127,7 @@ export function CalendarDeleteButton({
         <CalendarShareDialog
           open={shareDialogOpen}
           onOpenChange={setShareDialogOpen}
-          calendarId={calendarId}
+          calendarUuid={calendarUuid}
           calendarName={calendarName}
           isPublic={isPublic}
         />

@@ -7,10 +7,10 @@ import { useRouter }           from 'next/navigation';
 import { useTransition }       from 'react';
 
 interface RestoreCalendarButtonProps {
-  calendarId: number;
+  calendarUuid: string;
 }
 
-export function RestoreCalendarButton({ calendarId }: RestoreCalendarButtonProps) {
+export function RestoreCalendarButton({ calendarUuid }: RestoreCalendarButtonProps) {
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
   const router = useRouter();
@@ -18,7 +18,7 @@ export function RestoreCalendarButton({ calendarId }: RestoreCalendarButtonProps
   function handleRestore() {
     startTransition(async () => {
       try {
-        await restoreCalendar(calendarId);
+        await restoreCalendar(calendarUuid);
         toast({ title: 'Calendar restored' });
         router.refresh();
       } catch {

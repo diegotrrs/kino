@@ -7,13 +7,13 @@ import { Star }             from 'lucide-react';
 import { useOptimistic, useTransition } from 'react';
 
 interface CalendarFavouriteButtonProps {
-  calendarId: number;
+  calendarUuid: string;
   isFavourite: boolean;
   disabled?: boolean;
 }
 
 export function CalendarFavouriteButton({
-  calendarId,
+  calendarUuid,
   isFavourite,
   disabled = false,
 }: CalendarFavouriteButtonProps) {
@@ -26,7 +26,7 @@ export function CalendarFavouriteButton({
     startTransition(async () => {
       setOptimisticFavourite(next);
       try {
-        await toggleFavourite(calendarId, next);
+        await toggleFavourite(calendarUuid, next);
       } catch {
         toast({ variant: 'destructive', title: 'Failed to update favourite' });
       }

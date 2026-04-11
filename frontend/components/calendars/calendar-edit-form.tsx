@@ -26,12 +26,12 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 interface CalendarEditFormProps {
-  calendarId: number;
+  calendarUuid: string;
   currentName: string;
   isPublic: boolean;
 }
 
-export function CalendarEditForm({ calendarId, currentName, isPublic }: CalendarEditFormProps) {
+export function CalendarEditForm({ calendarUuid, currentName, isPublic }: CalendarEditFormProps) {
   const [isPending, startTransition] = useTransition();
   const [isVisibilityPending, startVisibilityTransition] = useTransition();
   const { toast } = useToast();
@@ -45,9 +45,9 @@ export function CalendarEditForm({ calendarId, currentName, isPublic }: Calendar
   function onSubmit(data: FormValues) {
     startTransition(async () => {
       try {
-        await updateCalendar(calendarId, data.name);
+        await updateCalendar(calendarUuid, data.name);
         toast({ title: 'Calendar updated!' });
-        router.push(`/calendars/${calendarId}`);
+        router.push(`/calendars/${calendarUuid}`);
       } catch {
         toast({ variant: 'destructive', title: 'Failed to update calendar' });
       }
@@ -57,7 +57,7 @@ export function CalendarEditForm({ calendarId, currentName, isPublic }: Calendar
   function handleVisibilityChange(checked: boolean) {
     startVisibilityTransition(async () => {
       try {
-        await updateCalendarVisibility(calendarId, checked);
+        await updateCalendarVisibility(calendarUuid, checked);
         toast({ title: checked ? 'Calendar is now public' : 'Calendar is now private' });
       } catch {
         toast({ variant: 'destructive', title: 'Failed to update visibility' });

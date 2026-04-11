@@ -9,6 +9,7 @@ const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
 type DeletedCalendar = {
   id: number;
+  uuid: string;
   name: string;
   deleted_at: string;
 };
@@ -73,7 +74,7 @@ export default async function DeletedCalendarsPage() {
                       })}
                     </p>
                   </div>
-                  <RestoreCalendarButton calendarId={calendar.id} />
+                  <RestoreCalendarButton calendarUuid={String(calendar.uuid)} />
                 </li>
               ))}
             </ul>
