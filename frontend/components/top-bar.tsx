@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger
 }                           from '@/components/ui/dropdown-menu';
 import { useToast }              from '@/hooks/use-toast';
-import { EllipsisVertical, Moon, Sun } from 'lucide-react';
+import { EllipsisVertical, MessageSquare, Moon, Sun } from 'lucide-react';
 import Link                      from 'next/link';
 import { useTheme }              from 'next-themes';
 
@@ -47,6 +47,23 @@ export function TopBar({ isLoggedIn }: { isLoggedIn: boolean }) {
             <span className='hidden 2xl:inline'>2xl</span>
           </span>
         )}
+
+        <Button
+          variant='ghost'
+          size='icon'
+          aria-label='Feedback'
+          disabled={!isLoggedIn}
+          className={!isLoggedIn ? 'pointer-events-none opacity-40' : ''}
+          asChild={isLoggedIn}
+        >
+          {isLoggedIn ? (
+            <Link href='/feedback'>
+              <MessageSquare className='h-5 w-5' />
+            </Link>
+          ) : (
+            <MessageSquare className='h-5 w-5' />
+          )}
+        </Button>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

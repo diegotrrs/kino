@@ -1,3 +1,9 @@
+from .feedback import (
+    add_vote,
+    get_wishlist,
+    remove_vote,
+    submit_feedback,
+)
 from .calendars import (
     add_user_to_calendar,
     create_calendar,
@@ -40,6 +46,7 @@ __all__ = [
     "add_user_to_calendar",
     "create_calendar",
     "create_event",
+    "add_vote",
     "create_password_reset_token",
     "create_user",
     "delete_calendar",
@@ -60,10 +67,13 @@ __all__ = [
     "get_events_by_calendar",
     "get_password_reset_token",
     "get_user",
+    "get_wishlist",
     "get_user_by_email",
     "get_users",
     "mark_token_used",
     "remove_user_from_calendar",
+    "remove_vote",
+    "submit_feedback",
     "set_calendar_favourite",
     "update_calendar",
     "update_event",
