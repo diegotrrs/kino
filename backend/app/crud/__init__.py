@@ -25,17 +25,22 @@ from .events import (
     update_event,
 )
 from .users import (
+    create_password_reset_token,
     create_user,
     delete_user,
+    get_password_reset_token,
     get_user,
     get_user_by_email,
     get_users,
+    mark_token_used,
+    update_user_password,
 )
 
 __all__ = [
     "add_user_to_calendar",
     "create_calendar",
     "create_event",
+    "create_password_reset_token",
     "create_user",
     "delete_calendar",
     "delete_event",
@@ -53,11 +58,14 @@ __all__ = [
     "get_event",
     "get_events",
     "get_events_by_calendar",
+    "get_password_reset_token",
     "get_user",
     "get_user_by_email",
     "get_users",
+    "mark_token_used",
     "remove_user_from_calendar",
     "set_calendar_favourite",
     "update_calendar",
     "update_event",
+    "update_user_password",
 ]

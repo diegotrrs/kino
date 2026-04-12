@@ -24,6 +24,7 @@ const signupSchema = z.object({
 export type AuthState = {
   error?: string;
   fieldErrors?: Record<string, string[]>;
+  success?: string;
 };
 
 function safeRedirectPath(raw: FormDataEntryValue | null): string {
@@ -106,5 +107,57 @@ export async function signup(_prev: AuthState, formData: FormData): Promise<Auth
 export async function logout() {
   const cookieStore = await cookies();
   cookieStore.delete('token');
+  redirect('/login');
+}
+
+export async function requestPasswordReset(
+  _prev: AuthState,
+  formData: FormData
+): Promise<AuthState> {
+  const email = formData.get('email');
+  if (typeof email !== 'string' || !email) {
+    return { fieldErrors: { email: ['Email is required'] } };
+  }
+
+  const res = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+
+  if (!res.ok) {
+    return { error: 'Something went wrong. Please try again.' };
+  }
+
+  const { message } = await res.json();
+  return { success: message };
+}
+
+export async function resetPassword(
+  _prev: AuthState,
+  formData: FormData
+): Promise<AuthState> {
+  const token = formData.get('token');
+  const password = formData.get('password');
+  const confirmPassword = formData.get('confirmPassword');
+
+  if (typeof password !== 'string' || password.length < 8) {
+    return { fieldErrors: { password: ['Password must be at least 8 characters'] } };
+  }
+  if (password !== confirmPassword) {
+    return { fieldErrors: { confirmPassword: ['Passwords do not match'] } };
+  }
+
+  const res = await fetch(`${API_BASE_URL}/api/auth/reset-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, password }),
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    return { error: body?.detail ?? 'Invalid or expired link. Please request a new one.' };
+  }
+
   redirect('/login');
 }

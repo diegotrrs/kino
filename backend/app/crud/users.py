@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from psycopg2.extensions import connection
 
 from ..auth import hash_password
@@ -48,3 +50,44 @@ def delete_user(db: connection, user_id: int) -> bool:
         deleted = cur.rowcount > 0
         db.commit()
         return deleted
+
+
+def create_password_reset_token(
+    db: connection, user_id: int, token: str, expires_at: datetime
+) -> None:
+    with db.cursor() as cur:
+        cur.execute(
+            """
+            INSERT INTO password_reset_tokens (user_id, token, expires_at)
+            VALUES (%s, %s, %s)
+            """,
+            (user_id, token, expires_at),
+        )
+        db.commit()
+
+
+def get_password_reset_token(db: connection, token: str) -> dict | None:
+    with db.cursor() as cur:
+        cur.execute(
+            "SELECT * FROM password_reset_tokens WHERE token = %s",
+            (token,),
+        )
+        return cur.fetchone()
+
+
+def mark_token_used(db: connection, token: str) -> None:
+    with db.cursor() as cur:
+        cur.execute(
+            "UPDATE password_reset_tokens SET used_at = NOW() WHERE token = %s",
+            (token,),
+        )
+        db.commit()
+
+
+def update_user_password(db: connection, user_id: int, password_hash: str) -> None:
+    with db.cursor() as cur:
+        cur.execute(
+            "UPDATE users SET password_hash = %s, updated_at = NOW() WHERE id = %s",
+            (password_hash, user_id),
+        )
+        db.commit()
