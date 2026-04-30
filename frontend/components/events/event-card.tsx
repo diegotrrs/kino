@@ -6,7 +6,10 @@ import {
   CardTitle
 }                            from '@/components/ui/card';
 import type { Event }        from '@/lib/types';
-import { format, parse }     from 'date-fns';
+import {
+  format,
+  parse
+}                            from 'date-fns';
 import {
   CalendarIcon,
   ClockIcon,
@@ -14,11 +17,11 @@ import {
 }                            from 'lucide-react';
 import { EventDeleteButton } from './event-delete-button';
 
-interface EventCardProps {
+type EventCardProps = {
   event: Event;
 }
 
-export function EventCard({ event }: EventCardProps) {
+export const EventCard = ({ event }: EventCardProps) => {
   const eventDate = parse(event.date, 'yyyy-MM-dd', new Date());
   const startTime = parse(event.start_time, 'HH:mm:ss', new Date());
   const endTime = event.end_time

@@ -1,15 +1,15 @@
-import { CalendarList } from '@/components/calendars/calendar-list';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import { CalendarList }  from '@/components/calendars/calendar-list';
+import { Button }        from '@/components/ui/button';
+import { Separator }     from '@/components/ui/separator';
 import type { Calendar } from '@/lib/types';
-import { PlusIcon } from 'lucide-react';
-import { cookies } from 'next/headers';
-import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { PlusIcon }      from 'lucide-react';
+import { cookies }       from 'next/headers';
+import Link              from 'next/link';
+import { redirect }      from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
-async function getCalendars(): Promise<Calendar[]> {
+const getCalendars = async (): Promise<Calendar[]> => {
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
 
@@ -29,7 +29,7 @@ async function getCalendars(): Promise<Calendar[]> {
   return res.json();
 }
 
-export default async function CalendarsPage() {
+const CalendarsPage = async () => {
   const calendars = await getCalendars();
 
   return (
@@ -62,4 +62,6 @@ export default async function CalendarsPage() {
       </div>
     </div>
   );
-}
+};
+
+export default CalendarsPage;

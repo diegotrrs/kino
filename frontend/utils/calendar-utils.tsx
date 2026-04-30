@@ -6,7 +6,7 @@ import {
 }                      from 'react';
 import { calendarRef } from './data';
 
-export function generateDaysInMonth(daysInMonth: number) {
+export const generateDaysInMonth = (daysInMonth: number) => {
   const daysArray = [];
 
   for (let day = 1; day <= daysInMonth; day++) {
@@ -19,57 +19,57 @@ export function generateDaysInMonth(daysInMonth: number) {
   return daysArray;
 }
 
-export function goPrev(calendarRef: calendarRef) {
+export const goPrev = (calendarRef: calendarRef) => {
   const calendarApi = calendarRef.current!.getApi();
   calendarApi.prev();
 }
 
-export function goNext(calendarRef: calendarRef) {
+export const goNext = (calendarRef: calendarRef) => {
   const calendarApi = calendarRef.current!.getApi();
   calendarApi.next();
 }
 
-export function goToday(calendarRef: calendarRef) {
+export const goToday = (calendarRef: calendarRef) => {
   const calendarApi = calendarRef.current!.getApi();
   calendarApi.today();
 }
 
-export function handleDayChange(
+export const handleDayChange = (
   calendarRef: calendarRef,
   currentDate: Date,
   day: string
-) {
+) => {
   const calendarApi = calendarRef.current!.getApi();
   const newDate = currentDate.setDate(Number(day));
   calendarApi.gotoDate(newDate);
 }
 
-export function handleMonthChange(
+export const handleMonthChange = (
   calendarRef: calendarRef,
   currentDate: Date,
   month: string
-) {
+) => {
   const calendarApi = calendarRef.current!.getApi();
   const newDate = new Date(currentDate);
   newDate.setMonth(Number(month) - 1);
   calendarApi.gotoDate(newDate);
 }
 
-export function handleYearChange(
+export const handleYearChange = (
   calendarRef: calendarRef,
   currentDate: Date,
   e: ChangeEvent<HTMLInputElement>
-) {
+) => {
   const calendarApi = calendarRef.current!.getApi();
   const newDate = currentDate.setFullYear(Number(e.target.value));
   calendarApi.gotoDate(newDate);
 }
 
-export function setView(
+export const setView = (
   calendarRef: calendarRef,
   viewName: string,
   setCurrentView: Dispatch<SetStateAction<string>>
-) {
+) => {
   const calendarApi = calendarRef.current!.getApi();
   setCurrentView(viewName);
   calendarApi.changeView(viewName);

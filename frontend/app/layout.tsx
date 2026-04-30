@@ -8,11 +8,7 @@ export const metadata: Metadata = {
   description: 'Create dedicated holiday calendars, map out every day of your trip, and never double-book a beach day again.',
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <html lang='en' suppressHydrationWarning>
       <body>
@@ -29,3 +25,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+export default RootLayout;

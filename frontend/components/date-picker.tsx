@@ -786,6 +786,7 @@ const DateTimePicker = React.forwardRef<
 
     // Sync the displayed month when the value changes (e.g. on form reset)
     useEffect(() => {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (value) setMonth(value);
     }, [value]);
 

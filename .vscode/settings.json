@@ -1,0 +1,11 @@
+{
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        "match": "\\.tsx?$",
+        "isAsync": true,
+        "cmd": "node ${workspaceFolder}/frontend/scripts/dev/align-imports.js ${file}" 
+      }
+    ]
+  },
+}

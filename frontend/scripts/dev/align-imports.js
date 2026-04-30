@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-const fs = require("fs").promises;
+const fs = require('fs').promises;
 
 function normalizeImportStatement(importStr, eol) {
   // Remove extra whitespace within single lines but preserve line breaks
   const lines = importStr.split(/\r?\n/);
   const normalizedLines = lines
-    .map((line) => line.replace(/\s+/g, " ").trim())
+    .map((line) => line.replace(/\s+/g, ' ').trim())
     .filter((line) => line);
 
   // Check if this is a multi-import with braces that should be formatted as multi-line
-  const singleLineStr = normalizedLines.join(" ");
+  const singleLineStr = normalizedLines.join(' ');
   const multiImportMatch = singleLineStr.match(
     /^(\s*(?:import|export)\s*(?:type\s*)?)\s*\{([^}]+)\}\s*(from\s+.+;?)$/
   );
@@ -20,7 +20,7 @@ function normalizeImportStatement(importStr, eol) {
     const fromClause = multiImportMatch[3];
 
     const importList = imports
-      .split(",")
+      .split(',')
       .map((imp) => imp.trim())
       .filter((imp) => imp);
 
@@ -48,7 +48,7 @@ function normalizeImportStatement(importStr, eol) {
     const fromClause = mixedImportMatch[4];
 
     const namedImportList = namedImports
-      .split(",")
+      .split(',')
       .map((imp) => imp.trim())
       .filter((imp) => imp);
 
@@ -64,12 +64,12 @@ function normalizeImportStatement(importStr, eol) {
   }
 
   // For other patterns, just normalize whitespace and return as single statement
-  return normalizedLines.join(" ");
+  return normalizedLines.join(' ');
 }
 
 async function alignFile(file) {
-  let content = await fs.readFile(file, "utf8");
-  const eol = content.includes("\r\n") ? "\r\n" : "\n";
+  let content = await fs.readFile(file, 'utf8');
+  const eol = content.includes('\r\n') ? '\r\n' : '\n';
   // Match each import-block (single or multi-line) by
   // looking for a leading "import" and the trailing semicolon.
   // We use multiline mode (m) so ^ sees the line start.
@@ -96,7 +96,7 @@ async function alignFile(file) {
   let processedExports = [];
   for (let match of matches) {
     const normalizedImport = normalizeImportStatement(match.raw, eol);
-    const isExport = match.raw.trim().startsWith("export");
+    const isExport = match.raw.trim().startsWith('export');
 
     if (isExport) {
       processedExports.push({
@@ -118,7 +118,7 @@ async function alignFile(file) {
     // For multi-line imports, check the last line for "from"
     const lines = raw.split(/\r?\n/);
     const lastLine = lines[lines.length - 1];
-    let idx = lastLine.indexOf("from");
+    let idx = lastLine.indexOf('from');
     if (idx >= 0) {
       let prefix = lastLine.slice(0, idx);
       if (prefix.length > maxPrefix) maxPrefix = prefix.length;
@@ -137,7 +137,7 @@ async function alignFile(file) {
     const lines = importStr.split(/\r?\n/);
     const lastLine = lines[lines.length - 1];
     const fromMatch = lastLine.match(/from\s+['"]([^'"]+)['"]/);
-    return fromMatch ? fromMatch[1] : "";
+    return fromMatch ? fromMatch[1] : '';
   }
 
   // Sort imports and exports separately by source alphabetically, with relative imports and import assignments last
@@ -159,8 +159,8 @@ async function alignFile(file) {
       const sourceA = extractSource(a.raw);
       const sourceB = extractSource(b.raw);
 
-      const isRelativeA = sourceA.startsWith(".");
-      const isRelativeB = sourceB.startsWith(".");
+      const isRelativeA = sourceA.startsWith('.');
+      const isRelativeB = sourceB.startsWith('.');
 
       // If one is relative and the other isn't, put the non-relative first
       if (isRelativeA && !isRelativeB) return 1;
@@ -184,11 +184,11 @@ async function alignFile(file) {
       // Process each line, but only align the last line (which contains "from")
       const processedLines = lines.map((line, idx) => {
         if (idx === lastLineIdx) {
-          let fromIdx = line.indexOf("from");
+          let fromIdx = line.indexOf('from');
           if (fromIdx >= 0) {
             let prefix = line.slice(0, fromIdx);
             let rest = line.slice(fromIdx);
-            let pad = " ".repeat(maxPrefix - prefix.length);
+            let pad = ' '.repeat(maxPrefix - prefix.length);
             return prefix + pad + rest;
           }
         }
@@ -217,7 +217,7 @@ async function alignFile(file) {
   }
   if (rebuiltExports.length > 0) {
     if (rebuiltImports.length > 0) {
-      combinedStatements.push(""); // Add blank line between imports and exports
+      combinedStatements.push(''); // Add blank line between imports and exports
     }
     combinedStatements.push(...rebuiltExports);
   }
@@ -228,8 +228,8 @@ async function alignFile(file) {
     combinedStatements.join(eol) +
     content.slice(endPos);
   if (out !== content) {
-    await fs.writeFile(file, out, "utf8");
-    console.log("Aligned:", file);
+    await fs.writeFile(file, out, 'utf8');
+    console.log('Aligned:', file);
   }
 }
 

@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-const { execFileSync } = require("child_process");
-const fs = require("fs");
-const path = require("path");
+const { execFileSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
 
-const dirs = ["app", "components", "hooks", "lib", "utils"];
+const dirs = ['app', 'components', 'hooks', 'lib', 'utils'];
 
 function findFiles(dir) {
   const results = [];
@@ -22,9 +22,9 @@ function findFiles(dir) {
 const files = dirs.flatMap(findFiles);
 
 if (files.length === 0) {
-  console.log("No files found.");
+  console.log('No files found.');
   process.exit(0);
 }
 
-const script = path.join(__dirname, "align-imports.js");
-execFileSync("node", [script, ...files], { stdio: "inherit" });
+const script = path.join(__dirname, 'align-imports.js');
+execFileSync('node', [script, ...files], { stdio: 'inherit' });

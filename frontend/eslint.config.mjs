@@ -9,6 +9,7 @@ const eslintConfig = defineConfig([
     rules: {
       quotes: ['error', 'single', { avoidEscape: true }],
       'jsx-quotes': ['error', 'prefer-single'],
+      '@typescript-eslint/no-unused-vars': ['warn', { varsIgnorePattern: '^_', argsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
     },
   },
   // Override default ignores of eslint-config-next.
@@ -18,6 +19,8 @@ const eslintConfig = defineConfig([
     'out/**',
     'build/**',
     'next-env.d.ts',
+    // Node.js scripts use CommonJS require()
+    'scripts/**',
   ]),
 ]);
 

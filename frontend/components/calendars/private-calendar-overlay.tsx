@@ -1,6 +1,6 @@
 import { Lock } from 'lucide-react';
 
-export function PrivateCalendarOverlay() {
+export const PrivateCalendarOverlay = () => {
   return (
     <div className='absolute inset-0 z-20 flex items-center justify-center'>
       <div className='absolute inset-0 bg-background/70 backdrop-blur-sm' />

@@ -6,7 +6,7 @@ import { redirect }     from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
-async function getWishlist(token: string) {
+const getWishlist = async (token: string) => {
   const res = await fetch(`${API_BASE_URL}/api/wishlist/`, {
     cache: 'no-store',
     headers: { Authorization: `Bearer ${token}` },
@@ -16,7 +16,7 @@ async function getWishlist(token: string) {
   return res.json();
 }
 
-export default async function FeedbackPage() {
+const FeedbackPage = async () => {
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
   if (!token) redirect('/login');
@@ -63,4 +63,6 @@ export default async function FeedbackPage() {
       </div>
     </div>
   );
-}
+};
+
+export default FeedbackPage;

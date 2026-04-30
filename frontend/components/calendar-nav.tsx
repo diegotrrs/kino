@@ -19,7 +19,6 @@ import {
   generateDaysInMonth,
   goNext,
   goPrev,
-  goToday,
   handleDayChange,
   handleMonthChange,
   handleYearChange
@@ -35,7 +34,7 @@ import {
 import { useState }     from 'react';
 import { EventAddForm } from './event-add-form';
 
-interface CalendarNavProps {
+type CalendarNavProps = {
   calendarRef: calendarRef;
   start: Date;
   end: Date;
@@ -43,13 +42,13 @@ interface CalendarNavProps {
   readOnly?: boolean;
 }
 
-export default function CalendarNav({
+const CalendarNav = ({
   calendarRef,
   start,
   end,
   viewedDate,
   readOnly = false,
-}: CalendarNavProps) {
+}: CalendarNavProps) => {
   const [currentView] = useState('dayGridMonth');
 
   const selectedMonth = viewedDate.getMonth() + 1;
@@ -215,3 +214,5 @@ export default function CalendarNav({
     </div>
   );
 }
+
+export default CalendarNav;

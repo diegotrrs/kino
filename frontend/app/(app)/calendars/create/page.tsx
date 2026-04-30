@@ -1,7 +1,7 @@
 import { CalendarCreateForm } from '@/components/calendars/calendar-create-form';
 import { Separator }          from '@/components/ui/separator';
 
-export default function CreateCalendarPage() {
+const CreateCalendarPage = () => {
   return (
     <div className='py-4'>
       <div className='flex flex-col w-full items-center'>
@@ -23,3 +23,5 @@ export default function CreateCalendarPage() {
     </div>
   );
 }
+
+export default CreateCalendarPage;

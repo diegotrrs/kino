@@ -2,7 +2,7 @@
 import { CalendarEvent, initialEvents } from '@/utils/data';
 import React, { createContext, ReactNode, useContext, useState } from 'react';
 
-interface EventsContextType {
+type EventsContextType = {
   calendarId?: number;
   readOnly: boolean;
   events: CalendarEvent[];
@@ -30,7 +30,7 @@ export const useEvents = () => {
   return context;
 };
 
-interface EventsProviderProps {
+type EventsProviderProps = {
   children: ReactNode;
   calendarId?: number;
   serverEvents?: CalendarEvent[];

@@ -1,21 +1,20 @@
 'use client';
-
 import { CalendarShareDialog } from '@/components/calendars/calendar-share-dialog';
-import { Button } from '@/components/ui/button';
-import { Share2 } from 'lucide-react';
-import { useState } from 'react';
+import { Button }              from '@/components/ui/button';
+import { Share2 }              from 'lucide-react';
+import { useState }            from 'react';
 
-interface CalendarShareButtonProps {
+type CalendarShareButtonProps = {
   calendarUuid: string;
   calendarName: string;
   isPublic: boolean;
 }
 
-export function CalendarShareButton({
+export const CalendarShareButton = ({
   calendarUuid,
   calendarName,
   isPublic,
-}: CalendarShareButtonProps) {
+}: CalendarShareButtonProps) => {
   const [open, setOpen] = useState(false);
 
   return (

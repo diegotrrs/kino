@@ -1,11 +1,18 @@
 'use client';
-
-import { Separator }    from '@/components/ui/separator';
-import { cn }           from '@/lib/utils';
-import { ChevronRight, Monitor, Moon, Sun } from 'lucide-react';
-import Link             from 'next/link';
-import { useTheme }     from 'next-themes';
-import { useEffect, useState } from 'react';
+import { Separator } from '@/components/ui/separator';
+import { cn }        from '@/lib/utils';
+import {
+  ChevronRight,
+  Monitor,
+  Moon,
+  Sun
+}                    from 'lucide-react';
+import { useTheme }  from 'next-themes';
+import Link          from 'next/link';
+import {
+  useEffect,
+  useState
+}                    from 'react';
 
 const options = [
   { value: 'system', label: 'System', icon: Monitor },
@@ -13,10 +20,11 @@ const options = [
   { value: 'dark',   label: 'Dark',   icon: Moon },
 ] as const;
 
-export default function SettingsPage() {
+const SettingsPage = () => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
   return (
@@ -75,3 +83,5 @@ export default function SettingsPage() {
     </div>
   );
 }
+
+export default SettingsPage;

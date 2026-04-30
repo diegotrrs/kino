@@ -1,11 +1,11 @@
 import type { Event } from '@/lib/types';
 import { EventCard }  from './event-card';
 
-interface EventListProps {
+type EventListProps = {
   events: Event[];
 }
 
-export function EventList({ events }: EventListProps) {
+export const EventList = ({ events }: EventListProps) => {
   if (events.length === 0) {
     return (
       <div className='flex flex-col items-center justify-center rounded-xl border border-dashed p-12 text-center'>

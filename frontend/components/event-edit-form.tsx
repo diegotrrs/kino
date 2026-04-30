@@ -64,17 +64,17 @@ const eventEditFormSchema = z.object({
 
 type EventEditFormValues = z.infer<typeof eventEditFormSchema>;
 
-interface EventEditFormProps {
+type EventEditFormProps = {
   oldEvent?: CalendarEvent;
   event?: CalendarEvent;
   isDrag: boolean;
 }
 
-export function EventEditForm({
+export const EventEditForm = ({
   oldEvent,
   event,
   isDrag,
-}: EventEditFormProps) {
+}: EventEditFormProps) => {
   const { calendarId, readOnly, addEvent, deleteEvent } = useEvents();
   const { eventEditOpen, setEventEditOpen } = useEvents();
   const [confirmingDelete, setConfirmingDelete] = useState(false);
@@ -104,6 +104,7 @@ export function EventEditForm({
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setConfirmingDelete(false);
     form.reset({
       id: event?.id,
@@ -115,7 +116,7 @@ export function EventEditForm({
     });
   }, [form, event]);
 
-  async function onSubmit(data: EventEditFormValues) {
+  const onSubmit = async (data: EventEditFormValues) => {
     const newEvent = {
       id: data.id,
       title: data.title,
@@ -160,7 +161,7 @@ export function EventEditForm({
     });
   }
 
-  async function handleDelete() {
+  const handleDelete = async () => {
     const id = form.getValues('id');
     if (!id) return;
 

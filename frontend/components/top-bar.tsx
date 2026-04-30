@@ -1,19 +1,24 @@
 'use client';
-import { logout }           from '@/app/auth/actions';
-import { Button }           from '@/components/ui/button';
+import { logout }   from '@/app/auth/actions';
+import { Button }   from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger
-}                           from '@/components/ui/dropdown-menu';
-import { useToast }              from '@/hooks/use-toast';
-import { EllipsisVertical, MessageSquare, Moon, Sun } from 'lucide-react';
-import Link                      from 'next/link';
-import { useTheme }              from 'next-themes';
+}                   from '@/components/ui/dropdown-menu';
+import { useToast } from '@/hooks/use-toast';
+import {
+  EllipsisVertical,
+  MessageSquare,
+  Moon,
+  Sun
+}                   from 'lucide-react';
+import { useTheme } from 'next-themes';
+import Link         from 'next/link';
 
-export function TopBar({ isLoggedIn }: { isLoggedIn: boolean }) {
+export const TopBar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const { toast } = useToast();
   const { resolvedTheme, setTheme } = useTheme();
 

@@ -1,5 +1,5 @@
-import CalendarNoSSR from '@/components/calendar-no-ssr';
-import { Button } from '@/components/ui/button';
+import CalendarNoSSR      from '@/components/calendar-no-ssr';
+import { Button }         from '@/components/ui/button';
 import { EventsProvider } from '@/context/events-context';
 import {
   CalendarDays,
@@ -7,9 +7,9 @@ import {
   Globe2,
   Sparkles,
   ArrowRight,
-  CheckCircle2,
-} from 'lucide-react';
-import Link from 'next/link';
+  CheckCircle2
+}                         from 'lucide-react';
+import Link               from 'next/link';
 
 const features = [
   {
@@ -44,7 +44,7 @@ const steps = [
   { step: '03', title: 'Enjoy your holiday', body: 'Open Kino on your phone and follow the plan. Or ignore it and have fun anyway.' },
 ];
 
-export default function Home() {
+const Home = () => {
   return (
     <div className='flex flex-col'>
 
@@ -185,3 +185,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default Home;

@@ -1,6 +1,8 @@
 'use client';
-
-import { inviteToCalendar, removeMember } from '@/app/(app)/calendars/actions';
+import {
+  inviteToCalendar,
+  removeMember
+}                              from '@/app/(app)/calendars/actions';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,29 +11,33 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { Button }   from '@/components/ui/button';
-import { Input }    from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
+  AlertDialogTitle
+}                              from '@/components/ui/alert-dialog';
+import { Button }              from '@/components/ui/button';
+import { Input }               from '@/components/ui/input';
+import { useToast }            from '@/hooks/use-toast';
 import type { CalendarMember } from '@/lib/types';
-import { X } from 'lucide-react';
-import { useTransition, useRef, useState } from 'react';
+import { X }                   from 'lucide-react';
+import {
+  useTransition,
+  useRef,
+  useState
+}                              from 'react';
 
-interface CalendarMembersProps {
+type CalendarMembersProps = {
   calendarUuid: string;
   calendarName: string;
   members: CalendarMember[];
   currentUserId: number;
 }
 
-export function CalendarMembers({ calendarUuid, calendarName, members, currentUserId }: CalendarMembersProps) {
+export const CalendarMembers = ({ calendarUuid, calendarName, members, currentUserId }: CalendarMembersProps) => {
   const [isPending, startTransition] = useTransition();
   const [memberToRemove, setMemberToRemove] = useState<CalendarMember | null>(null);
   const { toast } = useToast();
-  const emailRef  = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
 
-  function handleInvite(e: React.FormEvent) {
+  const handleInvite = (e: React.FormEvent) => {
     e.preventDefault();
     const email = emailRef.current?.value.trim();
     if (!email) return;
@@ -47,7 +53,7 @@ export function CalendarMembers({ calendarUuid, calendarName, members, currentUs
     });
   }
 
-  function handleRemove(userId: number) {
+  const handleRemove = (userId: number) => {
     startTransition(async () => {
       try {
         await removeMember(calendarUuid, userId);

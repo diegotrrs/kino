@@ -2,22 +2,22 @@
 import {
   login,
   type AuthState
-} from '@/app/auth/actions';
-import { Button } from '@/components/ui/button';
+}                          from '@/app/auth/actions';
+import { Button }          from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import Link from 'next/link';
+}                          from '@/components/ui/card';
+import { Input }           from '@/components/ui/input';
+import { Label }           from '@/components/ui/label';
+import Link                from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useActionState } from 'react';
+import { useActionState }  from 'react';
 
-export default function LoginPage() {
+const LoginPage = () => {
   const [state, formAction, pending] = useActionState<AuthState, FormData>(login, {});
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') ?? '';
@@ -79,3 +79,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+export default LoginPage;

@@ -1,6 +1,5 @@
 'use client';
-
-import { deleteCalendar }  from '@/app/(app)/calendars/actions';
+import { deleteCalendar }      from '@/app/(app)/calendars/actions';
 import { CalendarShareDialog } from '@/components/calendars/calendar-share-dialog';
 import {
   AlertDialog,
@@ -10,22 +9,29 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Button }          from '@/components/ui/button';
+  AlertDialogTrigger
+}                              from '@/components/ui/alert-dialog';
+import { Button }              from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useToast }        from '@/hooks/use-toast';
-import { MoreHorizontal, Share2, Trash2 } from 'lucide-react';
-import { useRouter }       from 'next/navigation';
-import { useState, useTransition } from 'react';
+  DropdownMenuTrigger
+}                              from '@/components/ui/dropdown-menu';
+import { useToast }            from '@/hooks/use-toast';
+import {
+  MoreHorizontal,
+  Share2,
+  Trash2
+}                              from 'lucide-react';
+import { useRouter }           from 'next/navigation';
+import {
+  useState,
+  useTransition
+}                              from 'react';
 
-interface CalendarDeleteButtonProps {
+type CalendarDeleteButtonProps = {
   calendarUuid: string;
   calendarName: string;
   isPublic?: boolean;
@@ -33,13 +39,13 @@ interface CalendarDeleteButtonProps {
   variant?: 'dropdown' | 'button';
 }
 
-export function CalendarDeleteButton({
+export const CalendarDeleteButton = ({
   calendarUuid,
   calendarName,
   isPublic = false,
   role,
   variant = 'dropdown',
-}: CalendarDeleteButtonProps) {
+}: CalendarDeleteButtonProps) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -48,7 +54,7 @@ export function CalendarDeleteButton({
 
   const canShare = role === 'owner' || role === 'editor';
 
-  function handleDelete() {
+  const handleDelete = () => {
     startTransition(async () => {
       try {
         await deleteCalendar(calendarUuid);

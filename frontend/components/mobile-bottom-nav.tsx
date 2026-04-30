@@ -1,11 +1,10 @@
 'use client';
-
-import { navItems }   from '@/lib/nav';
+import { navItems }    from '@/lib/nav';
 import { cn }          from '@/lib/utils';
 import Link            from 'next/link';
 import { usePathname } from 'next/navigation';
 
-export function MobileBottomNav({ isLoggedIn = true }: { isLoggedIn?: boolean }) {
+export const MobileBottomNav = ({ isLoggedIn = true }: { isLoggedIn?: boolean }) => {
   const pathname  = usePathname();
   const mainItems = navItems.filter((i) => i.section === 'main');
 

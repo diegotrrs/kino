@@ -1,22 +1,22 @@
-import { CalendarList } from '@/components/calendars/calendar-list';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import { CalendarList }  from '@/components/calendars/calendar-list';
+import { Button }        from '@/components/ui/button';
+import { Separator }     from '@/components/ui/separator';
 import type { Calendar } from '@/lib/types';
-import { PlusIcon } from 'lucide-react';
-import { cookies } from 'next/headers';
-import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { PlusIcon }      from 'lucide-react';
+import { cookies }       from 'next/headers';
+import Link              from 'next/link';
+import { redirect }      from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
-async function getAuthToken(): Promise<string> {
+const getAuthToken = async (): Promise<string> => {
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
   if (!token) redirect('/login');
   return token;
 }
 
-async function getCalendars(token: string): Promise<Calendar[]> {
+const getCalendars = async (token: string): Promise<Calendar[]> => {
   const res = await fetch(`${API_BASE_URL}/api/calendars/`, {
     cache: 'no-store',
     headers: { Authorization: `Bearer ${token}` },
@@ -26,7 +26,7 @@ async function getCalendars(token: string): Promise<Calendar[]> {
   return res.json();
 }
 
-export default async function HomePage() {
+const HomePage = async () => {
   const token = await getAuthToken();
   const calendars = await getCalendars(token);
 
@@ -85,4 +85,6 @@ export default async function HomePage() {
       </div>
     </div>
   );
-}
+};
+
+export default HomePage;

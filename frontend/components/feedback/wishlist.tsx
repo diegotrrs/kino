@@ -1,12 +1,13 @@
 'use client';
-
 import { toggleVote } from '@/app/(app)/feedback/actions';
-import { Button }     from '@/components/ui/button';
 import { useToast }   from '@/hooks/use-toast';
 import { ThumbsUp }   from 'lucide-react';
-import { useOptimistic, useTransition } from 'react';
+import {
+  useOptimistic,
+  useTransition
+}                     from 'react';
 
-interface WishlistItem {
+type WishlistItem = {
   id: number;
   title: string;
   description: string;
@@ -14,11 +15,11 @@ interface WishlistItem {
   user_has_voted: boolean;
 }
 
-interface WishlistProps {
+type WishlistProps = {
   items: WishlistItem[];
 }
 
-export function Wishlist({ items }: WishlistProps) {
+export const Wishlist = ({ items }: WishlistProps) => {
   const [optimisticItems, updateOptimistic] = useOptimistic(
     items,
     (state, { id, voted }: { id: number; voted: boolean }) =>
@@ -35,7 +36,7 @@ export function Wishlist({ items }: WishlistProps) {
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
 
-  function handleToggle(item: WishlistItem) {
+  const handleToggle = (item: WishlistItem) => {
     const voted = !item.user_has_voted;
     startTransition(async () => {
       updateOptimistic({ id: item.id, voted });

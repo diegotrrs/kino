@@ -1,21 +1,27 @@
-import Calendar from '@/components/calendar-no-ssr';
+import Calendar                    from '@/components/calendar-no-ssr';
 import { CalendarFavouriteButton } from '@/components/calendars/calendar-favourite-button';
-import { PrivateCalendarOverlay } from '@/components/calendars/private-calendar-overlay';
-import { ReadOnlyBanner } from '@/components/calendars/read-only-banner';
-import { CalendarShareButton } from '@/components/calendars/calendar-share-button';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { EventsProvider } from '@/context/events-context';
-import type { Calendar as CalendarType, Event } from '@/lib/types';
-import { CalendarEvent } from '@/utils/data';
-import { ArrowLeft, Pencil } from 'lucide-react';
-import { cookies } from 'next/headers';
-import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { CalendarShareButton }     from '@/components/calendars/calendar-share-button';
+import { PrivateCalendarOverlay }  from '@/components/calendars/private-calendar-overlay';
+import { ReadOnlyBanner }          from '@/components/calendars/read-only-banner';
+import { Button }                  from '@/components/ui/button';
+import { Separator }               from '@/components/ui/separator';
+import { EventsProvider }          from '@/context/events-context';
+import type {
+  Calendar as CalendarType,
+  Event
+}                                  from '@/lib/types';
+import { CalendarEvent }           from '@/utils/data';
+import {
+  ArrowLeft,
+  Pencil
+}                                  from 'lucide-react';
+import { cookies }                 from 'next/headers';
+import Link                        from 'next/link';
+import { redirect }                from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
-function dbEventToCalendarEvent(event: Event): CalendarEvent {
+const dbEventToCalendarEvent = (event: Event): CalendarEvent => {
   const start = new Date(`${event.date}T${event.start_time}`);
   const endDate = event.end_date ?? event.date;
   const end = event.end_time
@@ -32,15 +38,15 @@ function dbEventToCalendarEvent(event: Event): CalendarEvent {
   };
 }
 
-async function getToken(): Promise<string | null> {
+const getToken = async (): Promise<string | null> => {
   const cookieStore = await cookies();
   return cookieStore.get('token')?.value ?? null;
 }
 
-async function getCalendar(
+const getCalendar = async (
   calendarUuid: string,
   token: string | null
-): Promise<{ calendar: CalendarType & { is_favourite: boolean }; status: number }> {
+): Promise<{ calendar: CalendarType & { is_favourite: boolean }; status: number }> => {
   const headers: Record<string, string> = {};
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
@@ -54,7 +60,7 @@ async function getCalendar(
   return { calendar: res.ok ? await res.json() : ({} as CalendarType & { is_favourite: boolean }), status: res.status };
 }
 
-async function getCalendarEvents(calendarUuid: string, token: string | null): Promise<Event[]> {
+const getCalendarEvents = async (calendarUuid: string, token: string | null): Promise<Event[]> => {
   const headers: Record<string, string> = {};
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
@@ -67,13 +73,13 @@ async function getCalendarEvents(calendarUuid: string, token: string | null): Pr
   return res.json();
 }
 
-export default async function CalendarPage({
+const CalendarPage = async ({
   params,
   searchParams,
 }: {
   params: Promise<{ uuid: string }>;
   searchParams: Promise<{ from?: string }>;
-}) {
+}) => {
   const { uuid } = await params;
   const { from } = await searchParams;
   const backHref = from === 'home' ? '/home' : '/calendars';
@@ -170,4 +176,6 @@ export default async function CalendarPage({
         </div>
     </EventsProvider>
   );
-}
+};
+
+export default CalendarPage;

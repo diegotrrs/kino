@@ -1,29 +1,32 @@
 'use client';
-
-import { logout }            from '@/app/auth/actions';
-import type { CurrentUser }  from '@/components/app-shell';
+import { logout }           from '@/app/auth/actions';
+import type { CurrentUser } from '@/components/app-shell';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+  DropdownMenuTrigger
+}                           from '@/components/ui/dropdown-menu';
 import {
   Tooltip,
   TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { cn }                from '@/lib/utils';
-import { LogIn, LogOut, User } from 'lucide-react';
-import Link                  from 'next/link';
-import { useTheme }          from 'next-themes';
+  TooltipTrigger
+}                           from '@/components/ui/tooltip';
+import { cn }               from '@/lib/utils';
+import {
+  LogIn,
+  LogOut,
+  User
+}                           from 'lucide-react';
+import { useTheme }         from 'next-themes';
+import Link                 from 'next/link';
 
-interface UserButtonProps {
+type UserButtonProps = {
   user: CurrentUser | null;
 }
 
-export function UserButton({ user }: UserButtonProps) {
+export const UserButton = ({ user }: UserButtonProps) => {
   const { resolvedTheme } = useTheme();
   const isDark            = resolvedTheme === 'dark';
 

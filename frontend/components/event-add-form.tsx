@@ -58,12 +58,12 @@ const eventAddFormSchema = z.object({
 
 type EventAddFormValues = z.infer<typeof eventAddFormSchema>;
 
-interface EventAddFormProps {
+type EventAddFormProps = {
   start: Date;
   end: Date;
 }
 
-export function EventAddForm({ start, end }: EventAddFormProps) {
+export const EventAddForm = ({ start, end }: EventAddFormProps) => {
   const { calendarId, readOnly, events, addEvent } = useEvents();
   const { eventAddOpen, setEventAddOpen } = useEvents();
 
@@ -83,7 +83,7 @@ export function EventAddForm({ start, end }: EventAddFormProps) {
     });
   }, [form, start, end]);
 
-  async function onSubmit(data: EventAddFormValues) {
+  const onSubmit = async (data: EventAddFormValues) => {
     const localEvent = {
       id: String(events.length + 1),
       title: data.title,

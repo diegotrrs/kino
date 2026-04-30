@@ -1,24 +1,23 @@
 'use client';
-
-import { navItems }    from '@/lib/nav';
 import type { CurrentUser } from '@/components/app-shell';
-import { UserButton }  from '@/components/user-button';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { cn }          from '@/lib/utils';
-import Link            from 'next/link';
-import { usePathname } from 'next/navigation';
+  TooltipTrigger
+}                           from '@/components/ui/tooltip';
+import { UserButton }       from '@/components/user-button';
+import { navItems }         from '@/lib/nav';
+import { cn }               from '@/lib/utils';
+import Link                 from 'next/link';
+import { usePathname }      from 'next/navigation';
 
-interface DesktopSidebarProps {
+type DesktopSidebarProps = {
   user: CurrentUser | null;
   isLoggedIn: boolean;
 }
 
-export function DesktopSidebar({ user, isLoggedIn }: DesktopSidebarProps) {
+export const DesktopSidebar = ({ user, isLoggedIn }: DesktopSidebarProps) => {
   const pathname = usePathname();
 
   const mainItems   = navItems.filter((i) => i.section === 'main');

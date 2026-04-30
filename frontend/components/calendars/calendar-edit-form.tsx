@@ -1,23 +1,25 @@
 'use client';
-
-import { updateCalendar, updateCalendarVisibility } from '@/app/(app)/calendars/actions';
-import { Button }         from '@/components/ui/button';
+import {
+  updateCalendar,
+  updateCalendarVisibility
+}                        from '@/app/(app)/calendars/actions';
+import { Button }        from '@/components/ui/button';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-}                         from '@/components/ui/form';
-import { Input }          from '@/components/ui/input';
-import { Switch }         from '@/components/ui/switch';
-import { useToast }       from '@/hooks/use-toast';
-import { zodResolver }    from '@hookform/resolvers/zod';
-import { useRouter }      from 'next/navigation';
-import { useTransition }  from 'react';
-import { useForm }        from 'react-hook-form';
-import { z }              from 'zod';
+  FormMessage
+}                        from '@/components/ui/form';
+import { Input }         from '@/components/ui/input';
+import { Switch }        from '@/components/ui/switch';
+import { useToast }      from '@/hooks/use-toast';
+import { zodResolver }   from '@hookform/resolvers/zod';
+import { useRouter }     from 'next/navigation';
+import { useTransition } from 'react';
+import { useForm }       from 'react-hook-form';
+import { z }             from 'zod';
 
 const schema = z.object({
   name: z.string().min(1, { message: 'Calendar name is required.' }),
@@ -25,24 +27,24 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-interface CalendarEditFormProps {
+type CalendarEditFormProps = {
   calendarUuid: string;
   currentName: string;
   isPublic: boolean;
 }
 
-export function CalendarEditForm({ calendarUuid, currentName, isPublic }: CalendarEditFormProps) {
+export const CalendarEditForm = ({ calendarUuid, currentName, isPublic }: CalendarEditFormProps) => {
   const [isPending, startTransition] = useTransition();
   const [isVisibilityPending, startVisibilityTransition] = useTransition();
   const { toast } = useToast();
-  const router    = useRouter();
+  const router = useRouter();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { name: currentName },
   });
 
-  function onSubmit(data: FormValues) {
+  const onSubmit = (data: FormValues) => {
     startTransition(async () => {
       try {
         await updateCalendar(calendarUuid, data.name);
@@ -54,7 +56,7 @@ export function CalendarEditForm({ calendarUuid, currentName, isPublic }: Calend
     });
   }
 
-  function handleVisibilityChange(checked: boolean) {
+  const handleVisibilityChange = (checked: boolean) => {
     startVisibilityTransition(async () => {
       try {
         await updateCalendarVisibility(calendarUuid, checked);

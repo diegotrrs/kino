@@ -1,17 +1,17 @@
-import { Button }       from '@/components/ui/button';
-import { cookies }      from 'next/headers';
-import Link             from 'next/link';
+import { Button }  from '@/components/ui/button';
+import { cookies } from 'next/headers';
+import Link        from 'next/link';
 
-async function isLoggedIn() {
+const isLoggedIn = async () => {
   const cookieStore = await cookies();
   return !!cookieStore.get('token')?.value;
 }
 
-export default async function MarketingLayout({
+const MarketingLayout = async ({
   children,
 }: {
   children: React.ReactNode;
-}) {
+}) => {
   const loggedIn = await isLoggedIn();
 
   return (
@@ -43,4 +43,6 @@ export default async function MarketingLayout({
       <main className='flex-1'>{children}</main>
     </div>
   );
-}
+};
+
+export default MarketingLayout;

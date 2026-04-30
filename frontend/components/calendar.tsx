@@ -45,8 +45,8 @@ type DayRenderProps = {
   info: DayCellContentArg;
 };
 
-export default function Calendar() {
-  const { events, calendarId, readOnly, addEvent, deleteEvent, setEventAddOpen, setEventEditOpen, setEventViewOpen } =
+const Calendar = () => {
+  const { events, calendarId, readOnly, addEvent, deleteEvent, setEventAddOpen, setEventEditOpen } =
     useEvents();
   const { toast } = useToast();
 
@@ -313,3 +313,5 @@ export default function Calendar() {
     </div>
   );
 }
+
+export default Calendar;

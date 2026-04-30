@@ -16,19 +16,19 @@ import { useToast }      from '@/hooks/use-toast';
 import { Trash2Icon }    from 'lucide-react';
 import { useTransition } from 'react';
 
-interface EventDeleteButtonProps {
+type EventDeleteButtonProps = {
   eventId: number;
   eventTitle: string;
 }
 
-export function EventDeleteButton({
+export const EventDeleteButton = ({
   eventId,
   eventTitle,
-}: EventDeleteButtonProps) {
+}: EventDeleteButtonProps) => {
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
 
-  function handleDelete() {
+  const handleDelete = () => {
     startTransition(async () => {
       try {
         await deleteEvent(eventId);

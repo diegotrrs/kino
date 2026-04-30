@@ -1,21 +1,20 @@
 'use client';
+import { restoreCalendar } from '@/app/(app)/calendars/actions';
+import { Button }          from '@/components/ui/button';
+import { useToast }        from '@/hooks/use-toast';
+import { useRouter }       from 'next/navigation';
+import { useTransition }   from 'react';
 
-import { restoreCalendar }     from '@/app/(app)/calendars/actions';
-import { Button }              from '@/components/ui/button';
-import { useToast }            from '@/hooks/use-toast';
-import { useRouter }           from 'next/navigation';
-import { useTransition }       from 'react';
-
-interface RestoreCalendarButtonProps {
+type RestoreCalendarButtonProps = {
   calendarUuid: string;
 }
 
-export function RestoreCalendarButton({ calendarUuid }: RestoreCalendarButtonProps) {
+export const RestoreCalendarButton = ({ calendarUuid }: RestoreCalendarButtonProps) => {
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
   const router = useRouter();
 
-  function handleRestore() {
+  const handleRestore = () => {
     startTransition(async () => {
       try {
         await restoreCalendar(calendarUuid);

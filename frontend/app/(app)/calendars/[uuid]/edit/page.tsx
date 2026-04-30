@@ -1,23 +1,23 @@
 import { CalendarDeleteButton } from '@/components/calendars/calendar-delete-button';
-import { CalendarEditForm } from '@/components/calendars/calendar-edit-form';
-import { CalendarMembers } from '@/components/calendars/calendar-members';
-import { Separator } from '@/components/ui/separator';
-import type { CalendarMember } from '@/lib/types';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { CalendarEditForm }     from '@/components/calendars/calendar-edit-form';
+import { CalendarMembers }      from '@/components/calendars/calendar-members';
+import { Separator }            from '@/components/ui/separator';
+import type { CalendarMember }  from '@/lib/types';
+import { cookies }              from 'next/headers';
+import { redirect }             from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
-function getCurrentUserId(token: string): number {
+const getCurrentUserId = (token: string): number => {
   const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
   return Number(payload.sub);
 }
 
-export default async function EditCalendarPage({
+const EditCalendarPage = async ({
   params,
 }: {
   params: Promise<{ uuid: string }>;
-}) {
+}) => {
   const { uuid } = await params;
 
   const cookieStore = await cookies();
@@ -84,4 +84,6 @@ export default async function EditCalendarPage({
       </div>
     </div>
   );
-}
+};
+
+export default EditCalendarPage;

@@ -13,18 +13,18 @@ import { useEvents }   from '@/context/events-context';
 import { useToast }    from '@/hooks/use-toast';
 import { ToastAction } from './ui/toast';
 
-interface EventDeleteFormProps {
+type EventDeleteFormProps = {
   id?: string;
   title?: string;
 }
 
-export function EventDeleteForm({ id, title }: EventDeleteFormProps) {
+export const EventDeleteForm = ({ id, title }: EventDeleteFormProps) => {
   const { deleteEvent } = useEvents();
   const { eventDeleteOpen, setEventDeleteOpen, setEventViewOpen } = useEvents();
 
   const { toast } = useToast();
 
-  async function onSubmit() {
+  const onSubmit = async () => {
     deleteEvent(id!);
     setEventDeleteOpen(false);
     setEventViewOpen(false);

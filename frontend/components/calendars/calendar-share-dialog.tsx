@@ -1,19 +1,26 @@
 'use client';
-
 import { updateCalendarVisibility } from '@/app/(app)/calendars/actions';
-import { Button }  from '@/components/ui/button';
+import { Button }                   from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle,
-}                  from '@/components/ui/dialog';
-import { Switch }  from '@/components/ui/switch';
-import { useToast } from '@/hooks/use-toast';
-import { Copy, Facebook, Mail, MessageCircle } from 'lucide-react';
-import { useState, useTransition } from 'react';
+  DialogTitle
+}                                   from '@/components/ui/dialog';
+import { Switch }                   from '@/components/ui/switch';
+import { useToast }                 from '@/hooks/use-toast';
+import {
+  Copy,
+  Facebook,
+  Mail,
+  MessageCircle
+}                                   from 'lucide-react';
+import {
+  useState,
+  useTransition
+}                                   from 'react';
 
-interface CalendarShareDialogProps {
+type CalendarShareDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   calendarUuid: string;
@@ -21,13 +28,13 @@ interface CalendarShareDialogProps {
   isPublic: boolean;
 }
 
-export function CalendarShareDialog({
+export const CalendarShareDialog = ({
   open,
   onOpenChange,
   calendarUuid,
   calendarName,
   isPublic: initialIsPublic,
-}: CalendarShareDialogProps) {
+}: CalendarShareDialogProps) => {
   const [isPublic, setIsPublic] = useState(initialIsPublic);
   const [isPending, startTransition] = useTransition();
   const [copied, setCopied] = useState(false);
@@ -38,7 +45,7 @@ export function CalendarShareDialog({
       ? `${window.location.origin}/calendars/${calendarUuid}`
       : `/calendars/${calendarUuid}`;
 
-  function handleVisibilityToggle(checked: boolean) {
+  const handleVisibilityToggle = (checked: boolean) => {
     startTransition(async () => {
       try {
         await updateCalendarVisibility(calendarUuid, checked);
@@ -50,25 +57,25 @@ export function CalendarShareDialog({
     });
   }
 
-  function handleWhatsApp() {
+  const handleWhatsApp = () => {
     window.open(`https://wa.me/?text=${encodeURIComponent(shareUrl)}`, '_blank');
   }
 
-  function handleFacebook() {
+  const handleFacebook = () => {
     window.open(
       `https://www.facebook.com/dialog/send?link=${encodeURIComponent(shareUrl)}&app_id=0&redirect_uri=${encodeURIComponent(shareUrl)}`,
       '_blank'
     );
   }
 
-  function handleEmail() {
+  const handleEmail = () => {
     window.open(
       `mailto:?subject=${encodeURIComponent(calendarName)}&body=${encodeURIComponent(shareUrl)}`,
       '_blank'
     );
   }
 
-  function handleCopy() {
+  const handleCopy = () => {
     navigator.clipboard.writeText(shareUrl).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 3000);

@@ -1,27 +1,29 @@
 'use client';
+import { toggleFavourite } from '@/app/(app)/calendars/actions';
+import { Button }          from '@/components/ui/button';
+import { useToast }        from '@/hooks/use-toast';
+import { Star }            from 'lucide-react';
+import {
+  useOptimistic,
+  useTransition
+}                          from 'react';
 
-import { toggleFavourite }  from '@/app/(app)/calendars/actions';
-import { Button }           from '@/components/ui/button';
-import { useToast }         from '@/hooks/use-toast';
-import { Star }             from 'lucide-react';
-import { useOptimistic, useTransition } from 'react';
-
-interface CalendarFavouriteButtonProps {
+type CalendarFavouriteButtonProps = {
   calendarUuid: string;
   isFavourite: boolean;
   disabled?: boolean;
 }
 
-export function CalendarFavouriteButton({
+export const CalendarFavouriteButton = ({
   calendarUuid,
   isFavourite,
   disabled = false,
-}: CalendarFavouriteButtonProps) {
+}: CalendarFavouriteButtonProps) => {
   const { toast } = useToast();
   const [, startTransition] = useTransition();
   const [optimisticFavourite, setOptimisticFavourite] = useOptimistic(isFavourite);
 
-  function handleClick() {
+  const handleClick = () => {
     const next = !optimisticFavourite;
     startTransition(async () => {
       setOptimisticFavourite(next);

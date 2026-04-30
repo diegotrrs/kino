@@ -12,11 +12,11 @@ import { X }               from 'lucide-react';
 import { EventDeleteForm } from './event-delete-form';
 import { EventEditForm }   from './event-edit-form';
 
-interface EventViewProps {
+type EventViewProps = {
   event?: CalendarEvent;
 }
 
-export function EventView({ event }: EventViewProps) {
+export const EventView = ({ event }: EventViewProps) => {
   const { eventViewOpen, setEventViewOpen } = useEvents();
 
   return (

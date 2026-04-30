@@ -1,7 +1,7 @@
 import { Separator } from '@/components/ui/separator';
 import Link          from 'next/link';
 
-export default function AboutPage() {
+const AboutPage = () => {
   return (
     <div className='py-4'>
       <div className='flex flex-col w-full items-center'>
@@ -53,3 +53,5 @@ export default function AboutPage() {
     </div>
   );
 }
+
+export default AboutPage;

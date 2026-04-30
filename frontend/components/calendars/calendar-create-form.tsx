@@ -1,5 +1,4 @@
 'use client';
-
 import { createCalendar } from '@/app/(app)/calendars/actions';
 import { Button }         from '@/components/ui/button';
 import {
@@ -8,8 +7,8 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+  FormMessage
+}                         from '@/components/ui/form';
 import { Input }          from '@/components/ui/input';
 import { useToast }       from '@/hooks/use-toast';
 import { zodResolver }    from '@hookform/resolvers/zod';
@@ -24,17 +23,17 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-export function CalendarCreateForm() {
+export const CalendarCreateForm = () => {
   const [isPending, startTransition] = useTransition();
-  const { toast }  = useToast();
-  const router     = useRouter();
+  const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { name: '' },
   });
 
-  function onSubmit(data: FormValues) {
+  const onSubmit = (data: FormValues) => {
     startTransition(async () => {
       try {
         await createCalendar(data.name);

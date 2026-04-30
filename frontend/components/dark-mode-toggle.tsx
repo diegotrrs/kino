@@ -6,10 +6,10 @@ import {
 }                   from '@radix-ui/react-icons';
 import { useTheme } from 'next-themes';
 
-export function DarkModeToggle() {
+export const DarkModeToggle = () => {
   const { theme, setTheme } = useTheme();
 
-  function ToggleTheme() {
+  const ToggleTheme = () => {
     if (theme == 'dark') {
       setTheme('light');
     } else {

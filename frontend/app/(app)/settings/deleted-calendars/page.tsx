@@ -14,7 +14,7 @@ type DeletedCalendar = {
   deleted_at: string;
 };
 
-async function getDeletedCalendars(token: string): Promise<DeletedCalendar[]> {
+const getDeletedCalendars = async (token: string): Promise<DeletedCalendar[]> => {
   const res = await fetch(`${API_BASE_URL}/api/calendars/deleted`, {
     cache: 'no-store',
     headers: { Authorization: `Bearer ${token}` },
@@ -26,7 +26,7 @@ async function getDeletedCalendars(token: string): Promise<DeletedCalendar[]> {
   return res.json();
 }
 
-export default async function DeletedCalendarsPage() {
+const DeletedCalendarsPage = async () => {
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
   if (!token) redirect('/login');
@@ -83,4 +83,6 @@ export default async function DeletedCalendarsPage() {
       </div>
     </div>
   );
-}
+};
+
+export default DeletedCalendarsPage;

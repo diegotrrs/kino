@@ -1,8 +1,7 @@
 'use server';
-
-import { cookies } from 'next/headers';
+import { cookies }  from 'next/headers';
 import { redirect } from 'next/navigation';
-import { z } from 'zod';
+import { z }        from 'zod';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
@@ -27,14 +26,14 @@ export type AuthState = {
   success?: string;
 };
 
-function safeRedirectPath(raw: FormDataEntryValue | null): string {
+const safeRedirectPath = (raw: FormDataEntryValue | null): string => {
   if (typeof raw !== 'string') return '/home';
   const decoded = decodeURIComponent(raw);
   // Only allow relative paths starting with /
   return decoded.startsWith('/') && !decoded.startsWith('//') ? decoded : '/home';
 }
 
-export async function login(_prev: AuthState, formData: FormData): Promise<AuthState> {
+export const login = async (_prev: AuthState, formData: FormData): Promise<AuthState> => {
   const parsed = loginSchema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
@@ -67,7 +66,7 @@ export async function login(_prev: AuthState, formData: FormData): Promise<AuthS
   redirect(safeRedirectPath(formData.get('redirect')));
 }
 
-export async function signup(_prev: AuthState, formData: FormData): Promise<AuthState> {
+export const signup = async (_prev: AuthState, formData: FormData): Promise<AuthState> => {
   const parsed = signupSchema.safeParse({
     name: formData.get('name'),
     email: formData.get('email'),
@@ -79,7 +78,7 @@ export async function signup(_prev: AuthState, formData: FormData): Promise<Auth
     return { fieldErrors: parsed.error.flatten().fieldErrors };
   }
 
-  const { confirmPassword: _, ...body } = parsed.data;
+  const { confirmPassword: _confirmPassword, ...body } = parsed.data;
 
   const res = await fetch(`${API_BASE_URL}/api/auth/signup`, {
     method: 'POST',
@@ -104,16 +103,16 @@ export async function signup(_prev: AuthState, formData: FormData): Promise<Auth
   redirect(safeRedirectPath(formData.get('redirect')));
 }
 
-export async function logout() {
+export const logout = async () => {
   const cookieStore = await cookies();
   cookieStore.delete('token');
   redirect('/login');
 }
 
-export async function requestPasswordReset(
+export const requestPasswordReset = async (
   _prev: AuthState,
   formData: FormData
-): Promise<AuthState> {
+): Promise<AuthState> => {
   const email = formData.get('email');
   if (typeof email !== 'string' || !email) {
     return { fieldErrors: { email: ['Email is required'] } };
@@ -133,10 +132,10 @@ export async function requestPasswordReset(
   return { success: message };
 }
 
-export async function resetPassword(
+export const resetPassword = async (
   _prev: AuthState,
   formData: FormData
-): Promise<AuthState> {
+): Promise<AuthState> => {
   const token = formData.get('token');
   const password = formData.get('password');
   const confirmPassword = formData.get('confirmPassword');

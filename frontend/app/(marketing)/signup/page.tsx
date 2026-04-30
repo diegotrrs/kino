@@ -1,23 +1,23 @@
 'use client';
-
-import { useActionState } from 'react';
-
+import {
+  signup,
+  type AuthState
+}                          from '@/app/auth/actions';
+import { Button }          from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Input }  from '@/components/ui/input';
-import { Label }  from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import Link       from 'next/link';
+  CardTitle
+}                          from '@/components/ui/card';
+import { Input }           from '@/components/ui/input';
+import { Label }           from '@/components/ui/label';
+import Link                from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { useActionState }  from 'react';
 
-import { signup, type AuthState } from '@/app/auth/actions';
-
-export default function SignupPage() {
+const SignupPage = () => {
   const [state, formAction, pending] = useActionState<AuthState, FormData>(signup, {});
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') ?? '';
@@ -85,3 +85,5 @@ export default function SignupPage() {
     </div>
   );
 }
+
+export default SignupPage;

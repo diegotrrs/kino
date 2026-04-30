@@ -1,11 +1,11 @@
 'use server';
 import type { CreateEventInput } from '@/lib/types';
-import { cookies }               from 'next/headers';
 import { revalidatePath }        from 'next/cache';
+import { cookies }               from 'next/headers';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
-async function getAuthHeaders(): Promise<Record<string, string>> {
+const getAuthHeaders = async (): Promise<Record<string, string>> => {
   const cookieStore = await cookies();
   const token       = cookieStore.get('token')?.value;
   return token
@@ -13,7 +13,7 @@ async function getAuthHeaders(): Promise<Record<string, string>> {
     : { 'Content-Type': 'application/json' };
 }
 
-export async function createEvent(input: CreateEventInput) {
+export const createEvent = async (input: CreateEventInput) => {
   const headers = await getAuthHeaders();
   const res = await fetch(`${API_BASE_URL}/api/events/`, {
     method: 'POST',
@@ -30,7 +30,7 @@ export async function createEvent(input: CreateEventInput) {
   return res.json();
 }
 
-export async function updateEvent(id: number, input: Partial<Omit<CreateEventInput, 'calendar_id'>>) {
+export const updateEvent = async (id: number, input: Partial<Omit<CreateEventInput, 'calendar_id'>>) => {
   const headers = await getAuthHeaders();
   const res = await fetch(`${API_BASE_URL}/api/events/${id}`, {
     method: 'PATCH',
@@ -47,7 +47,7 @@ export async function updateEvent(id: number, input: Partial<Omit<CreateEventInp
   return res.json();
 }
 
-export async function deleteEvent(id: number) {
+export const deleteEvent = async (id: number) => {
   const headers = await getAuthHeaders();
   const res = await fetch(`${API_BASE_URL}/api/events/${id}`, {
     method: 'DELETE',

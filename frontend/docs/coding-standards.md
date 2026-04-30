@@ -31,6 +31,8 @@ npm run lint
 
 - Use `UPPER_SNAKE_CASE` for module-level constants: `API_BASE_URL`, `MAX_LENGTH`
 
+### 2.4 Use single quotes instead of double quotes
+
 ---
 
 ## 3. TypeScript
@@ -41,6 +43,7 @@ npm run lint
 - Use optional chaining (`?.`) and nullish coalescing (`??`)
 - Use utility types (`Partial<T>`, `Pick<T, K>`, `Omit<T, K>`) over duplicating type definitions
 - Use `as const` for constant lookup objects
+- Prefer types over interfaces.
 
 ```ts
 // Good
@@ -59,6 +62,7 @@ function getBackHref(from) {
 ## 4. Functions
 
 - Keep functions small and focused — one responsibility per function
+- Prefer using const arrow function syntax (e.g., const fn = () => {}), over function declarations.
 - Prefer `async`/`await` over `.then()` chains
 - Use early returns to avoid deep nesting
 - Always use curly braces for `if` blocks, even single-line

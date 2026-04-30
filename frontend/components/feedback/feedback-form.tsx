@@ -1,19 +1,21 @@
 'use client';
-
 import { submitFeedback } from '@/app/(app)/feedback/actions';
-import { Button }   from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
-import { useState, useTransition } from 'react';
+import { Button }         from '@/components/ui/button';
+import { Textarea }       from '@/components/ui/textarea';
+import { useToast }       from '@/hooks/use-toast';
+import {
+  useState,
+  useTransition
+}                         from 'react';
 
 const MAX_LENGTH = 500;
 
-export function FeedbackForm() {
+export const FeedbackForm = () => {
   const [content, setContent] = useState('');
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
 
-  function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim()) return;
 

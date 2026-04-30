@@ -1,10 +1,9 @@
 'use client';
-
-import { useEvents } from '@/context/events-context';
-import Link from 'next/link';
+import { useEvents }   from '@/context/events-context';
+import Link            from 'next/link';
 import { usePathname } from 'next/navigation';
 
-export function ReadOnlyBanner() {
+export const ReadOnlyBanner = () => {
   const { readOnly } = useEvents();
   const pathname = usePathname();
 

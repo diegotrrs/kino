@@ -7,12 +7,12 @@ import {
 import Link                     from 'next/link';
 import { CalendarDeleteButton } from './calendar-delete-button';
 
-interface CalendarListProps {
+type CalendarListProps = {
   calendars: Calendar[];
   from?: string;
 }
 
-export function CalendarList({ calendars, from }: CalendarListProps) {
+export const CalendarList = ({ calendars, from }: CalendarListProps) => {
   if (calendars.length === 0) {
     return (
       <div className='flex flex-col items-center justify-center rounded-xl border border-dashed p-12 text-center gap-3'>

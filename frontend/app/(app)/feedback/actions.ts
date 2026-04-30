@@ -1,12 +1,11 @@
 'use server';
-
-import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
+import { cookies }        from 'next/headers';
+import { redirect }       from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
-async function getAuthHeaders(): Promise<Record<string, string>> {
+const getAuthHeaders = async (): Promise<Record<string, string>> => {
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
   if (!token) redirect('/login');
@@ -16,7 +15,7 @@ async function getAuthHeaders(): Promise<Record<string, string>> {
   };
 }
 
-export async function submitFeedback(content: string): Promise<void> {
+export const submitFeedback = async (content: string): Promise<void> => {
   const headers = await getAuthHeaders();
   const res = await fetch(`${API_BASE_URL}/api/feedback/`, {
     method: 'POST',
@@ -30,7 +29,7 @@ export async function submitFeedback(content: string): Promise<void> {
   }
 }
 
-export async function toggleVote(wishlistId: number, userHasVoted: boolean): Promise<void> {
+export const toggleVote = async (wishlistId: number, userHasVoted: boolean): Promise<void> => {
   const headers = await getAuthHeaders();
   const method = userHasVoted ? 'DELETE' : 'POST';
 

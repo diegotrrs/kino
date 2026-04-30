@@ -1,20 +1,22 @@
 'use client';
-
-import { requestPasswordReset, type AuthState } from '@/app/auth/actions';
-import { Button } from '@/components/ui/button';
+import {
+  requestPasswordReset,
+  type AuthState
+}                         from '@/app/auth/actions';
+import { Button }         from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import Link from 'next/link';
+  CardTitle
+}                         from '@/components/ui/card';
+import { Input }          from '@/components/ui/input';
+import { Label }          from '@/components/ui/label';
+import Link               from 'next/link';
 import { useActionState } from 'react';
 
-export default function ForgotPasswordPage() {
+const ForgotPasswordPage = () => {
   const [state, formAction, pending] = useActionState<AuthState, FormData>(
     requestPasswordReset,
     {}
@@ -72,3 +74,5 @@ export default function ForgotPasswordPage() {
     </div>
   );
 }
+
+export default ForgotPasswordPage;

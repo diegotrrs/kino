@@ -45,7 +45,7 @@ const createEventSchema = z.object({
 
 type CreateEventFormValues = z.infer<typeof createEventSchema>;
 
-export function EventCreateDialog() {
+export const EventCreateDialog = () => {
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
 
@@ -58,7 +58,7 @@ export function EventCreateDialog() {
     },
   });
 
-  function onSubmit(data: CreateEventFormValues) {
+  const onSubmit = (data: CreateEventFormValues) => {
     startTransition(async () => {
       try {
         await createEvent({

@@ -1,21 +1,23 @@
 'use client';
-
-import { resetPassword, type AuthState } from '@/app/auth/actions';
-import { Button } from '@/components/ui/button';
+import {
+  resetPassword,
+  type AuthState
+}                          from '@/app/auth/actions';
+import { Button }          from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import Link from 'next/link';
+  CardTitle
+}                          from '@/components/ui/card';
+import { Input }           from '@/components/ui/input';
+import { Label }           from '@/components/ui/label';
+import Link                from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useActionState } from 'react';
+import { useActionState }  from 'react';
 
-export default function ResetPasswordPage() {
+const ResetPasswordPage = () => {
   const searchParams = useSearchParams();
   const token = searchParams.get('token') ?? '';
 
@@ -91,3 +93,5 @@ export default function ResetPasswordPage() {
     </div>
   );
 }
+
+export default ResetPasswordPage;
