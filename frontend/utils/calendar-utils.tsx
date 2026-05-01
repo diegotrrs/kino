@@ -19,6 +19,14 @@ export const generateDaysInMonth = (daysInMonth: number) => {
   return daysArray;
 }
 
+export const getDateFromMinutes = (minutes: number) => {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0); // Set time to midnight
+  now.setMinutes(minutes);
+  return now;
+};
+
+
 export const goPrev = (calendarRef: calendarRef) => {
   const calendarApi = calendarRef.current!.getApi();
   calendarApi.prev();

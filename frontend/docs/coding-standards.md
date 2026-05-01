@@ -31,7 +31,7 @@ npm run lint
 
 - Use `UPPER_SNAKE_CASE` for module-level constants: `API_BASE_URL`, `MAX_LENGTH`
 
-### 2.4 Use single quotes instead of double quotes
+### 2.4 Always Use single quotes instead of double quotes
 
 ---
 

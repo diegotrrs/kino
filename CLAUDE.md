@@ -23,4 +23,10 @@ Example:
 2. Read the feature file and ask any clarifying questions if needed
 3. Once all questions are resolved, create a new \*.plan.md file (for example: 9-4-share-calendar.plan.md) containing the implementation plan
 
-I may review and modify the plan. Once I confirm it is ready, you should use it as the definitive guide for implementation.
+I may review and modify the plan. Once I confirm it is ready, you should use it as the definitive guide for implementation. Finally, remember to run the following steps afterwards:
+
+```
+npm run build
+npm run lint
+npm run tests
+```

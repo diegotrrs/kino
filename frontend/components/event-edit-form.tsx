@@ -68,6 +68,7 @@ type EventEditFormProps = {
   oldEvent?: CalendarEvent;
   event?: CalendarEvent;
   isDrag: boolean;
+  displayButton?: boolean;
 }
 
 export const EventEditForm = ({

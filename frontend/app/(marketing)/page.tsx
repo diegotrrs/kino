@@ -47,10 +47,7 @@ const steps = [
 const Home = () => {
   return (
     <div className='flex flex-col'>
-
-      {/* ── Hero ──────────────────────────────────────────────────── */}
       <section className='relative overflow-hidden px-6 py-20 md:py-32 text-center'>
-        {/* soft gradient blob */}
         <div
           aria-hidden
           className='pointer-events-none absolute inset-0 -z-10 flex items-center justify-center'
@@ -88,7 +85,6 @@ const Home = () => {
         </ul>
       </section>
 
-      {/* ── Live Demo ─────────────────────────────────────────────── */}
       <section className='px-6 pb-20'>
         <div className='mx-auto max-w-5xl'>
           <div className='mb-8 text-center'>
@@ -105,7 +101,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ── Features ──────────────────────────────────────────────── */}
       <section className='bg-muted/40 px-6 py-20'>
         <div className='mx-auto max-w-5xl'>
           <div className='mb-12 text-center'>
@@ -133,7 +128,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ── How it works ──────────────────────────────────────────── */}
       <section className='px-6 py-20'>
         <div className='mx-auto max-w-3xl'>
           <div className='mb-12 text-center'>
@@ -155,7 +149,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ── Final CTA ─────────────────────────────────────────────── */}
       <section className='px-6 py-20'>
         <div className='mx-auto max-w-2xl rounded-2xl bg-primary px-8 py-16 text-center text-primary-foreground shadow-lg'>
           <h2 className='text-3xl font-extrabold tracking-tight'>
@@ -177,7 +170,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ── Footer ────────────────────────────────────────────────── */}
       <footer className='border-t px-6 py-8 text-center text-sm text-muted-foreground'>
         <p>© {new Date().getFullYear()} Kino Calendars. Made for travellers.</p>
       </footer>

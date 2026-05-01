@@ -1,15 +1,17 @@
 'use client';
 import '@/styles/calendar.css';
-import { updateEvent }        from '@/app/(app)/events/actions';
-import { useEvents }          from '@/context/events-context';
-import { useToast }           from '@/hooks/use-toast';
-import { getDateFromMinutes } from '@/lib/utils';
-import { goToday }            from '@/utils/calendar-utils';
+import { updateEvent }   from '@/app/(app)/events/actions';
+import { useEvents }     from '@/context/events-context';
+import { useToast }      from '@/hooks/use-toast';
+import {
+  goToday,
+  getDateFromMinutes
+}                        from '@/utils/calendar-utils';
 import {
   CalendarEvent,
   earliestTime,
   latestTime
-}                             from '@/utils/data';
+}                        from '@/utils/data';
 import {
   DateSelectArg,
   DayCellContentArg,
@@ -17,21 +19,21 @@ import {
   EventChangeArg,
   EventClickArg,
   EventContentArg
-}                             from '@fullcalendar/core/index.js';
-import dayGridPlugin          from '@fullcalendar/daygrid';
-import interactionPlugin      from '@fullcalendar/interaction';
-import listPlugin             from '@fullcalendar/list';
-import multiMonthPlugin       from '@fullcalendar/multimonth';
-import FullCalendar           from '@fullcalendar/react';
-import timeGridPlugin         from '@fullcalendar/timegrid';
-import { format }             from 'date-fns';
+}                        from '@fullcalendar/core/index.js';
+import dayGridPlugin     from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import listPlugin        from '@fullcalendar/list';
+import multiMonthPlugin  from '@fullcalendar/multimonth';
+import FullCalendar      from '@fullcalendar/react';
+import timeGridPlugin    from '@fullcalendar/timegrid';
+import { format }        from 'date-fns';
 import {
   useRef,
   useState
-}                             from 'react';
-import CalendarNav            from './calendar-nav';
-import { EventEditForm }      from './event-edit-form';
-import { Card }               from './ui/card';
+}                        from 'react';
+import CalendarNav       from './calendar-nav';
+import { EventEditForm } from './event-edit-form';
+import { Card }          from './ui/card';
 
 type EventItemProps = {
   info: EventContentArg;
