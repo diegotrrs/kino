@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     resend_api_key: str = ""
     resend_from_email: str = "onboarding@resend.dev"
     app_base_url: str = "http://localhost:3000"
+    env: str = "development"
+    test_user_id: int = 0  # must be set explicitly — 0 means disabled
+    test_reset_secret: str = ""  # must be set explicitly — empty means disabled
 
     class Config:
         env_file = ".env"
