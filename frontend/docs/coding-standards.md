@@ -48,12 +48,12 @@ npm run lint
 ```ts
 // Good
 function getBackHref(from: string | undefined): string {
-  return from === "home" ? "/home" : "/calendars";
+  return from === 'home' ? '/home' : '/calendars';
 }
 
 // Bad
 function getBackHref(from) {
-  return from === "home" ? "/home" : "/calendars";
+  return from === 'home' ? '/home' : '/calendars';
 }
 ```
 
@@ -133,10 +133,14 @@ Never rely on `Date.now()` or `new Date()` returning real wall-clock time in tes
 ```ts
 beforeEach(() => {
   vi.useFakeTimers();
-  vi.setSystemTime(new Date("2026-01-01T00:00:00Z"));
+  vi.setSystemTime(new Date('2026-01-01T00:00:00Z'));
 });
 
 afterEach(() => {
   vi.useRealTimers();
 });
 ```
+
+# 10. E2E tests.
+
+For E2E tips and practices refer to ./e2e-tips-and-practices

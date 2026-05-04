@@ -5,7 +5,7 @@ from fastapi import APIRouter, Header, HTTPException, status, Depends
 from psycopg2.extensions import connection
 
 from ..config import get_settings
-from ..crud.test import reset_test_user_data
+from ..crud.test import delete_user, reset_test_user_data
 from ..database import get_db
 
 logger = logging.getLogger(__name__)
@@ -48,3 +48,27 @@ def reset_test_user(
 
     reset_test_user_data(db, settings.test_user_id)
     logger.info("Test user %d data reset", settings.test_user_id)
+
+
+@router.delete("/users/{user_id}", status_code=204)
+def delete_test_user(
+    user_id: int,
+    x_test_secret: str = Header(...),
+    db: connection = Depends(get_db),
+) -> None:
+    settings = get_settings()
+
+    if not settings.test_reset_secret:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Test reset is not configured",
+        )
+
+    if x_test_secret != settings.test_reset_secret:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Forbidden",
+        )
+
+    delete_user(db, user_id)
+    logger.info("Test user %d deleted", user_id)

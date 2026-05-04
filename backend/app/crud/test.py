@@ -55,3 +55,37 @@ def reset_test_user_data(db: connection, user_id: int) -> None:
         cur.execute("DELETE FROM deleted_calendars WHERE created_by = %s", (user_id,))
 
     db.commit()
+
+
+def delete_user(db: connection, user_id: int) -> None:
+    """
+    Delete a user and all their data. Used to clean up accounts
+    created during e2e tests.
+    """
+    with db.cursor() as cur:
+        cur.execute("DELETE FROM wishlist_votes WHERE user_id = %s", (user_id,))
+        cur.execute("DELETE FROM feedback WHERE user_id = %s", (user_id,))
+        cur.execute("DELETE FROM password_reset_tokens WHERE user_id = %s", (user_id,))
+        cur.execute(
+            """
+            DELETE FROM calendar_users
+            WHERE user_id = %s
+              AND calendar_id NOT IN (
+                  SELECT id FROM calendars WHERE created_by = %s
+              )
+            """,
+            (user_id, user_id),
+        )
+        cur.execute(
+            "DELETE FROM events WHERE calendar_id IN (SELECT id FROM calendars WHERE created_by = %s)",
+            (user_id,),
+        )
+        cur.execute(
+            "DELETE FROM calendar_users WHERE calendar_id IN (SELECT id FROM calendars WHERE created_by = %s)",
+            (user_id,),
+        )
+        cur.execute("DELETE FROM calendars WHERE created_by = %s", (user_id,))
+        cur.execute("DELETE FROM deleted_calendars WHERE created_by = %s", (user_id,))
+        cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
+
+    db.commit()

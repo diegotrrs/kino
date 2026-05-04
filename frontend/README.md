@@ -20,6 +20,21 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Commands
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Start the development server |
+| `npm run build` | Build for production |
+| `npm run start` | Start the production server |
+| `npm run lint` | Run ESLint |
+| `npm run test` | Run unit tests with Vitest |
+| `npm run e2e` | Run all e2e tests |
+| `npm run e2e:grep -- @tag` | Run e2e tests matching a tag (e.g. `@2.1`, `@2`) |
+| `npm run e2e:headed` | Run e2e tests with the browser visible |
+| `npm run e2e:ui` | Open the Playwright UI |
+| `npm run align-imports` | Auto-align import statements across the codebase |
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
