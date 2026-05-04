@@ -42,7 +42,6 @@ def get_current_user(
         payload = jwt.decode(
             credentials.credentials, settings.jwt_secret_key, algorithms=["HS256"]
         )
-        print(payload)
         sub = payload.get("sub")
         if sub is None:
             raise HTTPException(

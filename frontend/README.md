@@ -34,6 +34,7 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 | `npm run e2e:headed` | Run e2e tests with the browser visible |
 | `npm run e2e:ui` | Open the Playwright UI |
 | `npm run align-imports` | Auto-align import statements across the codebase |
+| `npm run check` | Run unit tests and e2e tests |
 
 ## Learn More
 

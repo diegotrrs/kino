@@ -8,3 +8,6 @@ bcrypt<4.1
 PyJWT
 ruff
 resend
+pytest
+pytest-cov
+httpx

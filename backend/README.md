@@ -190,6 +190,22 @@ The server will start at http://localhost:8000 with hot-reload enabled.
 uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
+## Commands
+
+| Command | Description |
+|---|---|
+| `uvicorn app.main:app --reload` | Start the development server |
+| `pytest tests/unit` | Run unit tests |
+| `pytest tests/unit -v` | Run unit tests with verbose output |
+| `pytest tests/unit --cov=app` | Run unit tests with coverage report |
+| `pytest tests/integration` | Run integration tests (requires PostgreSQL) |
+| `pytest tests/integration -v` | Run integration tests with verbose output |
+| `pytest` | Run all tests |
+| `make check` | Run unit tests and integration tests |
+| `ruff check app/` | Check for lint errors |
+| `ruff check --fix app/` | Auto-fix lint errors |
+| `ruff format app/` | Format code |
+
 ## Linting & Formatting
 
 This project uses [Ruff](https://docs.astral.sh/ruff/) for linting and formatting.
