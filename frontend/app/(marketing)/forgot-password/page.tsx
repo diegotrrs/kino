@@ -13,6 +13,7 @@ import {
 }                         from '@/components/ui/card';
 import { Input }          from '@/components/ui/input';
 import { Label }          from '@/components/ui/label';
+import { useTranslations } from 'next-intl';
 import Link               from 'next/link';
 import { useActionState } from 'react';
 
@@ -21,15 +22,16 @@ const ForgotPasswordPage = () => {
     requestPasswordReset,
     {}
   );
+  const t = useTranslations('auth.forgotPassword');
 
   return (
     <div className='flex min-h-svh w-full items-center justify-center p-6 md:p-10'>
       <div className='w-full max-w-sm'>
         <Card>
           <CardHeader>
-            <CardTitle className='text-2xl'>Forgot your password?</CardTitle>
+            <CardTitle className='text-2xl'>{t('title')}</CardTitle>
             <CardDescription>
-              Enter your email and we&apos;ll send you a reset link.
+              {t('description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -37,7 +39,7 @@ const ForgotPasswordPage = () => {
               <div className='space-y-4'>
                 <p className='text-sm text-muted-foreground'>{state.success}</p>
                 <Link href='/login' className='text-sm underline underline-offset-4'>
-                  Back to login
+                  {t('backToLogin')}
                 </Link>
               </div>
             ) : (
@@ -46,12 +48,12 @@ const ForgotPasswordPage = () => {
                   <p className='text-sm text-destructive'>{state.error}</p>
                 )}
                 <div className='grid gap-2'>
-                  <Label htmlFor='email'>Email</Label>
+                  <Label htmlFor='email'>{t('email')}</Label>
                   <Input
                     id='email'
                     name='email'
                     type='email'
-                    placeholder='m@example.com'
+                    placeholder={t('emailPlaceholder')}
                     required
                   />
                   {state.fieldErrors?.email && (
@@ -59,11 +61,11 @@ const ForgotPasswordPage = () => {
                   )}
                 </div>
                 <Button type='submit' className='w-full' disabled={pending}>
-                  {pending ? 'Sending...' : 'Send reset link'}
+                  {pending ? t('submitting') : t('submit')}
                 </Button>
                 <div className='text-center text-sm'>
                   <Link href='/login' className='underline underline-offset-4'>
-                    Back to login
+                    {t('backToLogin')}
                   </Link>
                 </div>
               </form>

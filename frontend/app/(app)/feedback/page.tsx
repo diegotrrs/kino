@@ -1,6 +1,7 @@
 import { FeedbackForm } from '@/components/feedback/feedback-form';
 import { Wishlist }     from '@/components/feedback/wishlist';
 import { Separator }    from '@/components/ui/separator';
+import { getTranslations } from 'next-intl/server';
 import { cookies }      from 'next/headers';
 import { redirect }     from 'next/navigation';
 
@@ -21,7 +22,10 @@ const FeedbackPage = async () => {
   const token = cookieStore.get('token')?.value;
   if (!token) redirect('/login');
 
-  const wishlistItems = await getWishlist(token);
+  const [wishlistItems, t] = await Promise.all([
+    getWishlist(token),
+    getTranslations('feedback'),
+  ]);
 
   return (
     <div className='py-4'>
@@ -29,10 +33,10 @@ const FeedbackPage = async () => {
 
         <div className='space-y-1'>
           <h2 className='text-2xl font-semibold tracking-tight md:text-3xl select-none cursor-default'>
-            Feedback
+            {t('title')}
           </h2>
           <p className='text-xs md:text-sm text-muted-foreground select-none cursor-default'>
-            Help us improve Kino.
+            {t('subtitle')}
           </p>
         </div>
 
@@ -40,9 +44,9 @@ const FeedbackPage = async () => {
 
         <section className='space-y-3'>
           <div className='space-y-0'>
-            <h3 className='text-base font-semibold tracking-tight'>Share your feedback</h3>
+            <h3 className='text-base font-semibold tracking-tight'>{t('shareTitle')}</h3>
             <p className='text-xs text-muted-foreground'>
-              Tell us what&apos;s working, what&apos;s not, or anything else on your mind.
+              {t('shareSubtitle')}
             </p>
           </div>
           <FeedbackForm />
@@ -52,9 +56,9 @@ const FeedbackPage = async () => {
 
         <section className='space-y-3'>
           <div className='space-y-0'>
-            <h3 className='text-base font-semibold tracking-tight'>Wishlist</h3>
+            <h3 className='text-base font-semibold tracking-tight'>{t('wishlistTitle')}</h3>
             <p className='text-xs text-muted-foreground'>
-              Vote for the features you&apos;d like to see next.
+              {t('wishlistSubtitle')}
             </p>
           </div>
           <Wishlist items={wishlistItems} />

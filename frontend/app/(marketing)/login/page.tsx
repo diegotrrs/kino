@@ -13,6 +13,7 @@ import {
 }                          from '@/components/ui/card';
 import { Input }           from '@/components/ui/input';
 import { Label }           from '@/components/ui/label';
+import { useTranslations } from 'next-intl';
 import Link                from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useActionState }  from 'react';
@@ -21,15 +22,16 @@ const LoginPage = () => {
   const [state, formAction, pending] = useActionState<AuthState, FormData>(login, {});
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') ?? '';
+  const t = useTranslations('auth.login');
 
   return (
     <div className='flex min-h-svh w-full items-center justify-center p-6 md:p-10'>
       <div className='w-full max-w-sm'>
         <Card>
           <CardHeader>
-            <CardTitle className='text-2xl'>Login to your account</CardTitle>
+            <CardTitle className='text-2xl'>{t('title')}</CardTitle>
             <CardDescription>
-              Enter your email below to login to your account
+              {t('description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -39,7 +41,7 @@ const LoginPage = () => {
               )}
               {redirect && <input type='hidden' name='redirect' value={redirect} />}
               <div className='grid gap-2'>
-                <Label htmlFor='email'>Email</Label>
+                <Label htmlFor='email'>{t('email')}</Label>
                 <Input id='email' name='email' type='email' required />
                 {state.fieldErrors?.email && (
                   <p className='text-sm text-destructive'>{state.fieldErrors.email[0]}</p>
@@ -47,12 +49,12 @@ const LoginPage = () => {
               </div>
               <div className='grid gap-2'>
                 <div className='flex items-center'>
-                  <Label htmlFor='password'>Password</Label>
+                  <Label htmlFor='password'>{t('password')}</Label>
                   <Link
                     href='/forgot-password'
                     className='ml-auto inline-block text-sm underline-offset-4 hover:underline'
                   >
-                    Forgot your password?
+                    {t('forgotPassword')}
                   </Link>
                 </div>
                 <Input id='password' name='password' type='password' required />
@@ -61,16 +63,16 @@ const LoginPage = () => {
                 )}
               </div>
               <Button type='submit' className='w-full' disabled={pending}>
-                {pending ? 'Logging in...' : 'Login'}
+                {pending ? t('submitting') : t('submit')}
               </Button>
             </form>
             <div className='mt-4 text-center text-sm'>
-              Don&apos;t have an account?{' '}
+              {t('noAccount')}{' '}
               <Link
                 href={redirect ? `/signup?redirect=${encodeURIComponent(redirect)}` : '/signup'}
                 className='underline underline-offset-4'
               >
-                Sign up
+                {t('signUp')}
               </Link>
             </div>
           </CardContent>

@@ -1,0 +1,173 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "myCalendars": "Mis Calendarios",
+    "createCalendar": "Crear Calendario",
+    "events": "Eventos",
+    "settings": "Configuración"
+  },
+  "topBar": {
+    "feedback": "Comentarios",
+    "toggleTheme": "Cambiar tema",
+    "changeLanguage": "Cambiar idioma",
+    "profile": "Perfil",
+    "settings": "Configuración",
+    "about": "Acerca de",
+    "logOut": "Cerrar sesión"
+  },
+  "marketing": {
+    "goToApp": "Ir a la app",
+    "signIn": "Iniciar sesión",
+    "getStarted": "Comenzar",
+    "landing": {
+      "tagline": "Kino Calendarios",
+      "hero": "Tus vacaciones,",
+      "heroHighlight": "perfectamente planificadas.",
+      "subhero": "Crea calendarios de vacaciones dedicados, organiza cada día de tu viaje y nunca vuelvas a hacer doble reserva en la playa.",
+      "getStartedFree": "Comenzar gratis",
+      "signIn": "Iniciar sesión",
+      "noCreditCard": "Sin tarjeta de crédito",
+      "freePlan": "Plan gratuito para siempre",
+      "anyDevice": "Funciona en cualquier dispositivo",
+      "tryNowTitle": "Pruébalo ahora mismo",
+      "tryNowSubtitle": "Sin registro. Haz clic en cualquier día para añadir un evento, arrastra para reprogramar, haz clic en un evento para editar o eliminar.",
+      "featuresTitle": "Todo lo que necesitas para planificar un gran viaje",
+      "featuresSubtitle": "Kino está diseñado para la forma en que los viajeros realmente piensan.",
+      "feature1Title": "Varios Calendarios de Vacaciones",
+      "feature1Desc": "Mantén las escapadas de verano, los descansos de invierno y los fines de semana largos en calendarios separados para que nada se superponga.",
+      "feature2Title": "Planifica Cualquier Destino",
+      "feature2Desc": "Desde una escapada de fin de semana hasta un viaje en carretera de un mes — añade eventos, establece horarios y codifica en colores cada momento.",
+      "feature3Title": "Vistas de Mes, Semana y Día",
+      "feature3Desc": "Cambia entre vistas para centrarte en un solo día de actividades o ampliar para ver toda tu temporada de vacaciones de un vistazo.",
+      "feature4Title": "Arrastra, Suelta y Edita",
+      "feature4Desc": "Los planes cambian. Arrastra eventos a nuevas posiciones, redimensiónalos y edita cada detalle sin perder el panorama general.",
+      "stepsTitle": "En marcha en minutos",
+      "step1Title": "Crea un calendario",
+      "step1Body": "Dale un nombre a tu viaje — \"Maldivas 2026\", \"Navidad en Viena\", lo que sea.",
+      "step2Title": "Añade tus eventos",
+      "step2Body": "Haz clic en cualquier día para añadir vuelos, check-ins de hotel, tours, cenas y tiempo libre.",
+      "step3Title": "Disfruta tus vacaciones",
+      "step3Body": "Abre Kino en tu teléfono y sigue el plan. O ignóralo y diviértete de todas formas.",
+      "ctaTitle": "¿Listo para planificar tus vacaciones perfectas?",
+      "ctaSubtitle": "Únete a Kino Calendarios y empieza a organizar cada viaje — desde un fin de semana largo hasta una vuelta al mundo.",
+      "ctaButton": "Crea tu cuenta gratis",
+      "footer": "© {year} Kino Calendarios. Hecho para viajeros."
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Iniciar sesión",
+      "description": "Introduce tu correo electrónico para acceder a tu cuenta",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "submit": "Iniciar sesión",
+      "submitting": "Iniciando sesión...",
+      "noAccount": "¿No tienes una cuenta?",
+      "signUp": "Regístrate"
+    },
+    "signup": {
+      "title": "Crear una cuenta",
+      "description": "Introduce tu información para crear tu cuenta",
+      "name": "Nombre",
+      "namePlaceholder": "Juan García",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "m@ejemplo.com",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "submit": "Crear cuenta",
+      "submitting": "Creando cuenta...",
+      "haveAccount": "¿Ya tienes una cuenta?",
+      "signIn": "Iniciar sesión"
+    },
+    "forgotPassword": {
+      "title": "¿Olvidaste tu contraseña?",
+      "description": "Introduce tu correo y te enviaremos un enlace para restablecerla.",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "m@ejemplo.com",
+      "submit": "Enviar enlace",
+      "submitting": "Enviando...",
+      "backToLogin": "Volver al inicio de sesión"
+    },
+    "resetPassword": {
+      "title": "Restablecer contraseña",
+      "description": "Introduce una nueva contraseña para tu cuenta.",
+      "invalidTitle": "Enlace inválido",
+      "invalidDescription": "Este enlace de restablecimiento de contraseña está incompleto o es incorrecto.",
+      "requestNew": "Solicitar un nuevo enlace",
+      "newPassword": "Nueva contraseña",
+      "confirmPassword": "Confirmar nueva contraseña",
+      "submit": "Restablecer contraseña",
+      "submitting": "Restableciendo..."
+    }
+  },
+  "home": {
+    "title": "Inicio",
+    "subtitle": "Tus calendarios de un vistazo.",
+    "myCalendars": "Mis Calendarios",
+    "newCalendar": "Nuevo Calendario",
+    "myFavourites": "Mis Favoritos",
+    "noFavourites": "Sin favoritos todavía",
+    "noFavouritesHint": "Abre un calendario y pulsa la estrella para marcarlo como favorito."
+  },
+  "calendars": {
+    "title": "Mis Calendarios",
+    "subtitle": "Gestiona tus calendarios.",
+    "newCalendar": "Nuevo Calendario"
+  },
+  "createCalendar": {
+    "title": "Crear Calendario",
+    "subtitle": "Configura un nuevo calendario."
+  },
+  "events": {
+    "title": "Eventos",
+    "subtitle": "Gestiona tus eventos — crea, visualiza y elimina."
+  },
+  "feedback": {
+    "title": "Comentarios",
+    "subtitle": "Ayúdanos a mejorar Kino.",
+    "shareTitle": "Comparte tus comentarios",
+    "shareSubtitle": "Cuéntanos qué funciona, qué no, o cualquier otra cosa que tengas en mente.",
+    "wishlistTitle": "Lista de deseos",
+    "wishlistSubtitle": "Vota por las funciones que te gustaría ver a continuación."
+  },
+  "settings": {
+    "title": "Configuración",
+    "subtitle": "Configura tus preferencias.",
+    "appearance": {
+      "title": "Apariencia",
+      "system": "Sistema",
+      "light": "Claro",
+      "dark": "Oscuro",
+      "hint": "Sistema utiliza la configuración de apariencia de tu dispositivo."
+    },
+    "language": {
+      "title": "Idioma",
+      "hint": "Elige tu idioma preferido."
+    },
+    "calendars": {
+      "title": "Calendarios",
+      "recoverDeleted": "Recuperar calendarios eliminados"
+    }
+  },
+  "deletedCalendars": {
+    "title": "Calendarios Eliminados",
+    "subtitle": "Restaura los calendarios que hayas eliminado anteriormente.",
+    "backTo": "Configuración",
+    "empty": "No hay calendarios eliminados.",
+    "deletedOn": "Eliminado el {date}"
+  },
+  "about": {
+    "title": "Acerca de",
+    "subtitle": "Aprende más sobre Kino.",
+    "builtBy": "Kino es una aplicación de calendario creada por",
+    "contact": "¿Tienes preguntas o comentarios? Escríbenos a",
+    "inspiredBy": "Inspirado en"
+  },
+  "languages": {
+    "en": "English",
+    "es": "Español",
+    "pt": "Português",
+    "de": "Deutsch"
+  }
+}

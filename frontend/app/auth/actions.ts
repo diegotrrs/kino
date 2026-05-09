@@ -63,6 +63,22 @@ export const login = async (_prev: AuthState, formData: FormData): Promise<AuthS
     path: '/',
   });
 
+  // Restore the user's saved locale preference from their profile
+  try {
+    const meRes = await fetch(`${API_BASE_URL}/api/auth/me`, {
+      headers: { Authorization: `Bearer ${access_token}` },
+      cache: 'no-store',
+    });
+    if (meRes.ok) {
+      const user = await meRes.json();
+      if (user.locale) {
+        cookieStore.set('locale', user.locale, { path: '/', sameSite: 'lax' });
+      }
+    }
+  } catch {
+    // Best-effort — login still succeeds without locale sync
+  }
+
   redirect(safeRedirectPath(formData.get('redirect')));
 }
 

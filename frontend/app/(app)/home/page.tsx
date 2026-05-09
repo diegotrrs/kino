@@ -3,6 +3,7 @@ import { Button }        from '@/components/ui/button';
 import { Separator }     from '@/components/ui/separator';
 import type { Calendar } from '@/lib/types';
 import { PlusIcon }      from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 import { cookies }       from 'next/headers';
 import Link              from 'next/link';
 import { redirect }      from 'next/navigation';
@@ -27,7 +28,10 @@ const getCalendars = async (token: string): Promise<Calendar[]> => {
 }
 
 const HomePage = async () => {
-  const token = await getAuthToken();
+  const [token, t] = await Promise.all([
+    getAuthToken(),
+    getTranslations('home'),
+  ]);
   const calendars = await getCalendars(token);
 
   const favourites = calendars.filter((c) => c.is_favourite);
@@ -38,10 +42,10 @@ const HomePage = async () => {
 
         <div className='space-y-1'>
           <h2 className='text-2xl font-semibold tracking-tight md:text-3xl select-none cursor-default'>
-            Home
+            {t('title')}
           </h2>
           <p className='text-xs md:text-sm text-muted-foreground select-none cursor-default'>
-            Your calendars at a glance.
+            {t('subtitle')}
           </p>
         </div>
 
@@ -50,13 +54,13 @@ const HomePage = async () => {
         <section className='space-y-3'>
           <div className='flex items-center justify-between'>
             <h3 className='text-base font-semibold tracking-tight'>
-              My Calendars
+              {t('myCalendars')}
             </h3>
             {calendars.length > 0 && (
               <Button asChild size='sm'>
                 <Link href='/calendars/create'>
                   <PlusIcon className='h-4 w-4' />
-                  New Calendar
+                  {t('newCalendar')}
                 </Link>
               </Button>
             )}
@@ -66,15 +70,15 @@ const HomePage = async () => {
 
         <section className='space-y-3'>
           <h3 className='text-base font-semibold tracking-tight'>
-            My Favourites
+            {t('myFavourites')}
           </h3>
           {favourites.length === 0 ? (
             <div className='flex flex-col items-center justify-center rounded-xl border border-dashed p-10 text-center'>
               <p className='text-sm font-medium text-muted-foreground'>
-                No favourites yet
+                {t('noFavourites')}
               </p>
               <p className='text-xs text-muted-foreground mt-1'>
-                Open a calendar and press the star to mark it as a favourite.
+                {t('noFavouritesHint')}
               </p>
             </div>
           ) : (

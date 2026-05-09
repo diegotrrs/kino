@@ -1,26 +1,34 @@
 'use client';
-import { logout }   from '@/app/auth/actions';
-import { Button }   from '@/components/ui/button';
+import { logout }           from '@/app/auth/actions';
+import { updateLocale }     from '@/app/(app)/settings/actions';
+import { Button }           from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger
-}                   from '@/components/ui/dropdown-menu';
-import { useToast } from '@/hooks/use-toast';
+}                           from '@/components/ui/dropdown-menu';
+import { locales }          from '@/i18n/routing';
+import { useToast }         from '@/hooks/use-toast';
 import {
+  Check,
   EllipsisVertical,
+  Globe,
   MessageSquare,
   Moon,
   Sun
-}                   from 'lucide-react';
-import { useTheme } from 'next-themes';
-import Link         from 'next/link';
+}                           from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
+import { useTheme }         from 'next-themes';
+import Link                 from 'next/link';
 
 export const TopBar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
-  const { toast } = useToast();
-  const { resolvedTheme, setTheme } = useTheme();
+  const { toast }                    = useToast();
+  const { resolvedTheme, setTheme }  = useTheme();
+  const currentLocale                = useLocale();
+  const t                            = useTranslations('topBar');
+  const tLang                        = useTranslations('languages');
 
   return (
     <header className='sticky top-0 z-50 flex h-14 items-center justify-between border-b bg-background px-4'>
@@ -32,7 +40,7 @@ export const TopBar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
             variant='ghost'
             size='icon'
             onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-            aria-label='Toggle theme'
+            aria-label={t('toggleTheme')}
           >
             {resolvedTheme === 'dark' ? (
               <Sun className='h-4 w-4' />
@@ -53,10 +61,28 @@ export const TopBar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
           </span>
         )}
 
+        {process.env.NODE_ENV === 'development' && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant='ghost' size='icon' aria-label={t('changeLanguage')}>
+                <Globe className='h-4 w-4' />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end'>
+              {locales.map((locale) => (
+                <DropdownMenuItem key={locale} onSelect={() => updateLocale(locale)}>
+                  <Check className={`h-4 w-4 ${locale === currentLocale ? 'opacity-100' : 'opacity-0'}`} />
+                  {tLang(locale)}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+
         <Button
           variant='ghost'
           size='icon'
-          aria-label='Feedback'
+          aria-label={t('feedback')}
           disabled={!isLoggedIn}
           className={!isLoggedIn ? 'pointer-events-none opacity-40' : ''}
           asChild={isLoggedIn}
@@ -83,20 +109,20 @@ export const TopBar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
-            <DropdownMenuItem onSelect={() => toast({ title: 'Profile clicked' })}>
-              Profile
+            <DropdownMenuItem onSelect={() => toast({ title: t('profile') })}>
+              {t('profile')}
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href='/settings'>Settings</Link>
+              <Link href='/settings'>{t('settings')}</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href='/about'>About</Link>
+              <Link href='/about'>{t('about')}</Link>
             </DropdownMenuItem>
             {isLoggedIn && (
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onSelect={() => logout()}>
-                  Log out
+                  {t('logOut')}
                 </DropdownMenuItem>
               </>
             )}
@@ -105,4 +131,4 @@ export const TopBar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       </div>
     </header>
   );
-}
+};

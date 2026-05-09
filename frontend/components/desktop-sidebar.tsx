@@ -9,6 +9,7 @@ import {
 import { UserButton }       from '@/components/user-button';
 import { navItems }         from '@/lib/nav';
 import { cn }               from '@/lib/utils';
+import { useTranslations }  from 'next-intl';
 import Link                 from 'next/link';
 import { usePathname }      from 'next/navigation';
 
@@ -19,6 +20,7 @@ type DesktopSidebarProps = {
 
 export const DesktopSidebar = ({ user, isLoggedIn }: DesktopSidebarProps) => {
   const pathname = usePathname();
+  const t = useTranslations('nav');
 
   const mainItems   = navItems.filter((i) => i.section === 'main');
   const bottomItems = navItems.filter((i) => i.section === 'bottom');
@@ -30,6 +32,7 @@ export const DesktopSidebar = ({ user, isLoggedIn }: DesktopSidebarProps) => {
         {mainItems.map((item) => {
           const Icon     = item.icon;
           const isActive = pathname === item.href;
+          const label    = t(item.labelKey);
 
           return (
             <Tooltip key={item.href} delayDuration={0}>
@@ -37,6 +40,7 @@ export const DesktopSidebar = ({ user, isLoggedIn }: DesktopSidebarProps) => {
                 <Link
                   href={isLoggedIn ? item.href : '#'}
                   aria-disabled={!isLoggedIn}
+                  data-testid={item.testId}
                   className={cn(
                     'flex h-10 w-10 items-center justify-center rounded-lg transition-colors',
                     !isLoggedIn
@@ -47,10 +51,10 @@ export const DesktopSidebar = ({ user, isLoggedIn }: DesktopSidebarProps) => {
                   )}
                 >
                   <Icon className='h-5 w-5' />
-                  <span className='sr-only'>{item.label}</span>
+                  <span className='sr-only'>{label}</span>
                 </Link>
               </TooltipTrigger>
-              <TooltipContent side='right'>{item.label}</TooltipContent>
+              <TooltipContent side='right'>{label}</TooltipContent>
             </Tooltip>
           );
         })}
@@ -61,6 +65,7 @@ export const DesktopSidebar = ({ user, isLoggedIn }: DesktopSidebarProps) => {
         {bottomItems.map((item) => {
           const Icon     = item.icon;
           const isActive = pathname === item.href;
+          const label    = t(item.labelKey);
 
           return (
             <Tooltip key={item.href} delayDuration={0}>
@@ -68,6 +73,7 @@ export const DesktopSidebar = ({ user, isLoggedIn }: DesktopSidebarProps) => {
                 <Link
                   href={isLoggedIn ? item.href : '#'}
                   aria-disabled={!isLoggedIn}
+                  data-testid={item.testId}
                   className={cn(
                     'flex h-10 w-10 items-center justify-center rounded-lg transition-colors',
                     !isLoggedIn
@@ -78,10 +84,10 @@ export const DesktopSidebar = ({ user, isLoggedIn }: DesktopSidebarProps) => {
                   )}
                 >
                   <Icon className='h-5 w-5' />
-                  <span className='sr-only'>{item.label}</span>
+                  <span className='sr-only'>{label}</span>
                 </Link>
               </TooltipTrigger>
-              <TooltipContent side='right'>{item.label}</TooltipContent>
+              <TooltipContent side='right'>{label}</TooltipContent>
             </Tooltip>
           );
         })}
@@ -89,4 +95,4 @@ export const DesktopSidebar = ({ user, isLoggedIn }: DesktopSidebarProps) => {
     </aside>
     </TooltipProvider>
   );
-}
+};

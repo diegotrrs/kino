@@ -44,6 +44,21 @@ def create_user(db: connection, user: UserCreate) -> dict:
         return row
 
 
+def update_user(db: connection, user_id: int, updates: dict) -> dict | None:
+    if not updates:
+        return get_user(db, user_id)
+    set_clause = ", ".join(f"{key} = %({key})s" for key in updates)
+    updates["id"] = user_id
+    with db.cursor() as cur:
+        cur.execute(
+            f"UPDATE users SET {set_clause}, updated_at = NOW() WHERE id = %(id)s RETURNING *",
+            updates,
+        )
+        row = cur.fetchone()
+        db.commit()
+        return row
+
+
 def delete_user(db: connection, user_id: int) -> bool:
     with db.cursor() as cur:
         cur.execute("DELETE FROM users WHERE id = %s", (user_id,))

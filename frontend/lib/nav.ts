@@ -8,31 +8,47 @@ import {
 } from 'lucide-react';
 
 export type NavItem = {
-  label: string;
+  labelKey: string;
   href: string;
   icon: LucideIcon;
   section: 'main' | 'bottom';
+  testId: string;
 };
 
 export const navItems: NavItem[] = [
   {
-    label: 'Home',
+    labelKey: 'home',
     href: '/home',
     icon: House,
     section: 'main',
+    testId: 'nav-home',
   },
   {
-    label: 'My calendars',
+    labelKey: 'myCalendars',
     href: '/calendars',
     icon: CalendarRange,
     section: 'main',
+    testId: 'nav-my-calendars',
   },
   {
-    label: 'Create calendar',
+    labelKey: 'createCalendar',
     href: '/calendars/create',
     icon: CalendarPlus,
     section: 'main',
+    testId: 'nav-create-calendar',
   },
-  { label: 'Events', href: '/events', icon: ListChecks, section: 'main' },
-  { label: 'Settings', href: '/settings', icon: Settings, section: 'bottom' },
+  {
+    labelKey: 'events',
+    href: '/events',
+    icon: ListChecks,
+    section: 'main',
+    testId: 'nav-events',
+  },
+  {
+    labelKey: 'settings',
+    href: '/settings',
+    icon: Settings,
+    section: 'bottom',
+    testId: 'nav-settings',
+  },
 ];

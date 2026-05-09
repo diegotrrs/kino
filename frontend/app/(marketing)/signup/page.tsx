@@ -13,6 +13,7 @@ import {
 }                          from '@/components/ui/card';
 import { Input }           from '@/components/ui/input';
 import { Label }           from '@/components/ui/label';
+import { useTranslations } from 'next-intl';
 import Link                from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useActionState }  from 'react';
@@ -21,15 +22,16 @@ const SignupPage = () => {
   const [state, formAction, pending] = useActionState<AuthState, FormData>(signup, {});
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') ?? '';
+  const t = useTranslations('auth.signup');
 
   return (
     <div className='flex min-h-svh w-full items-center justify-center p-6 md:p-10'>
       <div className='w-full max-w-sm'>
         <Card>
           <CardHeader>
-            <CardTitle className='text-2xl'>Create an account</CardTitle>
+            <CardTitle className='text-2xl'>{t('title')}</CardTitle>
             <CardDescription>
-              Enter your information below to create your account
+              {t('description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -39,44 +41,44 @@ const SignupPage = () => {
               )}
               {redirect && <input type='hidden' name='redirect' value={redirect} />}
               <div className='grid gap-2'>
-                <Label htmlFor='name'>Name</Label>
-                <Input id='name' name='name' type='text' placeholder='John Doe' required />
+                <Label htmlFor='name'>{t('name')}</Label>
+                <Input id='name' name='name' type='text' placeholder={t('namePlaceholder')} required />
                 {state.fieldErrors?.name && (
                   <p className='text-sm text-destructive'>{state.fieldErrors.name[0]}</p>
                 )}
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='email'>Email</Label>
-                <Input id='email' name='email' type='email' placeholder='m@example.com' required />
+                <Label htmlFor='email'>{t('email')}</Label>
+                <Input id='email' name='email' type='email' placeholder={t('emailPlaceholder')} required />
                 {state.fieldErrors?.email && (
                   <p className='text-sm text-destructive'>{state.fieldErrors.email[0]}</p>
                 )}
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='password'>Password</Label>
+                <Label htmlFor='password'>{t('password')}</Label>
                 <Input id='password' name='password' type='password' required />
                 {state.fieldErrors?.password && (
                   <p className='text-sm text-destructive'>{state.fieldErrors.password[0]}</p>
                 )}
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='confirmPassword'>Confirm password</Label>
+                <Label htmlFor='confirmPassword'>{t('confirmPassword')}</Label>
                 <Input id='confirmPassword' name='confirmPassword' type='password' required />
                 {state.fieldErrors?.confirmPassword && (
                   <p className='text-sm text-destructive'>{state.fieldErrors.confirmPassword[0]}</p>
                 )}
               </div>
               <Button type='submit' className='w-full' disabled={pending}>
-                {pending ? 'Creating account...' : 'Create account'}
+                {pending ? t('submitting') : t('submit')}
               </Button>
             </form>
             <div className='mt-4 text-center text-sm'>
-              Already have an account?{' '}
+              {t('haveAccount')}{' '}
               <Link
                 href={redirect ? `/login?redirect=${encodeURIComponent(redirect)}` : '/login'}
                 className='underline underline-offset-4'
               >
-                Sign in
+                {t('signIn')}
               </Link>
             </div>
           </CardContent>

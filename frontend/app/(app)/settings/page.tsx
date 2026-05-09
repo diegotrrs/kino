@@ -1,31 +1,37 @@
 'use client';
-import { Separator } from '@/components/ui/separator';
-import { cn }        from '@/lib/utils';
+import { updateLocale }  from '@/app/(app)/settings/actions';
+import { Separator }     from '@/components/ui/separator';
+import { locales }       from '@/i18n/routing';
+import { cn }            from '@/lib/utils';
 import {
   ChevronRight,
   Monitor,
   Moon,
   Sun
-}                    from 'lucide-react';
-import { useTheme }  from 'next-themes';
-import Link          from 'next/link';
+}                        from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
+import { useTheme }      from 'next-themes';
+import Link              from 'next/link';
 import {
   useEffect,
   useState
-}                    from 'react';
-
-const options = [
-  { value: 'system', label: 'System', icon: Monitor },
-  { value: 'light',  label: 'Light',  icon: Sun },
-  { value: 'dark',   label: 'Dark',   icon: Moon },
-] as const;
+}                        from 'react';
 
 const SettingsPage = () => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const locale                = useLocale();
+  const t                     = useTranslations('settings');
+  const tLang                 = useTranslations('languages');
 
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
+
+  const appearanceOptions = [
+    { value: 'system', label: t('appearance.system'), icon: Monitor },
+    { value: 'light',  label: t('appearance.light'),  icon: Sun },
+    { value: 'dark',   label: t('appearance.dark'),   icon: Moon },
+  ];
 
   return (
     <div className='py-4'>
@@ -33,19 +39,19 @@ const SettingsPage = () => {
         <div className='w-full px-5 space-y-5'>
           <div className='space-y-0'>
             <h2 className='text-2xl font-semibold tracking-tight md:text-3xl'>
-              Settings
+              {t('title')}
             </h2>
             <p className='text-xs md:text-sm font-medium text-muted-foreground'>
-              Configure your preferences.
+              {t('subtitle')}
             </p>
           </div>
 
           <Separator />
 
           <div className='space-y-2'>
-            <h3 className='text-sm font-medium'>Appearance</h3>
+            <h3 className='text-sm font-medium'>{t('appearance.title')}</h3>
             <div className='flex gap-2'>
-              {options.map(({ value, label, icon: Icon }) => (
+              {appearanceOptions.map(({ value, label, icon: Icon }) => (
                 <button
                   key={value}
                   onClick={() => setTheme(value)}
@@ -62,19 +68,44 @@ const SettingsPage = () => {
               ))}
             </div>
             <p className='text-xs text-muted-foreground'>
-              System uses your device&apos;s appearance setting.
+              {t('appearance.hint')}
+            </p>
+          </div>
+
+          <Separator />
+
+          <div className='space-y-2' data-testid='language-selector'>
+            <h3 className='text-sm font-medium'>{t('language.title')}</h3>
+            <div className='flex gap-2'>
+              {locales.map((loc) => (
+                <button
+                  key={loc}
+                  onClick={() => updateLocale(loc)}
+                  className={cn(
+                    'flex items-center gap-2 rounded-md border px-4 py-2 text-sm transition-colors',
+                    mounted && locale === loc
+                      ? 'border-foreground bg-accent text-accent-foreground'
+                      : 'border-border text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+                  )}
+                >
+                  {tLang(loc)}
+                </button>
+              ))}
+            </div>
+            <p className='text-xs text-muted-foreground'>
+              {t('language.hint')}
             </p>
           </div>
 
           <Separator />
 
           <div className='space-y-2'>
-            <h3 className='text-sm font-medium'>Calendars</h3>
+            <h3 className='text-sm font-medium'>{t('calendars.title')}</h3>
             <Link
               href='/settings/deleted-calendars'
               className='flex items-center justify-between rounded-md border px-4 py-3 text-sm hover:bg-accent transition-colors'
             >
-              <span>Recover deleted calendars</span>
+              <span>{t('calendars.recoverDeleted')}</span>
               <ChevronRight className='h-4 w-4 text-muted-foreground' />
             </Link>
           </div>

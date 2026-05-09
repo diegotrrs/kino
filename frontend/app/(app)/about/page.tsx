@@ -1,17 +1,20 @@
-import { Separator } from '@/components/ui/separator';
-import Link          from 'next/link';
+import { Separator }      from '@/components/ui/separator';
+import { getTranslations } from 'next-intl/server';
+import Link                from 'next/link';
 
-const AboutPage = () => {
+const AboutPage = async () => {
+  const t = await getTranslations('about');
+
   return (
     <div className='py-4'>
       <div className='flex flex-col w-full items-center'>
         <div className='w-full px-5 space-y-5'>
           <div className='space-y-0'>
             <h2 className='text-2xl font-semibold tracking-tight md:text-3xl'>
-              About
+              {t('title')}
             </h2>
             <p className='text-xs md:text-sm font-medium text-muted-foreground'>
-              Learn more about Kino.
+              {t('subtitle')}
             </p>
           </div>
 
@@ -19,11 +22,11 @@ const AboutPage = () => {
 
           <div className='space-y-1'>
             <p className='text-sm'>
-              Kino is a calendar app built by{' '}
+              {t('builtBy')}{' '}
               <span className='font-medium'>Diego T.</span>
             </p>
             <p className='text-sm text-muted-foreground'>
-              Got questions or feedback? Reach out at{' '}
+              {t('contact')}{' '}
               <a
                 href='mailto:diego.torres.arguedas@gmail.com'
                 className='underline underline-offset-4 hover:text-foreground'
@@ -36,7 +39,7 @@ const AboutPage = () => {
           <Separator />
 
           <div className='space-y-2'>
-            <h3 className='text-sm font-medium'>Inspired by</h3>
+            <h3 className='text-sm font-medium'>{t('inspiredBy')}</h3>
             <div className='flex flex-wrap gap-2'>
               <Link
                 href='https://www.shadcn.io/template/robskinney-shadcn-ui-fullcalendar-example'

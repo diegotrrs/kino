@@ -3,6 +3,7 @@ import { Button }        from '@/components/ui/button';
 import { Separator }     from '@/components/ui/separator';
 import type { Calendar } from '@/lib/types';
 import { PlusIcon }      from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 import { cookies }       from 'next/headers';
 import Link              from 'next/link';
 import { redirect }      from 'next/navigation';
@@ -30,7 +31,10 @@ const getCalendars = async (): Promise<Calendar[]> => {
 }
 
 const CalendarsPage = async () => {
-  const calendars = await getCalendars();
+  const [calendars, t] = await Promise.all([
+    getCalendars(),
+    getTranslations('calendars'),
+  ]);
 
   return (
     <div className='py-4'>
@@ -39,17 +43,17 @@ const CalendarsPage = async () => {
           <div className='flex items-start justify-between'>
             <div className='space-y-0 cursor-default'>
               <h2 className='text-2xl font-semibold tracking-tight md:text-3xl select-none cursor-default'>
-                My Calendars
+                {t('title')}
               </h2>
               <p className='text-xs md:text-sm font-medium text-muted-foreground select-none cursor-default'>
-                Manage your calendars.
+                {t('subtitle')}
               </p>
             </div>
             {calendars.length > 0 && (
               <Button asChild size='sm'>
                 <Link href='/calendars/create'>
                   <PlusIcon className='h-4 w-4' />
-                  New Calendar
+                  {t('newCalendar')}
                 </Link>
               </Button>
             )}

@@ -1,6 +1,7 @@
 import { RestoreCalendarButton } from '@/components/calendars/restore-calendar-button';
 import { Separator }             from '@/components/ui/separator';
 import { ArrowLeft }             from 'lucide-react';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { cookies }               from 'next/headers';
 import Link                      from 'next/link';
 import { redirect }              from 'next/navigation';
@@ -31,7 +32,11 @@ const DeletedCalendarsPage = async () => {
   const token = cookieStore.get('token')?.value;
   if (!token) redirect('/login');
 
-  const deletedCalendars = await getDeletedCalendars(token);
+  const [deletedCalendars, t, locale] = await Promise.all([
+    getDeletedCalendars(token),
+    getTranslations('deletedCalendars'),
+    getLocale(),
+  ]);
 
   return (
     <div className='py-4'>
@@ -43,20 +48,20 @@ const DeletedCalendarsPage = async () => {
               className='inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-1'
             >
               <ArrowLeft className='h-4 w-4' />
-              Settings
+              {t('backTo')}
             </Link>
             <h2 className='text-2xl font-semibold tracking-tight md:text-3xl'>
-              Deleted Calendars
+              {t('title')}
             </h2>
             <p className='text-xs md:text-sm font-medium text-muted-foreground'>
-              Restore calendars you have previously deleted.
+              {t('subtitle')}
             </p>
           </div>
 
           <Separator />
 
           {deletedCalendars.length === 0 ? (
-            <p className='text-sm text-muted-foreground'>No deleted calendars.</p>
+            <p className='text-sm text-muted-foreground'>{t('empty')}</p>
           ) : (
             <ul className='space-y-2'>
               {deletedCalendars.map((calendar) => (
@@ -67,10 +72,12 @@ const DeletedCalendarsPage = async () => {
                   <div>
                     <p className='text-sm font-medium'>{calendar.name}</p>
                     <p className='text-xs text-muted-foreground'>
-                      Deleted {new Date(calendar.deleted_at).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
+                      {t('deletedOn', {
+                        date: new Date(calendar.deleted_at).toLocaleDateString(locale, {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        }),
                       })}
                     </p>
                   </div>

@@ -39,6 +39,7 @@ from .users import (
     get_user_by_email,
     get_users,
     mark_token_used,
+    update_user,
     update_user_password,
 )
 
@@ -77,5 +78,6 @@ __all__ = [
     "set_calendar_favourite",
     "update_calendar",
     "update_event",
+    "update_user",
     "update_user_password",
 ]

@@ -1,6 +1,7 @@
-import { Button }  from '@/components/ui/button';
-import { cookies } from 'next/headers';
-import Link        from 'next/link';
+import { Button }        from '@/components/ui/button';
+import { getTranslations } from 'next-intl/server';
+import { cookies }       from 'next/headers';
+import Link              from 'next/link';
 
 const isLoggedIn = async () => {
   const cookieStore = await cookies();
@@ -12,7 +13,10 @@ const MarketingLayout = async ({
 }: {
   children: React.ReactNode;
 }) => {
-  const loggedIn = await isLoggedIn();
+  const [loggedIn, t] = await Promise.all([
+    isLoggedIn(),
+    getTranslations('marketing'),
+  ]);
 
   return (
     <div className='flex min-h-svh flex-col'>
@@ -24,15 +28,15 @@ const MarketingLayout = async ({
           <nav className='flex items-center gap-2'>
             {loggedIn ? (
               <Button asChild size='sm'>
-                <Link href='/calendars'>Go to app</Link>
+                <Link href='/calendars'>{t('goToApp')}</Link>
               </Button>
             ) : (
               <>
                 <Button asChild variant='ghost' size='sm'>
-                  <Link href='/login'>Sign in</Link>
+                  <Link href='/login'>{t('signIn')}</Link>
                 </Button>
                 <Button asChild size='sm'>
-                  <Link href='/signup'>Get started</Link>
+                  <Link href='/signup'>{t('getStarted')}</Link>
                 </Button>
               </>
             )}

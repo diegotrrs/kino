@@ -1,0 +1,173 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "myCalendars": "Meine Kalender",
+    "createCalendar": "Kalender erstellen",
+    "events": "Veranstaltungen",
+    "settings": "Einstellungen"
+  },
+  "topBar": {
+    "feedback": "Feedback",
+    "toggleTheme": "Design wechseln",
+    "changeLanguage": "Sprache ändern",
+    "profile": "Profil",
+    "settings": "Einstellungen",
+    "about": "Über",
+    "logOut": "Abmelden"
+  },
+  "marketing": {
+    "goToApp": "Zur App",
+    "signIn": "Anmelden",
+    "getStarted": "Loslegen",
+    "landing": {
+      "tagline": "Kino Kalender",
+      "hero": "Dein Urlaub,",
+      "heroHighlight": "perfekt geplant.",
+      "subhero": "Erstelle eigene Urlaubskalender, plane jeden Tag deiner Reise und vermeide Doppelbuchungen.",
+      "getStartedFree": "Kostenlos loslegen",
+      "signIn": "Anmelden",
+      "noCreditCard": "Keine Kreditkarte erforderlich",
+      "freePlan": "Kostenloser Plan für immer",
+      "anyDevice": "Funktioniert auf jedem Gerät",
+      "tryNowTitle": "Jetzt ausprobieren",
+      "tryNowSubtitle": "Keine Anmeldung erforderlich. Klicke auf einen Tag, um ein Ereignis hinzuzufügen, ziehe es zum Verschieben, klicke darauf zum Bearbeiten oder Löschen.",
+      "featuresTitle": "Alles was du für eine tolle Reise brauchst",
+      "featuresSubtitle": "Kino wurde so entwickelt, wie Reisende wirklich denken.",
+      "feature1Title": "Mehrere Urlaubskalender",
+      "feature1Desc": "Behalte Sommerausflüge, Winterpausen und lange Wochenenden in separaten Kalendern, damit nichts durcheinandergerät.",
+      "feature2Title": "Jedes Ziel planen",
+      "feature2Desc": "Von einem Städtetrip bis zur einmonatigen Roadtrip — füge Ereignisse hinzu, lege Zeiten fest und farbkodiere jeden Moment.",
+      "feature3Title": "Monats-, Wochen- und Tagesansichten",
+      "feature3Desc": "Wechsle zwischen Ansichten, um auf einen einzelnen Aktivitätentag einzuzoomen oder die gesamte Urlaubssaison zu überblicken.",
+      "feature4Title": "Ziehen, Ablegen und Bearbeiten",
+      "feature4Desc": "Pläne ändern sich. Verschiebe Ereignisse auf neue Slots, ändere ihre Größe und bearbeite jedes Detail.",
+      "stepsTitle": "In Minuten einsatzbereit",
+      "step1Title": "Erstelle einen Kalender",
+      "step1Body": "Gib deiner Reise einen Namen — \"Malediven 2026\", \"Weihnachten in Wien\", was auch immer passt.",
+      "step2Title": "Füge deine Ereignisse hinzu",
+      "step2Body": "Klicke auf einen beliebigen Tag, um Flüge, Hotel-Check-ins, Touren, Abendessen und Freizeit hinzuzufügen.",
+      "step3Title": "Genieße deinen Urlaub",
+      "step3Body": "Öffne Kino auf deinem Handy und folge dem Plan. Oder ignoriere ihn und hab trotzdem Spaß.",
+      "ctaTitle": "Bereit, deinen perfekten Urlaub zu planen?",
+      "ctaSubtitle": "Tritt Kino Kalender bei und organisiere jede Reise — vom langen Wochenende bis zur Weltreise.",
+      "ctaButton": "Erstelle dein kostenloses Konto",
+      "footer": "© {year} Kino Kalender. Für Reisende gemacht."
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "In dein Konto anmelden",
+      "description": "Gib deine E-Mail-Adresse ein, um dich anzumelden",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "forgotPassword": "Passwort vergessen?",
+      "submit": "Anmelden",
+      "submitting": "Anmeldung läuft...",
+      "noAccount": "Noch kein Konto?",
+      "signUp": "Registrieren"
+    },
+    "signup": {
+      "title": "Konto erstellen",
+      "description": "Gib deine Informationen ein, um dein Konto zu erstellen",
+      "name": "Name",
+      "namePlaceholder": "Max Mustermann",
+      "email": "E-Mail",
+      "emailPlaceholder": "m@beispiel.com",
+      "password": "Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "submit": "Konto erstellen",
+      "submitting": "Konto wird erstellt...",
+      "haveAccount": "Hast du bereits ein Konto?",
+      "signIn": "Anmelden"
+    },
+    "forgotPassword": {
+      "title": "Passwort vergessen?",
+      "description": "Gib deine E-Mail ein und wir senden dir einen Reset-Link.",
+      "email": "E-Mail",
+      "emailPlaceholder": "m@beispiel.com",
+      "submit": "Reset-Link senden",
+      "submitting": "Wird gesendet...",
+      "backToLogin": "Zurück zur Anmeldung"
+    },
+    "resetPassword": {
+      "title": "Passwort zurücksetzen",
+      "description": "Gib ein neues Passwort für dein Konto ein.",
+      "invalidTitle": "Ungültiger Link",
+      "invalidDescription": "Dieser Passwort-Reset-Link fehlt oder ist fehlerhaft.",
+      "requestNew": "Neuen Reset-Link anfordern",
+      "newPassword": "Neues Passwort",
+      "confirmPassword": "Neues Passwort bestätigen",
+      "submit": "Passwort zurücksetzen",
+      "submitting": "Wird zurückgesetzt..."
+    }
+  },
+  "home": {
+    "title": "Startseite",
+    "subtitle": "Deine Kalender auf einen Blick.",
+    "myCalendars": "Meine Kalender",
+    "newCalendar": "Neuer Kalender",
+    "myFavourites": "Meine Favoriten",
+    "noFavourites": "Noch keine Favoriten",
+    "noFavouritesHint": "Öffne einen Kalender und drücke den Stern, um ihn als Favorit zu markieren."
+  },
+  "calendars": {
+    "title": "Meine Kalender",
+    "subtitle": "Verwalte deine Kalender.",
+    "newCalendar": "Neuer Kalender"
+  },
+  "createCalendar": {
+    "title": "Kalender erstellen",
+    "subtitle": "Richte einen neuen Kalender ein."
+  },
+  "events": {
+    "title": "Veranstaltungen",
+    "subtitle": "Verwalte deine Veranstaltungen — erstellen, ansehen und löschen."
+  },
+  "feedback": {
+    "title": "Feedback",
+    "subtitle": "Hilf uns, Kino zu verbessern.",
+    "shareTitle": "Teile dein Feedback",
+    "shareSubtitle": "Sag uns, was funktioniert, was nicht, oder was dir sonst noch auf dem Herzen liegt.",
+    "wishlistTitle": "Wunschliste",
+    "wishlistSubtitle": "Stimme für die Funktionen ab, die du als nächstes sehen möchtest."
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "subtitle": "Konfiguriere deine Einstellungen.",
+    "appearance": {
+      "title": "Erscheinungsbild",
+      "system": "System",
+      "light": "Hell",
+      "dark": "Dunkel",
+      "hint": "System verwendet die Erscheinungsbildeinstellung deines Geräts."
+    },
+    "language": {
+      "title": "Sprache",
+      "hint": "Wähle deine bevorzugte Sprache."
+    },
+    "calendars": {
+      "title": "Kalender",
+      "recoverDeleted": "Gelöschte Kalender wiederherstellen"
+    }
+  },
+  "deletedCalendars": {
+    "title": "Gelöschte Kalender",
+    "subtitle": "Stelle zuvor gelöschte Kalender wieder her.",
+    "backTo": "Einstellungen",
+    "empty": "Keine gelöschten Kalender.",
+    "deletedOn": "Gelöscht am {date}"
+  },
+  "about": {
+    "title": "Über",
+    "subtitle": "Erfahre mehr über Kino.",
+    "builtBy": "Kino ist eine Kalender-App, entwickelt von",
+    "contact": "Fragen oder Feedback? Schreib uns an",
+    "inspiredBy": "Inspiriert von"
+  },
+  "languages": {
+    "en": "English",
+    "es": "Español",
+    "pt": "Português",
+    "de": "Deutsch"
+  }
+}

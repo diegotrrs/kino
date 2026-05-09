@@ -25,8 +25,16 @@ Example:
 
 I may review and modify the plan. Once I confirm it is ready, you should use it as the definitive guide for implementation. Finally, remember to run the following steps afterwards:
 
-```
+Frontend:
+
+```ts
 npm run build
 npm run lint
-npm run tests
+npm run check
+```
+
+Backend:
+
+```ts
+make check
 ```

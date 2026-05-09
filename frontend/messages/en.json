@@ -1,0 +1,173 @@
+{
+  "nav": {
+    "home": "Home",
+    "myCalendars": "My Calendars",
+    "createCalendar": "Create Calendar",
+    "events": "Events",
+    "settings": "Settings"
+  },
+  "topBar": {
+    "feedback": "Feedback",
+    "toggleTheme": "Toggle theme",
+    "changeLanguage": "Change language",
+    "profile": "Profile",
+    "settings": "Settings",
+    "about": "About",
+    "logOut": "Log out"
+  },
+  "marketing": {
+    "goToApp": "Go to app",
+    "signIn": "Sign in",
+    "getStarted": "Get started",
+    "landing": {
+      "tagline": "Kino Calendars",
+      "hero": "Your holidays,",
+      "heroHighlight": "perfectly planned.",
+      "subhero": "Create dedicated holiday calendars, map out every day of your trip, and never double-book a beach day again.",
+      "getStartedFree": "Get started free",
+      "signIn": "Sign in",
+      "noCreditCard": "No credit card required",
+      "freePlan": "Free forever plan",
+      "anyDevice": "Works on any device",
+      "tryNowTitle": "Try it right now",
+      "tryNowSubtitle": "No sign-up needed. Click any day to add an event, drag to reschedule, click an event to edit or delete.",
+      "featuresTitle": "Everything you need to plan a great trip",
+      "featuresSubtitle": "Kino is built around the way travellers actually think.",
+      "feature1Title": "Multiple Holiday Calendars",
+      "feature1Desc": "Keep summer getaways, winter breaks, and long weekends in separate calendars so nothing overlaps and everything stays clear.",
+      "feature2Title": "Plan Any Destination",
+      "feature2Desc": "From a weekend city break to a month-long road trip — add events, set times, and colour-code every moment of your itinerary.",
+      "feature3Title": "Month, Week & Day Views",
+      "feature3Desc": "Switch between views to zoom in on a single day of activities or zoom out to see your entire holiday season at a glance.",
+      "feature4Title": "Drag, Drop & Edit",
+      "feature4Desc": "Plans change. Drag events to new slots, resize them, and edit every detail without losing the bigger picture.",
+      "stepsTitle": "Up and running in minutes",
+      "step1Title": "Create a calendar",
+      "step1Body": "Give your trip a name — \"Maldives 2026\", \"Christmas in Vienna\", whatever fits.",
+      "step2Title": "Add your events",
+      "step2Body": "Click any day to add flights, hotel check-ins, tours, dinners, and free time.",
+      "step3Title": "Enjoy your holiday",
+      "step3Body": "Open Kino on your phone and follow the plan. Or ignore it and have fun anyway.",
+      "ctaTitle": "Ready to plan your perfect holiday?",
+      "ctaSubtitle": "Join Kino Calendars and start organising every trip — from a long weekend to a world tour.",
+      "ctaButton": "Create your free account",
+      "footer": "© {year} Kino Calendars. Made for travellers."
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Login to your account",
+      "description": "Enter your email below to login to your account",
+      "email": "Email",
+      "password": "Password",
+      "forgotPassword": "Forgot your password?",
+      "submit": "Login",
+      "submitting": "Logging in...",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up"
+    },
+    "signup": {
+      "title": "Create an account",
+      "description": "Enter your information below to create your account",
+      "name": "Name",
+      "namePlaceholder": "John Doe",
+      "email": "Email",
+      "emailPlaceholder": "m@example.com",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "submit": "Create account",
+      "submitting": "Creating account...",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in"
+    },
+    "forgotPassword": {
+      "title": "Forgot your password?",
+      "description": "Enter your email and we'll send you a reset link.",
+      "email": "Email",
+      "emailPlaceholder": "m@example.com",
+      "submit": "Send reset link",
+      "submitting": "Sending...",
+      "backToLogin": "Back to login"
+    },
+    "resetPassword": {
+      "title": "Reset your password",
+      "description": "Enter a new password for your account.",
+      "invalidTitle": "Invalid link",
+      "invalidDescription": "This password reset link is missing or malformed.",
+      "requestNew": "Request a new reset link",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "submit": "Reset password",
+      "submitting": "Resetting..."
+    }
+  },
+  "home": {
+    "title": "Home",
+    "subtitle": "Your calendars at a glance.",
+    "myCalendars": "My Calendars",
+    "newCalendar": "New Calendar",
+    "myFavourites": "My Favourites",
+    "noFavourites": "No favourites yet",
+    "noFavouritesHint": "Open a calendar and press the star to mark it as a favourite."
+  },
+  "calendars": {
+    "title": "My Calendars",
+    "subtitle": "Manage your calendars.",
+    "newCalendar": "New Calendar"
+  },
+  "createCalendar": {
+    "title": "Create Calendar",
+    "subtitle": "Set up a new calendar."
+  },
+  "events": {
+    "title": "Events",
+    "subtitle": "Manage your events — create, view, and delete."
+  },
+  "feedback": {
+    "title": "Feedback",
+    "subtitle": "Help us improve Kino.",
+    "shareTitle": "Share your feedback",
+    "shareSubtitle": "Tell us what's working, what's not, or anything else on your mind.",
+    "wishlistTitle": "Wishlist",
+    "wishlistSubtitle": "Vote for the features you'd like to see next."
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Configure your preferences.",
+    "appearance": {
+      "title": "Appearance",
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark",
+      "hint": "System uses your device's appearance setting."
+    },
+    "language": {
+      "title": "Language",
+      "hint": "Choose your preferred language."
+    },
+    "calendars": {
+      "title": "Calendars",
+      "recoverDeleted": "Recover deleted calendars"
+    }
+  },
+  "deletedCalendars": {
+    "title": "Deleted Calendars",
+    "subtitle": "Restore calendars you have previously deleted.",
+    "backTo": "Settings",
+    "empty": "No deleted calendars.",
+    "deletedOn": "Deleted {date}"
+  },
+  "about": {
+    "title": "About",
+    "subtitle": "Learn more about Kino.",
+    "builtBy": "Kino is a calendar app built by",
+    "contact": "Got questions or feedback? Reach out at",
+    "inspiredBy": "Inspired by"
+  },
+  "languages": {
+    "en": "English",
+    "es": "Español",
+    "pt": "Português",
+    "de": "Deutsch"
+  }
+}

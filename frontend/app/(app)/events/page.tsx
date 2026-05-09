@@ -2,6 +2,7 @@ import { EventCreateDialog } from '@/components/events/event-create-dialog';
 import { EventList }         from '@/components/events/event-list';
 import { Separator }         from '@/components/ui/separator';
 import type { Event }        from '@/lib/types';
+import { getTranslations }   from 'next-intl/server';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
@@ -18,7 +19,10 @@ async function getEvents(): Promise<Event[]> {
 }
 
 export default async function EventsPage() {
-  const events = await getEvents();
+  const [events, t] = await Promise.all([
+    getEvents(),
+    getTranslations('events'),
+  ]);
 
   return (
     <div className='py-4'>
@@ -27,10 +31,10 @@ export default async function EventsPage() {
           <div className='flex items-center justify-between'>
             <div className='space-y-0'>
               <h2 className='flex items-center text-2xl font-semibold tracking-tight md:text-3xl'>
-                Events
+                {t('title')}
               </h2>
               <p className='text-xs md:text-sm font-medium text-muted-foreground'>
-                Manage your events — create, view, and delete.
+                {t('subtitle')}
               </p>
             </div>
             <EventCreateDialog />
