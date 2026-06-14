@@ -56,3 +56,38 @@ In conversations, when referring to the following pages:
 
 - Left navigation bar: `lib/nav.ts`
 - Top navigation bar: `components/top-bar.tsx`
+
+# 5. Internationalisation (i18n)
+
+The project uses **next-intl** for translations.
+
+**Supported locales:** `en`, `es`, `pt`, `de` — defined in `i18n/routing.ts`, with `en` as the default.
+
+**Key files:**
+
+| File | Purpose |
+| --- | --- |
+| `i18n/routing.ts` | Locale list and default locale |
+| `i18n/request.ts` | Resolves locale from `locale` cookie per request, loads message file |
+| `lib/locale.ts` | `detectLocale()` — parses `Accept-Language` header to pick the best locale |
+| `messages/<locale>.json` | Translation strings for each locale (`en`, `es`, `pt`, `de`) |
+
+**How to use translations:**
+
+Server components — use `getTranslations` from `next-intl/server`:
+
+```ts
+import { getTranslations } from 'next-intl/server';
+
+const t = await getTranslations('home');
+```
+
+Client components — use `useTranslations` from `next-intl`:
+
+```ts
+import { useTranslations } from 'next-intl';
+
+const t = useTranslations('nav');
+```
+
+The string passed to `getTranslations` / `useTranslations` is the top-level namespace key in the `messages/<locale>.json` files.

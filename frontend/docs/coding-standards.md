@@ -144,3 +144,32 @@ afterEach(() => {
 # 10. E2E tests.
 
 For E2E tips and practices refer to ./e2e-tips-and-practices
+
+---
+
+# 11. Internationalisation (i18n)
+
+The project uses **next-intl**. All user-facing strings must use the translation system — do not hardcode English text in components.
+
+**Server components** — `getTranslations` (async):
+
+```ts
+import { getTranslations } from 'next-intl/server';
+
+const t = await getTranslations('home');
+return <h1>{t('title')}</h1>;
+```
+
+**Client components** — `useTranslations` (hook):
+
+```ts
+import { useTranslations } from 'next-intl';
+
+const t = useTranslations('nav');
+return <span>{t('calendars')}</span>;
+```
+
+**Adding new strings:**
+1. Add the key to all four message files: `messages/en.json`, `messages/es.json`, `messages/pt.json`, `messages/de.json`
+2. Use the same namespace and key across all locales
+3. Never add a key to one locale file only
