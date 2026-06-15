@@ -169,5 +169,13 @@
     "es": "Español",
     "pt": "Português",
     "de": "Deutsch"
+  },
+  "eventLinks": {
+    "title": "Enlaces",
+    "addPlaceholder": "https://...",
+    "add": "Añadir",
+    "adding": "Añadiendo...",
+    "deleteLink": "Eliminar enlace",
+    "openLink": "Abrir enlace"
   }
 }

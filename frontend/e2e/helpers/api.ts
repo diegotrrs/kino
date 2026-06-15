@@ -8,6 +8,16 @@ export const login = async (page: Page): Promise<void> => {
   await page.getByLabel('Password', { exact: true }).fill(process.env.E2E_TEST_PASSWORD!);
   await page.getByRole('button', { name: /^login$/i }).click();
   await page.waitForURL('/home');
+  // Force English locale — the login server action restores the locale from the
+  // DB, which may be 'es' if the i18n test ran concurrently. Override the cookie
+  // and reload so the page re-renders in English before the test begins.
+  await page.context().addCookies([{
+    name: 'locale',
+    value: 'en',
+    domain: 'localhost',
+    path: '/',
+  }]);
+  await page.reload();
 };
 
 export const getToken = async (request: APIRequestContext): Promise<string> => {
@@ -100,4 +110,40 @@ export const inviteMember = async (
     },
     data: { email },
   });
+};
+
+export const createEvent = async (
+  request: APIRequestContext,
+  token: string,
+  calendarId: number,
+  title: string,
+  date: string,
+): Promise<number> => {
+  const res = await request.post(`${API_URL}/api/events/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    data: {
+      calendar_id: calendarId,
+      title,
+      date,
+      start_time: '10:00:00',
+      end_time: '11:00:00',
+    },
+  });
+  const { id } = await res.json() as { id: number };
+  return id;
+};
+
+export const getCalendarId = async (
+  request: APIRequestContext,
+  token: string,
+  calendarUuid: string,
+): Promise<number> => {
+  const res = await request.get(`${API_URL}/api/calendars/${calendarUuid}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const { id } = await res.json() as { id: number };
+  return id;
 };

@@ -28,12 +28,15 @@ import { zodResolver }    from '@hookform/resolvers/zod';
 import { format }         from 'date-fns';
 import React, {
   useEffect,
+  useRef,
   useState
 }                         from 'react';
+import type { EventLink } from '@/lib/types';
 import { HexColorPicker } from 'react-colorful';
 import { useForm }        from 'react-hook-form';
 import { z }              from 'zod';
 import { DateTimePicker } from './date-picker';
+import { EventLinks }     from './events/event-links';
 import { Button }         from './ui/button';
 import {
   Popover,
@@ -79,6 +82,7 @@ export const EventEditForm = ({
   const { calendarId, readOnly, addEvent, deleteEvent } = useEvents();
   const { eventEditOpen, setEventEditOpen } = useEvents();
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const currentLinksRef = useRef<EventLink[]>(event?.links ?? []);
 
   const { toast } = useToast();
 
@@ -107,6 +111,7 @@ export const EventEditForm = ({
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setConfirmingDelete(false);
+    currentLinksRef.current = event?.links ?? [];
     form.reset({
       id: event?.id,
       title: event?.title,
@@ -125,6 +130,7 @@ export const EventEditForm = ({
       start: data.start,
       end: data.end,
       backgroundColor: data.color,
+      links: currentLinksRef.current,
     };
 
     if (calendarId !== undefined) {
@@ -232,6 +238,14 @@ export const EventEditForm = ({
                 </FormItem>
               )}
             />
+            <EventLinks
+              key={event?.id}
+              eventId={Number(event?.id)}
+              initialLinks={event?.links ?? []}
+              readOnly={readOnly}
+              onLinksChange={(links) => { currentLinksRef.current = links; }}
+            />
+
             <FormField
               control={form.control}
               name='start'

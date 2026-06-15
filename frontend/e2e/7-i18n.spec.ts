@@ -2,7 +2,14 @@ import {
   expect,
   test
 }                from '@playwright/test';
-import { login } from './helpers/api';
+import {
+  login,
+  resetTestData
+}                from './helpers/api';
+
+test.afterAll(async ({ request }) => {
+  await resetTestData(request);
+});
 
 test.beforeEach(async ({ page }) => {
   await login(page);
@@ -18,11 +25,11 @@ test.describe('@7. i18n', () => {
     await page.getByTestId('language-selector').getByRole('button', { name: 'Español' }).click();
 
     // Verify nav label changes to Spanish
-    await expect(page.getByTestId('nav-home')).toContainText('Inicio');
+    await expect(page.getByTestId('nav-home').first()).toContainText('Inicio');
 
     // Reload and verify preference is persisted
     await page.reload();
-    await expect(page.getByTestId('nav-home')).toContainText('Inicio');
+    await expect(page.getByTestId('nav-home').first()).toContainText('Inicio');
 
     // Switch back to English so other tests are not affected
     await page.goto('/settings');

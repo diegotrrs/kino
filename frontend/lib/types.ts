@@ -17,6 +17,14 @@ export interface CalendarMember {
   role: 'owner' | 'editor';
 }
 
+export type EventLink = {
+  id: number;
+  event_id: number;
+  url: string;
+  title: string | null;
+  created_at: string;
+};
+
 export interface Event {
   id: number;
   uuid: string;
@@ -31,6 +39,7 @@ export interface Event {
   color: string;
   created_at: string;
   updated_at: string | null;
+  links: EventLink[];
 }
 
 export interface CreateEventInput {

@@ -6,6 +6,18 @@ from uuid import UUID
 from pydantic import BaseModel
 
 
+class EventLinkCreate(BaseModel):
+    url: str
+
+
+class EventLinkResponse(BaseModel):
+    id: int
+    event_id: int
+    url: str
+    title: str | None = None
+    created_at: datetime
+
+
 class EventBase(BaseModel):
     calendar_id: int
     title: str
@@ -38,3 +50,4 @@ class EventResponse(EventBase):
     uuid: UUID
     created_at: datetime
     updated_at: datetime | None = None
+    links: list[EventLinkResponse] = []

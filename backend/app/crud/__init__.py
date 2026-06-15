@@ -24,7 +24,9 @@ from .calendars import (
 )
 from .events import (
     create_event,
+    create_event_link,
     delete_event,
+    delete_event_link,
     get_event,
     get_events,
     get_events_by_calendar,
@@ -47,11 +49,13 @@ __all__ = [
     "add_user_to_calendar",
     "create_calendar",
     "create_event",
+    "create_event_link",
     "add_vote",
     "create_password_reset_token",
     "create_user",
     "delete_calendar",
     "delete_event",
+    "delete_event_link",
     "delete_user",
     "get_calendar",
     "get_calendar_by_uuid",

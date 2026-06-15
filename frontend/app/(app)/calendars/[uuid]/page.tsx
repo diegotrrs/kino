@@ -35,6 +35,7 @@ const dbEventToCalendarEvent = (event: Event): CalendarEvent => {
     start,
     end,
     backgroundColor: event.color,
+    links: event.links,
   };
 }
 

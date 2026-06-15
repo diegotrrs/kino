@@ -1,7 +1,7 @@
 'use server';
-import type { CreateEventInput } from '@/lib/types';
-import { revalidatePath }        from 'next/cache';
-import { cookies }               from 'next/headers';
+import type { CreateEventInput, EventLink } from '@/lib/types';
+import { revalidatePath }                   from 'next/cache';
+import { cookies }                          from 'next/headers';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
@@ -60,4 +60,36 @@ export const deleteEvent = async (id: number) => {
   }
 
   revalidatePath('/events');
+}
+
+export const addEventLink = async (eventId: number, url: string): Promise<EventLink> => {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_BASE_URL}/api/events/${eventId}/links`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ url }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Failed to add link: ${text}`);
+  }
+
+  revalidatePath('/calendars');
+  return res.json();
+}
+
+export const deleteEventLink = async (eventId: number, linkId: number): Promise<void> => {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_BASE_URL}/api/events/${eventId}/links/${linkId}`, {
+    method: 'DELETE',
+    headers,
+  });
+
+  if (!res.ok && res.status !== 204) {
+    const text = await res.text();
+    throw new Error(`Failed to delete link: ${text}`);
+  }
+
+  revalidatePath('/calendars');
 }

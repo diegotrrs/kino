@@ -73,6 +73,7 @@ const Calendar = () => {
       backgroundColor: info.event.backgroundColor,
       start: info.event.start!,
       end: info.event.end!,
+      links: info.event.extendedProps.links,
     };
 
     setIsDrag(false);

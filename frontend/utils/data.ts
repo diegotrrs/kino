@@ -70,6 +70,7 @@ export interface CalendarEvent {
   end: Date;
   backgroundColor?: string;
   description?: string;
+  links?: import('@/lib/types').EventLink[];
 }
 
 export const initialEvents: CalendarEvent[] = [

@@ -4,8 +4,7 @@ from psycopg2.extensions import connection
 from ..auth import get_current_user, get_optional_user
 from .. import crud
 from ..database import get_db
-from ..schemas.event import EventCreate, EventResponse, EventUpdate
-
+from ..schemas.event import EventCreate, EventLinkCreate, EventLinkResponse, EventResponse, EventUpdate
 router = APIRouter()
 
 
@@ -83,3 +82,35 @@ def delete_event(
     if crud.get_user_role(db, existing["calendar_id"], current_user["id"]) is None:
         raise HTTPException(status_code=403, detail="Not a member of this calendar")
     crud.delete_event(db, event_id)
+
+
+@router.post("/{event_id}/links", response_model=EventLinkResponse, status_code=201)
+def create_event_link(
+    event_id: int,
+    link: EventLinkCreate,
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    existing = crud.get_event(db, event_id)
+    if existing is None:
+        raise HTTPException(status_code=404, detail="Event not found")
+    if crud.get_user_role(db, existing["calendar_id"], current_user["id"]) is None:
+        raise HTTPException(status_code=403, detail="Not a member of this calendar")
+    return crud.create_event_link(db, event_id, link.url, None)
+
+
+@router.delete("/{event_id}/links/{link_id}", status_code=204)
+def delete_event_link(
+    event_id: int,
+    link_id: int,
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    existing = crud.get_event(db, event_id)
+    if existing is None:
+        raise HTTPException(status_code=404, detail="Event not found")
+    if crud.get_user_role(db, existing["calendar_id"], current_user["id"]) is None:
+        raise HTTPException(status_code=403, detail="Not a member of this calendar")
+    deleted = crud.delete_event_link(db, link_id, event_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Link not found")

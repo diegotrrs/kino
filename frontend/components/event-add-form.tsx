@@ -1,5 +1,8 @@
 'use client';
-import { createEvent }    from '@/app/(app)/events/actions';
+import {
+  addEventLink,
+  createEvent
+}                         from '@/app/(app)/events/actions';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,14 +25,16 @@ import {
 import { Input }          from '@/components/ui/input';
 import { useEvents }      from '@/context/events-context';
 import { useToast }       from '@/hooks/use-toast';
+import type { EventLink } from '@/lib/types';
 import { zodResolver }    from '@hookform/resolvers/zod';
 import { format }         from 'date-fns';
 import { PlusIcon }       from 'lucide-react';
-import { useEffect }      from 'react';
+import { useEffect, useRef } from 'react';
 import { HexColorPicker } from 'react-colorful';
 import { useForm }        from 'react-hook-form';
 import { z }              from 'zod';
 import { DateTimePicker } from './date-picker';
+import { PendingLinks }   from './events/pending-links';
 import {
   Popover,
   PopoverContent,
@@ -68,12 +73,14 @@ export const EventAddForm = ({ start, end }: EventAddFormProps) => {
   const { eventAddOpen, setEventAddOpen } = useEvents();
 
   const { toast } = useToast();
+  const pendingUrlsRef = useRef<string[]>([]);
 
   const form = useForm<z.infer<typeof eventAddFormSchema>>({
     resolver: zodResolver(eventAddFormSchema)
   });
 
   useEffect(() => {
+    pendingUrlsRef.current = [];
     form.reset({
       title: '',
       description: '',
@@ -105,7 +112,13 @@ export const EventAddForm = ({ start, end }: EventAddFormProps) => {
           end_time: format(data.end, 'HH:mm:ss'),
           color: data.color,
         });
-        addEvent({ ...localEvent, id: String(created.id) });
+        const linkResults = await Promise.allSettled(
+          pendingUrlsRef.current.map((url) => addEventLink(created.id, url))
+        );
+        const links = linkResults
+          .filter((r): r is PromiseFulfilledResult<EventLink> => r.status === 'fulfilled')
+          .map((r) => r.value);
+        addEvent({ ...localEvent, id: String(created.id), links });
       } catch {
         toast({
           variant: 'destructive',
@@ -179,6 +192,8 @@ export const EventAddForm = ({ start, end }: EventAddFormProps) => {
                 </FormItem>
               )}
             />
+            <PendingLinks onChange={(urls) => { pendingUrlsRef.current = urls; }} />
+
             <FormField
               control={form.control}
               name='start'

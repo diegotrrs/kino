@@ -54,6 +54,9 @@ def reset_test_user_data(db: connection, user_id: int) -> None:
         # Soft-deleted calendars owned by the test user
         cur.execute("DELETE FROM deleted_calendars WHERE created_by = %s", (user_id,))
 
+        # Reset locale so subsequent logins don't restore a language set during tests
+        cur.execute("UPDATE users SET locale = NULL WHERE id = %s", (user_id,))
+
     db.commit()
 
 
