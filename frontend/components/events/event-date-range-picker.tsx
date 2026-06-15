@@ -1,0 +1,167 @@
+'use client';
+import {
+  DateTimePicker,
+  TimePicker
+}               from '@/components/date-picker';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import {
+  useEffect,
+  useState
+}               from 'react';
+
+type Props = {
+  start: Date | undefined;
+  end: Date | undefined;
+  onChange: (start: Date, end: Date) => void;
+  disabled?: boolean;
+  defaultMultiDay?: boolean;
+  detectMultiDay?: boolean;
+};
+
+const setDatePart = (target: Date, source: Date): Date => {
+  const result = new Date(target);
+  result.setFullYear(source.getFullYear(), source.getMonth(), source.getDate());
+  return result;
+};
+
+export const EventDateRangePicker = ({ start, end, onChange, disabled, defaultMultiDay, detectMultiDay }: Props) => {
+  const [isMultiDay, setIsMultiDay] = useState(defaultMultiDay ?? false);
+
+  useEffect(() => {
+    if (!detectMultiDay) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsMultiDay(!!start && !!end && start.toDateString() !== end.toDateString());
+  }, [start, end, detectMultiDay]);
+
+  if (!start || !end) return null;
+
+  const handleToggleMultiDay = (checked: boolean) => {
+    setIsMultiDay(checked);
+    if (!checked) {
+      onChange(start, setDatePart(end, start));
+    }
+  };
+
+  const handleSharedDateChange = (newDate: Date | undefined) => {
+    if (!newDate) return;
+    onChange(newDate, setDatePart(end, newDate));
+  };
+
+  const handleStartDateChange = (newDate: Date | undefined) => {
+    if (!newDate) return;
+    onChange(newDate, end);
+  };
+
+  const handleEndDateChange = (newDate: Date | undefined) => {
+    if (!newDate) return;
+    onChange(start, newDate);
+  };
+
+  const handleStartTimeChange = (newDate: Date | undefined) => {
+    if (!newDate) return;
+    onChange(newDate, end);
+  };
+
+  const handleEndTimeChange = (newDate: Date | undefined) => {
+    if (!newDate) return;
+    onChange(start, newDate);
+  };
+
+  return (
+    <div className='space-y-2'>
+      {!isMultiDay ? (
+        <>
+          <div className='flex flex-col gap-1.5'>
+            <Label>Date</Label>
+            <DateTimePicker
+              value={start}
+              onChange={handleSharedDateChange}
+              granularity='day'
+              displayFormat={{ hour24: 'PP', hour12: 'PP' }}
+              disabled={disabled}
+            />
+          </div>
+          <div className='grid grid-cols-2 gap-2'>
+            <div className='flex flex-col gap-1.5'>
+              <Label>Start time</Label>
+              <div className='flex h-9 items-center rounded-md border border-input px-3 [&_input]:border-0 [&_input]:shadow-none [&_button]:border-0 [&_button]:shadow-none'>
+                <TimePicker
+                  date={start}
+                  onChange={handleStartTimeChange}
+                  hourCycle={12}
+                  granularity='minute'
+                />
+              </div>
+            </div>
+            <div className='flex flex-col gap-1.5'>
+              <Label>End time</Label>
+              <div className='flex h-9 items-center rounded-md border border-input px-3 [&_input]:border-0 [&_input]:shadow-none [&_button]:border-0 [&_button]:shadow-none'>
+                <TimePicker
+                  date={end}
+                  onChange={handleEndTimeChange}
+                  hourCycle={12}
+                  granularity='minute'
+                />
+              </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className='space-y-2'>
+          <div className='flex items-center gap-2'>
+            <Label className='w-10 shrink-0 text-xs text-muted-foreground'>Start</Label>
+            <div className='flex-1'>
+              <DateTimePicker
+                value={start}
+                onChange={handleStartDateChange}
+                granularity='day'
+                displayFormat={{ hour24: 'PP', hour12: 'PP' }}
+                disabled={disabled}
+              />
+            </div>
+            <div className='flex h-9 shrink-0 items-center rounded-md border border-input px-3 [&_input]:border-0 [&_input]:shadow-none [&_button]:border-0 [&_button]:shadow-none'>
+              <TimePicker
+                date={start}
+                onChange={handleStartTimeChange}
+                hourCycle={12}
+                granularity='minute'
+              />
+            </div>
+          </div>
+          <div className='flex items-center gap-2'>
+            <Label className='w-10 shrink-0 text-xs text-muted-foreground'>End</Label>
+            <div className='flex-1'>
+              <DateTimePicker
+                value={end}
+                onChange={handleEndDateChange}
+                granularity='day'
+                displayFormat={{ hour24: 'PP', hour12: 'PP' }}
+                disabled={disabled}
+              />
+            </div>
+            <div className='flex h-9 shrink-0 items-center rounded-md border border-input px-3 [&_input]:border-0 [&_input]:shadow-none [&_button]:border-0 [&_button]:shadow-none'>
+              <TimePicker
+                date={end}
+                onChange={handleEndTimeChange}
+                hourCycle={12}
+                granularity='minute'
+              />
+            </div>
+          </div>
+        </div>
+      )}
+      <div className='flex items-center gap-2 pt-1'>
+        <Switch
+          id='multi-day'
+          checked={isMultiDay}
+          onCheckedChange={handleToggleMultiDay}
+          disabled={disabled}
+        />
+        <Label htmlFor='multi-day' className='cursor-pointer font-normal text-sm'>
+          Spans multiple days
+        </Label>
+      </div>
+    </div>
+  );
+};

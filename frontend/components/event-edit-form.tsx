@@ -33,9 +33,12 @@ import React, {
 }                         from 'react';
 import type { EventLink } from '@/lib/types';
 import { HexColorPicker } from 'react-colorful';
-import { useForm }        from 'react-hook-form';
+import {
+  useForm,
+  useWatch
+}                         from 'react-hook-form';
 import { z }              from 'zod';
-import { DateTimePicker } from './date-picker';
+import { EventDateRangePicker } from './events/event-date-range-picker';
 import { EventLinks }     from './events/event-links';
 import { Button }         from './ui/button';
 import {
@@ -89,6 +92,8 @@ export const EventEditForm = ({
   const form = useForm<z.infer<typeof eventEditFormSchema>>({
     resolver: zodResolver(eventEditFormSchema),
   });
+  const watchedStart = useWatch({ control: form.control, name: 'start' });
+  const watchedEnd   = useWatch({ control: form.control, name: 'end' });
 
   const handleEditCancellation = () => {
     if (isDrag && oldEvent) {
@@ -109,7 +114,6 @@ export const EventEditForm = ({
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setConfirmingDelete(false);
     currentLinksRef.current = event?.links ?? [];
     form.reset({
@@ -207,6 +211,7 @@ export const EventEditForm = ({
         </AlertDialogHeader>
 
         <Form {...form}>
+          {/* eslint-disable-next-line react-hooks/refs */}
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2.5'>
             <FormField
               control={form.control}
@@ -246,43 +251,20 @@ export const EventEditForm = ({
               onLinksChange={(links) => { currentLinksRef.current = links; }}
             />
 
-            <FormField
-              control={form.control}
-              name='start'
-              render={({ field }) => (
-                <FormItem className='flex flex-col'>
-                  <FormLabel htmlFor='datetime'>Start</FormLabel>
-                  <FormControl>
-                    <DateTimePicker
-                      value={field.value}
-                      onChange={field.onChange}
-                      hourCycle={12}
-                      granularity='minute'
-                      disabled={readOnly}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='end'
-              render={({ field }) => (
-                <FormItem className='flex flex-col'>
-                  <FormLabel htmlFor='datetime'>End</FormLabel>
-                  <FormControl>
-                    <DateTimePicker
-                      value={field.value}
-                      onChange={field.onChange}
-                      hourCycle={12}
-                      granularity='minute'
-                      disabled={readOnly}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+            <EventDateRangePicker
+              key={event?.id}
+              start={watchedStart}
+              end={watchedEnd}
+              defaultMultiDay={
+                !!event?.start && !!event?.end &&
+                new Date(event.start as Date).toDateString() !== new Date(event.end as Date).toDateString()
+              }
+              detectMultiDay
+              onChange={(newStart, newEnd) => {
+                form.setValue('start', newStart, { shouldValidate: true });
+                form.setValue('end', newEnd, { shouldValidate: true });
+              }}
+              disabled={readOnly}
             />
             <FormField
               control={form.control}

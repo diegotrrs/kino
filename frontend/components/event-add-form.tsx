@@ -31,10 +31,13 @@ import { format }         from 'date-fns';
 import { PlusIcon }       from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { HexColorPicker } from 'react-colorful';
-import { useForm }        from 'react-hook-form';
+import {
+  useForm,
+  useWatch
+}                         from 'react-hook-form';
 import { z }              from 'zod';
-import { DateTimePicker } from './date-picker';
-import { PendingLinks }   from './events/pending-links';
+import { EventDateRangePicker } from './events/event-date-range-picker';
+import { PendingLinks }         from './events/pending-links';
 import {
   Popover,
   PopoverContent,
@@ -78,6 +81,8 @@ export const EventAddForm = ({ start, end }: EventAddFormProps) => {
   const form = useForm<z.infer<typeof eventAddFormSchema>>({
     resolver: zodResolver(eventAddFormSchema)
   });
+  const watchedStart = useWatch({ control: form.control, name: 'start' });
+  const watchedEnd   = useWatch({ control: form.control, name: 'end' });
 
   useEffect(() => {
     pendingUrlsRef.current = [];
@@ -162,6 +167,7 @@ export const EventAddForm = ({ start, end }: EventAddFormProps) => {
         </AlertDialogHeader>
 
         <Form {...form}>
+          {/* eslint-disable-next-line react-hooks/refs */}
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2.5'>
             <FormField
               control={form.control}
@@ -194,41 +200,13 @@ export const EventAddForm = ({ start, end }: EventAddFormProps) => {
             />
             <PendingLinks onChange={(urls) => { pendingUrlsRef.current = urls; }} />
 
-            <FormField
-              control={form.control}
-              name='start'
-              render={({ field }) => (
-                <FormItem className='flex flex-col'>
-                  <FormLabel htmlFor='datetime'>Start</FormLabel>
-                  <FormControl>
-                    <DateTimePicker
-                      value={field.value}
-                      onChange={field.onChange}
-                      hourCycle={12}
-                      granularity='minute'
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='end'
-              render={({ field }) => (
-                <FormItem className='flex flex-col'>
-                  <FormLabel htmlFor='datetime'>End</FormLabel>
-                  <FormControl>
-                    <DateTimePicker
-                      value={field.value}
-                      onChange={field.onChange}
-                      hourCycle={12}
-                      granularity='minute'
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+            <EventDateRangePicker
+              start={watchedStart}
+              end={watchedEnd}
+              onChange={(newStart, newEnd) => {
+                form.setValue('start', newStart, { shouldValidate: true });
+                form.setValue('end', newEnd, { shouldValidate: true });
+              }}
             />
             <FormField
               control={form.control}

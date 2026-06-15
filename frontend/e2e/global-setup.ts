@@ -35,7 +35,7 @@ const globalSetup = async (): Promise<void> => {
   if (!loginRes.ok) {
     throw new Error(
       `globalSetup: user "${email}" exists but the password in .env.local is wrong. ` +
-        `Delete the account from the database or update E2E_TEST_PASSWORD in .env.local.`
+        'Delete the account from the database or update E2E_TEST_PASSWORD in .env.local.'
     );
   }
 };
