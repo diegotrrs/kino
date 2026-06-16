@@ -23,6 +23,7 @@ import {
   FormMessage
 }                         from '@/components/ui/form';
 import { Input }          from '@/components/ui/input';
+import { Separator }      from '@/components/ui/separator';
 import { useEvents }      from '@/context/events-context';
 import { useToast }       from '@/hooks/use-toast';
 import type { EventLink } from '@/lib/types';
@@ -202,6 +203,7 @@ export const EventAddForm = ({ start, end }: EventAddFormProps) => {
                 </FormItem>
               )}
             />
+            <Separator className='my-5' />
             <EventDateRangePicker
               start={watchedStart}
               end={watchedEnd}
@@ -210,6 +212,7 @@ export const EventAddForm = ({ start, end }: EventAddFormProps) => {
                 form.setValue('end', newEnd, { shouldValidate: true });
               }}
             />
+            <Separator className='my-5' />
             <PendingLinks onChange={(urls) => { pendingUrlsRef.current = urls; }} />
             <FormField
               control={form.control}

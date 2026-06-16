@@ -3,6 +3,7 @@ import {
   DateTimePicker,
   TimePicker
 }               from '@/components/date-picker';
+import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import {
@@ -17,6 +18,29 @@ type Props = {
   disabled?: boolean;
   defaultMultiDay?: boolean;
   detectMultiDay?: boolean;
+};
+
+const DURATION_PRESETS = [
+  { label: '30 min', minutes: 30 },
+  { label: '1 hr',   minutes: 60 },
+  { label: '2 hr',   minutes: 120 },
+  { label: 'All day', minutes: null },
+] as const;
+
+export const applyDurationPreset = (start: Date, minutes: number): Date =>
+  new Date(start.getTime() + minutes * 60_000);
+
+export const applyAllDay = (start: Date): { start: Date; end: Date } => {
+  const s = new Date(start); s.setHours(0, 0, 0, 0);
+  const e = new Date(start); e.setHours(23, 59, 0, 0);
+  return { start: s, end: e };
+};
+
+export const getActiveMinutes = (start: Date, end: Date): number | null => {
+  const allDay =
+    start.getHours() === 0 && start.getMinutes() === 0 &&
+    end.getHours() === 23 && end.getMinutes() === 59;
+  return allDay ? null : (end.getTime() - start.getTime()) / 60_000;
 };
 
 const setDatePart = (target: Date, source: Date): Date => {
@@ -44,6 +68,18 @@ export const EventDateRangePicker = ({ start, end, onChange, disabled, defaultMu
   }, [isMultiDay, start]);
 
   if (!start || !end) return null;
+
+  const activeMinutes = getActiveMinutes(start, end);
+  const isAllDay = activeMinutes === null;
+
+  const handlePreset = (minutes: number | null) => {
+    if (minutes === null) {
+      const { start: s, end: e } = applyAllDay(start);
+      onChange(s, e);
+    } else {
+      onChange(start, applyDurationPreset(start, minutes));
+    }
+  };
 
   const handleToggleMultiDay = (checked: boolean) => {
     setIsMultiDay(checked);
@@ -91,30 +127,47 @@ export const EventDateRangePicker = ({ start, end, onChange, disabled, defaultMu
               disabled={disabled}
             />
           </div>
-          <div className='grid grid-cols-2 gap-2'>
-            <div className='flex flex-col gap-1.5'>
-              <Label>Start time</Label>
-              <div className='flex h-9 items-center rounded-md border border-input px-3 [&_input]:border-0 [&_input]:shadow-none [&_button]:border-0 [&_button]:shadow-none'>
-                <TimePicker
-                  date={start}
-                  onChange={handleStartTimeChange}
-                  hourCycle={12}
-                  granularity='minute'
-                />
-              </div>
-            </div>
-            <div className='flex flex-col gap-1.5'>
-              <Label>End time</Label>
-              <div className='flex h-9 items-center rounded-md border border-input px-3 [&_input]:border-0 [&_input]:shadow-none [&_button]:border-0 [&_button]:shadow-none'>
-                <TimePicker
-                  date={end}
-                  onChange={handleEndTimeChange}
-                  hourCycle={12}
-                  granularity='minute'
-                />
-              </div>
-            </div>
+          <div className='flex gap-1.5 pb-2'>
+            {DURATION_PRESETS.map(({ label, minutes }) => (
+              <Button
+                key={label}
+                type='button'
+                size='sm'
+                variant={minutes === activeMinutes ? 'default' : 'outline'}
+                className='h-7 flex-1 px-0 text-xs'
+                disabled={disabled}
+                onClick={() => handlePreset(minutes)}
+              >
+                {label}
+              </Button>
+            ))}
           </div>
+          {!isAllDay && (
+            <div className='grid grid-cols-2 gap-2'>
+              <div className='flex flex-col gap-1.5'>
+                <Label>Start time</Label>
+                <div className='flex h-9 items-center rounded-md border border-input px-3 [&_input]:border-0 [&_input]:shadow-none [&_button]:border-0 [&_button]:shadow-none'>
+                  <TimePicker
+                    date={start}
+                    onChange={handleStartTimeChange}
+                    hourCycle={12}
+                    granularity='minute'
+                  />
+                </div>
+              </div>
+              <div className='flex flex-col gap-1.5'>
+                <Label>End time</Label>
+                <div className='flex h-9 items-center rounded-md border border-input px-3 [&_input]:border-0 [&_input]:shadow-none [&_button]:border-0 [&_button]:shadow-none'>
+                  <TimePicker
+                    date={end}
+                    onChange={handleEndTimeChange}
+                    hourCycle={12}
+                    granularity='minute'
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </>
       ) : (
         <div className='space-y-2'>

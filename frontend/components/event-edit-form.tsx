@@ -21,6 +21,7 @@ import {
   FormMessage
 }                         from '@/components/ui/form';
 import { Input }          from '@/components/ui/input';
+import { Separator }      from '@/components/ui/separator';
 import { useEvents }      from '@/context/events-context';
 import { useToast }       from '@/hooks/use-toast';
 import { CalendarEvent }  from '@/utils/data';
@@ -243,6 +244,7 @@ export const EventEditForm = ({
                 </FormItem>
               )}
             />
+            <Separator className='my-5' />
             <EventDateRangePicker
               key={event?.id}
               start={watchedStart}
@@ -258,6 +260,7 @@ export const EventEditForm = ({
               }}
               disabled={readOnly}
             />
+            <Separator className='my-5' />
             <EventLinks
               key={event?.id}
               eventId={Number(event?.id)}
