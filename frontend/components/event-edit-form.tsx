@@ -243,14 +243,6 @@ export const EventEditForm = ({
                 </FormItem>
               )}
             />
-            <EventLinks
-              key={event?.id}
-              eventId={Number(event?.id)}
-              initialLinks={event?.links ?? []}
-              readOnly={readOnly}
-              onLinksChange={(links) => { currentLinksRef.current = links; }}
-            />
-
             <EventDateRangePicker
               key={event?.id}
               start={watchedStart}
@@ -266,12 +258,19 @@ export const EventEditForm = ({
               }}
               disabled={readOnly}
             />
+            <EventLinks
+              key={event?.id}
+              eventId={Number(event?.id)}
+              initialLinks={event?.links ?? []}
+              readOnly={readOnly}
+              onLinksChange={(links) => { currentLinksRef.current = links; }}
+            />
             <FormField
               control={form.control}
               name='color'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Color</FormLabel>
+                  <FormLabel>Colour</FormLabel>
                   <FormControl>
                     <Popover>
                       <PopoverTrigger asChild disabled={readOnly} className={readOnly ? 'cursor-default' : 'cursor-pointer'}>

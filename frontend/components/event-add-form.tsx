@@ -85,12 +85,16 @@ export const EventAddForm = ({ start, end }: EventAddFormProps) => {
   const watchedEnd   = useWatch({ control: form.control, name: 'end' });
 
   useEffect(() => {
+    const defaultStart = new Date(start);
+    defaultStart.setHours(8, 0, 0, 0);
+    const defaultEnd = new Date(start);
+    defaultEnd.setHours(9, 0, 0, 0);
     pendingUrlsRef.current = [];
     form.reset({
       title: '',
       description: '',
-      start: start,
-      end: end,
+      start: defaultStart,
+      end: defaultEnd,
       color: localStorage.getItem('lastEventColor') ?? '#76c7ef',
     });
   }, [form, start, end]);
@@ -198,8 +202,6 @@ export const EventAddForm = ({ start, end }: EventAddFormProps) => {
                 </FormItem>
               )}
             />
-            <PendingLinks onChange={(urls) => { pendingUrlsRef.current = urls; }} />
-
             <EventDateRangePicker
               start={watchedStart}
               end={watchedEnd}
@@ -208,12 +210,13 @@ export const EventAddForm = ({ start, end }: EventAddFormProps) => {
                 form.setValue('end', newEnd, { shouldValidate: true });
               }}
             />
+            <PendingLinks onChange={(urls) => { pendingUrlsRef.current = urls; }} />
             <FormField
               control={form.control}
               name='color'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Color</FormLabel>
+                  <FormLabel>Colour</FormLabel>
                   <FormControl>
                     <Popover>
                       <PopoverTrigger asChild className='cursor-pointer'>

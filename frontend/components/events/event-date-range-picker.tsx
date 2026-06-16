@@ -30,9 +30,18 @@ export const EventDateRangePicker = ({ start, end, onChange, disabled, defaultMu
 
   useEffect(() => {
     if (!detectMultiDay) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMultiDay(!!start && !!end && start.toDateString() !== end.toDateString());
   }, [start, end, detectMultiDay]);
+
+  // FullCalendar passes end = next-day 00:00 for single-day clicks (exclusive end).
+  // Correct that whenever single-day mode is active and start/end dates diverge.
+  useEffect(() => {
+    if (isMultiDay || !start || !end) return;
+    if (start.toDateString() !== end.toDateString()) {
+      onChange(start, setDatePart(end, start));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMultiDay, start]);
 
   if (!start || !end) return null;
 
@@ -60,12 +69,12 @@ export const EventDateRangePicker = ({ start, end, onChange, disabled, defaultMu
 
   const handleStartTimeChange = (newDate: Date | undefined) => {
     if (!newDate) return;
-    onChange(newDate, end);
+    onChange(newDate, isMultiDay ? end : setDatePart(end, newDate));
   };
 
   const handleEndTimeChange = (newDate: Date | undefined) => {
     if (!newDate) return;
-    onChange(start, newDate);
+    onChange(start, isMultiDay ? newDate : setDatePart(newDate, start));
   };
 
   return (

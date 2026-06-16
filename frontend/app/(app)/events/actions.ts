@@ -2,6 +2,7 @@
 import type { CreateEventInput, EventLink } from '@/lib/types';
 import { revalidatePath }                   from 'next/cache';
 import { cookies }                          from 'next/headers';
+import { redirect }                         from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
@@ -21,6 +22,7 @@ export const createEvent = async (input: CreateEventInput) => {
     body: JSON.stringify(input),
   });
 
+  if (res.status === 401) redirect('/login');
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`Failed to create event: ${text}`);
@@ -38,6 +40,7 @@ export const updateEvent = async (id: number, input: Partial<Omit<CreateEventInp
     body: JSON.stringify(input),
   });
 
+  if (res.status === 401) redirect('/login');
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`Failed to update event: ${text}`);
@@ -54,6 +57,7 @@ export const deleteEvent = async (id: number) => {
     headers,
   });
 
+  if (res.status === 401) redirect('/login');
   if (!res.ok && res.status !== 204) {
     const text = await res.text();
     throw new Error(`Failed to delete event: ${text}`);
@@ -70,6 +74,7 @@ export const addEventLink = async (eventId: number, url: string): Promise<EventL
     body: JSON.stringify({ url }),
   });
 
+  if (res.status === 401) redirect('/login');
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`Failed to add link: ${text}`);
@@ -86,6 +91,7 @@ export const deleteEventLink = async (eventId: number, linkId: number): Promise<
     headers,
   });
 
+  if (res.status === 401) redirect('/login');
   if (!res.ok && res.status !== 204) {
     const text = await res.text();
     throw new Error(`Failed to delete link: ${text}`);
