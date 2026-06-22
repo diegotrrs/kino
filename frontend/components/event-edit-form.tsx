@@ -32,13 +32,14 @@ import React, {
   useRef,
   useState
 }                         from 'react';
-import type { EventLink } from '@/lib/types';
+import type { EventCost, EventLink } from '@/lib/types';
 import { HexColorPicker } from 'react-colorful';
 import {
   useForm,
   useWatch
 }                         from 'react-hook-form';
 import { z }              from 'zod';
+import { EventCosts }     from './events/event-costs';
 import { EventDateRangePicker } from './events/event-date-range-picker';
 import { EventLinks }     from './events/event-links';
 import { Button }         from './ui/button';
@@ -83,10 +84,10 @@ export const EventEditForm = ({
   event,
   isDrag,
 }: EventEditFormProps) => {
-  const { calendarId, readOnly, addEvent, deleteEvent } = useEvents();
-  const { eventEditOpen, setEventEditOpen } = useEvents();
+  const { calendarId, readOnly, preferredCurrency, addEvent, deleteEvent, eventEditOpen, setEventEditOpen } = useEvents();
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const currentLinksRef = useRef<EventLink[]>(event?.links ?? []);
+  const currentCostsRef = useRef<EventCost[]>(event?.costs ?? []);
 
   const { toast } = useToast();
 
@@ -117,6 +118,7 @@ export const EventEditForm = ({
   useEffect(() => {
     setConfirmingDelete(false);
     currentLinksRef.current = event?.links ?? [];
+    currentCostsRef.current = event?.costs ?? [];
     form.reset({
       id: event?.id,
       title: event?.title,
@@ -136,6 +138,7 @@ export const EventEditForm = ({
       end: data.end,
       backgroundColor: data.color,
       links: currentLinksRef.current,
+      costs: currentCostsRef.current,
     };
 
     if (calendarId !== undefined) {
@@ -267,6 +270,15 @@ export const EventEditForm = ({
               initialLinks={event?.links ?? []}
               readOnly={readOnly}
               onLinksChange={(links) => { currentLinksRef.current = links; }}
+            />
+            <Separator className='my-5' />
+            <EventCosts
+              key={event?.id}
+              eventId={Number(event?.id)}
+              initialCosts={event?.costs ?? []}
+              readOnly={readOnly}
+              preferredCurrency={preferredCurrency}
+              onCostsChange={(costs) => { currentCostsRef.current = costs; }}
             />
             <FormField
               control={form.control}

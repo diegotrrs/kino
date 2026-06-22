@@ -145,6 +145,10 @@
       "title": "Idioma",
       "hint": "Escolha o seu idioma preferido."
     },
+    "currency": {
+      "title": "Moeda",
+      "hint": "Escolha a sua moeda preferida para as despesas."
+    },
     "calendars": {
       "title": "Calendários",
       "recoverDeleted": "Recuperar calendários eliminados"
@@ -177,5 +181,13 @@
     "adding": "Adicionando...",
     "deleteLink": "Remover link",
     "openLink": "Abrir link"
+  },
+  "eventCosts": {
+    "title": "Despesas",
+    "add": "Adicionar despesa",
+    "adding": "Adicionando...",
+    "labelPlaceholder": "ex. Café",
+    "amountPlaceholder": "0,00",
+    "deleteCost": "Remover despesa"
   }
 }

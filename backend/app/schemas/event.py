@@ -3,7 +3,29 @@ from datetime import datetime
 from datetime import time as Time
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
+
+
+class EventCostCreate(BaseModel):
+    label: str
+    amount: float
+    currency: str
+
+    @field_validator('amount')
+    @classmethod
+    def amount_must_be_positive(cls, v: float) -> float:
+        if v <= 0:
+            raise ValueError('amount must be greater than 0')
+        return v
+
+
+class EventCostResponse(BaseModel):
+    id: int
+    event_id: int
+    label: str
+    amount: float
+    currency: str
+    created_at: datetime
 
 
 class EventLinkCreate(BaseModel):
@@ -51,3 +73,4 @@ class EventResponse(EventBase):
     created_at: datetime
     updated_at: datetime | None = None
     links: list[EventLinkResponse] = []
+    costs: list[EventCostResponse] = []

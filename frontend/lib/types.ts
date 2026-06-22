@@ -25,6 +25,15 @@ export type EventLink = {
   created_at: string;
 };
 
+export type EventCost = {
+  id: number;
+  event_id: number;
+  label: string;
+  amount: number;
+  currency: string;
+  created_at: string;
+};
+
 export interface Event {
   id: number;
   uuid: string;
@@ -40,6 +49,7 @@ export interface Event {
   created_at: string;
   updated_at: string | null;
   links: EventLink[];
+  costs: EventCost[];
 }
 
 export interface CreateEventInput {

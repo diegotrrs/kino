@@ -145,6 +145,10 @@
       "title": "Sprache",
       "hint": "Wähle deine bevorzugte Sprache."
     },
+    "currency": {
+      "title": "Währung",
+      "hint": "Wähle deine bevorzugte Währung für Kosteneinträge."
+    },
     "calendars": {
       "title": "Kalender",
       "recoverDeleted": "Gelöschte Kalender wiederherstellen"
@@ -177,5 +181,13 @@
     "adding": "Wird hinzugefügt...",
     "deleteLink": "Link löschen",
     "openLink": "Link öffnen"
+  },
+  "eventCosts": {
+    "title": "Kosten",
+    "add": "Kosten hinzufügen",
+    "adding": "Wird hinzugefügt...",
+    "labelPlaceholder": "z. B. Kaffee",
+    "amountPlaceholder": "0,00",
+    "deleteCost": "Kosten löschen"
   }
 }

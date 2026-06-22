@@ -36,6 +36,7 @@ const dbEventToCalendarEvent = (event: Event): CalendarEvent => {
     end,
     backgroundColor: event.color,
     links: event.links,
+    costs: event.costs,
   };
 }
 
@@ -87,6 +88,8 @@ const CalendarPage = async ({
 
   const token = await getToken();
   const isAuthenticated = !!token;
+  const cookieStore = await cookies();
+  const preferredCurrency = cookieStore.get('currency')?.value ?? 'GBP';
 
   const { calendar, status } = await getCalendar(uuid, token);
 
@@ -129,7 +132,7 @@ const CalendarPage = async ({
   const canShare = calendar.role === 'owner' || calendar.role === 'editor';
 
   return (
-    <EventsProvider calendarId={calendar.id} serverEvents={events} readOnly={readOnly}>
+    <EventsProvider calendarId={calendar.id} serverEvents={events} readOnly={readOnly} preferredCurrency={preferredCurrency}>
       <ReadOnlyBanner />
       <div className='relative py-4'>
           <div className='flex flex-col w-full items-center'>

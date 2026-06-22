@@ -1,5 +1,6 @@
 'use client';
 import {
+  addEventCost,
   addEventLink,
   createEvent
 }                         from '@/app/(app)/events/actions';
@@ -37,8 +38,9 @@ import {
   useWatch
 }                         from 'react-hook-form';
 import { z }              from 'zod';
-import { EventDateRangePicker } from './events/event-date-range-picker';
-import { PendingLinks }         from './events/pending-links';
+import { EventDateRangePicker }           from './events/event-date-range-picker';
+import { PendingCosts, type PendingCost } from './events/pending-costs';
+import { PendingLinks }                   from './events/pending-links';
 import {
   Popover,
   PopoverContent,
@@ -73,11 +75,10 @@ type EventAddFormProps = {
 }
 
 export const EventAddForm = ({ start, end }: EventAddFormProps) => {
-  const { calendarId, readOnly, events, addEvent } = useEvents();
-  const { eventAddOpen, setEventAddOpen } = useEvents();
-
+  const { calendarId, readOnly, events, addEvent, eventAddOpen, setEventAddOpen, preferredCurrency } = useEvents();
   const { toast } = useToast();
   const pendingUrlsRef = useRef<string[]>([]);
+  const pendingCostsRef = useRef<PendingCost[]>([]);
 
   const form = useForm<z.infer<typeof eventAddFormSchema>>({
     resolver: zodResolver(eventAddFormSchema)
@@ -91,6 +92,7 @@ export const EventAddForm = ({ start, end }: EventAddFormProps) => {
     const defaultEnd = new Date(start);
     defaultEnd.setHours(9, 0, 0, 0);
     pendingUrlsRef.current = [];
+    pendingCostsRef.current = [];
     form.reset({
       title: '',
       description: '',
@@ -122,13 +124,21 @@ export const EventAddForm = ({ start, end }: EventAddFormProps) => {
           end_time: format(data.end, 'HH:mm:ss'),
           color: data.color,
         });
-        const linkResults = await Promise.allSettled(
-          pendingUrlsRef.current.map((url) => addEventLink(created.id, url))
-        );
+        const [linkResults, costResults] = await Promise.all([
+          Promise.allSettled(
+            pendingUrlsRef.current.map((url) => addEventLink(created.id, url))
+          ),
+          Promise.allSettled(
+            pendingCostsRef.current.map((c) => addEventCost(created.id, c.label, c.amount, c.currency))
+          ),
+        ]);
         const links = linkResults
           .filter((r): r is PromiseFulfilledResult<EventLink> => r.status === 'fulfilled')
           .map((r) => r.value);
-        addEvent({ ...localEvent, id: String(created.id), links });
+        const costs = costResults
+          .filter((r): r is PromiseFulfilledResult<import('@/lib/types').EventCost> => r.status === 'fulfilled')
+          .map((r) => r.value);
+        addEvent({ ...localEvent, id: String(created.id), links, costs });
       } catch {
         toast({
           variant: 'destructive',
@@ -214,6 +224,11 @@ export const EventAddForm = ({ start, end }: EventAddFormProps) => {
             />
             <Separator className='my-5' />
             <PendingLinks onChange={(urls) => { pendingUrlsRef.current = urls; }} />
+            <Separator className='my-5' />
+            <PendingCosts
+              preferredCurrency={preferredCurrency}
+              onChange={(c) => { pendingCostsRef.current = c; }}
+            />
             <FormField
               control={form.control}
               name='color'

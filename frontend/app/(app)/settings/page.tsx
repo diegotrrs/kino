@@ -1,5 +1,5 @@
 'use client';
-import { updateLocale }  from '@/app/(app)/settings/actions';
+import { updateCurrency, updateLocale } from '@/app/(app)/settings/actions';
 import { Separator }     from '@/components/ui/separator';
 import { locales }       from '@/i18n/routing';
 import { cn }            from '@/lib/utils';
@@ -17,12 +17,19 @@ import {
   useState
 }                        from 'react';
 
+const CURRENCIES = ['GBP', 'EUR', 'USD'] as const;
+
 const SettingsPage = () => {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  const locale                = useLocale();
-  const t                     = useTranslations('settings');
-  const tLang                 = useTranslations('languages');
+  const [mounted, setMounted]       = useState(false);
+  const [currency, setCurrency]     = useState(() => {
+    if (typeof document === 'undefined') return 'GBP';
+    const match = document.cookie.match(/(?:^|;\s*)currency=([^;]+)/);
+    return match ? decodeURIComponent(match[1]) : 'GBP';
+  });
+  const locale                      = useLocale();
+  const t                           = useTranslations('settings');
+  const tLang                       = useTranslations('languages');
 
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
@@ -94,6 +101,31 @@ const SettingsPage = () => {
             </div>
             <p className='text-xs text-muted-foreground'>
               {t('language.hint')}
+            </p>
+          </div>
+
+          <Separator />
+
+          <div className='space-y-2' data-testid='currency-selector'>
+            <h3 className='text-sm font-medium'>{t('currency.title')}</h3>
+            <div className='flex gap-2'>
+              {CURRENCIES.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => { setCurrency(c); updateCurrency(c); }}
+                  className={cn(
+                    'flex items-center gap-2 rounded-md border px-4 py-2 text-sm transition-colors',
+                    mounted && currency === c
+                      ? 'border-foreground bg-accent text-accent-foreground'
+                      : 'border-border text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+                  )}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+            <p className='text-xs text-muted-foreground'>
+              {t('currency.hint')}
             </p>
           </div>
 

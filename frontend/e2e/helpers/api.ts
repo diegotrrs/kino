@@ -136,6 +136,25 @@ export const createEvent = async (
   return id;
 };
 
+export const createEventCost = async (
+  request: APIRequestContext,
+  token: string,
+  eventId: number,
+  label: string,
+  amount: number,
+  currency: string,
+): Promise<number> => {
+  const res = await request.post(`${API_URL}/api/events/${eventId}/costs`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    data: { label, amount, currency },
+  });
+  const { id } = await res.json() as { id: number };
+  return id;
+};
+
 export const getCalendarId = async (
   request: APIRequestContext,
   token: string,

@@ -71,6 +71,7 @@ export interface CalendarEvent {
   backgroundColor?: string;
   description?: string;
   links?: import('@/lib/types').EventLink[];
+  costs?: import('@/lib/types').EventCost[];
 }
 
 export const initialEvents: CalendarEvent[] = [

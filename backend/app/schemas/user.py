@@ -14,6 +14,7 @@ class UserUpdate(BaseModel):
     name: str | None = None
     email: str | None = None
     locale: str | None = None
+    currency: str | None = None
 
 
 class UserResponse(BaseModel):
@@ -22,5 +23,6 @@ class UserResponse(BaseModel):
     name: str
     email: str
     locale: str = 'en'
+    currency: str = 'GBP'
     created_at: datetime
     updated_at: datetime | None = None

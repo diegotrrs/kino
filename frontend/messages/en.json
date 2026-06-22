@@ -145,6 +145,10 @@
       "title": "Language",
       "hint": "Choose your preferred language."
     },
+    "currency": {
+      "title": "Currency",
+      "hint": "Choose your preferred currency for cost entries."
+    },
     "calendars": {
       "title": "Calendars",
       "recoverDeleted": "Recover deleted calendars"
@@ -177,5 +181,13 @@
     "adding": "Adding...",
     "deleteLink": "Delete link",
     "openLink": "Open link"
+  },
+  "eventCosts": {
+    "title": "Costs",
+    "add": "Add cost",
+    "adding": "Adding...",
+    "labelPlaceholder": "e.g. Coffee",
+    "amountPlaceholder": "0.00",
+    "deleteCost": "Delete cost"
   }
 }

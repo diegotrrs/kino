@@ -17,14 +17,31 @@ _LINKS_AGG = """
     ) AS links
 """
 
+_COSTS_AGG = """
+    COALESCE(
+        json_agg(
+            json_build_object(
+                'id',         ec.id,
+                'event_id',   ec.event_id,
+                'label',      ec.label,
+                'amount',     ec.amount,
+                'currency',   ec.currency,
+                'created_at', ec.created_at
+            ) ORDER BY ec.id
+        ) FILTER (WHERE ec.id IS NOT NULL),
+        '[]'
+    ) AS costs
+"""
+
 
 def get_event(db: connection, event_id: int) -> dict | None:
     with db.cursor() as cur:
         cur.execute(
             f"""
-            SELECT e.*, {_LINKS_AGG}
+            SELECT e.*, {_LINKS_AGG}, {_COSTS_AGG}
             FROM events e
             LEFT JOIN event_links el ON el.event_id = e.id
+            LEFT JOIN event_costs ec ON ec.event_id = e.id
             WHERE e.id = %s
             GROUP BY e.id
             """,
@@ -37,9 +54,10 @@ def get_events(db: connection, skip: int = 0, limit: int = 100) -> list[dict]:
     with db.cursor() as cur:
         cur.execute(
             f"""
-            SELECT e.*, {_LINKS_AGG}
+            SELECT e.*, {_LINKS_AGG}, {_COSTS_AGG}
             FROM events e
             LEFT JOIN event_links el ON el.event_id = e.id
+            LEFT JOIN event_costs ec ON ec.event_id = e.id
             GROUP BY e.id
             ORDER BY e.date, e.start_time
             OFFSET %s LIMIT %s
@@ -55,9 +73,10 @@ def get_events_by_calendar(
     with db.cursor() as cur:
         cur.execute(
             f"""
-            SELECT e.*, {_LINKS_AGG}
+            SELECT e.*, {_LINKS_AGG}, {_COSTS_AGG}
             FROM events e
             LEFT JOIN event_links el ON el.event_id = e.id
+            LEFT JOIN event_costs ec ON ec.event_id = e.id
             WHERE e.calendar_id = %s
             GROUP BY e.id
             ORDER BY e.date, e.start_time
@@ -86,6 +105,7 @@ def create_event(db: connection, event: EventCreate) -> dict:
         row = cur.fetchone()
         db.commit()
     row["links"] = []
+    row["costs"] = []
     return row
 
 
@@ -136,6 +156,34 @@ def delete_event_link(db: connection, link_id: int, event_id: int) -> bool:
         cur.execute(
             "DELETE FROM event_links WHERE id = %s AND event_id = %s",
             (link_id, event_id),
+        )
+        deleted = cur.rowcount > 0
+        db.commit()
+        return deleted
+
+
+def create_event_cost(
+    db: connection, event_id: int, label: str, amount: float, currency: str
+) -> dict:
+    with db.cursor() as cur:
+        cur.execute(
+            """
+            INSERT INTO event_costs (event_id, label, amount, currency)
+            VALUES (%s, %s, %s, %s)
+            RETURNING *
+            """,
+            (event_id, label, amount, currency),
+        )
+        row = cur.fetchone()
+        db.commit()
+        return row
+
+
+def delete_event_cost(db: connection, cost_id: int, event_id: int) -> bool:
+    with db.cursor() as cur:
+        cur.execute(
+            "DELETE FROM event_costs WHERE id = %s AND event_id = %s",
+            (cost_id, event_id),
         )
         deleted = cur.rowcount > 0
         db.commit()

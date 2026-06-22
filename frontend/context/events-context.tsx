@@ -5,6 +5,7 @@ import React, { createContext, ReactNode, useContext, useState } from 'react';
 type EventsContextType = {
   calendarId?: number;
   readOnly: boolean;
+  preferredCurrency: string;
   events: CalendarEvent[];
   addEvent: (event: CalendarEvent) => void;
   deleteEvent: (id: string) => void;
@@ -35,6 +36,7 @@ type EventsProviderProps = {
   calendarId?: number;
   serverEvents?: CalendarEvent[];
   readOnly?: boolean;
+  preferredCurrency?: string;
 }
 
 export const EventsProvider: React.FC<EventsProviderProps> = ({
@@ -42,6 +44,7 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
   calendarId,
   serverEvents,
   readOnly = false,
+  preferredCurrency = 'GBP',
 }) => {
   const [events, setEvents] = useState<CalendarEvent[]>(
     serverEvents ??
@@ -77,6 +80,7 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
       value={{
         calendarId,
         readOnly,
+        preferredCurrency,
         events,
         addEvent,
         deleteEvent,
