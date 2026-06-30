@@ -5,7 +5,7 @@ import {
 import {
   createCalendar,
   createEvent,
-  createEventCost,
+  createEventExpense,
   deleteCalendar,
   getCalendarId,
   getToken,
@@ -36,10 +36,10 @@ test.describe('@10. cost entries', () => {
     await page.goto(`/calendars/${calendarUuid}`);
     await page.getByText('Museum Visit').first().click();
 
-    await page.getByTestId('add-cost-trigger').click();
-    await page.getByTestId('cost-label-input').fill('Coffee');
-    await page.getByTestId('cost-amount-input').fill('2.50');
-    await page.getByTestId('add-cost-button').click();
+    await page.getByTestId('add-expense-trigger').click();
+    await page.getByTestId('expense-label-input').fill('Coffee');
+    await page.getByTestId('expense-amount-input').fill('2.50');
+    await page.getByTestId('add-expense-button').click();
 
     await expect(page.getByText('£2.50 Coffee')).toBeVisible();
 
@@ -56,8 +56,8 @@ test.describe('@10. cost entries', () => {
 
     const today = new Date().toISOString().split('T')[0];
     const eventId = await createEvent(request, token, calendarId, 'Day Trip', today);
-    await createEventCost(request, token, eventId, 'Coffee', 2.50, 'GBP');
-    await createEventCost(request, token, eventId, 'Ticket', 4.00, 'GBP');
+    await createEventExpense(request, token, eventId, 'Coffee', 2.50, 'GBP');
+    await createEventExpense(request, token, eventId, 'Ticket', 4.00, 'GBP');
 
     await page.goto(`/calendars/${calendarUuid}`);
     await page.getByText('Day Trip').first().click();
@@ -77,13 +77,13 @@ test.describe('@10. cost entries', () => {
 
     const today = new Date().toISOString().split('T')[0];
     const eventId = await createEvent(request, token, calendarId, 'Lunch', today);
-    await createEventCost(request, token, eventId, 'Sandwich', 5.00, 'GBP');
+    await createEventExpense(request, token, eventId, 'Sandwich', 5.00, 'GBP');
 
     await page.goto(`/calendars/${calendarUuid}`);
     await page.getByText('Lunch').first().click();
 
     await expect(page.getByText('£5.00 Sandwich')).toBeVisible();
-    await page.getByTestId('delete-cost-button').first().click();
+    await page.getByTestId('delete-expense-button').first().click();
     await expect(page.getByText('£5.00 Sandwich')).not.toBeVisible();
 
     await deleteCalendar(request, token, calendarUuid);
@@ -100,10 +100,10 @@ test.describe('@10. cost entries', () => {
     await page.getByRole('button', { name: /add event/i }).first().click();
 
     await page.getByPlaceholder('Event title').fill('Event With Cost');
-    await page.getByTestId('pending-add-cost-trigger').click();
-    await page.getByTestId('pending-cost-label').fill('Coffee');
-    await page.getByTestId('pending-cost-amount').fill('3.00');
-    await page.getByTestId('pending-add-cost-button').click();
+    await page.getByTestId('pending-add-expense-trigger').click();
+    await page.getByTestId('pending-expense-label').fill('Coffee');
+    await page.getByTestId('pending-expense-amount').fill('3.00');
+    await page.getByTestId('pending-add-expense-button').click();
 
     await page.getByRole('button', { name: /add event/i }).last().click();
 
@@ -125,8 +125,8 @@ test.describe('@10. cost entries', () => {
 
     const today = new Date().toISOString().split('T')[0];
     const eventId = await createEvent(request, token, calendarId, 'Euro Trip', today);
-    await createEventCost(request, token, eventId, 'Hotel', 120, 'GBP');
-    await createEventCost(request, token, eventId, 'Dinner', 45, 'EUR');
+    await createEventExpense(request, token, eventId, 'Hotel', 120, 'GBP');
+    await createEventExpense(request, token, eventId, 'Dinner', 45, 'EUR');
 
     await page.goto(`/calendars/${calendarUuid}`);
     await page.getByText('Euro Trip').first().click();

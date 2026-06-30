@@ -1,5 +1,5 @@
 """
-Integration tests for the event costs API.
+Integration tests for the event expenses API.
 
 These tests hit a real PostgreSQL database. Each test is isolated:
 fixtures create the data they need and clean up after themselves.
@@ -25,20 +25,20 @@ def event(db_conn, calendar):
     )
     yield ev
     with db_conn.cursor() as cur:
-        cur.execute("DELETE FROM event_costs WHERE event_id = %s", (ev["id"],))
+        cur.execute("DELETE FROM event_expenses WHERE event_id = %s", (ev["id"],))
         cur.execute("DELETE FROM events WHERE id = %s", (ev["id"],))
         db_conn.commit()
 
 
 # ---------------------------------------------------------------------------
-# Create cost
+# Create expense
 # ---------------------------------------------------------------------------
 
 
-class TestCreateEventCost:
-    def test_returns_201_with_cost_fields(self, client, event, owner_headers):
+class TestCreateEventExpense:
+    def test_returns_201_with_expense_fields(self, client, event, owner_headers):
         res = client.post(
-            f"/api/events/{event['id']}/costs",
+            f"/api/events/{event['id']}/expenses",
             json={"label": "Coffee", "amount": 2.50, "currency": "GBP"},
             headers=owner_headers,
         )
@@ -50,9 +50,9 @@ class TestCreateEventCost:
         assert body["currency"] == "GBP"
         assert body["event_id"] == event["id"]
 
-    def test_non_member_cannot_add_cost(self, client, event, other_headers):
+    def test_non_member_cannot_add_expense(self, client, event, other_headers):
         res = client.post(
-            f"/api/events/{event['id']}/costs",
+            f"/api/events/{event['id']}/expenses",
             json={"label": "Ticket", "amount": 10.00, "currency": "EUR"},
             headers=other_headers,
         )
@@ -60,14 +60,14 @@ class TestCreateEventCost:
 
     def test_requires_auth(self, client, event):
         res = client.post(
-            f"/api/events/{event['id']}/costs",
+            f"/api/events/{event['id']}/expenses",
             json={"label": "Ticket", "amount": 10.00, "currency": "EUR"},
         )
         assert res.status_code == 403
 
     def test_returns_404_for_unknown_event(self, client, owner_headers):
         res = client.post(
-            "/api/events/999999/costs",
+            "/api/events/999999/expenses",
             json={"label": "Coffee", "amount": 2.50, "currency": "GBP"},
             headers=owner_headers,
         )
@@ -75,7 +75,7 @@ class TestCreateEventCost:
 
     def test_rejects_zero_amount(self, client, event, owner_headers):
         res = client.post(
-            f"/api/events/{event['id']}/costs",
+            f"/api/events/{event['id']}/expenses",
             json={"label": "Free thing", "amount": 0, "currency": "GBP"},
             headers=owner_headers,
         )
@@ -83,7 +83,7 @@ class TestCreateEventCost:
 
     def test_rejects_negative_amount(self, client, event, owner_headers):
         res = client.post(
-            f"/api/events/{event['id']}/costs",
+            f"/api/events/{event['id']}/expenses",
             json={"label": "Refund", "amount": -5.00, "currency": "GBP"},
             headers=owner_headers,
         )
@@ -91,67 +91,67 @@ class TestCreateEventCost:
 
 
 # ---------------------------------------------------------------------------
-# Delete cost
+# Delete expense
 # ---------------------------------------------------------------------------
 
 
-class TestDeleteEventCost:
+class TestDeleteEventExpense:
     def test_returns_204_on_success(self, client, event, owner_headers):
         create_res = client.post(
-            f"/api/events/{event['id']}/costs",
+            f"/api/events/{event['id']}/expenses",
             json={"label": "Museum", "amount": 12.00, "currency": "GBP"},
             headers=owner_headers,
         )
-        cost_id = create_res.json()["id"]
+        expense_id = create_res.json()["id"]
 
         res = client.delete(
-            f"/api/events/{event['id']}/costs/{cost_id}",
+            f"/api/events/{event['id']}/expenses/{expense_id}",
             headers=owner_headers,
         )
         assert res.status_code == 204
 
-    def test_returns_404_for_unknown_cost(self, client, event, owner_headers):
+    def test_returns_404_for_unknown_expense(self, client, event, owner_headers):
         res = client.delete(
-            f"/api/events/{event['id']}/costs/999999",
+            f"/api/events/{event['id']}/expenses/999999",
             headers=owner_headers,
         )
         assert res.status_code == 404
 
-    def test_non_member_cannot_delete_cost(self, client, event, owner_headers, other_headers):
+    def test_non_member_cannot_delete_expense(self, client, event, owner_headers, other_headers):
         create_res = client.post(
-            f"/api/events/{event['id']}/costs",
+            f"/api/events/{event['id']}/expenses",
             json={"label": "Museum", "amount": 12.00, "currency": "GBP"},
             headers=owner_headers,
         )
-        cost_id = create_res.json()["id"]
+        expense_id = create_res.json()["id"]
 
         res = client.delete(
-            f"/api/events/{event['id']}/costs/{cost_id}",
+            f"/api/events/{event['id']}/expenses/{expense_id}",
             headers=other_headers,
         )
         assert res.status_code == 403
 
 
 # ---------------------------------------------------------------------------
-# Costs in EventResponse
+# Expenses in EventResponse
 # ---------------------------------------------------------------------------
 
 
-class TestCostsInEventResponse:
-    def test_get_event_returns_empty_costs_by_default(self, client, event, owner_headers):
+class TestExpensesInEventResponse:
+    def test_get_event_returns_empty_expenses_by_default(self, client, event, owner_headers):
         res = client.get(f"/api/events/{event['id']}", headers=owner_headers)
 
         assert res.status_code == 200
-        assert res.json()["costs"] == []
+        assert res.json()["expenses"] == []
 
-    def test_get_event_returns_costs_after_adding(self, client, event, owner_headers):
+    def test_get_event_returns_expenses_after_adding(self, client, event, owner_headers):
         client.post(
-            f"/api/events/{event['id']}/costs",
+            f"/api/events/{event['id']}/expenses",
             json={"label": "Coffee", "amount": 2.50, "currency": "GBP"},
             headers=owner_headers,
         )
         client.post(
-            f"/api/events/{event['id']}/costs",
+            f"/api/events/{event['id']}/expenses",
             json={"label": "Ticket", "amount": 15.00, "currency": "EUR"},
             headers=owner_headers,
         )
@@ -159,7 +159,7 @@ class TestCostsInEventResponse:
         res = client.get(f"/api/events/{event['id']}", headers=owner_headers)
 
         assert res.status_code == 200
-        costs = res.json()["costs"]
-        assert len(costs) == 2
-        labels = {c["label"] for c in costs}
+        expenses = res.json()["expenses"]
+        assert len(expenses) == 2
+        labels = {e["label"] for e in expenses}
         assert labels == {"Coffee", "Ticket"}

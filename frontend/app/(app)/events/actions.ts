@@ -1,5 +1,5 @@
 'use server';
-import type { CreateEventInput, EventCost, EventLink } from '@/lib/types';
+import type { CreateEventInput, EventExpense, EventLink } from '@/lib/types';
 import { revalidatePath }                   from 'next/cache';
 import { cookies }                          from 'next/headers';
 import { redirect }                         from 'next/navigation';
@@ -100,14 +100,14 @@ export const deleteEventLink = async (eventId: number, linkId: number): Promise<
   revalidatePath('/calendars');
 }
 
-export const addEventCost = async (
+export const addEventExpense = async (
   eventId: number,
   label: string,
   amount: number,
   currency: string,
-): Promise<EventCost> => {
+): Promise<EventExpense> => {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${API_BASE_URL}/api/events/${eventId}/costs`, {
+  const res = await fetch(`${API_BASE_URL}/api/events/${eventId}/expenses`, {
     method: 'POST',
     headers,
     body: JSON.stringify({ label, amount, currency }),
@@ -116,16 +116,16 @@ export const addEventCost = async (
   if (res.status === 401) redirect('/login');
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`Failed to add cost: ${text}`);
+    throw new Error(`Failed to add expense: ${text}`);
   }
 
   revalidatePath('/calendars');
   return res.json();
 }
 
-export const deleteEventCost = async (eventId: number, costId: number): Promise<void> => {
+export const deleteEventExpense = async (eventId: number, expenseId: number): Promise<void> => {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${API_BASE_URL}/api/events/${eventId}/costs/${costId}`, {
+  const res = await fetch(`${API_BASE_URL}/api/events/${eventId}/expenses/${expenseId}`, {
     method: 'DELETE',
     headers,
   });
@@ -133,7 +133,7 @@ export const deleteEventCost = async (eventId: number, costId: number): Promise<
   if (res.status === 401) redirect('/login');
   if (!res.ok && res.status !== 204) {
     const text = await res.text();
-    throw new Error(`Failed to delete cost: ${text}`);
+    throw new Error(`Failed to delete expense: ${text}`);
   }
 
   revalidatePath('/calendars');

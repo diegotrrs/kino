@@ -6,7 +6,7 @@ from uuid import UUID
 from pydantic import BaseModel, field_validator
 
 
-class EventCostCreate(BaseModel):
+class EventExpenseCreate(BaseModel):
     label: str
     amount: float
     currency: str
@@ -19,7 +19,7 @@ class EventCostCreate(BaseModel):
         return v
 
 
-class EventCostResponse(BaseModel):
+class EventExpenseResponse(BaseModel):
     id: int
     event_id: int
     label: str
@@ -73,4 +73,4 @@ class EventResponse(EventBase):
     created_at: datetime
     updated_at: datetime | None = None
     links: list[EventLinkResponse] = []
-    costs: list[EventCostResponse] = []
+    expenses: list[EventExpenseResponse] = []

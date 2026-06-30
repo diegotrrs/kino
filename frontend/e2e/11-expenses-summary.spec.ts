@@ -3,7 +3,7 @@ import {
   createCalendar,
   createCalendarExpense,
   createEvent,
-  createEventCost,
+  createEventExpense,
   deleteCalendar,
   getCalendarId,
   getToken,
@@ -46,7 +46,7 @@ test.describe('@11. expenses summary', () => {
     const calendarId = await getCalendarId(request, token, calendarUuid);
     const today = new Date().toISOString().split('T')[0];
     const eventId = await createEvent(request, token, calendarId, 'Hotel', today);
-    await createEventCost(request, token, eventId, 'Room', 120, 'GBP');
+    await createEventExpense(request, token, eventId, 'Room', 120, 'GBP');
 
     await page.goto(`/calendars/${calendarUuid}`);
     await expect(page.getByTestId('trip-cost-pill')).toBeVisible({ timeout: 10000 });
@@ -79,7 +79,7 @@ test.describe('@11. expenses summary', () => {
     const calendarId = await getCalendarId(request, token, calendarUuid);
     const today = new Date().toISOString().split('T')[0];
     const eventId = await createEvent(request, token, calendarId, 'Flight', today);
-    await createEventCost(request, token, eventId, 'Return ticket', 240, 'GBP');
+    await createEventExpense(request, token, eventId, 'Return ticket', 240, 'GBP');
     await createCalendarExpense(request, token, calendarUuid, 'Travel insurance', 62, 'GBP');
     await createCalendarExpense(request, token, calendarUuid, 'Visa', 45, 'EUR');
 
@@ -178,7 +178,7 @@ test.describe('@11. expenses summary', () => {
     const calendarId = await getCalendarId(request, token, calendarUuid);
     const today = new Date().toISOString().split('T')[0];
     const eventId = await createEvent(request, token, calendarId, 'Tour', today);
-    await createEventCost(request, token, eventId, 'Ticket', 25, 'GBP');
+    await createEventExpense(request, token, eventId, 'Ticket', 25, 'GBP');
 
     await page.goto(`/calendars/${calendarUuid}`);
     await page.getByTestId('trip-cost-pill').click();
@@ -200,9 +200,9 @@ test.describe('@11. expenses summary', () => {
     const today = new Date().toISOString().split('T')[0];
 
     const ev1 = await createEvent(request, token, calendarId, 'Flight', today);
-    await createEventCost(request, token, ev1, 'Ticket', 200, 'GBP');
+    await createEventExpense(request, token, ev1, 'Ticket', 200, 'GBP');
     const ev2 = await createEvent(request, token, calendarId, 'Hotel', today);
-    await createEventCost(request, token, ev2, 'Room', 300, 'EUR');
+    await createEventExpense(request, token, ev2, 'Room', 300, 'EUR');
     await createCalendarExpense(request, token, calendarUuid, 'Travel insurance', 62, 'GBP');
 
     await page.goto(`/calendars/${calendarUuid}`);

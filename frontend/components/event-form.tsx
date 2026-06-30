@@ -1,6 +1,6 @@
 'use client';
 import {
-  addEventCost,
+  addEventExpense,
   addEventLink,
   createEvent,
   deleteEvent as deleteEventAction,
@@ -19,7 +19,7 @@ import { Button }               from '@/components/ui/button';
 import { useEvents }            from '@/context/events-context';
 import { useToast }             from '@/hooks/use-toast';
 import type {
-  EventCost,
+  EventExpense,
   EventLink
 }                               from '@/lib/types';
 import { CalendarEvent }        from '@/utils/data';
@@ -32,13 +32,13 @@ import {
 }                               from 'react';
 import { HexColorPicker }       from 'react-colorful';
 import { z }                    from 'zod';
-import { EventCosts }           from './events/event-costs';
+import { EventExpenses }        from './events/event-expenses';
 import { EventDateRangePicker } from './events/event-date-range-picker';
 import { EventLinks }           from './events/event-links';
 import {
-  PendingCosts,
-  type PendingCost
-}                               from './events/pending-costs';
+  PendingExpenses,
+  type PendingExpense
+}                               from './events/pending-expenses';
 import { PendingLinks }         from './events/pending-links';
 import {
   Popover,
@@ -95,9 +95,9 @@ export const EventForm = (props: EventFormProps) => {
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   const pendingUrlsRef = useRef<string[]>([]);
-  const pendingCostsRef = useRef<PendingCost[]>([]);
+  const pendingExpensesRef = useRef<PendingExpense[]>([]);
   const currentLinksRef = useRef<EventLink[]>(editEvent?.links ?? []);
-  const currentCostsRef = useRef<EventCost[]>(editEvent?.costs ?? []);
+  const currentExpensesRef = useRef<EventExpense[]>(editEvent?.expenses ?? []);
 
   // Reset when the user selects a different date on the calendar (add mode)
   useEffect(() => {
@@ -114,7 +114,7 @@ export const EventForm = (props: EventFormProps) => {
     setDateOpen(false);
     /* eslint-enable react-hooks/set-state-in-effect */
     pendingUrlsRef.current = [];
-    pendingCostsRef.current = [];
+    pendingExpensesRef.current = [];
   }, [addStart, addEnd]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Reset when the user clicks a different event (edit mode)
@@ -131,7 +131,7 @@ export const EventForm = (props: EventFormProps) => {
     setDateOpen(false);
     /* eslint-enable react-hooks/set-state-in-effect */
     currentLinksRef.current = editEvent?.links ?? [];
-    currentCostsRef.current = editEvent?.costs ?? [];
+    currentExpensesRef.current = editEvent?.expenses ?? [];
   }, [editEvent]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const dateLabel = start
@@ -185,17 +185,17 @@ export const EventForm = (props: EventFormProps) => {
             end_time: format(end, 'HH:mm:ss'),
             color,
           });
-          const [linkResults, costResults] = await Promise.all([
+          const [linkResults, expenseResults] = await Promise.all([
             Promise.allSettled(pendingUrlsRef.current.map((url) => addEventLink(created.id, url))),
-            Promise.allSettled(pendingCostsRef.current.map((c) => addEventCost(created.id, c.label, c.amount, c.currency))),
+            Promise.allSettled(pendingExpensesRef.current.map((e) => addEventExpense(created.id, e.label, e.amount, e.currency))),
           ]);
           const links = linkResults
             .filter((r): r is PromiseFulfilledResult<EventLink> => r.status === 'fulfilled')
             .map((r) => r.value);
-          const costs = costResults
-            .filter((r): r is PromiseFulfilledResult<EventCost> => r.status === 'fulfilled')
+          const expenses = expenseResults
+            .filter((r): r is PromiseFulfilledResult<EventExpense> => r.status === 'fulfilled')
             .map((r) => r.value);
-          addEvent({ ...localEvent, id: String(created.id), links, costs });
+          addEvent({ ...localEvent, id: String(created.id), links, expenses });
         } catch {
           toast({
             variant: 'destructive',
@@ -223,7 +223,7 @@ export const EventForm = (props: EventFormProps) => {
         end,
         backgroundColor: color,
         links: currentLinksRef.current,
-        costs: currentCostsRef.current,
+        expenses: currentExpensesRef.current,
       };
 
       if (calendarId !== undefined) {
@@ -393,20 +393,20 @@ export const EventForm = (props: EventFormProps) => {
             <PendingLinks onChange={(urls) => { pendingUrlsRef.current = urls; }} />
           )}
 
-          {/* Costs */}
+          {/* Expenses */}
           {mode === 'edit' ? (
-            <EventCosts
-              key={`costs-${editEvent?.id}`}
+            <EventExpenses
+              key={`expenses-${editEvent?.id}`}
               eventId={Number(editEvent?.id)}
-              initialCosts={editEvent?.costs ?? []}
+              initialExpenses={editEvent?.expenses ?? []}
               readOnly={isReadOnly}
               preferredCurrency={preferredCurrency}
-              onCostsChange={(costs) => { currentCostsRef.current = costs; }}
+              onExpensesChange={(expenses) => { currentExpensesRef.current = expenses; }}
             />
           ) : (
-            <PendingCosts
+            <PendingExpenses
               preferredCurrency={preferredCurrency}
-              onChange={(c) => { pendingCostsRef.current = c; }}
+              onChange={(e) => { pendingExpensesRef.current = e; }}
             />
           )}
           </div>

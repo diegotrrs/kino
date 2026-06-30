@@ -136,7 +136,7 @@ export const createEvent = async (
   return id;
 };
 
-export const createEventCost = async (
+export const createEventExpense = async (
   request: APIRequestContext,
   token: string,
   eventId: number,
@@ -144,7 +144,7 @@ export const createEventCost = async (
   amount: number,
   currency: string,
 ): Promise<number> => {
-  const res = await request.post(`${API_URL}/api/events/${eventId}/costs`, {
+  const res = await request.post(`${API_URL}/api/events/${eventId}/expenses`, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',

@@ -183,13 +183,12 @@
     "openLink": "Open link"
   },
   "eventCosts": {
-    "title": "Costs",
+    "title": "Expenses",
     "add": "Add",
     "adding": "Adding...",
     "cancel": "Cancel",
     "labelPlaceholder": "e.g. Coffee",
     "amountPlaceholder": "0.00",
-    "deleteCost": "Delete cost",
     "deleteExpense": "Delete expense",
     "viewExpenses": "View Expenses",
     "drawerTitle": "Expenses",

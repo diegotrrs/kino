@@ -8,7 +8,7 @@ const makeEvent = (id: string, costs: { label: string; amount: number; currency:
   title: `Event ${id}`,
   start: new Date('2025-07-14T08:00:00'),
   end:   new Date('2025-07-14T09:00:00'),
-  costs: costs.map((c, i) => ({ id: i, event_id: Number(id), created_at: '', ...c })),
+  expenses: costs.map((c, i) => ({ id: i, event_id: Number(id), created_at: '', ...c })),
 });
 
 const makeExpense = (id: number, amount: number, currency: string): CalendarExpense => ({
@@ -71,8 +71,8 @@ describe('tripTotals', () => {
     expect(tripTotals([], expenses)).toEqual([['USD', 120]]);
   });
 
-  it('handles events with undefined costs gracefully', () => {
-    const event = { ...makeEvent('1', []), costs: undefined } as unknown as CalendarEvent;
+  it('handles events with undefined expenses gracefully', () => {
+    const event = { ...makeEvent('1', []), expenses: undefined } as unknown as CalendarEvent;
     expect(tripTotals([event], [])).toEqual([]);
   });
 

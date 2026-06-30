@@ -25,7 +25,7 @@ export type EventLink = {
   created_at: string;
 };
 
-export type EventCost = {
+export type EventExpense = {
   id: number;
   event_id: number;
   label: string;
@@ -58,7 +58,7 @@ export interface Event {
   created_at: string;
   updated_at: string | null;
   links: EventLink[];
-  costs: EventCost[];
+  expenses: EventExpense[];
 }
 
 export interface CreateEventInput {

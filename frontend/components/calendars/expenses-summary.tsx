@@ -3,7 +3,7 @@ import {
   addCalendarExpense   as addCalendarExpenseAction,
   deleteCalendarExpense as deleteCalendarExpenseAction,
 } from '@/app/(app)/calendars/actions';
-import { formatAmount, groupedTotals } from '@/components/events/pending-costs';
+import { formatAmount, groupedTotals } from '@/components/events/pending-expenses';
 import { Button }                      from '@/components/ui/button';
 import { Input }                       from '@/components/ui/input';
 import { Separator }                   from '@/components/ui/separator';
@@ -25,7 +25,7 @@ export const tripTotals = (
   calendarExpenses: CalendarExpense[] = [],
 ): [string, number][] =>
   groupedTotals([
-    ...events.flatMap((e) => e.costs ?? []),
+    ...events.flatMap((e) => e.expenses ?? []),
     ...calendarExpenses,
   ]);
 
@@ -231,7 +231,7 @@ export const ExpensesSummary = () => {
           {/* Per-event breakdown */}
           <div className='px-4 py-3 space-y-4'>
             {events
-              .filter((ev) => (ev.costs ?? []).length > 0)
+              .filter((ev) => (ev.expenses ?? []).length > 0)
               .map((ev) => (
                 <div key={ev.id}>
                   <div className='text-xs text-muted-foreground mb-0.5'>
@@ -242,7 +242,7 @@ export const ExpensesSummary = () => {
                     })}
                   </div>
                   <div className='text-sm font-medium mb-1'>{ev.title}</div>
-                  {(ev.costs ?? []).map((c) => (
+                  {(ev.expenses ?? []).map((c) => (
                     <div key={c.id} className='flex justify-between text-sm text-muted-foreground pl-2'>
                       <span>{c.label}</span>
                       <span>{formatAmount(c.amount, c.currency)}</span>

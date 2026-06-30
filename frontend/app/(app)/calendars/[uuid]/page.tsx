@@ -37,7 +37,7 @@ const dbEventToCalendarEvent = (event: Event): CalendarEvent => {
     end,
     backgroundColor: event.color,
     links: event.links,
-    costs: event.costs,
+    expenses: event.expenses,
   };
 }
 

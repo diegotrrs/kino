@@ -1,17 +1,17 @@
 'use client';
-import { addEventCost, deleteEventCost } from '@/app/(app)/events/actions';
-import { Button }                        from '@/components/ui/button';
-import { Input }                         from '@/components/ui/input';
+import { addEventExpense, deleteEventExpense } from '@/app/(app)/events/actions';
+import { Button }                              from '@/components/ui/button';
+import { Input }                               from '@/components/ui/input';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import type { EventCost }                from '@/lib/types';
-import { Plus, X }                       from 'lucide-react';
-import { useTranslations }               from 'next-intl';
-import { useState }                      from 'react';
-import { formatAmount, groupedTotals }   from './pending-costs';
+import type { EventExpense }                   from '@/lib/types';
+import { Plus, X }                             from 'lucide-react';
+import { useTranslations }                     from 'next-intl';
+import { useState }                            from 'react';
+import { formatAmount, groupedTotals }         from './pending-expenses';
 
 const CURRENCIES = [
   { code: 'GBP', symbol: '£' },
@@ -21,30 +21,30 @@ const CURRENCIES = [
 
 type Props = {
   eventId: number;
-  initialCosts: EventCost[];
+  initialExpenses: EventExpense[];
   readOnly?: boolean;
   preferredCurrency: string;
-  onCostsChange?: (costs: EventCost[]) => void;
+  onExpensesChange?: (expenses: EventExpense[]) => void;
 };
 
-export const EventCosts = ({
+export const EventExpenses = ({
   eventId,
-  initialCosts,
+  initialExpenses,
   readOnly = false,
   preferredCurrency,
-  onCostsChange,
+  onExpensesChange,
 }: Props) => {
   const t = useTranslations('eventCosts');
-  const [costs, setCosts] = useState<EventCost[]>(initialCosts);
+  const [expenses, setExpenses] = useState<EventExpense[]>(initialExpenses);
   const [label, setLabel] = useState('');
   const [amount, setAmount] = useState('');
   const [currency, setCurrency] = useState(preferredCurrency);
   const [isAdding, setIsAdding] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const update = (next: EventCost[]) => {
-    setCosts(next);
-    onCostsChange?.(next);
+  const update = (next: EventExpense[]) => {
+    setExpenses(next);
+    onExpensesChange?.(next);
   };
 
   const handleAdd = async () => {
@@ -52,8 +52,8 @@ export const EventCosts = ({
     if (!label.trim() || isNaN(n) || n <= 0) return;
     setIsAdding(true);
     try {
-      const newCost = await addEventCost(eventId, label.trim(), n, currency);
-      update([...costs, newCost]);
+      const newExpense = await addEventExpense(eventId, label.trim(), n, currency);
+      update([...expenses, newExpense]);
       setLabel('');
       setAmount('');
       setOpen(false);
@@ -62,12 +62,12 @@ export const EventCosts = ({
     }
   };
 
-  const handleDelete = async (costId: number) => {
-    await deleteEventCost(eventId, costId);
-    update(costs.filter((c) => c.id !== costId));
+  const handleDelete = async (expenseId: number) => {
+    await deleteEventExpense(eventId, expenseId);
+    update(expenses.filter((e) => e.id !== expenseId));
   };
 
-  const totals = groupedTotals(costs);
+  const totals = groupedTotals(expenses);
 
   return (
     <div className='space-y-2'>
@@ -80,18 +80,18 @@ export const EventCosts = ({
         )}
       </div>
       <div className='flex flex-wrap gap-1.5'>
-        {costs.map((c) => (
+        {expenses.map((e) => (
           <span
-            key={c.id}
+            key={e.id}
             className='inline-flex items-center gap-1 text-xs rounded-full border bg-muted px-2.5 py-1 font-medium'
           >
-            {formatAmount(c.amount, c.currency)} {c.label}
+            {formatAmount(e.amount, e.currency)} {e.label}
             {!readOnly && (
               <button
                 type='button'
-                aria-label={t('deleteCost')}
-                data-testid='delete-cost-button'
-                onClick={() => handleDelete(c.id)}
+                aria-label={t('deleteExpense')}
+                data-testid='delete-expense-button'
+                onClick={() => handleDelete(e.id)}
                 className='ml-0.5 text-muted-foreground hover:text-destructive'
               >
                 <X className='h-3 w-3' />
@@ -104,7 +104,7 @@ export const EventCosts = ({
             <PopoverTrigger asChild>
               <button
                 type='button'
-                data-testid='add-cost-trigger'
+                data-testid='add-expense-trigger'
                 className='inline-flex items-center gap-1 text-xs rounded-full border border-dashed px-2.5 py-1 text-muted-foreground hover:border-solid hover:text-foreground transition-colors'
               >
                 <Plus className='h-3 w-3' /> {t('add')}
@@ -119,7 +119,7 @@ export const EventCosts = ({
                 className='h-8 text-sm'
                 autoFocus
                 disabled={isAdding}
-                data-testid='cost-label-input'
+                data-testid='expense-label-input'
               />
               <div className='flex gap-1.5'>
                 <select
@@ -127,7 +127,7 @@ export const EventCosts = ({
                   onChange={(e) => setCurrency(e.target.value)}
                   className='h-8 rounded-md border bg-background px-1.5 text-sm shrink-0 w-[72px]'
                   disabled={isAdding}
-                  data-testid='cost-currency-select'
+                  data-testid='expense-currency-select'
                 >
                   {CURRENCIES.map((c) => (
                     <option key={c.code} value={c.code}>
@@ -144,7 +144,7 @@ export const EventCosts = ({
                   min='0.01'
                   step='0.01'
                   disabled={isAdding}
-                  data-testid='cost-amount-input'
+                  data-testid='expense-amount-input'
                   onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
                 />
               </div>
@@ -154,7 +154,7 @@ export const EventCosts = ({
                 className='w-full'
                 disabled={isAdding || !label.trim() || !amount || parseFloat(amount) <= 0}
                 onClick={handleAdd}
-                data-testid='add-cost-button'
+                data-testid='add-expense-button'
               >
                 {isAdding ? t('adding') : t('add')}
               </Button>

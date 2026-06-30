@@ -5,8 +5,8 @@ from ..auth import get_current_user, get_optional_user
 from .. import crud
 from ..database import get_db
 from ..schemas.event import (
-    EventCostCreate,
-    EventCostResponse,
+    EventExpenseCreate,
+    EventExpenseResponse,
     EventCreate,
     EventLinkCreate,
     EventLinkResponse,
@@ -124,10 +124,10 @@ def delete_event_link(
         raise HTTPException(status_code=404, detail="Link not found")
 
 
-@router.post("/{event_id}/costs", response_model=EventCostResponse, status_code=201)
-def create_event_cost(
+@router.post("/{event_id}/expenses", response_model=EventExpenseResponse, status_code=201)
+def create_event_expense(
     event_id: int,
-    cost: EventCostCreate,
+    expense: EventExpenseCreate,
     db: connection = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
@@ -136,13 +136,13 @@ def create_event_cost(
         raise HTTPException(status_code=404, detail="Event not found")
     if crud.get_user_role(db, existing["calendar_id"], current_user["id"]) is None:
         raise HTTPException(status_code=403, detail="Not a member of this calendar")
-    return crud.create_event_cost(db, event_id, cost.label, cost.amount, cost.currency)
+    return crud.create_event_expense(db, event_id, expense.label, expense.amount, expense.currency)
 
 
-@router.delete("/{event_id}/costs/{cost_id}", status_code=204)
-def delete_event_cost(
+@router.delete("/{event_id}/expenses/{expense_id}", status_code=204)
+def delete_event_expense(
     event_id: int,
-    cost_id: int,
+    expense_id: int,
     db: connection = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
@@ -151,6 +151,6 @@ def delete_event_cost(
         raise HTTPException(status_code=404, detail="Event not found")
     if crud.get_user_role(db, existing["calendar_id"], current_user["id"]) is None:
         raise HTTPException(status_code=403, detail="Not a member of this calendar")
-    deleted = crud.delete_event_cost(db, cost_id, event_id)
+    deleted = crud.delete_event_expense(db, expense_id, event_id)
     if not deleted:
-        raise HTTPException(status_code=404, detail="Cost not found")
+        raise HTTPException(status_code=404, detail="Expense not found")

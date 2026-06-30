@@ -74,7 +74,7 @@ const Calendar = () => {
       start: info.event.start!,
       end: info.event.end ?? new Date(info.event.start!.getTime() + 60 * 60 * 1000),
       links: info.event.extendedProps.links,
-      costs: info.event.extendedProps.costs,
+      expenses: info.event.extendedProps.expenses,
     };
 
     setIsDrag(false);
@@ -97,7 +97,7 @@ const Calendar = () => {
       start: newStart,
       end: newEnd,
       links: storedEvent?.links,
-      costs: storedEvent?.costs,
+      expenses: storedEvent?.expenses,
     };
 
     if (calendarId !== undefined) {
