@@ -8,6 +8,7 @@ import { Separator }               from '@/components/ui/separator';
 import { EventsProvider }          from '@/context/events-context';
 import type {
   Calendar as CalendarType,
+  CalendarExpense,
   Event
 }                                  from '@/lib/types';
 import { CalendarEvent }           from '@/utils/data';
@@ -75,6 +76,19 @@ const getCalendarEvents = async (calendarUuid: string, token: string | null): Pr
   return res.json();
 }
 
+const getCalendarExpenses = async (calendarUuid: string, token: string | null): Promise<CalendarExpense[]> => {
+  const headers: Record<string, string> = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const res = await fetch(
+    `${API_BASE_URL}/api/calendars/${calendarUuid}/expenses`,
+    { cache: 'no-store', headers }
+  );
+
+  if (!res.ok) return [];
+  return res.json();
+}
+
 const CalendarPage = async ({
   params,
   searchParams,
@@ -125,14 +139,24 @@ const CalendarPage = async ({
     redirect(isAuthenticated ? '/calendars' : '/login');
   }
 
-  const dbEvents = await getCalendarEvents(uuid, token);
+  const [dbEvents, calendarExpenses] = await Promise.all([
+    getCalendarEvents(uuid, token),
+    getCalendarExpenses(uuid, token),
+  ]);
   const events = dbEvents.map(dbEventToCalendarEvent);
 
   const readOnly = !isAuthenticated;
   const canShare = calendar.role === 'owner' || calendar.role === 'editor';
 
   return (
-    <EventsProvider calendarId={calendar.id} serverEvents={events} readOnly={readOnly} preferredCurrency={preferredCurrency}>
+    <EventsProvider
+      calendarId={calendar.id}
+      calendarUuid={String(calendar.uuid)}
+      serverEvents={events}
+      serverCalendarExpenses={calendarExpenses}
+      readOnly={readOnly}
+      preferredCurrency={preferredCurrency}
+    >
       <ReadOnlyBanner />
       <div className='relative py-4'>
           <div className='flex flex-col w-full items-center'>

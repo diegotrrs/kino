@@ -52,3 +52,18 @@ class DeletedCalendarResponse(BaseModel):
 
 class CalendarUserAdd(BaseModel):
     user_id: int
+
+
+class CalendarExpenseCreate(BaseModel):
+    label: str
+    amount: float
+    currency: str
+
+
+class CalendarExpenseResponse(BaseModel):
+    id: int
+    calendar_id: int
+    label: str
+    amount: float
+    currency: str
+    created_at: datetime

@@ -34,6 +34,15 @@ export type EventCost = {
   created_at: string;
 };
 
+export type CalendarExpense = {
+  id: number;
+  calendar_id: number;
+  label: string;
+  amount: number;
+  currency: string;
+  created_at: string;
+};
+
 export interface Event {
   id: number;
   uuid: string;

@@ -184,11 +184,17 @@
   },
   "eventCosts": {
     "title": "Despesas",
-    "add": "Adicionar despesa",
+    "add": "Adicionar",
     "adding": "Adicionando...",
+    "cancel": "Cancelar",
     "labelPlaceholder": "ex. Café",
     "amountPlaceholder": "0,00",
     "deleteCost": "Remover despesa",
-    "viewExpenses": "Ver despesas"
+    "deleteExpense": "Remover despesa geral",
+    "viewExpenses": "Ver despesas",
+    "drawerTitle": "Despesas",
+    "generalExpenses": "Despesas gerais",
+    "noGeneralExpenses": "Sem despesas gerais ainda.",
+    "readOnlyExpensesMessage": "As despesas da viagem são visíveis apenas para proprietários e editores deste calendário."
   }
 }

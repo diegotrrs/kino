@@ -1,7 +1,8 @@
 'use server';
-import { revalidatePath } from 'next/cache';
-import { cookies }        from 'next/headers';
-import { redirect }       from 'next/navigation';
+import type { CalendarExpense } from '@/lib/types';
+import { revalidatePath }       from 'next/cache';
+import { cookies }              from 'next/headers';
+import { redirect }             from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
@@ -197,4 +198,51 @@ export const toggleFavourite = async (
 
   revalidatePath('/home');
   revalidatePath(`/calendars/${calendarUuid}`);
+};
+
+const getAuthHeaders = async (): Promise<Record<string, string>> => {
+  const cookieStore = await cookies();
+  const token       = cookieStore.get('token')?.value;
+  return token
+    ? { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+    : { 'Content-Type': 'application/json' };
+};
+
+export const addCalendarExpense = async (
+  calendarUuid: string,
+  label: string,
+  amount: number,
+  currency: string,
+): Promise<CalendarExpense> => {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarUuid}/expenses`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ label, amount, currency }),
+  });
+
+  if (res.status === 401) redirect('/login');
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Failed to add expense: ${text}`);
+  }
+
+  return res.json();
+};
+
+export const deleteCalendarExpense = async (
+  calendarUuid: string,
+  expenseId: number,
+): Promise<void> => {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarUuid}/expenses/${expenseId}`, {
+    method: 'DELETE',
+    headers,
+  });
+
+  if (res.status === 401) redirect('/login');
+  if (!res.ok && res.status !== 204) {
+    const text = await res.text();
+    throw new Error(`Failed to delete expense: ${text}`);
+  }
 };

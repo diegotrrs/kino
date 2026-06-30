@@ -12,6 +12,8 @@ from ..email import send_calendar_invite_email
 logger = logging.getLogger(__name__)
 from ..schemas.calendar import (
     CalendarCreate,
+    CalendarExpenseCreate,
+    CalendarExpenseResponse,
     CalendarFavouriteUpdate,
     CalendarInvite,
     CalendarMemberResponse,
@@ -217,3 +219,46 @@ def remove_calendar_user(
         raise HTTPException(status_code=403, detail="Only the owner can remove users")
     if not crud.remove_user_from_calendar(db, calendar_id, user_id):
         raise HTTPException(status_code=404, detail="User not in calendar")
+
+
+@router.get("/{calendar_uuid}/expenses", response_model=list[CalendarExpenseResponse])
+def list_calendar_expenses(
+    calendar_uuid: str,
+    db: connection = Depends(get_db),
+    current_user: dict | None = Depends(get_optional_user),
+):
+    calendar = crud.get_calendar_by_uuid(db, calendar_uuid, current_user["id"] if current_user else None)
+    if calendar is None:
+        raise HTTPException(status_code=404, detail="Calendar not found")
+    if not calendar["is_public"]:
+        if current_user is None or calendar.get("role") is None:
+            raise HTTPException(status_code=403, detail="This calendar is private")
+    calendar_id = calendar["id"]
+    return crud.get_calendar_expenses(db, calendar_id)
+
+
+@router.post("/{calendar_uuid}/expenses", response_model=CalendarExpenseResponse, status_code=201)
+def create_calendar_expense(
+    calendar_uuid: str,
+    expense: CalendarExpenseCreate,
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    calendar_id = _get_id_by_uuid(db, calendar_uuid)
+    if crud.get_user_role(db, calendar_id, current_user["id"]) is None:
+        raise HTTPException(status_code=403, detail="Not a member of this calendar")
+    return crud.create_calendar_expense(db, calendar_id, expense.label, expense.amount, expense.currency)
+
+
+@router.delete("/{calendar_uuid}/expenses/{expense_id}", status_code=204)
+def delete_calendar_expense(
+    calendar_uuid: str,
+    expense_id: int,
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    calendar_id = _get_id_by_uuid(db, calendar_uuid)
+    if crud.get_user_role(db, calendar_id, current_user["id"]) is None:
+        raise HTTPException(status_code=403, detail="Not a member of this calendar")
+    if not crud.delete_calendar_expense(db, expense_id, calendar_id):
+        raise HTTPException(status_code=404, detail="Expense not found")

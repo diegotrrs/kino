@@ -184,11 +184,17 @@
   },
   "eventCosts": {
     "title": "Kosten",
-    "add": "Kosten hinzufügen",
+    "add": "Hinzufügen",
     "adding": "Wird hinzugefügt...",
+    "cancel": "Abbrechen",
     "labelPlaceholder": "z. B. Kaffee",
     "amountPlaceholder": "0,00",
     "deleteCost": "Kosten löschen",
-    "viewExpenses": "Ausgaben anzeigen"
+    "deleteExpense": "Allgemeine Ausgabe löschen",
+    "viewExpenses": "Ausgaben anzeigen",
+    "drawerTitle": "Ausgaben",
+    "generalExpenses": "Allgemeine Ausgaben",
+    "noGeneralExpenses": "Noch keine allgemeinen Ausgaben.",
+    "readOnlyExpensesMessage": "Reiseausgaben sind nur für Eigentümer und Bearbeiter dieses Kalenders sichtbar."
   }
 }

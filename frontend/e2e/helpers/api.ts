@@ -166,3 +166,22 @@ export const getCalendarId = async (
   const { id } = await res.json() as { id: number };
   return id;
 };
+
+export const createCalendarExpense = async (
+  request: APIRequestContext,
+  token: string,
+  calendarUuid: string,
+  label: string,
+  amount: number,
+  currency: string,
+): Promise<number> => {
+  const res = await request.post(`${API_URL}/api/calendars/${calendarUuid}/expenses`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    data: { label, amount, currency },
+  });
+  const { id } = await res.json() as { id: number };
+  return id;
+};

@@ -31,7 +31,7 @@ import {
   ChevronRight,
   ChevronsUpDown
 }                       from 'lucide-react';
-import { TripCostSummary } from '@/components/calendars/trip-cost-summary';
+import { ExpensesSummary } from '@/components/calendars/expenses-summary';
 import { useEvents }       from '@/context/events-context';
 import { PlusIcon }        from 'lucide-react';
 import { useState }        from 'react';
@@ -225,7 +225,7 @@ const CalendarNav = ({
 
       {/* Right: trip cost pill */}
       <div className='flex-1 flex justify-end'>
-        <TripCostSummary />
+        <ExpensesSummary />
       </div>
     </div>
   );

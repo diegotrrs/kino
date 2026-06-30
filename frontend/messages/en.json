@@ -184,11 +184,17 @@
   },
   "eventCosts": {
     "title": "Costs",
-    "add": "Add cost",
+    "add": "Add",
     "adding": "Adding...",
+    "cancel": "Cancel",
     "labelPlaceholder": "e.g. Coffee",
     "amountPlaceholder": "0.00",
     "deleteCost": "Delete cost",
-    "viewExpenses": "View Expenses"
+    "deleteExpense": "Delete expense",
+    "viewExpenses": "View Expenses",
+    "drawerTitle": "Expenses",
+    "generalExpenses": "General expenses",
+    "noGeneralExpenses": "No general expenses yet.",
+    "readOnlyExpensesMessage": "Travel expenses are only visible to owners and editors of this calendar."
   }
 }

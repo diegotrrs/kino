@@ -304,3 +304,40 @@ def get_calendar_users(db: connection, calendar_id: int) -> list[dict]:
             (calendar_id,),
         )
         return cur.fetchall()
+
+
+def get_calendar_expenses(db: connection, calendar_id: int) -> list[dict]:
+    with db.cursor() as cur:
+        cur.execute(
+            "SELECT * FROM calendar_expenses WHERE calendar_id = %s ORDER BY created_at",
+            (calendar_id,),
+        )
+        return cur.fetchall()
+
+
+def create_calendar_expense(
+    db: connection, calendar_id: int, label: str, amount: float, currency: str
+) -> dict:
+    with db.cursor() as cur:
+        cur.execute(
+            """
+            INSERT INTO calendar_expenses (calendar_id, label, amount, currency)
+            VALUES (%s, %s, %s, %s)
+            RETURNING *
+            """,
+            (calendar_id, label, amount, currency),
+        )
+        row = cur.fetchone()
+        db.commit()
+        return row
+
+
+def delete_calendar_expense(db: connection, expense_id: int, calendar_id: int) -> bool:
+    with db.cursor() as cur:
+        cur.execute(
+            "DELETE FROM calendar_expenses WHERE id = %s AND calendar_id = %s",
+            (expense_id, calendar_id),
+        )
+        deleted = cur.rowcount > 0
+        db.commit()
+        return deleted

@@ -1,14 +1,19 @@
 'use client';
 import { CalendarEvent, initialEvents } from '@/utils/data';
+import type { CalendarExpense }          from '@/lib/types';
 import React, { createContext, ReactNode, useContext, useState } from 'react';
 
 type EventsContextType = {
   calendarId?: number;
+  calendarUuid?: string;
   readOnly: boolean;
   preferredCurrency: string;
   events: CalendarEvent[];
   addEvent: (event: CalendarEvent) => void;
   deleteEvent: (id: string) => void;
+  calendarExpenses: CalendarExpense[];
+  addCalendarExpense: (expense: CalendarExpense) => void;
+  removeCalendarExpense: (id: number) => void;
   eventViewOpen: boolean;
   setEventViewOpen: (value: boolean) => void;
   eventAddOpen: boolean;
@@ -34,7 +39,9 @@ export const useEvents = () => {
 type EventsProviderProps = {
   children: ReactNode;
   calendarId?: number;
+  calendarUuid?: string;
   serverEvents?: CalendarEvent[];
+  serverCalendarExpenses?: CalendarExpense[];
   readOnly?: boolean;
   preferredCurrency?: string;
 }
@@ -42,7 +49,9 @@ type EventsProviderProps = {
 export const EventsProvider: React.FC<EventsProviderProps> = ({
   children,
   calendarId,
+  calendarUuid,
   serverEvents,
+  serverCalendarExpenses,
   readOnly = false,
   preferredCurrency = 'GBP',
 }) => {
@@ -53,6 +62,9 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
         id: String(event.id),
         color: event.backgroundColor,
       }))
+  );
+  const [calendarExpenses, setCalendarExpenses] = useState<CalendarExpense[]>(
+    serverCalendarExpenses ?? []
   );
   const [eventViewOpen, setEventViewOpen]                               = useState(false);
   const [eventAddOpen, setEventAddOpenState]                            = useState(false);
@@ -75,15 +87,27 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
     );
   };
 
+  const addCalendarExpense = (expense: CalendarExpense) => {
+    setCalendarExpenses((prev) => [...prev, expense]);
+  };
+
+  const removeCalendarExpense = (id: number) => {
+    setCalendarExpenses((prev) => prev.filter((e) => e.id !== id));
+  };
+
   return (
     <EventsContext.Provider
       value={{
         calendarId,
+        calendarUuid,
         readOnly,
         preferredCurrency,
         events,
         addEvent,
         deleteEvent,
+        calendarExpenses,
+        addCalendarExpense,
+        removeCalendarExpense,
         eventViewOpen,
         setEventViewOpen,
         eventAddOpen,
