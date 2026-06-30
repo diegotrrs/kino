@@ -31,8 +31,9 @@ import {
   ChevronRight,
   ChevronsUpDown
 }                       from 'lucide-react';
+import { useEvents }    from '@/context/events-context';
+import { PlusIcon }     from 'lucide-react';
 import { useState }     from 'react';
-import { EventAddForm } from './event-add-form';
 
 type CalendarNavProps = {
   calendarRef: calendarRef;
@@ -44,11 +45,10 @@ type CalendarNavProps = {
 
 const CalendarNav = ({
   calendarRef,
-  start,
-  end,
   viewedDate,
   readOnly = false,
-}: CalendarNavProps) => {
+}: Omit<CalendarNavProps, 'start' | 'end'>) => {
+  const { setEventAddOpen } = useEvents();
   const [currentView] = useState('dayGridMonth');
 
   const selectedMonth = viewedDate.getMonth() + 1;
@@ -207,8 +207,14 @@ const CalendarNav = ({
 
       {!readOnly && (
         <div className='flex flex-wrap gap-3 justify-center'>
-          {/* Add event button  */}
-          <EventAddForm start={start} end={end} />
+          <Button
+            className='w-24 md:w-28 text-xs md:text-sm'
+            variant='default'
+            onClick={() => setEventAddOpen(true)}
+          >
+            <PlusIcon className='md:h-5 md:w-5 h-3 w-3' />
+            <p>Add Event</p>
+          </Button>
         </div>
       )}
     </div>

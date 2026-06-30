@@ -31,9 +31,9 @@ import {
   useRef,
   useState
 }                        from 'react';
-import CalendarNav       from './calendar-nav';
-import { EventEditForm } from './event-edit-form';
-import { Card }          from './ui/card';
+import CalendarNav  from './calendar-nav';
+import { EventForm } from './event-form';
+import { Card }      from './ui/card';
 
 type EventItemProps = {
   info: EventContentArg;
@@ -72,7 +72,7 @@ const Calendar = () => {
       description: info.event.extendedProps.description,
       backgroundColor: info.event.backgroundColor,
       start: info.event.start!,
-      end: info.event.end!,
+      end: info.event.end ?? new Date(info.event.start!.getTime() + 60 * 60 * 1000),
       links: info.event.extendedProps.links,
       costs: info.event.extendedProps.costs,
     };
@@ -109,9 +109,11 @@ const Calendar = () => {
           end_time: format(newEnd, 'HH:mm:ss'),
           color: info.event.backgroundColor,
         });
-      } catch {
+      } catch (e) {
+        console.log('heeeyy')
+        console.log(e);
         info.revert();
-        toast({ variant: 'destructive', title: 'Failed to save event' });
+        toast({ variant: 'destructive', title: 'Failed to save eventx' });
         return;
       }
     }
@@ -245,8 +247,6 @@ const Calendar = () => {
     <div className=' space-y-5'>
       <CalendarNav
         calendarRef={calendarRef}
-        start={selectedStart}
-        end={selectedEnd}
         viewedDate={viewedDate}
         readOnly={readOnly}
       />
@@ -309,11 +309,8 @@ const Calendar = () => {
           />
         </Card>
       </div>
-      <EventEditForm
-        oldEvent={selectedOldEvent}
-        event={selectedEvent}
-        isDrag={isDrag}
-      />
+      <EventForm mode='add'  start={selectedStart} end={selectedEnd} />
+      <EventForm mode='edit' event={selectedEvent} oldEvent={selectedOldEvent} isDrag={isDrag} />
     </div>
   );
 }

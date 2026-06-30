@@ -99,7 +99,7 @@ test.describe('@10. cost entries', () => {
     await page.goto(`/calendars/${calendarUuid}`);
     await page.getByRole('button', { name: /add event/i }).first().click();
 
-    await page.getByLabel('Title').fill('Event With Cost');
+    await page.getByPlaceholder('Event title').fill('Event With Cost');
     await page.getByTestId('pending-add-cost-trigger').click();
     await page.getByTestId('pending-cost-label').fill('Coffee');
     await page.getByTestId('pending-cost-amount').fill('3.00');
@@ -131,7 +131,7 @@ test.describe('@10. cost entries', () => {
     await page.goto(`/calendars/${calendarUuid}`);
     await page.getByText('Euro Trip').first().click();
 
-    await expect(page.getByText(/£120\.00.*€45\.00/)).toBeVisible();
+    await expect(page.getByText(/£120\.00.*€45\.00/).first()).toBeVisible();
 
     await deleteCalendar(request, token, calendarUuid);
   });

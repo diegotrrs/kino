@@ -84,7 +84,7 @@ test.describe('@8. event links', () => {
     await page.goto(`/calendars/${calendarUuid}`);
     await page.getByRole('button', { name: /add event/i }).first().click();
 
-    await page.getByLabel('Title').fill('Event With Link');
+    await page.getByPlaceholder('Event title').fill('Event With Link');
     await page.getByPlaceholder('https://...').fill('https://example.com');
     await page.getByTestId('pending-add-link-button').click();
 

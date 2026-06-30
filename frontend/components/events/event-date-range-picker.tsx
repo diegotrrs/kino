@@ -14,7 +14,7 @@ import {
 type Props = {
   start: Date | undefined;
   end: Date | undefined;
-  onChange: (start: Date, end: Date) => void;
+  onChange: (start: Date, end: Date, closePopover?: boolean) => void;
   disabled?: boolean;
   defaultMultiDay?: boolean;
   detectMultiDay?: boolean;
@@ -59,10 +59,11 @@ export const EventDateRangePicker = ({ start, end, onChange, disabled, defaultMu
 
   // FullCalendar passes end = next-day 00:00 for single-day clicks (exclusive end).
   // Correct that whenever single-day mode is active and start/end dates diverge.
+  // Pass false so the parent doesn't close the popover on this automatic correction.
   useEffect(() => {
     if (isMultiDay || !start || !end) return;
     if (start.toDateString() !== end.toDateString()) {
-      onChange(start, setDatePart(end, start));
+      onChange(start, setDatePart(end, start), false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMultiDay, start]);
@@ -75,9 +76,9 @@ export const EventDateRangePicker = ({ start, end, onChange, disabled, defaultMu
   const handlePreset = (minutes: number | null) => {
     if (minutes === null) {
       const { start: s, end: e } = applyAllDay(start);
-      onChange(s, e);
+      onChange(s, e, false);
     } else {
-      onChange(start, applyDurationPreset(start, minutes));
+      onChange(start, applyDurationPreset(start, minutes), false);
     }
   };
 
@@ -114,7 +115,7 @@ export const EventDateRangePicker = ({ start, end, onChange, disabled, defaultMu
   };
 
   return (
-    <div className='space-y-2'>
+    <div className='space-y-2 min-w-[312px]'>
       {!isMultiDay ? (
         <>
           <div className='flex flex-col gap-1.5'>
@@ -126,21 +127,6 @@ export const EventDateRangePicker = ({ start, end, onChange, disabled, defaultMu
               displayFormat={{ hour24: 'PP', hour12: 'PP' }}
               disabled={disabled}
             />
-          </div>
-          <div className='flex gap-1.5 pb-2'>
-            {DURATION_PRESETS.map(({ label, minutes }) => (
-              <Button
-                key={label}
-                type='button'
-                size='sm'
-                variant={minutes === activeMinutes ? 'default' : 'outline'}
-                className='h-7 flex-1 px-0 text-xs'
-                disabled={disabled}
-                onClick={() => handlePreset(minutes)}
-              >
-                {label}
-              </Button>
-            ))}
           </div>
           {!isAllDay && (
             <div className='grid grid-cols-2 gap-2'>
@@ -168,6 +154,21 @@ export const EventDateRangePicker = ({ start, end, onChange, disabled, defaultMu
               </div>
             </div>
           )}
+          <div className='flex gap-1.5'>
+            {DURATION_PRESETS.map(({ label, minutes }) => (
+              <Button
+                key={label}
+                type='button'
+                size='sm'
+                variant={minutes === activeMinutes ? 'default' : 'outline'}
+                className='h-7 flex-1 px-0 text-xs'
+                disabled={disabled}
+                onClick={() => handlePreset(minutes)}
+              >
+                {label}
+              </Button>
+            ))}
+          </div>
         </>
       ) : (
         <div className='space-y-2'>

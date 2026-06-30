@@ -28,6 +28,7 @@ test.describe('@9. event duration presets', () => {
 
     await page.goto(`/calendars/${calendarUuid}`);
     await page.getByRole('button', { name: /add event/i }).first().click();
+    await page.getByRole('button', { name: 'Change date and time' }).click();
 
     await expect(page.getByRole('button', { name: '30 min' })).toBeVisible();
     await expect(page.getByRole('button', { name: '1 hr' })).toBeVisible();
@@ -46,6 +47,7 @@ test.describe('@9. event duration presets', () => {
 
     await page.goto(`/calendars/${calendarUuid}`);
     await page.getByRole('button', { name: /add event/i }).first().click();
+    await page.getByRole('button', { name: 'Change date and time' }).click();
 
     await expect(page.getByText('Start time')).toBeVisible();
     await expect(page.getByText('End time')).toBeVisible();
@@ -67,6 +69,7 @@ test.describe('@9. event duration presets', () => {
 
     await page.goto(`/calendars/${calendarUuid}`);
     await page.getByRole('button', { name: /add event/i }).first().click();
+    await page.getByRole('button', { name: 'Change date and time' }).click();
 
     await page.getByRole('button', { name: 'All day' }).click();
     await expect(page.getByText('Start time')).not.toBeVisible();
@@ -88,18 +91,17 @@ test.describe('@9. event duration presets', () => {
     await page.goto(`/calendars/${calendarUuid}`);
     await page.getByRole('button', { name: /add event/i }).first().click();
 
-    // The active button has the default (filled) variant — check aria-pressed is not the right
-    // approach here; instead verify the 1hr button does NOT have outline styling by checking
-    // it is styled differently from its siblings. The simplest proxy: clicking Save without
-    // changing anything should produce a 1-hour event. We verify indirectly via the edit form.
-    await page.getByLabel('Title').fill('Default Duration Event');
+    await page.getByPlaceholder('Event title').fill('Default Duration Event');
     await page.getByRole('button', { name: /add event/i }).last().click();
     await expect(page.getByText('Default Duration Event')).toBeVisible({ timeout: 10000 });
 
     await page.getByText('Default Duration Event').first().click();
-    // Edit form should show "1 hr" as active — time pickers are visible (not all-day)
+    await page.getByRole('button', { name: 'Change date and time' }).click();
+
+    // 1 hr should be active (filled variant) — time pickers should be visible
     await expect(page.getByText('Start time')).toBeVisible();
     await expect(page.getByText('End time')).toBeVisible();
+    await expect(page.getByRole('button', { name: '1 hr' })).toBeVisible();
 
     await deleteCalendar(request, token, calendarUuid);
   });

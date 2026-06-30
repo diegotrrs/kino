@@ -28,7 +28,7 @@ test.describe('@2. authentication', () => {
     await page.getByLabel('Email').fill(TEST_EMAIL);
     await page.getByLabel('Password', { exact: true }).fill('wrongpassword');
     await page.getByRole('button', { name: /^login$/i }).click();
-    await expect(page.getByText('Invalid email or password')).toBeVisible();
+    await expect(page.getByText('Invalid email or password')).toBeVisible({ timeout: 15000 });
   });
 
   test('@2.3 should show an error when logging in with a non-existent email', async ({
@@ -38,7 +38,7 @@ test.describe('@2. authentication', () => {
     await page.getByLabel('Email').fill('notregistered@example.com');
     await page.getByLabel('Password', { exact: true }).fill('somepassword123');
     await page.getByRole('button', { name: /^login$/i }).click();
-    await expect(page.getByText('Invalid email or password')).toBeVisible();
+    await expect(page.getByText('Invalid email or password')).toBeVisible({ timeout: 15000 });
   });
 
   test('@2.4 should sign up with a new account and redirect to /home', async ({

@@ -69,6 +69,9 @@ docker logs kino-postgres
 
 # Remove the container (deletes all data)
 docker rm -f kino-postgres
+
+# Kill the process runnint at the 8000 port
+lsof -ti :8000 | xargs kill -9
 ```
 
 #### Query the database via command line
@@ -81,12 +84,12 @@ docker exec -it kino-postgres psql -U postgres -d kino
 
 Common psql commands:
 
-| Command | Description |
-|---------|-------------|
-| `\dt` | List all tables |
-| `\d events` | Describe the events table |
-| `SELECT * FROM events;` | Query all events |
-| `\q` | Exit psql |
+| Command                 | Description               |
+| ----------------------- | ------------------------- |
+| `\dt`                   | List all tables           |
+| `\d events`             | Describe the events table |
+| `SELECT * FROM events;` | Query all events          |
+| `\q`                    | Exit psql                 |
 
 ### 4. Set up pgAdmin (GUI Database Client)
 
@@ -192,19 +195,19 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 ## Commands
 
-| Command | Description |
-|---|---|
-| `uvicorn app.main:app --reload` | Start the development server |
-| `pytest tests/unit` | Run unit tests |
-| `pytest tests/unit -v` | Run unit tests with verbose output |
-| `pytest tests/unit --cov=app` | Run unit tests with coverage report |
-| `pytest tests/integration` | Run integration tests (requires PostgreSQL) |
-| `pytest tests/integration -v` | Run integration tests with verbose output |
-| `pytest` | Run all tests |
-| `make check` | Run unit tests and integration tests |
-| `ruff check app/` | Check for lint errors |
-| `ruff check --fix app/` | Auto-fix lint errors |
-| `ruff format app/` | Format code |
+| Command                         | Description                                 |
+| ------------------------------- | ------------------------------------------- |
+| `uvicorn app.main:app --reload` | Start the development server                |
+| `pytest tests/unit`             | Run unit tests                              |
+| `pytest tests/unit -v`          | Run unit tests with verbose output          |
+| `pytest tests/unit --cov=app`   | Run unit tests with coverage report         |
+| `pytest tests/integration`      | Run integration tests (requires PostgreSQL) |
+| `pytest tests/integration -v`   | Run integration tests with verbose output   |
+| `pytest`                        | Run all tests                               |
+| `make check`                    | Run unit tests and integration tests        |
+| `ruff check app/`               | Check for lint errors                       |
+| `ruff check --fix app/`         | Auto-fix lint errors                        |
+| `ruff format app/`              | Format code                                 |
 
 ## Linting & Formatting
 
@@ -230,19 +233,19 @@ Once the server is running, interactive API documentation is available at:
 
 ## API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/` | Welcome message |
-| GET | `/health` | Health check |
-| GET | `/api/events` | List all events |
-| GET | `/api/events/{id}` | Get event by ID |
-| POST | `/api/events` | Create a new event |
-| PATCH | `/api/events/{id}` | Update an event |
-| DELETE | `/api/events/{id}` | Delete an event |
+| Method | Endpoint           | Description        |
+| ------ | ------------------ | ------------------ |
+| GET    | `/`                | Welcome message    |
+| GET    | `/health`          | Health check       |
+| GET    | `/api/events`      | List all events    |
+| GET    | `/api/events/{id}` | Get event by ID    |
+| POST   | `/api/events`      | Create a new event |
+| PATCH  | `/api/events/{id}` | Update an event    |
+| DELETE | `/api/events/{id}` | Delete an event    |
 
 ## Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
+| Variable       | Description                  | Default                                              |
+| -------------- | ---------------------------- | ---------------------------------------------------- |
 | `DATABASE_URL` | PostgreSQL connection string | `postgresql://postgres:postgres@localhost:5432/kino` |
-| `DEBUG` | Enable debug mode | `false` |
+| `DEBUG`        | Enable debug mode            | `false`                                              |
