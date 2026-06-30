@@ -188,6 +188,7 @@
     "adding": "Adding...",
     "labelPlaceholder": "e.g. Coffee",
     "amountPlaceholder": "0.00",
-    "deleteCost": "Delete cost"
+    "deleteCost": "Delete cost",
+    "viewExpenses": "View Expenses"
   }
 }

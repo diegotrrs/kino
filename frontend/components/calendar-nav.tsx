@@ -31,9 +31,10 @@ import {
   ChevronRight,
   ChevronsUpDown
 }                       from 'lucide-react';
-import { useEvents }    from '@/context/events-context';
-import { PlusIcon }     from 'lucide-react';
-import { useState }     from 'react';
+import { TripCostSummary } from '@/components/calendars/trip-cost-summary';
+import { useEvents }       from '@/context/events-context';
+import { PlusIcon }        from 'lucide-react';
+import { useState }        from 'react';
 
 type CalendarNavProps = {
   calendarRef: calendarRef;
@@ -62,7 +63,12 @@ const CalendarNav = ({
   const [monthSelectOpen, setMonthSelectOpen] = useState(false);
 
   return (
-    <div className='flex flex-wrap min-w-full justify-center gap-3 px-10 '>
+    <div className='flex min-w-full items-center px-10'>
+      {/* Left spacer — mirrors right column to keep centre content truly centred */}
+      <div className='flex-1' />
+
+      {/* Centre: date navigation + Add Event */}
+      <div className='flex items-center gap-3'>
       <div className='flex flex-row space-x-1'>
         {/* Navigate to previous date interval */}
 
@@ -205,8 +211,7 @@ const CalendarNav = ({
         </Button>
       </div>
 
-      {!readOnly && (
-        <div className='flex flex-wrap gap-3 justify-center'>
+        {!readOnly && (
           <Button
             className='w-24 md:w-28 text-xs md:text-sm'
             variant='default'
@@ -215,8 +220,13 @@ const CalendarNav = ({
             <PlusIcon className='md:h-5 md:w-5 h-3 w-3' />
             <p>Add Event</p>
           </Button>
-        </div>
-      )}
+        )}
+      </div>
+
+      {/* Right: trip cost pill */}
+      <div className='flex-1 flex justify-end'>
+        <TripCostSummary />
+      </div>
     </div>
   );
 }

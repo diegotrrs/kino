@@ -188,6 +188,7 @@
     "adding": "Añadiendo...",
     "labelPlaceholder": "p. ej. Café",
     "amountPlaceholder": "0,00",
-    "deleteCost": "Eliminar gasto"
+    "deleteCost": "Eliminar gasto",
+    "viewExpenses": "Ver gastos"
   }
 }

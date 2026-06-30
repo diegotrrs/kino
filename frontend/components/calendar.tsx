@@ -96,6 +96,8 @@ const Calendar = () => {
       backgroundColor: info.event.backgroundColor,
       start: newStart,
       end: newEnd,
+      links: storedEvent?.links,
+      costs: storedEvent?.costs,
     };
 
     if (calendarId !== undefined) {
@@ -110,10 +112,9 @@ const Calendar = () => {
           color: info.event.backgroundColor,
         });
       } catch (e) {
-        console.log('heeeyy')
-        console.log(e);
+        console.error(e);
         info.revert();
-        toast({ variant: 'destructive', title: 'Failed to save eventx' });
+        toast({ variant: 'destructive', title: 'Failed to save event' });
         return;
       }
     }

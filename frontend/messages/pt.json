@@ -188,6 +188,7 @@
     "adding": "Adicionando...",
     "labelPlaceholder": "ex. Café",
     "amountPlaceholder": "0,00",
-    "deleteCost": "Remover despesa"
+    "deleteCost": "Remover despesa",
+    "viewExpenses": "Ver despesas"
   }
 }

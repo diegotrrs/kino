@@ -188,6 +188,7 @@
     "adding": "Wird hinzugefügt...",
     "labelPlaceholder": "z. B. Kaffee",
     "amountPlaceholder": "0,00",
-    "deleteCost": "Kosten löschen"
+    "deleteCost": "Kosten löschen",
+    "viewExpenses": "Ausgaben anzeigen"
   }
 }
