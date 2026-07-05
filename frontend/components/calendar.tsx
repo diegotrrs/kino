@@ -48,12 +48,12 @@ type DayRenderProps = {
 };
 
 const Calendar = () => {
-  const { events, calendarId, readOnly, addEvent, deleteEvent, setEventAddOpen, setEventEditOpen } =
+  const { events, calendarId, initialDate, readOnly, addEvent, deleteEvent, setEventAddOpen, setEventEditOpen } =
     useEvents();
   const { toast } = useToast();
 
   const calendarRef = useRef<FullCalendar | null>(null);
-  const [viewedDate, setViewedDate] = useState(new Date());
+  const [viewedDate, setViewedDate] = useState(initialDate ?? new Date());
   const [selectedStart, setSelectedStart] = useState(new Date());
   const [selectedEnd, setSelectedEnd] = useState(new Date());
   const [selectedOldEvent, setSelectedOldEvent] = useState<
@@ -274,6 +274,7 @@ const Calendar = () => {
               listPlugin,
             ]}
             initialView='dayGridMonth'
+            initialDate={initialDate}
             headerToolbar={false}
             slotMinTime={calendarEarliestTime}
             slotMaxTime={calendarLatestTime}

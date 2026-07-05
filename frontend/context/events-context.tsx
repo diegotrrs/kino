@@ -6,6 +6,7 @@ import React, { createContext, ReactNode, useContext, useState } from 'react';
 type EventsContextType = {
   calendarId?: number;
   calendarUuid?: string;
+  initialDate?: Date;
   readOnly: boolean;
   preferredCurrency: string;
   events: CalendarEvent[];
@@ -40,6 +41,7 @@ type EventsProviderProps = {
   children: ReactNode;
   calendarId?: number;
   calendarUuid?: string;
+  initialDate?: Date;
   serverEvents?: CalendarEvent[];
   serverCalendarExpenses?: CalendarExpense[];
   readOnly?: boolean;
@@ -50,6 +52,7 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
   children,
   calendarId,
   calendarUuid,
+  initialDate,
   serverEvents,
   serverCalendarExpenses,
   readOnly = false,
@@ -100,6 +103,7 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
       value={{
         calendarId,
         calendarUuid,
+        initialDate,
         readOnly,
         preferredCurrency,
         events,
