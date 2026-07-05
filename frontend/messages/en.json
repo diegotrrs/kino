@@ -121,7 +121,11 @@
   },
   "events": {
     "title": "Events",
-    "subtitle": "Manage your events — create, view, and delete."
+    "subtitle": "Manage your events — create, view, and delete.",
+    "empty": "No events yet",
+    "emptyHint": "Create your first event to get started.",
+    "expenseCount": "{count, plural, one {# expense} other {# expenses}}",
+    "linkCount": "{count, plural, one {# link} other {# links}}"
   },
   "feedback": {
     "title": "Feedback",

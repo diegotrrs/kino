@@ -121,7 +121,11 @@
   },
   "events": {
     "title": "Eventos",
-    "subtitle": "Gerencie os seus eventos — crie, visualize e elimine."
+    "subtitle": "Gerencie os seus eventos — crie, visualize e elimine.",
+    "empty": "Nenhum evento ainda",
+    "emptyHint": "Crie o seu primeiro evento para começar.",
+    "expenseCount": "{count, plural, one {# despesa} other {# despesas}}",
+    "linkCount": "{count, plural, one {# link} other {# links}}"
   },
   "feedback": {
     "title": "Feedback",

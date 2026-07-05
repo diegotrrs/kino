@@ -121,7 +121,11 @@
   },
   "events": {
     "title": "Veranstaltungen",
-    "subtitle": "Verwalte deine Veranstaltungen — erstellen, ansehen und löschen."
+    "subtitle": "Verwalte deine Veranstaltungen — erstellen, ansehen und löschen.",
+    "empty": "Noch keine Veranstaltungen",
+    "emptyHint": "Erstelle deine erste Veranstaltung, um loszulegen.",
+    "expenseCount": "{count, plural, one {# Ausgabe} other {# Ausgaben}}",
+    "linkCount": "{count, plural, one {# Link} other {# Links}}"
   },
   "feedback": {
     "title": "Feedback",
