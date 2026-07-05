@@ -70,6 +70,7 @@ class EventUpdate(BaseModel):
 class EventResponse(EventBase):
     id: int
     uuid: UUID
+    calendar_uuid: UUID
     created_at: datetime
     updated_at: datetime | None = None
     links: list[EventLinkResponse] = []

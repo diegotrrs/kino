@@ -25,6 +25,9 @@ async function getEvents(): Promise<Event[]> {
 }
 
 export default async function EventsPage() {
+  const cookieStore = await cookies();
+  const preferredCurrency = cookieStore.get('currency')?.value ?? 'GBP';
+
   const [events, t] = await Promise.all([
     getEvents(),
     getTranslations('events'),
@@ -47,7 +50,7 @@ export default async function EventsPage() {
           </div>
 
           <Separator />
-          <EventList events={events} />
+          <EventList events={events} preferredCurrency={preferredCurrency} />
         </div>
       </div>
     </div>

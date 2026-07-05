@@ -11,6 +11,7 @@ const makeEvent = (
   id,
   uuid: `uuid-${id}`,
   calendar_id: 1,
+  calendar_uuid: 'calendar-uuid-1',
   title,
   description: null,
   date,

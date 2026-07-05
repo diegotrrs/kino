@@ -38,12 +38,13 @@ def get_event(db: connection, event_id: int) -> dict | None:
     with db.cursor() as cur:
         cur.execute(
             f"""
-            SELECT e.*, {_LINKS_AGG}, {_EXPENSES_AGG}
+            SELECT e.*, c.uuid AS calendar_uuid, {_LINKS_AGG}, {_EXPENSES_AGG}
             FROM events e
+            JOIN calendars c ON c.id = e.calendar_id
             LEFT JOIN event_links el ON el.event_id = e.id
             LEFT JOIN event_expenses ec ON ec.event_id = e.id
             WHERE e.id = %s
-            GROUP BY e.id
+            GROUP BY e.id, c.uuid
             """,
             (event_id,),
         )
@@ -54,11 +55,12 @@ def get_events(db: connection, skip: int = 0, limit: int = 100) -> list[dict]:
     with db.cursor() as cur:
         cur.execute(
             f"""
-            SELECT e.*, {_LINKS_AGG}, {_EXPENSES_AGG}
+            SELECT e.*, c.uuid AS calendar_uuid, {_LINKS_AGG}, {_EXPENSES_AGG}
             FROM events e
+            JOIN calendars c ON c.id = e.calendar_id
             LEFT JOIN event_links el ON el.event_id = e.id
             LEFT JOIN event_expenses ec ON ec.event_id = e.id
-            GROUP BY e.id
+            GROUP BY e.id, c.uuid
             ORDER BY e.date, e.start_time
             OFFSET %s LIMIT %s
             """,
@@ -73,12 +75,13 @@ def get_events_by_calendar(
     with db.cursor() as cur:
         cur.execute(
             f"""
-            SELECT e.*, {_LINKS_AGG}, {_EXPENSES_AGG}
+            SELECT e.*, c.uuid AS calendar_uuid, {_LINKS_AGG}, {_EXPENSES_AGG}
             FROM events e
+            JOIN calendars c ON c.id = e.calendar_id
             LEFT JOIN event_links el ON el.event_id = e.id
             LEFT JOIN event_expenses ec ON ec.event_id = e.id
             WHERE e.calendar_id = %s
-            GROUP BY e.id
+            GROUP BY e.id, c.uuid
             ORDER BY e.date, e.start_time
             OFFSET %s LIMIT %s
             """,
@@ -92,13 +95,18 @@ def create_event(db: connection, event: EventCreate) -> dict:
     with db.cursor() as cur:
         cur.execute(
             """
-            INSERT INTO events
-                (calendar_id, title, description, date, start_time,
-                 end_date, end_time, location, color)
-            VALUES
-                (%(calendar_id)s, %(title)s, %(description)s, %(date)s,
-                 %(start_time)s, %(end_date)s, %(end_time)s, %(location)s, %(color)s)
-            RETURNING *
+            WITH new_event AS (
+                INSERT INTO events
+                    (calendar_id, title, description, date, start_time,
+                     end_date, end_time, location, color)
+                VALUES
+                    (%(calendar_id)s, %(title)s, %(description)s, %(date)s,
+                     %(start_time)s, %(end_date)s, %(end_time)s, %(location)s, %(color)s)
+                RETURNING *
+            )
+            SELECT ne.*, c.uuid AS calendar_uuid
+            FROM new_event ne
+            JOIN calendars c ON c.id = ne.calendar_id
             """,
             data,
         )

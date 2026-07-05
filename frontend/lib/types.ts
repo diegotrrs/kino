@@ -47,6 +47,7 @@ export interface Event {
   id: number;
   uuid: string;
   calendar_id: number;
+  calendar_uuid: string;
   title: string;
   description: string | null;
   date: string;
