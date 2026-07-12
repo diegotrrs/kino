@@ -20,8 +20,8 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.describe('@3. calendars', () => {
-  test('@3.1 should display the My Calendars page', async ({ page }) => {
-    await page.goto('/calendars');
+  test('@3.1 should display calendars on the home page', async ({ page }) => {
+    await page.goto('/home');
     await expect(
       page.getByRole('heading', { name: 'My Calendars' })
     ).toBeVisible();
@@ -34,7 +34,7 @@ test.describe('@3. calendars', () => {
     await page.goto('/calendars/create');
     await page.getByLabel('Name').fill(name);
     await page.getByRole('button', { name: /^create$/i }).click();
-    await page.waitForURL('/calendars');
+    await page.waitForURL('/home');
     await expect(page.getByRole('link', { name })).toBeVisible();
   });
 
@@ -45,7 +45,7 @@ test.describe('@3. calendars', () => {
     const name = `Open Calendar ${Date.now()}`;
     const token = await getToken(request);
     const uuid = await createCalendar(request, token, name);
-    await page.goto('/calendars');
+    await page.goto('/home');
     await page.getByText(name).click();
     await expect(page).toHaveURL(new RegExp(`/calendars/${uuid}`));
     await expect(page.getByRole('heading', { name })).toBeVisible();
@@ -77,13 +77,13 @@ test.describe('@3. calendars', () => {
     const name = `Delete Calendar ${Date.now()}`;
     const token = await getToken(request);
     await createCalendar(request, token, name);
-    await page.goto('/calendars');
+    await page.goto('/home');
     await expect(page.getByText(name)).toBeVisible();
     const row = page.getByRole('link', { name }).locator('..');
     await row.getByRole('button', { name: /options/i }).click();
     await page.getByRole('menuitem', { name: /delete/i }).click();
     await page.getByRole('button', { name: /^delete$/i }).click();
-    await page.waitForURL('/calendars');
+    await page.waitForURL('/home');
     await expect(page.getByRole('link', { name })).not.toBeVisible();
   });
 
@@ -130,7 +130,7 @@ test.describe('@3. calendars', () => {
       .click();
     await page.waitForLoadState('networkidle');
     await expect(page.getByText(name)).not.toBeVisible();
-    await page.goto('/calendars');
+    await page.goto('/home');
     await expect(page.getByText(name)).toBeVisible();
   });
 

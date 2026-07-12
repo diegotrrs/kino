@@ -91,13 +91,10 @@ const getCalendarExpenses = async (calendarUuid: string, token: string | null): 
 
 const CalendarPage = async ({
   params,
-  searchParams,
 }: {
   params: Promise<{ uuid: string }>;
-  searchParams: Promise<{ from?: string }>;
 }) => {
   const { uuid } = await params;
-  const { from } = await searchParams;
   const backHref = '/home';
 
   const token = await getToken();

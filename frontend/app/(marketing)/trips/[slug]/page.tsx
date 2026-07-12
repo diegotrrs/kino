@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react';
 import { getTranslations }   from 'next-intl/server';
 import Image                 from 'next/image';
 import Link                  from 'next/link';
+import { TripMapWrapper }    from '@/components/trips/trip-map-wrapper';
 import { notFound }          from 'next/navigation';
 import { getTripBySlug, TRIPS } from '../trips-data';
 
@@ -87,6 +88,22 @@ const TripPage = async ({
             fill
             className='object-cover'
           />
+        </div>
+
+        {trip.map && (
+          <div className='mt-10 space-y-3'>
+            <h2 className='text-xl font-semibold tracking-tight'>{t('suggestedRoute')}</h2>
+            <TripMapWrapper data={trip.map} />
+          </div>
+        )}
+
+        <div className='flex justify-center mt-10'>
+          <Button size='lg' asChild>
+            <Link href={`/calendars/create?name=${encodeURIComponent(`${trip.title}: ${trip.subtitle}`)}`}>
+              {t('planTrip', { title: trip.title })}
+              <ArrowRight className='ml-2 h-4 w-4' />
+            </Link>
+          </Button>
         </div>
       </div>
     </div>

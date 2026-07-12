@@ -90,10 +90,10 @@ test.describe('@2. authentication', () => {
     ).toBeVisible();
   });
 
-  test('@2.7 should redirect an unauthenticated user to /login when accessing /calendars', async ({
+  test('@2.7 should redirect an unauthenticated user to /login when accessing /home', async ({
     page,
   }) => {
-    await page.goto('/calendars');
+    await page.goto('/home');
     await expect(page).toHaveURL('/login');
   });
 

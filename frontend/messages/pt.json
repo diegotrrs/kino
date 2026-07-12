@@ -57,7 +57,8 @@
     },
     "trips": {
       "back": "Voltar ao início",
-      "planTrip": "Planeia a tua viagem a {title}"
+      "planTrip": "Planeia a tua viagem a {title}",
+      "suggestedRoute": "Rota sugerida"
     }
   },
   "auth": {

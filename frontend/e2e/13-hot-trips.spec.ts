@@ -77,7 +77,7 @@ test.describe('@13. hot trips', () => {
     // The start date picker should be present
     await expect(page.getByText(/start date/i)).toBeVisible();
     await page.getByRole('button', { name: /^create$/i }).click();
-    await page.waitForURL('/calendars');
+    await page.waitForURL('/home');
     await expect(page.getByRole('link', { name })).toBeVisible();
   });
 });

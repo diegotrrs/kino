@@ -57,7 +57,8 @@
     },
     "trips": {
       "back": "Back to Home",
-      "planTrip": "Plan your trip to {title}"
+      "planTrip": "Plan your trip to {title}",
+      "suggestedRoute": "Suggested route"
     }
   },
   "auth": {
