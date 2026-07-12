@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -7,11 +7,13 @@ from pydantic import BaseModel
 class CalendarCreate(BaseModel):
     name: str
     created_by: int = 0
+    start_date: date | None = None
 
 
 class CalendarUpdate(BaseModel):
     name: str | None = None
     is_public: bool | None = None
+    start_date: date | None = None
 
 
 class CalendarFavouriteUpdate(BaseModel):
@@ -24,6 +26,7 @@ class CalendarResponse(BaseModel):
     name: str
     is_public: bool = False
     created_by: int
+    start_date: date
     created_at: datetime
     updated_at: datetime | None = None
     is_favourite: bool = False

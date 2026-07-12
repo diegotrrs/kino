@@ -26,6 +26,30 @@ class TestCreateCalendar:
         assert body["role"] == "owner"
         assert body["is_favourite"] is False
         assert body["is_public"] is False
+        assert "start_date" in body
+        track_calendar(body["id"])
+
+    def test_start_date_defaults_to_today(self, client, owner_headers, track_calendar):
+        from datetime import date
+        res = client.post(
+            "/api/calendars/", json={"name": "No Date Trip"}, headers=owner_headers
+        )
+
+        assert res.status_code == 201
+        body = res.json()
+        assert body["start_date"] == date.today().isoformat()
+        track_calendar(body["id"])
+
+    def test_start_date_can_be_set_on_create(self, client, owner_headers, track_calendar):
+        res = client.post(
+            "/api/calendars/",
+            json={"name": "Japan Trip", "start_date": "2027-03-15"},
+            headers=owner_headers,
+        )
+
+        assert res.status_code == 201
+        body = res.json()
+        assert body["start_date"] == "2027-03-15"
         track_calendar(body["id"])
 
     def test_requires_auth(self, client):
@@ -110,6 +134,16 @@ class TestUpdateCalendar:
 
         assert res.status_code == 200
         assert res.json()["is_public"] is True
+
+    def test_owner_can_update_start_date(self, client, calendar, owner_headers):
+        res = client.patch(
+            f"/api/calendars/{calendar['uuid']}",
+            json={"start_date": "2028-06-01"},
+            headers=owner_headers,
+        )
+
+        assert res.status_code == 200
+        assert res.json()["start_date"] == "2028-06-01"
 
     def test_non_owner_cannot_update(self, client, calendar, other_headers):
         res = client.patch(

@@ -1,4 +1,5 @@
 import CalendarNoSSR      from '@/components/calendar-no-ssr';
+import { HotTripsCarousel } from '@/components/home/hot-trips-carousel';
 import { Button }         from '@/components/ui/button';
 import { EventsProvider } from '@/context/events-context';
 import {
@@ -131,6 +132,20 @@ const Home = async () => {
               </li>
             ))}
           </ol>
+        </div>
+      </section>
+
+      <section className='px-6 py-20'>
+        <div className='mx-auto max-w-5xl'>
+          <div className='mb-8 text-center'>
+            <h2 className='text-2xl font-bold tracking-tight md:text-3xl'>
+              {t('hotTripsTitle')}
+            </h2>
+            <p className='mt-2 text-muted-foreground'>
+              {t('hotTripsSubtitle')}
+            </p>
+          </div>
+          <HotTripsCarousel />
         </div>
       </section>
 

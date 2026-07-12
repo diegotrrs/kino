@@ -51,7 +51,13 @@
       "ctaTitle": "¿Listo para planificar tus vacaciones perfectas?",
       "ctaSubtitle": "Únete a Kino Calendarios y empieza a organizar cada viaje — desde un fin de semana largo hasta una vuelta al mundo.",
       "ctaButton": "Crea tu cuenta gratis",
-      "footer": "© {year} Kino Calendarios. Hecho para viajeros."
+      "footer": "© {year} Kino Calendarios. Hecho para viajeros.",
+      "hotTripsTitle": "Viajes de Moda",
+      "hotTripsSubtitle": "Inspírate para tu próxima aventura y empieza a planificar hoy."
+    },
+    "trips": {
+      "back": "Volver al inicio",
+      "planTrip": "Planifica tu viaje a {title}"
     }
   },
   "auth": {
@@ -108,7 +114,8 @@
     "newCalendar": "Nuevo Calendario",
     "myFavourites": "Mis Favoritos",
     "noFavourites": "Sin favoritos todavía",
-    "noFavouritesHint": "Abre un calendario y pulsa la estrella para marcarlo como favorito."
+    "noFavouritesHint": "Abre un calendario y pulsa la estrella para marcarlo como favorito.",
+    "hotTrips": "Viajes de Moda"
   },
   "calendars": {
     "title": "Mis Calendarios",
@@ -117,7 +124,9 @@
   },
   "createCalendar": {
     "title": "Crear Calendario",
-    "subtitle": "Configura un nuevo calendario."
+    "subtitle": "Configura un nuevo calendario.",
+    "startDate": "Fecha de inicio",
+    "startDatePlaceholder": "Elige una fecha"
   },
   "events": {
     "title": "Eventos",

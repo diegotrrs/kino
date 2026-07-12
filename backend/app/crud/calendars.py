@@ -67,8 +67,8 @@ def create_calendar(db: connection, calendar: CalendarCreate) -> dict:
     with db.cursor() as cur:
         cur.execute(
             """
-            INSERT INTO calendars (name, created_by)
-            VALUES (%(name)s, %(created_by)s)
+            INSERT INTO calendars (name, created_by, start_date)
+            VALUES (%(name)s, %(created_by)s, COALESCE(%(start_date)s, CURRENT_DATE))
             RETURNING *
             """,
             data,
@@ -109,8 +109,8 @@ def delete_calendar(db: connection, calendar_id: int) -> bool:
         # Archive calendar first (check it exists)
         cur.execute(
             """
-            INSERT INTO deleted_calendars (id, uuid, name, created_by, created_at, updated_at)
-            SELECT id, uuid, name, created_by, created_at, updated_at
+            INSERT INTO deleted_calendars (id, uuid, name, created_by, start_date, created_at, updated_at)
+            SELECT id, uuid, name, created_by, start_date, created_at, updated_at
             FROM calendars WHERE id = %s
             """,
             (calendar_id,),
@@ -153,8 +153,8 @@ def restore_calendar(db: connection, calendar_id: int, user_id: int) -> bool:
         # Restore calendar row first (events FK requires parent to exist)
         cur.execute(
             """
-            INSERT INTO calendars (id, uuid, name, created_by, created_at, updated_at)
-            SELECT id, uuid, name, created_by, created_at, updated_at
+            INSERT INTO calendars (id, uuid, name, created_by, start_date, created_at, updated_at)
+            SELECT id, uuid, name, created_by, COALESCE(start_date, created_at::date), created_at, updated_at
             FROM deleted_calendars WHERE id = %s AND created_by = %s
             """,
             (calendar_id, user_id),
@@ -248,8 +248,8 @@ def get_calendars_by_user(db: connection, user_id: int) -> list[dict]:
     with db.cursor() as cur:
         cur.execute(
             """
-            SELECT c.id, c.uuid, c.name, c.is_public, c.created_by, c.created_at, c.updated_at,
-                   cu.is_favourite, cu.role
+            SELECT c.id, c.uuid, c.name, c.is_public, c.created_by, c.start_date,
+                   c.created_at, c.updated_at, cu.is_favourite, cu.role
             FROM calendars c
             JOIN calendar_users cu ON c.id = cu.calendar_id
             WHERE cu.user_id = %s
@@ -264,8 +264,8 @@ def get_favourite_calendars(db: connection, user_id: int) -> list[dict]:
     with db.cursor() as cur:
         cur.execute(
             """
-            SELECT c.id, c.uuid, c.name, c.is_public, c.created_by, c.created_at, c.updated_at,
-                   cu.is_favourite, cu.role
+            SELECT c.id, c.uuid, c.name, c.is_public, c.created_by, c.start_date,
+                   c.created_at, c.updated_at, cu.is_favourite, cu.role
             FROM calendars c
             JOIN calendar_users cu ON c.id = cu.calendar_id
             WHERE cu.user_id = %s AND cu.is_favourite = TRUE

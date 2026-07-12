@@ -2,7 +2,7 @@ import { CalendarDeleteButton } from '@/components/calendars/calendar-delete-but
 import { CalendarEditForm }     from '@/components/calendars/calendar-edit-form';
 import { CalendarMembers }      from '@/components/calendars/calendar-members';
 import { Separator }            from '@/components/ui/separator';
-import type { CalendarMember }  from '@/lib/types';
+import type { Calendar, CalendarMember } from '@/lib/types';
 import { cookies }              from 'next/headers';
 import { redirect }             from 'next/navigation';
 
@@ -38,7 +38,7 @@ const EditCalendarPage = async ({
   if (calendarRes.status === 401) redirect('/login');
   if (!calendarRes.ok) redirect('/calendars');
 
-  const calendar: { name: string; is_public: boolean } = await calendarRes.json();
+  const calendar: Calendar = await calendarRes.json();
   const members: CalendarMember[] = membersRes.ok ? await membersRes.json() : [];
   const currentUserId = getCurrentUserId(token);
 
@@ -57,7 +57,12 @@ const EditCalendarPage = async ({
 
           <Separator />
 
-          <CalendarEditForm calendarUuid={uuid} currentName={calendar.name} isPublic={calendar.is_public} />
+          <CalendarEditForm
+            calendarUuid={uuid}
+            currentName={calendar.name}
+            isPublic={calendar.is_public}
+            currentStartDate={calendar.start_date}
+          />
 
           <Separator />
 

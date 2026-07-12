@@ -51,7 +51,13 @@
       "ctaTitle": "Bereit, deinen perfekten Urlaub zu planen?",
       "ctaSubtitle": "Tritt Kino Kalender bei und organisiere jede Reise — vom langen Wochenende bis zur Weltreise.",
       "ctaButton": "Erstelle dein kostenloses Konto",
-      "footer": "© {year} Kino Kalender. Für Reisende gemacht."
+      "footer": "© {year} Kino Kalender. Für Reisende gemacht.",
+      "hotTripsTitle": "Beliebte Reisen",
+      "hotTripsSubtitle": "Lass dich für dein nächstes Abenteuer inspirieren und fang heute mit der Planung an."
+    },
+    "trips": {
+      "back": "Zurück zur Startseite",
+      "planTrip": "Plane deine Reise nach {title}"
     }
   },
   "auth": {
@@ -108,7 +114,8 @@
     "newCalendar": "Neuer Kalender",
     "myFavourites": "Meine Favoriten",
     "noFavourites": "Noch keine Favoriten",
-    "noFavouritesHint": "Öffne einen Kalender und drücke den Stern, um ihn als Favorit zu markieren."
+    "noFavouritesHint": "Öffne einen Kalender und drücke den Stern, um ihn als Favorit zu markieren.",
+    "hotTrips": "Beliebte Reisen"
   },
   "calendars": {
     "title": "Meine Kalender",
@@ -117,7 +124,9 @@
   },
   "createCalendar": {
     "title": "Kalender erstellen",
-    "subtitle": "Richte einen neuen Kalender ein."
+    "subtitle": "Richte einen neuen Kalender ein.",
+    "startDate": "Startdatum",
+    "startDatePlaceholder": "Datum wählen"
   },
   "events": {
     "title": "Veranstaltungen",

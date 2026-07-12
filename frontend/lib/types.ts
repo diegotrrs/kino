@@ -4,6 +4,7 @@ export interface Calendar {
   name: string;
   is_public: boolean;
   created_by: number;
+  start_date: string;
   created_at: string;
   updated_at: string | null;
   is_favourite: boolean;

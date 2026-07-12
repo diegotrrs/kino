@@ -1,12 +1,13 @@
-import { CalendarList }  from '@/components/calendars/calendar-list';
-import { Button }        from '@/components/ui/button';
-import { Separator }     from '@/components/ui/separator';
-import type { Calendar } from '@/lib/types';
-import { PlusIcon }      from 'lucide-react';
-import { getTranslations } from 'next-intl/server';
-import { cookies }       from 'next/headers';
-import Link              from 'next/link';
-import { redirect }      from 'next/navigation';
+import { CalendarList }      from '@/components/calendars/calendar-list';
+import { HotTripsCarousel }  from '@/components/home/hot-trips-carousel';
+import { Button }            from '@/components/ui/button';
+import { Separator }         from '@/components/ui/separator';
+import type { Calendar }     from '@/lib/types';
+import { PlusIcon }          from 'lucide-react';
+import { getTranslations }   from 'next-intl/server';
+import { cookies }           from 'next/headers';
+import Link                  from 'next/link';
+import { redirect }          from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
@@ -84,6 +85,13 @@ const HomePage = async () => {
           ) : (
             <CalendarList calendars={favourites} from='home' />
           )}
+        </section>
+
+        <section className='space-y-3'>
+          <h3 className='text-base font-semibold tracking-tight'>
+            {t('hotTrips')}
+          </h3>
+          <HotTripsCarousel />
         </section>
 
       </div>

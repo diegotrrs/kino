@@ -45,11 +45,14 @@ export const restoreCalendar = async (uuid: string) => {
   revalidatePath('/settings/deleted-calendars');
 };
 
-export const createCalendar = async (name: string) => {
+export const createCalendar = async (name: string, startDate?: string) => {
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
 
   if (!token) redirect('/login');
+
+  const body: Record<string, string> = { name };
+  if (startDate) body['start_date'] = startDate;
 
   const res = await fetch(`${API_BASE_URL}/api/calendars/`, {
     method: 'POST',
@@ -57,7 +60,7 @@ export const createCalendar = async (name: string) => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ name }),
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {
@@ -97,11 +100,14 @@ export const updateCalendarVisibility = async (
   revalidatePath('/home');
 };
 
-export const updateCalendar = async (uuid: string, name: string) => {
+export const updateCalendar = async (uuid: string, name: string, startDate?: string) => {
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
 
   if (!token) redirect('/login');
+
+  const body: Record<string, string> = { name };
+  if (startDate) body['start_date'] = startDate;
 
   const res = await fetch(`${API_BASE_URL}/api/calendars/${uuid}`, {
     method: 'PATCH',
@@ -109,7 +115,7 @@ export const updateCalendar = async (uuid: string, name: string) => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ name }),
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {

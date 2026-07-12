@@ -145,10 +145,7 @@ const CalendarPage = async ({
   ]);
   const events = dbEvents.map(dbEventToCalendarEvent);
 
-  const latestEvent = dbEvents.length > 0
-    ? dbEvents.reduce((latest, ev) => (ev.date > latest.date ? ev : latest))
-    : null;
-  const initialDate = latestEvent ? new Date(`${latestEvent.date}T12:00:00`) : undefined;
+  const initialDate = new Date(`${calendar.start_date}T12:00:00`);
 
   const readOnly = !isAuthenticated;
   const canShare = calendar.role === 'owner' || calendar.role === 'editor';

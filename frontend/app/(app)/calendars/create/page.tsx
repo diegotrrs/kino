@@ -2,8 +2,15 @@ import { CalendarCreateForm } from '@/components/calendars/calendar-create-form'
 import { Separator }          from '@/components/ui/separator';
 import { getTranslations }    from 'next-intl/server';
 
-const CreateCalendarPage = async () => {
-  const t = await getTranslations('createCalendar');
+const CreateCalendarPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ name?: string }>;
+}) => {
+  const [t, { name }] = await Promise.all([
+    getTranslations('createCalendar'),
+    searchParams,
+  ]);
 
   return (
     <div className='py-4'>
@@ -20,7 +27,7 @@ const CreateCalendarPage = async () => {
 
           <Separator />
 
-          <CalendarCreateForm />
+          <CalendarCreateForm initialName={name} />
         </div>
       </div>
     </div>
