@@ -28,7 +28,7 @@ const MarketingLayout = async ({
           <nav className='flex items-center gap-2'>
             {loggedIn ? (
               <Button asChild size='sm'>
-                <Link href='/calendars'>{t('goToApp')}</Link>
+                <Link href='/home'>{t('goToApp')}</Link>
               </Button>
             ) : (
               <>

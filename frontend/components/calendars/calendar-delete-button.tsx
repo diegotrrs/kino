@@ -60,7 +60,7 @@ export const CalendarDeleteButton = ({
         await deleteCalendar(calendarUuid);
         setDeleteDialogOpen(false);
         toast({ title: 'Calendar deleted' });
-        router.push('/calendars');
+        router.push('/home');
       } catch {
         toast({ variant: 'destructive', title: 'Failed to delete calendar' });
       }

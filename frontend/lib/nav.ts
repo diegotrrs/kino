@@ -1,6 +1,5 @@
 import {
   CalendarPlus,
-  CalendarRange,
   House,
   ListChecks,
   Settings,
@@ -22,13 +21,6 @@ export const navItems: NavItem[] = [
     icon: House,
     section: 'main',
     testId: 'nav-home',
-  },
-  {
-    labelKey: 'myCalendars',
-    href: '/calendars',
-    icon: CalendarRange,
-    section: 'main',
-    testId: 'nav-my-calendars',
   },
   {
     labelKey: 'createCalendar',

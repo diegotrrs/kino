@@ -36,7 +36,7 @@ const EditCalendarPage = async ({
   ]);
 
   if (calendarRes.status === 401) redirect('/login');
-  if (!calendarRes.ok) redirect('/calendars');
+  if (!calendarRes.ok) redirect('/home');
 
   const calendar: Calendar = await calendarRes.json();
   const members: CalendarMember[] = membersRes.ok ? await membersRes.json() : [];

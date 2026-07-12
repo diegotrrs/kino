@@ -48,7 +48,7 @@ export const CalendarCreateForm = ({ initialName }: CalendarCreateFormProps) => 
         const startDate = data.startDate ? format(data.startDate, 'yyyy-MM-dd') : undefined;
         await createCalendar(data.name, startDate);
         toast({ title: 'Calendar created!' });
-        router.push('/calendars');
+        router.push('/home');
       } catch {
         toast({ variant: 'destructive', title: 'Failed to create calendar' });
       }

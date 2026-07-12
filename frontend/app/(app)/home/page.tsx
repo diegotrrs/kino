@@ -35,7 +35,7 @@ const HomePage = async () => {
   ]);
   const calendars = await getCalendars(token);
 
-  const favourites = calendars.filter((c) => c.is_favourite);
+  const sorted = [...calendars].sort((a, b) => Number(b.is_favourite) - Number(a.is_favourite));
 
   return (
     <div className='py-4'>
@@ -66,25 +66,7 @@ const HomePage = async () => {
               </Button>
             )}
           </div>
-          <CalendarList calendars={calendars} from='home' />
-        </section>
-
-        <section className='space-y-3'>
-          <h3 className='text-base font-semibold tracking-tight'>
-            {t('myFavourites')}
-          </h3>
-          {favourites.length === 0 ? (
-            <div className='flex flex-col items-center justify-center rounded-xl border border-dashed p-10 text-center'>
-              <p className='text-sm font-medium text-muted-foreground'>
-                {t('noFavourites')}
-              </p>
-              <p className='text-xs text-muted-foreground mt-1'>
-                {t('noFavouritesHint')}
-              </p>
-            </div>
-          ) : (
-            <CalendarList calendars={favourites} from='home' />
-          )}
+          <CalendarList calendars={sorted} from='home' />
         </section>
 
         <section className='space-y-3'>

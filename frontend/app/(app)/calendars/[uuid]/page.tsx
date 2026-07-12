@@ -98,7 +98,7 @@ const CalendarPage = async ({
 }) => {
   const { uuid } = await params;
   const { from } = await searchParams;
-  const backHref = from === 'home' ? '/home' : '/calendars';
+  const backHref = '/home';
 
   const token = await getToken();
   const isAuthenticated = !!token;
@@ -136,7 +136,7 @@ const CalendarPage = async ({
   }
 
   if (status !== 200) {
-    redirect(isAuthenticated ? '/calendars' : '/login');
+    redirect(isAuthenticated ? '/home' : '/login');
   }
 
   const [dbEvents, calendarExpenses] = await Promise.all([
