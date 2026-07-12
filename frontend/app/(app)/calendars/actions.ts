@@ -1,5 +1,6 @@
 'use server';
-import type { CalendarExpense } from '@/lib/types';
+import type { CalendarExpense, CreateEventInput } from '@/lib/types';
+import { getTripBySlug }        from '@/app/(marketing)/trips/trips-data';
 import { revalidatePath }       from 'next/cache';
 import { cookies }              from 'next/headers';
 import { redirect }             from 'next/navigation';
@@ -45,10 +46,47 @@ export const restoreCalendar = async (uuid: string) => {
   revalidatePath('/settings/deleted-calendars');
 };
 
+const STOP_COLORS = [
+  '#16a34a', '#2563eb', '#7c3aed', '#ea580c', '#0891b2', '#dc2626', '#ca8a04',
+];
+
+const addDays = (date: string, n: number): string => {
+  const d = new Date(`${date}T12:00:00`);
+  d.setDate(d.getDate() + n);
+  return d.toISOString().split('T')[0];
+};
+
+const buildTripEvents = (
+  stops: Array<{ pinId: number; place: string; days: number; travelFromPrev?: string }>,
+  calendarId: number,
+  startDate: string,
+): CreateEventInput[] => {
+  const events: CreateEventInput[] = [];
+  let offset = 0;
+  for (let i = 0; i < stops.length; i++) {
+    const stop = stops[i];
+    const date    = addDays(startDate, offset);
+    const endDate = stop.days > 1 ? addDays(startDate, offset + stop.days - 1) : null;
+    events.push({
+      calendar_id: calendarId,
+      title:       stop.place,
+      date,
+      end_date:    endDate ?? undefined,
+      start_time:  stop.travelFromPrev ? '14:00' : '09:00',
+      end_time:    '20:00',
+      color:       STOP_COLORS[i % STOP_COLORS.length],
+      description: stop.travelFromPrev
+        ? `Travel from ${stops[i - 1].place}: ${stop.travelFromPrev}`
+        : null,
+    });
+    offset += stop.days;
+  }
+  return events;
+};
+
 export const createCalendar = async (name: string, startDate?: string) => {
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
-
   if (!token) redirect('/login');
 
   const body: Record<string, string> = { name };
@@ -56,10 +94,7 @@ export const createCalendar = async (name: string, startDate?: string) => {
 
   const res = await fetch(`${API_BASE_URL}/api/calendars/`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     body: JSON.stringify(body),
   });
 
@@ -68,8 +103,46 @@ export const createCalendar = async (name: string, startDate?: string) => {
     throw new Error(`Failed to create calendar: ${text}`);
   }
 
-  revalidatePath('/calendars');
   revalidatePath('/home');
+};
+
+export const createTripCalendar = async (
+  tripSlug: string,
+  name: string,
+  startDate: string,
+): Promise<{ uuid: string }> => {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token')?.value;
+  if (!token) redirect('/login');
+
+  const body = { name, start_date: startDate };
+  const calRes = await fetch(`${API_BASE_URL}/api/calendars/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify(body),
+  });
+  if (!calRes.ok) {
+    const text = await calRes.text();
+    throw new Error(`Failed to create calendar: ${text}`);
+  }
+  const calendar: { id: number; uuid: string } = await calRes.json();
+
+  const trip = getTripBySlug(tripSlug);
+  if (trip?.map?.stops?.length) {
+    const events = buildTripEvents(trip.map.stops, calendar.id, startDate);
+    await Promise.all(
+      events.map((ev) =>
+        fetch(`${API_BASE_URL}/api/events/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify(ev),
+        }),
+      ),
+    );
+  }
+
+  revalidatePath('/home');
+  return { uuid: calendar.uuid };
 };
 
 export const updateCalendarVisibility = async (

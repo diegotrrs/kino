@@ -74,7 +74,7 @@ const TripPage = async ({
 
         <div className='flex justify-center mb-8'>
           <Button size='lg' asChild>
-            <Link href={`/calendars/create?name=${encodeURIComponent(`${trip.title}: ${trip.subtitle}`)}`}>
+            <Link href={`/calendars/create?trip=${trip.slug}`}>
               {t('planTrip', { title: trip.title })}
               <ArrowRight className='ml-2 h-4 w-4' />
             </Link>
@@ -99,7 +99,7 @@ const TripPage = async ({
 
         <div className='flex justify-center mt-10'>
           <Button size='lg' asChild>
-            <Link href={`/calendars/create?name=${encodeURIComponent(`${trip.title}: ${trip.subtitle}`)}`}>
+            <Link href={`/calendars/create?trip=${trip.slug}`}>
               {t('planTrip', { title: trip.title })}
               <ArrowRight className='ml-2 h-4 w-4' />
             </Link>

@@ -1,16 +1,20 @@
 import { CalendarCreateForm } from '@/components/calendars/calendar-create-form';
+import { getTripBySlug }      from '@/app/(marketing)/trips/trips-data';
 import { Separator }          from '@/components/ui/separator';
 import { getTranslations }    from 'next-intl/server';
 
 const CreateCalendarPage = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ name?: string }>;
+  searchParams: Promise<{ name?: string; trip?: string }>;
 }) => {
-  const [t, { name }] = await Promise.all([
+  const [t, { name, trip: tripSlug }] = await Promise.all([
     getTranslations('createCalendar'),
     searchParams,
   ]);
+
+  const trip = tripSlug ? getTripBySlug(tripSlug) : undefined;
+  const initialName = name ?? (trip ? `${trip.title}: ${trip.subtitle}` : undefined);
 
   return (
     <div className='py-4'>
@@ -27,7 +31,7 @@ const CreateCalendarPage = async ({
 
           <Separator />
 
-          <CalendarCreateForm initialName={name} />
+          <CalendarCreateForm initialName={initialName} tripSlug={tripSlug} />
         </div>
       </div>
     </div>

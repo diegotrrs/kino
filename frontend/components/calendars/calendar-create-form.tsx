@@ -1,5 +1,5 @@
 'use client';
-import { createCalendar }  from '@/app/(app)/calendars/actions';
+import { createCalendar, createTripCalendar } from '@/app/(app)/calendars/actions';
 import { DateTimePicker }  from '@/components/date-picker';
 import { Button }          from '@/components/ui/button';
 import {
@@ -29,9 +29,10 @@ type FormValues = z.infer<typeof schema>;
 
 type CalendarCreateFormProps = {
   initialName?: string;
+  tripSlug?: string;
 }
 
-export const CalendarCreateForm = ({ initialName }: CalendarCreateFormProps) => {
+export const CalendarCreateForm = ({ initialName, tripSlug }: CalendarCreateFormProps) => {
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
   const router = useRouter();
@@ -45,10 +46,19 @@ export const CalendarCreateForm = ({ initialName }: CalendarCreateFormProps) => 
   const onSubmit = (data: FormValues) => {
     startTransition(async () => {
       try {
-        const startDate = data.startDate ? format(data.startDate, 'yyyy-MM-dd') : undefined;
-        await createCalendar(data.name, startDate);
-        toast({ title: 'Calendar created!' });
-        router.push('/home');
+        const startDate = data.startDate
+          ? format(data.startDate, 'yyyy-MM-dd')
+          : format(new Date(), 'yyyy-MM-dd');
+
+        if (tripSlug) {
+          const { uuid } = await createTripCalendar(tripSlug, data.name, startDate);
+          toast({ title: 'Calendar created with your itinerary!' });
+          router.push(`/calendars/${uuid}`);
+        } else {
+          await createCalendar(data.name, data.startDate ? startDate : undefined);
+          toast({ title: 'Calendar created!' });
+          router.push('/home');
+        }
       } catch {
         toast({ variant: 'destructive', title: 'Failed to create calendar' });
       }

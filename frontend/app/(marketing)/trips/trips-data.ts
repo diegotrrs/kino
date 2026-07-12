@@ -4,11 +4,19 @@ export type TripPin = {
   coords: [number, number];
 };
 
+export type TripStop = {
+  pinId: number;
+  place: string;
+  days: number;
+  travelFromPrev?: string; // e.g. "Drive (~3h)", "Fly (~1h)"
+};
+
 export type TripMapData = {
   center: [number, number];
   zoom: number;
   pins: TripPin[];
   itinerary: string;
+  stops: TripStop[];
 };
 
 export type Trip = {
@@ -51,6 +59,13 @@ export const TRIPS: Trip[] = [
         'Drive to Monteverde for 2 nights to zip-line through the cloud forest canopy (3). ' +
         'Drop south to Manuel Antonio for 3 nights of beach and wildlife (4). ' +
         'Finish with 3 nights in Tamarindo on the Nicoya Peninsula before flying home (5).',
+      stops: [
+        { pinId: 1, place: 'San José',         days: 2 },
+        { pinId: 2, place: 'Arenal Volcano',   days: 3, travelFromPrev: 'Drive (~3h)' },
+        { pinId: 3, place: 'Monteverde',        days: 2, travelFromPrev: 'Drive (~3h via Tilarán)' },
+        { pinId: 4, place: 'Manuel Antonio',   days: 3, travelFromPrev: 'Drive (~4h)' },
+        { pinId: 5, place: 'Tamarindo',         days: 3, travelFromPrev: 'Drive (~3h)' },
+      ],
     },
   },
   {
@@ -83,6 +98,13 @@ export const TRIPS: Trip[] = [
         'Stop at the ancient ruins of Butrint before reaching the coast (4). ' +
         'Spend 3 nights in Sarandë, day-tripping along the Riviera beaches (5). ' +
         'Head north along the coast to Vlorë for your final night before flying home (6).',
+      stops: [
+        { pinId: 1, place: 'Tirana',      days: 2 },
+        { pinId: 2, place: 'Berat',        days: 2, travelFromPrev: 'Drive (~2h)' },
+        { pinId: 3, place: 'Gjirokastër', days: 2, travelFromPrev: 'Drive (~2h)' },
+        { pinId: 4, place: 'Sarandë',     days: 3, travelFromPrev: 'Drive (~1h, includes Butrint day trip)' },
+        { pinId: 5, place: 'Vlorë',       days: 2, travelFromPrev: 'Drive (~2h)' },
+      ],
     },
   },
   {
@@ -113,6 +135,13 @@ export const TRIPS: Trip[] = [
         'Relax on the shores of Lake Kivu in Gisenyi for a night (3). ' +
         'Drive south to Nyungwe Forest for chimpanzee tracking and canopy walks (4). ' +
         'Return east to Akagera for a classic Big Five safari before flying out of Kigali (5).',
+      stops: [
+        { pinId: 1, place: 'Kigali',                 days: 2 },
+        { pinId: 2, place: 'Volcanoes National Park', days: 2, travelFromPrev: 'Drive (~2.5h)' },
+        { pinId: 3, place: 'Gisenyi / Lake Kivu',     days: 2, travelFromPrev: 'Drive (~1h)' },
+        { pinId: 4, place: 'Nyungwe Forest',          days: 2, travelFromPrev: 'Drive (~5h)' },
+        { pinId: 5, place: 'Akagera National Park',   days: 2, travelFromPrev: 'Drive via Kigali (~6h)' },
+      ],
     },
   },
   {
@@ -145,6 +174,14 @@ export const TRIPS: Trip[] = [
         'Stop in Aberystwyth on the coast for a night and the funicular railway (4). ' +
         'Enter Snowdonia and hike or take the mountain railway to the Snowdon summit (5). ' +
         'Finish in Caernarfon to walk the most impressive castle in Wales (6).',
+      stops: [
+        { pinId: 1, place: 'Cardiff',             days: 2 },
+        { pinId: 2, place: 'Pembrokeshire',        days: 3, travelFromPrev: 'Drive (~2h)' },
+        { pinId: 3, place: 'Brecon Beacons',       days: 2, travelFromPrev: 'Drive (~1.5h)' },
+        { pinId: 4, place: 'Aberystwyth',          days: 1, travelFromPrev: 'Drive (~2h)' },
+        { pinId: 5, place: 'Snowdonia',            days: 2, travelFromPrev: 'Drive (~1.5h)' },
+        { pinId: 6, place: 'Caernarfon',           days: 1, travelFromPrev: 'Drive (~30min)' },
+      ],
     },
   },
   {
@@ -177,6 +214,14 @@ export const TRIPS: Trip[] = [
         'Visit the famous Thursday market in Chichicastenango for textiles and crafts (4). ' +
         'Head north to the turquoise limestone pools of Semuc Champey (5). ' +
         'End with 2 nights at the jungle ruins of Tikal, the greatest Mayan city (6).',
+      stops: [
+        { pinId: 1, place: 'Guatemala City', days: 1 },
+        { pinId: 2, place: 'Antigua',         days: 3, travelFromPrev: 'Drive (~1h)' },
+        { pinId: 3, place: 'Lake Atitlán',    days: 3, travelFromPrev: 'Drive (~1.5h)' },
+        { pinId: 4, place: 'Chichicastenango', days: 1, travelFromPrev: 'Drive (~1h)' },
+        { pinId: 5, place: 'Semuc Champey',   days: 2, travelFromPrev: 'Drive (~5h)' },
+        { pinId: 6, place: 'Tikal',           days: 2, travelFromPrev: 'Drive (~5h)' },
+      ],
     },
   },
   {
@@ -209,6 +254,14 @@ export const TRIPS: Trip[] = [
         'Fly south to Koh Samui for 3 nights of beaches and waterfall hikes (4). ' +
         'Take the ferry to Koh Phangan for 2 nights of diving and quieter coves (5). ' +
         'Finish with 3 nights in Phuket before your flight home (6).',
+      stops: [
+        { pinId: 1, place: 'Bangkok',      days: 3 },
+        { pinId: 2, place: 'Chiang Mai',   days: 3, travelFromPrev: 'Fly (~1h)' },
+        { pinId: 3, place: 'Pai',           days: 2, travelFromPrev: 'Bus (~3h)' },
+        { pinId: 4, place: 'Koh Samui',    days: 3, travelFromPrev: 'Fly from Chiang Mai (~1h)' },
+        { pinId: 5, place: 'Koh Phangan',  days: 2, travelFromPrev: 'Ferry (~30min)' },
+        { pinId: 6, place: 'Phuket',        days: 3, travelFromPrev: 'Ferry & bus (~4h)' },
+      ],
     },
   },
   {
@@ -243,6 +296,15 @@ export const TRIPS: Trip[] = [
         'Make a half-day trip to Nara to feed the sacred deer and see Tōdai-ji (5). ' +
         'End in Osaka for 2 nights of street food and vibrant nightlife (6). ' +
         'Optional final stop: Hiroshima and Miyajima island, a day-trip from Osaka (7).',
+      stops: [
+        { pinId: 1, place: 'Tokyo',     days: 4 },
+        { pinId: 2, place: 'Nikkō',     days: 1, travelFromPrev: 'Train (~2h)' },
+        { pinId: 3, place: 'Hakone',    days: 1, travelFromPrev: 'Train (~2h via Odawara)' },
+        { pinId: 4, place: 'Kyoto',     days: 4, travelFromPrev: 'Shinkansen (~2.5h)' },
+        { pinId: 5, place: 'Nara',      days: 1, travelFromPrev: 'Train (~45min)' },
+        { pinId: 6, place: 'Osaka',     days: 2, travelFromPrev: 'Train (~30min)' },
+        { pinId: 7, place: 'Hiroshima', days: 1, travelFromPrev: 'Shinkansen (~45min)' },
+      ],
     },
   },
   {
@@ -275,6 +337,14 @@ export const TRIPS: Trip[] = [
         'Drive the Eagle Road up to Geirangerfjord, one of Norway\'s most dramatic viewpoints (4). ' +
         'Continue to the art nouveau city of Ålesund for a night on the Atlantic coast (5). ' +
         'Fly north to Tromsø for 2 nights under the midnight sun — or Northern Lights in winter (6).',
+      stops: [
+        { pinId: 1, place: 'Oslo',           days: 2 },
+        { pinId: 2, place: 'Bergen',         days: 2, travelFromPrev: 'Train (~6.5h, Bergen Railway)' },
+        { pinId: 3, place: 'Flåm',           days: 2, travelFromPrev: 'Bus & ferry (~4h, Norway in a Nutshell)' },
+        { pinId: 4, place: 'Geirangerfjord', days: 1, travelFromPrev: 'Bus & ferry (~4h)' },
+        { pinId: 5, place: 'Ålesund',        days: 2, travelFromPrev: 'Drive (~1.5h)' },
+        { pinId: 6, place: 'Tromsø',         days: 2, travelFromPrev: 'Fly (~1.5h)' },
+      ],
     },
   },
 ];

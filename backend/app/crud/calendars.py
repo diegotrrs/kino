@@ -1,3 +1,5 @@
+from datetime import date
+
 from psycopg2.extensions import connection
 
 from ..schemas.calendar import CalendarCreate, CalendarUpdate
@@ -64,11 +66,13 @@ def get_calendars(db: connection, skip: int = 0, limit: int = 100) -> list[dict]
 
 def create_calendar(db: connection, calendar: CalendarCreate) -> dict:
     data = calendar.model_dump()
+    if data['start_date'] is None:
+        data['start_date'] = date.today()
     with db.cursor() as cur:
         cur.execute(
             """
             INSERT INTO calendars (name, created_by, start_date)
-            VALUES (%(name)s, %(created_by)s, COALESCE(%(start_date)s, CURRENT_DATE))
+            VALUES (%(name)s, %(created_by)s, %(start_date)s)
             RETURNING *
             """,
             data,
