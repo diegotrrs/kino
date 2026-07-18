@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* FullCalendar toolbar — prevent I-beam cursor on non-interactive text */
+.fc-toolbar-title,
+.fc .fc-col-header-cell-cushion {
+  cursor: default;
+  user-select: none;
+}
+
 @theme {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
