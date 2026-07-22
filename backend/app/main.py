@@ -2,7 +2,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import get_settings
-from .routers import auth_router, calendars_router, events_router, feedback_router, users_router, wishlist_router
+from .routers import (
+    auth_router,
+    calendars_router,
+    events_router,
+    feedback_router,
+    users_router,
+    wishlist_router,
+)
 
 app = FastAPI(
     title="Kino API",
@@ -13,7 +20,9 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://*.vercel.app",
+        "https://www.kinocalendars.com",
+        "https://kinocalendars.com",
+        "https://kino-lake.vercel.app",
         "http://localhost:3000",
     ],
     allow_credentials=True,
@@ -30,6 +39,7 @@ app.include_router(wishlist_router, prefix="/api/wishlist", tags=["wishlist"])
 
 if get_settings().env != "production":
     from .routers.test import router as test_router
+
     app.include_router(test_router, prefix="/api/test", tags=["test"])
 
 

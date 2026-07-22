@@ -106,12 +106,12 @@ export const EventDateRangePicker = ({ start, end, onChange, disabled, defaultMu
 
   const handleStartTimeChange = (newDate: Date | undefined) => {
     if (!newDate) return;
-    onChange(newDate, isMultiDay ? end : setDatePart(end, newDate));
+    onChange(newDate, isMultiDay ? end : setDatePart(end, newDate), false);
   };
 
   const handleEndTimeChange = (newDate: Date | undefined) => {
     if (!newDate) return;
-    onChange(start, isMultiDay ? newDate : setDatePart(newDate, start));
+    onChange(start, isMultiDay ? newDate : setDatePart(newDate, start), false);
   };
 
   return (
