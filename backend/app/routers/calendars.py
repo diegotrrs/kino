@@ -3,13 +3,10 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException
 from psycopg2.extensions import connection
 
-from ..auth import get_current_user, get_optional_user
-
 from .. import crud
+from ..auth import get_current_user, get_optional_user
 from ..database import get_db
 from ..email import send_calendar_invite_email
-
-logger = logging.getLogger(__name__)
 from ..schemas.calendar import (
     CalendarCreate,
     CalendarExpenseCreate,
@@ -22,8 +19,8 @@ from ..schemas.calendar import (
     CalendarUserAdd,
     DeletedCalendarResponse,
 )
-from ..schemas.user import UserResponse
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 

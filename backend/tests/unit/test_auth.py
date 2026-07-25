@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from unittest.mock import MagicMock, Mock, patch
 
 import jwt
@@ -104,14 +104,14 @@ class TestCreateAccessToken:
     @patch("app.auth.get_settings")
     def test_expiration_matches_configured_minutes(self, mock_get_settings):
         mock_get_settings.return_value = mock_settings(expiration_minutes=60)
-        before = datetime.now(timezone.utc)
+        before = datetime.now(UTC)
         token = create_access_token({"sub": "42"})
-        after = datetime.now(timezone.utc)
+        after = datetime.now(UTC)
 
         payload = jwt.decode(
             token, "test-secret-key-long-enough-for-hs256", algorithms=["HS256"]
         )
-        exp = datetime.fromtimestamp(payload["exp"], tz=timezone.utc)
+        exp = datetime.fromtimestamp(payload["exp"], tz=UTC)
 
         assert before + timedelta(minutes=59) < exp < after + timedelta(minutes=61)
 

@@ -1,18 +1,19 @@
 from fastapi import APIRouter, Depends, HTTPException
 from psycopg2.extensions import connection
 
-from ..auth import get_current_user, get_optional_user
 from .. import crud
+from ..auth import get_current_user, get_optional_user
 from ..database import get_db
 from ..schemas.event import (
+    EventCreate,
     EventExpenseCreate,
     EventExpenseResponse,
-    EventCreate,
     EventLinkCreate,
     EventLinkResponse,
     EventResponse,
     EventUpdate,
 )
+
 router = APIRouter()
 
 

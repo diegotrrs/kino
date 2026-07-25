@@ -1,2 +1,2 @@
 check:
-	pytest tests/unit && pytest tests/integration
+	ruff check . && pytest tests/unit && pytest tests/integration

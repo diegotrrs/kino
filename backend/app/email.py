@@ -19,7 +19,8 @@ def send_password_reset_email(to_email: str, reset_url: str) -> None:
                 "<p>Hi,</p>"
                 "<p>We received a request to reset your Kino password.</p>"
                 f'<p><a href="{reset_url}">Click here to reset your password</a></p>'
-                "<p>This link expires in 1 hour. If you did not request a password reset, you can ignore this email.</p>"
+                "<p>This link expires in 1 hour. If you did not request a password reset, "
+                "you can ignore this email.</p>"
             ),
         }
     )

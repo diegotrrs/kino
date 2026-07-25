@@ -3,8 +3,8 @@ import re
 from fastapi import APIRouter, Depends, HTTPException
 from psycopg2.extensions import connection
 
-from ..auth import get_current_user
 from .. import crud
+from ..auth import get_current_user
 from ..database import get_db
 from ..schemas.auth import MessageResponse
 from ..schemas.feedback import FeedbackCreate, WishlistItemResponse

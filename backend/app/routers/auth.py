@@ -1,6 +1,6 @@
 import logging
 import secrets
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from psycopg2.extensions import connection
@@ -72,7 +72,7 @@ def forgot_password(body: ForgotPasswordRequest, db: connection = Depends(get_db
         return MessageResponse(message=_GENERIC_MESSAGE)
 
     token = secrets.token_hex(32)
-    expires_at = datetime.now(timezone.utc) + timedelta(hours=1)
+    expires_at = datetime.now(UTC) + timedelta(hours=1)
     create_password_reset_token(db, user["id"], token, expires_at)
 
     settings = get_settings()
@@ -93,8 +93,8 @@ def reset_password(body: ResetPasswordRequest, db: connection = Depends(get_db))
 
     expires_at = row["expires_at"]
     if expires_at.tzinfo is None:
-        expires_at = expires_at.replace(tzinfo=timezone.utc)
-    if datetime.now(timezone.utc) > expires_at:
+        expires_at = expires_at.replace(tzinfo=UTC)
+    if datetime.now(UTC) > expires_at:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired token")
 
     new_hash = hash_password(body.password)

@@ -1,7 +1,7 @@
 import logging
 import time
 
-from fastapi import APIRouter, Header, HTTPException, status, Depends
+from fastapi import APIRouter, Depends, Header, HTTPException, status
 from psycopg2.extensions import connection
 
 from ..config import get_settings

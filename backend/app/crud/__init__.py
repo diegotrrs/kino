@@ -1,9 +1,3 @@
-from .feedback import (
-    add_vote,
-    get_wishlist,
-    remove_vote,
-    submit_feedback,
-)
 from .calendars import (
     add_user_to_calendar,
     create_calendar,
@@ -36,6 +30,12 @@ from .events import (
     get_events,
     get_events_by_calendar,
     update_event,
+)
+from .feedback import (
+    add_vote,
+    get_wishlist,
+    remove_vote,
+    submit_feedback,
 )
 from .users import (
     create_password_reset_token,
