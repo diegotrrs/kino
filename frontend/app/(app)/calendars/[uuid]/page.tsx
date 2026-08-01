@@ -1,5 +1,4 @@
 import Calendar                    from '@/components/calendar-no-ssr';
-import { CalendarFavouriteButton } from '@/components/calendars/calendar-favourite-button';
 import { CalendarShareButton }     from '@/components/calendars/calendar-share-button';
 import { PrivateCalendarOverlay }  from '@/components/calendars/private-calendar-overlay';
 import { ReadOnlyBanner }          from '@/components/calendars/read-only-banner';
@@ -176,11 +175,6 @@ const CalendarPage = async ({
                     {calendar.name}
                   </h2>
 
-                  <CalendarFavouriteButton
-                    calendarUuid={String(calendar.uuid)}
-                    isFavourite={calendar.is_favourite}
-                    disabled={readOnly}
-                  />
                   {canShare && (
                     <CalendarShareButton
                       calendarUuid={String(calendar.uuid)}
