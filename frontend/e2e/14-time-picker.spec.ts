@@ -34,7 +34,7 @@ test.describe('@14. time picker', () => {
     await expect(page.getByText('Start time')).toBeVisible();
 
     // Type into the start time hour input
-    const startTimeInput = page.getByLabel('Start time').locator('input').first();
+    const startTimeInput = page.getByText('Start time', { exact: true }).locator('..').locator('input').first();
     await startTimeInput.click();
     await startTimeInput.press('1');
 
@@ -58,7 +58,7 @@ test.describe('@14. time picker', () => {
 
     await expect(page.getByText('End time')).toBeVisible();
 
-    const endTimeInput = page.getByLabel('End time').locator('input').first();
+    const endTimeInput = page.getByText('End time', { exact: true }).locator('..').locator('input').first();
     await endTimeInput.click();
     await endTimeInput.press('2');
 
@@ -89,7 +89,7 @@ test.describe('@14. time picker', () => {
 
     await expect(page.getByText('Start time')).toBeVisible();
 
-    const startTimeInput = page.getByLabel('Start time').locator('input').first();
+    const startTimeInput = page.getByText('Start time', { exact: true }).locator('..').locator('input').first();
     await startTimeInput.click();
     await startTimeInput.press('1');
 

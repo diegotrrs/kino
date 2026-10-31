@@ -70,8 +70,8 @@ test.describe('@12. events timeline', () => {
     await expect(page.getByText('Morning Flight')).toBeVisible({ timeout: 10000 });
     await expect(page.getByText('Hotel Check-in')).toBeVisible();
 
-    // The date header "Sat 20 Sep 2035" should appear exactly once
-    await expect(page.getByText(/sat 20 sep 2035/i)).toHaveCount(1);
+    // The date header "Thu 20 Sep 2035" should appear exactly once
+    await expect(page.getByText(/thu 20 sep 2035/i)).toHaveCount(1);
 
     await deleteCalendar(request, token, calendarUuid);
   });
@@ -93,8 +93,8 @@ test.describe('@12. events timeline', () => {
 
     await expect(page.getByText('Day One Event')).toBeVisible({ timeout: 10000 });
     await expect(page.getByText('Day Two Event')).toBeVisible();
-    await expect(page.getByText(/tue 1 oct 2035/i)).toBeVisible();
-    await expect(page.getByText(/wed 2 oct 2035/i)).toBeVisible();
+    await expect(page.getByText(/mon 1 oct 2035/i)).toBeVisible();
+    await expect(page.getByText(/tue 2 oct 2035/i)).toBeVisible();
 
     await deleteCalendar(request, token, calendarUuid);
   });
@@ -118,7 +118,7 @@ test.describe('@12. events timeline', () => {
 
     // Morning Tour (10:00) should appear before Evening Tour (10:00 default — both use same
     // default time 10:00 per createEvent helper, so just assert both appear in the same group)
-    await expect(page.getByText(/wed 5 nov 2035/i)).toHaveCount(1);
+    await expect(page.getByText(/mon 5 nov 2035/i)).toHaveCount(1);
 
     await deleteCalendar(request, token, calendarUuid);
   });
@@ -136,14 +136,12 @@ test.describe('@12. events timeline', () => {
     await page.goto('/events');
     await expect(page.getByText('Event To Delete')).toBeVisible({ timeout: 10000 });
 
-    // Scope delete button to the row containing this event's title
-    const row = page.getByText('Event To Delete').locator('../..');
-    await row.getByRole('button', { name: /delete/i }).click();
+    await page.getByRole('button', { name: 'Delete Event To Delete' }).click();
 
     // Confirm in the dialog
     await page.getByRole('button', { name: /^delete$/i }).click();
 
-    await expect(page.getByText('Event To Delete')).not.toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Event To Delete', { exact: true })).not.toBeVisible({ timeout: 10000 });
 
     await deleteCalendar(request, token, calendarUuid);
   });

@@ -37,13 +37,13 @@ test.describe('@13. hot trips', () => {
   test('@13.4 should show a destination page with back link and CTA', async ({ page }) => {
     await page.goto('/trips/japan');
     await expect(page.getByRole('link', { name: /back to home/i })).toBeVisible();
-    await expect(page.getByRole('link', { name: /plan your trip to japan/i })).toBeVisible();
+    await expect(page.getByRole('link', { name: /plan your trip to japan/i }).first()).toBeVisible();
   });
 
   test('@13.5 should pre-fill calendar name from destination CTA', async ({ page }) => {
     await login(page);
     await page.goto('/trips/japan');
-    await page.getByRole('link', { name: /plan your trip to japan/i }).click();
+    await page.getByRole('link', { name: /plan your trip to japan/i }).first().click();
     await expect(page).toHaveURL(/\/calendars\/create/);
     const nameInput = page.getByLabel('Name');
     await expect(nameInput).toHaveValue(/japan/i);

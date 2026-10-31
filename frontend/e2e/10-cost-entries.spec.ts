@@ -34,7 +34,7 @@ test.describe('@10. cost entries', () => {
     await createEvent(request, token, calendarId, 'Museum Visit', today);
 
     await page.goto(`/calendars/${calendarUuid}`);
-    await page.getByText('Museum Visit').first().click();
+    await page.locator('.fc').getByText('Museum Visit').click();
 
     await page.getByTestId('add-expense-trigger').click();
     await page.getByTestId('expense-label-input').fill('Coffee');
@@ -60,9 +60,9 @@ test.describe('@10. cost entries', () => {
     await createEventExpense(request, token, eventId, 'Ticket', 4.00, 'GBP');
 
     await page.goto(`/calendars/${calendarUuid}`);
-    await page.getByText('Day Trip').first().click();
+    await page.locator('.fc').getByText('Day Trip').click();
 
-    await expect(page.getByText('£6.50')).toBeVisible();
+    await expect(page.getByRole('alertdialog', { name: 'Edit event' }).getByText('£6.50')).toBeVisible();
 
     await deleteCalendar(request, token, calendarUuid);
   });
@@ -80,7 +80,7 @@ test.describe('@10. cost entries', () => {
     await createEventExpense(request, token, eventId, 'Sandwich', 5.00, 'GBP');
 
     await page.goto(`/calendars/${calendarUuid}`);
-    await page.getByText('Lunch').first().click();
+    await page.locator('.fc').getByText('Lunch').click();
 
     await expect(page.getByText('£5.00 Sandwich')).toBeVisible();
     await page.getByTestId('delete-expense-button').first().click();
@@ -107,8 +107,9 @@ test.describe('@10. cost entries', () => {
 
     await page.getByRole('button', { name: /add event/i }).last().click();
 
-    await expect(page.getByText('Event With Cost')).toBeVisible({ timeout: 10000 });
-    await page.getByText('Event With Cost').first().click();
+    const createdEvent = page.locator('.fc').getByText('Event With Cost');
+    await expect(createdEvent).toBeVisible({ timeout: 10000 });
+    await createdEvent.click();
 
     await expect(page.getByText('£3.00 Coffee')).toBeVisible();
 
@@ -129,7 +130,7 @@ test.describe('@10. cost entries', () => {
     await createEventExpense(request, token, eventId, 'Dinner', 45, 'EUR');
 
     await page.goto(`/calendars/${calendarUuid}`);
-    await page.getByText('Euro Trip').first().click();
+    await page.locator('.fc').getByText('Euro Trip').click();
 
     await expect(page.getByText(/£120\.00.*€45\.00/).first()).toBeVisible();
 
