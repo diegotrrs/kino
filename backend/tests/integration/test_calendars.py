@@ -55,8 +55,8 @@ class TestCreateCalendar:
     def test_requires_auth(self, client):
         res = client.post("/api/calendars/", json={"name": "My Trip"})
 
-        # FastAPI's HTTPBearer returns 403 when no Authorization header is present
-        assert res.status_code == 403
+        # FastAPI's HTTPBearer returns 401 when no Authorization header is present
+        assert res.status_code == 401
 
 
 # ---------------------------------------------------------------------------

@@ -218,3 +218,61 @@ logger = logging.getLogger(__name__)
 logger.info("User %s logged in", user_id)
 logger.exception("Failed to send email to %s", email)  # includes traceback
 ```
+
+---
+
+## 12. Testing
+
+### Unit vs integration
+
+| | Unit (`tests/unit`) | Integration (`tests/integration`) |
+|---|---|---|
+| Tests | Branching logic: permissions, validation, error mapping, token expiry, string building | That SQL does what it claims: joins, `ON CONFLICT`, soft delete/restore, cascades |
+| Database | None — patch `crud`, `get_settings`, `resend` | Real Postgres (`DATABASE_URL`) |
+| Runs in CI | Yes, with coverage | Locally via `make check` |
+
+Rule of thumb: **if a function has an `if`, it deserves a unit test; if it only has SQL, it deserves an integration test.** Don't unit-test SQL by asserting on query strings beyond what the function itself builds dynamically.
+
+### Router tests
+
+Routers are plain functions, so call them directly instead of going through HTTP:
+
+```python
+@patch("app.routers.events.crud")
+def test_non_member_cannot_delete_event(mock_crud, db, user):
+    mock_crud.get_event.return_value = {"id": 5, "calendar_id": 9}
+    mock_crud.get_user_role.return_value = None
+
+    with pytest.raises(HTTPException) as exc:
+        delete_event(event_id=5, db=db, current_user=user)
+
+    assert exc.value.status_code == 403
+    mock_crud.delete_event.assert_not_called()
+```
+
+- On every rejection path, **assert the mutating crud call was not made** — that is the security property, not the status code.
+- Use `pytest.mark.parametrize` for permission matrices (roles × handlers) instead of copy-pasting near-identical tests.
+
+### Fixtures and helpers
+
+- Shared fixtures (`user`, `db`) live in `tests/unit/conftest.py`.
+- Shared helpers (`make_mock_db`, `mock_settings`) live in `tests/unit/helpers.py`.
+- Integration fixtures live in `tests/conftest.py`.
+
+### Time
+
+Never depend on wall-clock time. Pin it with the `time_machine` fixture:
+
+```python
+@pytest.fixture(autouse=True)
+def _frozen_clock(self, time_machine):
+    time_machine.move_to(NOW, tick=False)
+```
+
+### Known bugs
+
+A bug that is understood but not yet fixed gets a test marked `@pytest.mark.xfail(strict=True, reason="Bug: …")`. It documents the expected behaviour, and `strict=True` turns it into a failure once the bug is fixed, so the marker gets removed.
+
+### Naming
+
+Group by unit under test with `class TestThing:` and name methods after the behaviour, not the implementation: `test_non_member_cannot_delete_event`, not `test_get_user_role_returns_none`.

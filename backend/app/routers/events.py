@@ -35,7 +35,7 @@ def list_events(
         return crud.get_events_by_calendar(db, calendar["id"], skip=skip, limit=limit)
     if current_user is None:
         raise HTTPException(status_code=401, detail="Authentication required")
-    return crud.get_events(db, skip=skip, limit=limit)
+    return crud.get_events(db, current_user["id"], skip=skip, limit=limit)
 
 
 @router.get("/{event_id}", response_model=EventResponse)

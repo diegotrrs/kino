@@ -62,7 +62,7 @@ class TestCreateEventLink:
             f"/api/events/{event['id']}/links",
             json={"url": "https://example.com"},
         )
-        assert res.status_code == 403
+        assert res.status_code == 401
 
     def test_returns_404_for_unknown_event(self, client, owner_headers):
         res = client.post(

@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 
 class CalendarCreate(BaseModel):
@@ -61,6 +61,13 @@ class CalendarExpenseCreate(BaseModel):
     label: str
     amount: float
     currency: str
+
+    @field_validator("amount")
+    @classmethod
+    def amount_must_be_positive(cls, v: float) -> float:
+        if v <= 0:
+            raise ValueError("amount must be greater than 0")
+        return v
 
 
 class CalendarExpenseResponse(BaseModel):

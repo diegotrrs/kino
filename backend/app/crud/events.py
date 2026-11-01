@@ -51,20 +51,22 @@ def get_event(db: connection, event_id: int) -> dict | None:
         return cur.fetchone()
 
 
-def get_events(db: connection, skip: int = 0, limit: int = 100) -> list[dict]:
+def get_events(db: connection, user_id: int, skip: int = 0, limit: int = 100) -> list[dict]:
+    """Events from every calendar the user is a member of."""
     with db.cursor() as cur:
         cur.execute(
             f"""
             SELECT e.*, c.uuid AS calendar_uuid, {_LINKS_AGG}, {_EXPENSES_AGG}
             FROM events e
             JOIN calendars c ON c.id = e.calendar_id
+            JOIN calendar_users cu ON cu.calendar_id = e.calendar_id AND cu.user_id = %s
             LEFT JOIN event_links el ON el.event_id = e.id
             LEFT JOIN event_expenses ec ON ec.event_id = e.id
             GROUP BY e.id, c.uuid
             ORDER BY e.date, e.start_time
             OFFSET %s LIMIT %s
             """,
-            (skip, limit),
+            (user_id, skip, limit),
         )
         return cur.fetchall()
 
