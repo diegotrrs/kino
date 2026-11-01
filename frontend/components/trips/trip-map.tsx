@@ -1,7 +1,12 @@
 'use client';
 import 'leaflet/dist/leaflet.css';
-import L               from 'leaflet';
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import L from 'leaflet';
+import {
+  MapContainer,
+  Marker,
+  Popup,
+  TileLayer
+}        from 'react-leaflet';
 
 export type TripPin = {
   id: number;
@@ -29,7 +34,7 @@ type Props = { data: TripMapData };
 
 export const TripMap = ({ data }: Props) => (
   <div className='space-y-4'>
-    <div className='rounded-xl overflow-hidden border' style={{ height: 380 }}>
+    <div className='rounded-md overflow-hidden border' style={{ height: 380 }}>
       <MapContainer
         center={data.center}
         zoom={data.zoom}

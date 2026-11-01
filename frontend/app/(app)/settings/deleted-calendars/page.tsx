@@ -1,7 +1,10 @@
 import { RestoreCalendarButton } from '@/components/calendars/restore-calendar-button';
 import { Separator }             from '@/components/ui/separator';
 import { ArrowLeft }             from 'lucide-react';
-import { getLocale, getTranslations } from 'next-intl/server';
+import {
+  getLocale,
+  getTranslations
+}                                from 'next-intl/server';
 import { cookies }               from 'next/headers';
 import Link                      from 'next/link';
 import { redirect }              from 'next/navigation';
@@ -50,7 +53,7 @@ const DeletedCalendarsPage = async () => {
               <ArrowLeft className='h-4 w-4' />
               {t('backTo')}
             </Link>
-            <h2 className='text-2xl font-semibold tracking-tight md:text-3xl'>
+            <h2 className='text-3xl font-extrabold tracking-tighter md:text-4xl'>
               {t('title')}
             </h2>
             <p className='text-xs md:text-sm font-medium text-muted-foreground'>

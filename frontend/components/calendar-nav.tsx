@@ -1,5 +1,6 @@
 'use client';
-import { Button }       from '@/components/ui/button';
+import { ExpensesSummary } from '@/components/calendars/expenses-summary';
+import { Button }          from '@/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -7,14 +8,15 @@ import {
   CommandInput,
   CommandItem,
   CommandList
-}                       from '@/components/ui/command';
-import { Input }        from '@/components/ui/input';
+}                          from '@/components/ui/command';
+import { Input }           from '@/components/ui/input';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger
-}                       from '@/components/ui/popover';
-import { cn }           from '@/lib/utils';
+}                          from '@/components/ui/popover';
+import { useEvents }       from '@/context/events-context';
+import { cn }              from '@/lib/utils';
 import {
   generateDaysInMonth,
   goNext,
@@ -22,17 +24,15 @@ import {
   handleDayChange,
   handleMonthChange,
   handleYearChange
-}                       from '@/utils/calendar-utils';
-import { months }       from '@/utils/data';
-import { calendarRef }  from '@/utils/data';
+}                          from '@/utils/calendar-utils';
+import { months }          from '@/utils/data';
+import { calendarRef }     from '@/utils/data';
 import {
   Check,
   ChevronLeft,
   ChevronRight,
   ChevronsUpDown
-}                       from 'lucide-react';
-import { ExpensesSummary } from '@/components/calendars/expenses-summary';
-import { useEvents }       from '@/context/events-context';
+}                          from 'lucide-react';
 import { PlusIcon }        from 'lucide-react';
 import { useState }        from 'react';
 
@@ -63,9 +63,9 @@ const CalendarNav = ({
   const [monthSelectOpen, setMonthSelectOpen] = useState(false);
 
   return (
-    <div className='flex min-w-full items-center px-10'>
+    <div className='flex min-w-full flex-wrap items-center justify-center gap-y-3 md:flex-nowrap md:px-10'>
       {/* Left spacer — mirrors right column to keep centre content truly centred */}
-      <div className='flex-1' />
+      <div className='hidden flex-1 md:block' />
 
       {/* Centre: date navigation + Add Event */}
       <div className='flex items-center gap-3'>
@@ -224,7 +224,7 @@ const CalendarNav = ({
       </div>
 
       {/* Right: trip cost pill */}
-      <div className='flex-1 flex justify-end'>
+      <div className='flex w-full justify-center md:w-auto md:flex-1 md:justify-end'>
         <ExpensesSummary />
       </div>
     </div>

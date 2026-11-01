@@ -228,5 +228,14 @@
     "sage": "Salvia",
     "plum": "Ciruela",
     "slate": "Pizarra"
+  },
+  "calendarList": {
+    "emptyTitle": "Aún no hay viajes. ¿Adónde primero?",
+    "emptyHint": "Crea un calendario y empieza a planear los días.",
+    "create": "Crear un calendario"
+  },
+  "postcard": {
+    "days": "{count} días",
+    "hot": "Top"
   }
 }

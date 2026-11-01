@@ -1,9 +1,9 @@
-import { FeedbackForm } from '@/components/feedback/feedback-form';
-import { Wishlist }     from '@/components/feedback/wishlist';
-import { Separator }    from '@/components/ui/separator';
+import { FeedbackForm }    from '@/components/feedback/feedback-form';
+import { Wishlist }        from '@/components/feedback/wishlist';
+import { Separator }       from '@/components/ui/separator';
 import { getTranslations } from 'next-intl/server';
-import { cookies }      from 'next/headers';
-import { redirect }     from 'next/navigation';
+import { cookies }         from 'next/headers';
+import { redirect }        from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
@@ -32,7 +32,7 @@ const FeedbackPage = async () => {
       <div className='w-full px-5 space-y-8'>
 
         <div className='space-y-1'>
-          <h2 className='text-2xl font-semibold tracking-tight md:text-3xl select-none cursor-default'>
+          <h2 className='text-3xl font-extrabold tracking-tighter md:text-4xl select-none cursor-default'>
             {t('title')}
           </h2>
           <p className='text-xs md:text-sm text-muted-foreground select-none cursor-default'>

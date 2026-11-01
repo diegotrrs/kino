@@ -1,11 +1,19 @@
-import { Button }             from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react';
-import { getTranslations }   from 'next-intl/server';
-import Image                 from 'next/image';
-import Link                  from 'next/link';
-import { TripMapWrapper }    from '@/components/trips/trip-map-wrapper';
-import { notFound }          from 'next/navigation';
-import { getTripBySlug, TRIPS } from '../trips-data';
+import { TripMapWrapper }  from '@/components/trips/trip-map-wrapper';
+import { Button }          from '@/components/ui/button';
+import { Stamp }           from '@/components/ui/stamp';
+import {
+  ArrowLeft,
+  ArrowRight,
+  ExternalLink
+}                          from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
+import Image               from 'next/image';
+import Link                from 'next/link';
+import { notFound }        from 'next/navigation';
+import {
+  getTripBySlug,
+  TRIPS
+}                          from '../trips-data';
 
 export const generateStaticParams = () =>
   TRIPS.map((trip) => ({ slug: trip.slug }));
@@ -19,7 +27,11 @@ const TripPage = async ({
   const trip = getTripBySlug(slug);
   if (!trip) notFound();
 
-  const t = await getTranslations('marketing.trips');
+  const [t, tPostcard] = await Promise.all([
+    getTranslations('marketing.trips'),
+    getTranslations('postcard'),
+  ]);
+  const tripDays = trip.map?.stops.reduce((total, stop) => total + stop.days, 0) ?? 0;
 
   return (
     <div className='flex flex-col'>
@@ -32,14 +44,19 @@ const TripPage = async ({
           {t('back')}
         </Link>
 
-        <div className='space-y-2 mb-6'>
-          <h1 className='text-3xl font-extrabold tracking-tight md:text-4xl'>
-            {trip.title}
-          </h1>
-          <p className='text-lg text-muted-foreground'>{trip.subtitle}</p>
+        <div className='mb-6 flex items-start justify-between gap-4'>
+          <div className='space-y-2'>
+            <h1 className='text-4xl font-extrabold tracking-tighter md:text-6xl'>
+              {trip.title}
+            </h1>
+            <p className='text-lg text-muted-foreground'>{trip.subtitle}</p>
+          </div>
+          {tripDays > 0 && (
+            <Stamp className='mt-2 shrink-0 text-xs'>{tPostcard('days', { count: tripDays })}</Stamp>
+          )}
         </div>
 
-        <div className='relative aspect-video w-full overflow-hidden rounded-xl mb-6'>
+        <div className='relative aspect-video w-full overflow-hidden rounded-md mb-6'>
           <Image
             src={trip.photos[0]}
             alt={trip.title}
@@ -63,7 +80,7 @@ const TripPage = async ({
           {trip.website.replace(/^https?:\/\//, '')}
         </a>
 
-        <div className='relative aspect-video w-full overflow-hidden rounded-xl mb-8'>
+        <div className='relative aspect-video w-full overflow-hidden rounded-md mb-8'>
           <Image
             src={trip.photos[1]}
             alt={`${trip.title} — 2`}
@@ -81,7 +98,7 @@ const TripPage = async ({
           </Button>
         </div>
 
-        <div className='relative aspect-video w-full overflow-hidden rounded-xl'>
+        <div className='relative aspect-video w-full overflow-hidden rounded-md'>
           <Image
             src={trip.photos[2]}
             alt={`${trip.title} — 3`}
@@ -92,7 +109,7 @@ const TripPage = async ({
 
         {trip.map && (
           <div className='mt-10 space-y-3'>
-            <h2 className='text-xl font-semibold tracking-tight'>{t('suggestedRoute')}</h2>
+            <h2 className='text-2xl font-extrabold tracking-tighter'>{t('suggestedRoute')}</h2>
             <TripMapWrapper data={trip.map} />
           </div>
         )}

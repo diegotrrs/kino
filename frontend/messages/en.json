@@ -228,5 +228,14 @@
     "sage": "Sage",
     "plum": "Plum",
     "slate": "Slate"
+  },
+  "calendarList": {
+    "emptyTitle": "No trips yet. Where to first?",
+    "emptyHint": "Create a calendar and start mapping out the days.",
+    "create": "Create a calendar"
+  },
+  "postcard": {
+    "days": "{count} days",
+    "hot": "Hot"
   }
 }

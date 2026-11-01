@@ -228,5 +228,14 @@
     "sage": "Sálvia",
     "plum": "Ameixa",
     "slate": "Ardósia"
+  },
+  "calendarList": {
+    "emptyTitle": "Ainda sem viagens. Para onde primeiro?",
+    "emptyHint": "Crie um calendário e comece a planear os dias.",
+    "create": "Criar um calendário"
+  },
+  "postcard": {
+    "days": "{count} dias",
+    "hot": "Top"
   }
 }

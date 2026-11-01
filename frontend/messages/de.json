@@ -228,5 +228,14 @@
     "sage": "Salbei",
     "plum": "Pflaume",
     "slate": "Schiefer"
+  },
+  "calendarList": {
+    "emptyTitle": "Noch keine Reisen. Wohin zuerst?",
+    "emptyHint": "Erstelle einen Kalender und plane deine Tage.",
+    "create": "Kalender erstellen"
+  },
+  "postcard": {
+    "days": "{count} Tage",
+    "hot": "Top"
   }
 }
