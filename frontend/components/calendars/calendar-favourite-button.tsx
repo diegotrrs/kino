@@ -42,7 +42,7 @@ export const CalendarFavouriteButton = ({
       onClick={handleClick}
       disabled={disabled}
       aria-label={optimisticFavourite ? 'Remove from favourites' : 'Add to favourites'}
-      className={optimisticFavourite ? 'text-yellow-400 hover:text-yellow-500' : 'text-muted-foreground hover:text-yellow-400'}
+      className={optimisticFavourite ? 'text-ev-ochre hover:text-ev-ochre/80' : 'text-muted-foreground hover:text-ev-ochre'}
     >
       <Star
         className='h-5 w-5 transition-colors'

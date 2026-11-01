@@ -19,7 +19,7 @@ export type TripMapData = {
 const makeIcon = (n: number) =>
   L.divIcon({
     className: '',
-    html: `<div style="width:28px;height:28px;background:#171717;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.35)">${n}</div>`,
+    html: `<div style="width:28px;height:28px;background:#E8542F;color:#fff;font-family:var(--font-mono),monospace;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.35)">${n}</div>`,
     iconSize:    [28, 28],
     iconAnchor:  [14, 14],
     popupAnchor: [0, -16],
@@ -54,7 +54,7 @@ export const TripMap = ({ data }: Props) => (
     <div className='flex flex-wrap gap-x-4 gap-y-1.5'>
       {data.pins.map((pin) => (
         <div key={pin.id} className='flex items-center gap-1.5 text-sm'>
-          <span className='inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-[10px] font-bold text-white'>
+          <span className='inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary font-mono text-[10px] font-bold text-primary-foreground'>
             {pin.id}
           </span>
           <span className='text-muted-foreground'>{pin.label}</span>

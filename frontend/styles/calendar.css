@@ -1,11 +1,11 @@
 @import "../app/globals.css" reference;
 
 :root {
-  --fc-border-color: lightgray;
+  --fc-border-color: hsl(var(--border));
   --fc-page-bg-color: none;
-}
-.dark {
-  --fc-border-color: gray;
+  --fc-now-indicator-color: hsl(var(--primary));
+  --fc-highlight-color: hsl(var(--primary) / 0.12);
+  --fc-list-event-hover-bg-color: hsl(var(--secondary));
 }
 
 /* Removing external borders */
@@ -39,7 +39,7 @@
 /* Setting header size */
 
 .fc-col-header-cell-cushion {
-  @apply flex h-14 items-center;
+  @apply flex h-14 items-center font-mono text-xs font-medium uppercase tracking-wider text-muted-foreground;
 }
 
 /* Setting left time size */
@@ -49,7 +49,11 @@
 }
 
 .fc-timegrid-slot-label-cushion {
-  @apply text-xs font-light;
+  @apply font-mono text-xs text-muted-foreground tabular-nums;
+}
+
+.fc-daygrid-day-number {
+  @apply font-display font-semibold tabular-nums;
 }
 
 /* Setting cell colors */
@@ -79,7 +83,7 @@ td.fc-daygrid-day.fc-day.fc-day-today {
 }
 
 .fc-day-other {
-  @apply bg-gray-200 dark:bg-secondary;
+  @apply bg-secondary/60;
 }
 
 /* Override FullCalendar's opacity dimming on other-month days so the ribbon stays crisp */
@@ -89,11 +93,7 @@ td.fc-daygrid-day.fc-day.fc-day-today {
 
 /* Dim just the day number text via color instead */
 .fc-day-other .fc-daygrid-day-top {
-  color: rgba(0, 0, 0, 0.3);
-}
-
-.dark .fc-day-other .fc-daygrid-day-top {
-  color: rgba(255, 255, 255, 0.3);
+  color: hsl(var(--muted-foreground) / 0.6);
 }
 
 .fc-daygrid-day-top {
@@ -106,7 +106,7 @@ td.fc-daygrid-day.fc-day.fc-day-today {
 }
 
 .fc-daygrid-dot-event {
-  @apply hover:bg-blue-50;
+  @apply hover:bg-secondary;
 }
 
 .fc-daygrid-event-harness {
@@ -143,13 +143,8 @@ td.fc-daygrid-day.fc-day {
 
 /* Back to today floating pill */
 .back-to-today-pill {
-  background-color: black;
-  color: white;
-}
-
-.dark .back-to-today-pill {
-  background-color: white;
-  color: black;
+  background-color: hsl(var(--foreground));
+  color: hsl(var(--background));
 }
 
 /* Keep position: relative so the month ribbon can be absolutely positioned */
@@ -171,13 +166,9 @@ td.fc-daygrid-day.fc-day {
   width: 30px;
   height: 30px;
   clip-path: polygon(0 0, 100% 0, 100% 100%);
-  background-color: black;
+  background-color: hsl(var(--teal));
   pointer-events: none;
   z-index: 20;
-}
-
-.dark .month-ribbon {
-  background-color: white;
 }
 
 .month-ribbon span {
@@ -185,15 +176,15 @@ td.fc-daygrid-day.fc-day {
   top: 33%;
   left: 67%;
   transform: translate(-50%, -50%) rotate(45deg);
-  color: #fff;
+  color: hsl(var(--background));
+  font-family: var(--font-mono);
   font-size: 0.42rem;
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0.05em;
 }
 
-.dark .month-ribbon span {
-  color: #000;
+.month-ribbon span {
   white-space: nowrap;
 }
 
@@ -211,7 +202,10 @@ td.fc-daygrid-day.fc-day {
   pointer-events: none;
 }
 
-
-
-
-
+/* EventItem paints its own tinted ticket, so FullCalendar's solid fill is removed */
+.fc-timegrid-event,
+.fc-daygrid-block-event {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}

@@ -5,7 +5,12 @@ import { defaultLocale, locales } from '@/i18n/routing';
 import type { Metadata }        from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages }          from 'next-intl/server';
+import { Bricolage_Grotesque, Geist, Geist_Mono } from 'next/font/google';
 import { cookies }              from 'next/headers';
+
+const displayFont = Bricolage_Grotesque({ subsets: ['latin'], variable: '--font-bricolage', display: 'swap' });
+const sansFont    = Geist({ subsets: ['latin'], variable: '--font-geist', display: 'swap' });
+const monoFont    = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono', display: 'swap' });
 
 export const metadata: Metadata = {
   title: 'Kino Calendars — Plan Your Perfect Holiday',
@@ -19,7 +24,11 @@ const RootLayout = async ({ children }: Readonly<{ children: React.ReactNode }>)
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html
+      lang={locale}
+      className={`${displayFont.variable} ${sansFont.variable} ${monoFont.variable}`}
+      suppressHydrationWarning
+    >
       <body>
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider

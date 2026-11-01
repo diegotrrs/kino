@@ -32,65 +32,93 @@
   --color-chart-3: hsl(var(--chart-3));
   --color-chart-4: hsl(var(--chart-4));
   --color-chart-5: hsl(var(--chart-5));
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
+  --color-teal: hsl(var(--teal));
+  --color-teal-soft: hsl(var(--teal-soft));
+  --color-ev-terracotta: hsl(var(--ev-terracotta));
+  --color-ev-teal: hsl(var(--ev-teal));
+  --color-ev-ochre: hsl(var(--ev-ochre));
+  --color-ev-sage: hsl(var(--ev-sage));
+  --color-ev-plum: hsl(var(--ev-plum));
+  --color-ev-slate: hsl(var(--ev-slate));
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: var(--font-bricolage), var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, 'SF Mono', Menlo, monospace;
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* Boarding pass theme — see features/28-uiux-redesign */
 :root {
-  --background: 0 0% 100%;
-  --foreground: 0 0% 3.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 0 0% 3.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 3.9%;
-  --primary: 0 0% 9%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 0 0% 96.1%;
-  --secondary-foreground: 0 0% 9%;
-  --muted: 0 0% 96.1%;
-  --muted-foreground: 0 0% 45.1%;
-  --accent: 0 0% 96.1%;
-  --accent-foreground: 0 0% 9%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 89.8%;
-  --input: 0 0% 89.8%;
-  --ring: 0 0% 3.9%;
-  --chart-1: 12 76% 61%;
-  --chart-2: 173 58% 39%;
-  --chart-3: 197 37% 24%;
-  --chart-4: 43 74% 66%;
-  --chart-5: 27 87% 67%;
-  --radius: 0.5rem;
+  --background: 40 36% 95.1%;
+  --foreground: 40 5.7% 10.4%;
+  --card: 40 100% 98.8%;
+  --card-foreground: 40 5.7% 10.4%;
+  --popover: 40 100% 98.8%;
+  --popover-foreground: 40 5.7% 10.4%;
+  --primary: 12 80.1% 54.7%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 39 30.4% 91%;
+  --secondary-foreground: 40 5.7% 10.4%;
+  --muted: 39 30.4% 91%;
+  --muted-foreground: 40 5.8% 40.8%;
+  --accent: 39 30.4% 91%;
+  --accent-foreground: 40 5.7% 10.4%;
+  --destructive: 4 63.7% 46.5%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 40 25.4% 88.4%;
+  --input: 40 25.4% 85%;
+  --ring: 12 80.1% 54.7%;
+  --teal: 186 35.2% 28.4%;
+  --teal-soft: 180 19.1% 90.8%;
+  --ev-terracotta: 14 53.4% 53.7%;
+  --ev-teal: 186 35.2% 28.4%;
+  --ev-ochre: 38 57% 50.8%;
+  --ev-sage: 113 13.4% 54.1%;
+  --ev-plum: 305 16.7% 42%;
+  --ev-slate: 212 15.7% 42.4%;
+  --chart-1: 14 53.4% 53.7%;
+  --chart-2: 186 35.2% 28.4%;
+  --chart-3: 38 57% 50.8%;
+  --chart-4: 113 13.4% 54.1%;
+  --chart-5: 305 16.7% 42%;
+  --radius: 0.375rem;
 }
 
 .dark {
-  --background: 0 0% 3.9%;
-  --foreground: 0 0% 98%;
-  --card: 0 0% 3.9%;
-  --card-foreground: 0 0% 98%;
-  --popover: 0 0% 3.9%;
-  --popover-foreground: 0 0% 98%;
-  --primary: 0 0% 98%;
-  --primary-foreground: 0 0% 9%;
-  --secondary: 0 0% 14.9%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 0 0% 14.9%;
-  --muted-foreground: 0 0% 63.9%;
-  --accent: 0 0% 14.9%;
-  --accent-foreground: 0 0% 98%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 14.9%;
-  --input: 0 0% 14.9%;
-  --ring: 0 0% 83.1%;
-  --chart-1: 220 70% 50%;
-  --chart-2: 160 60% 45%;
-  --chart-3: 30 80% 55%;
-  --chart-4: 280 65% 60%;
-  --chart-5: 340 75% 55%;
+  --background: 223 13.7% 10%;
+  --foreground: 40 24.3% 92.7%;
+  --card: 222 14.3% 13.7%;
+  --card-foreground: 40 24.3% 92.7%;
+  --popover: 222 14.3% 13.7%;
+  --popover-foreground: 40 24.3% 92.7%;
+  --primary: 13 85.1% 60.6%;
+  --primary-foreground: 223 13.7% 10%;
+  --secondary: 220 13.6% 17.3%;
+  --secondary-foreground: 40 24.3% 92.7%;
+  --muted: 220 13.6% 17.3%;
+  --muted-foreground: 39 7.1% 61.2%;
+  --accent: 220 13.6% 17.3%;
+  --accent-foreground: 40 24.3% 92.7%;
+  --destructive: 7 74.3% 60.4%;
+  --destructive-foreground: 223 13.7% 10%;
+  --border: 222 12.9% 19.8%;
+  --input: 222 12.9% 24%;
+  --ring: 13 85.1% 60.6%;
+  --teal: 185 28.6% 61%;
+  --teal-soft: 195 26.1% 18%;
+  --ev-terracotta: 15 63.6% 65.5%;
+  --ev-teal: 185 28.6% 61%;
+  --ev-ochre: 39 67.7% 62.4%;
+  --ev-sage: 113 20.7% 68.4%;
+  --ev-plum: 305 21.6% 64.1%;
+  --ev-slate: 212 21.3% 65.5%;
+  --chart-1: 15 63.6% 65.5%;
+  --chart-2: 185 28.6% 61%;
+  --chart-3: 39 67.7% 62.4%;
+  --chart-4: 113 20.7% 68.4%;
+  --chart-5: 305 21.6% 64.1%;
 }
 
 @layer base {
@@ -100,6 +128,10 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: var(--font-sans);
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
   }
 }

@@ -28,7 +28,7 @@ export const MobileBottomNav = ({ isLoggedIn = true }: { isLoggedIn?: boolean })
               !isLoggedIn
                 ? 'pointer-events-none opacity-40 text-muted-foreground'
                 : isActive
-                  ? 'text-foreground'
+                  ? 'text-primary'
                   : 'text-muted-foreground',
             )}
           >

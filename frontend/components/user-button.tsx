@@ -19,7 +19,6 @@ import {
   LogOut,
   User
 }                           from 'lucide-react';
-import { useTheme }         from 'next-themes';
 import Link                 from 'next/link';
 
 type UserButtonProps = {
@@ -27,8 +26,6 @@ type UserButtonProps = {
 }
 
 export const UserButton = ({ user }: UserButtonProps) => {
-  const { resolvedTheme } = useTheme();
-  const isDark            = resolvedTheme === 'dark';
 
   const btnClass = cn(
     'flex h-10 w-10 items-center justify-center rounded-lg transition-colors',
@@ -69,12 +66,7 @@ export const UserButton = ({ user }: UserButtonProps) => {
         {/* User info */}
         <div className='flex items-center gap-2.5 px-1 py-1'>
           <div
-            className={cn(
-              'flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold',
-              isDark
-                ? 'bg-white text-black'
-                : 'bg-black text-white',
-            )}
+            className='flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-teal text-sm font-semibold text-background'
           >
             {initial}
           </div>
