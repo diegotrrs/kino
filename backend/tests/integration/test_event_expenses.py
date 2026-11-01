@@ -63,7 +63,7 @@ class TestCreateEventExpense:
             f"/api/events/{event['id']}/expenses",
             json={"label": "Ticket", "amount": 10.00, "currency": "EUR"},
         )
-        assert res.status_code == 403
+        assert res.status_code == 401
 
     def test_returns_404_for_unknown_event(self, client, owner_headers):
         res = client.post(

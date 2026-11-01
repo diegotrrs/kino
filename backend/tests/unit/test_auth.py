@@ -1,5 +1,5 @@
 from datetime import UTC, datetime, timedelta
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import Mock, patch
 
 import jwt
 import pytest
@@ -12,33 +12,17 @@ from app.auth import (
     hash_password,
     verify_password,
 )
+from tests.unit.helpers import TEST_JWT_SECRET, make_mock_db, mock_settings
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
 
-def make_mock_db(user=None):
-    """Return a mock DB connection whose cursor context manager yields a
-    cursor with fetchone() returning `user`."""
-    mock_cursor = MagicMock()
-    mock_cursor.fetchone.return_value = user
-
-    mock_db = MagicMock()
-    mock_db.cursor.return_value.__enter__.return_value = mock_cursor
-    return mock_db
-
-
 def make_credentials(token: str):
     mock = Mock()
     mock.credentials = token
     return mock
-
-
-def mock_settings(
-    secret="test-secret-key-long-enough-for-hs256", expiration_minutes=1440
-):
-    return Mock(jwt_secret_key=secret, jwt_expiration_minutes=expiration_minutes)
 
 
 # ---------------------------------------------------------------------------
@@ -87,30 +71,24 @@ class TestCreateAccessToken:
     def test_token_contains_sub_claim(self, mock_get_settings):
         mock_get_settings.return_value = mock_settings()
         token = create_access_token({"sub": "42"})
-        payload = jwt.decode(
-            token, "test-secret-key-long-enough-for-hs256", algorithms=["HS256"]
-        )
+        payload = jwt.decode(token, TEST_JWT_SECRET, algorithms=["HS256"])
         assert payload["sub"] == "42"
 
     @patch("app.auth.get_settings")
     def test_token_contains_expiration(self, mock_get_settings):
         mock_get_settings.return_value = mock_settings()
         token = create_access_token({"sub": "42"})
-        payload = jwt.decode(
-            token, "test-secret-key-long-enough-for-hs256", algorithms=["HS256"]
-        )
+        payload = jwt.decode(token, TEST_JWT_SECRET, algorithms=["HS256"])
         assert "exp" in payload
 
     @patch("app.auth.get_settings")
     def test_expiration_matches_configured_minutes(self, mock_get_settings):
-        mock_get_settings.return_value = mock_settings(expiration_minutes=60)
+        mock_get_settings.return_value = mock_settings(jwt_expiration_minutes=60)
         before = datetime.now(UTC)
         token = create_access_token({"sub": "42"})
         after = datetime.now(UTC)
 
-        payload = jwt.decode(
-            token, "test-secret-key-long-enough-for-hs256", algorithms=["HS256"]
-        )
+        payload = jwt.decode(token, TEST_JWT_SECRET, algorithms=["HS256"])
         exp = datetime.fromtimestamp(payload["exp"], tz=UTC)
 
         assert before + timedelta(minutes=59) < exp < after + timedelta(minutes=61)
@@ -119,9 +97,7 @@ class TestCreateAccessToken:
     def test_preserves_additional_claims(self, mock_get_settings):
         mock_get_settings.return_value = mock_settings()
         token = create_access_token({"sub": "42", "role": "admin"})
-        payload = jwt.decode(
-            token, "test-secret-key-long-enough-for-hs256", algorithms=["HS256"]
-        )
+        payload = jwt.decode(token, TEST_JWT_SECRET, algorithms=["HS256"])
         assert payload["role"] == "admin"
 
 
@@ -139,14 +115,14 @@ class TestGetCurrentUser:
 
         result = get_current_user(
             credentials=make_credentials(token),
-            db=make_mock_db(user=user),
+            db=make_mock_db(row=user),
         )
 
         assert result == user
 
     @patch("app.auth.get_settings")
     def test_expired_token_raises_401(self, mock_get_settings):
-        mock_get_settings.return_value = mock_settings(expiration_minutes=-1)
+        mock_get_settings.return_value = mock_settings(jwt_expiration_minutes=-1)
         token = create_access_token({"sub": "1"})
 
         with pytest.raises(HTTPException) as exc_info:
@@ -191,7 +167,7 @@ class TestGetCurrentUser:
         with pytest.raises(HTTPException) as exc_info:
             get_current_user(
                 credentials=make_credentials(token),
-                db=make_mock_db(user=None),
+                db=make_mock_db(row=None),
             )
 
         assert exc_info.value.status_code == 401
@@ -215,14 +191,14 @@ class TestGetOptionalUser:
 
         result = get_optional_user(
             credentials=make_credentials(token),
-            db=make_mock_db(user=user),
+            db=make_mock_db(row=user),
         )
 
         assert result == user
 
     @patch("app.auth.get_settings")
     def test_expired_token_returns_none(self, mock_get_settings):
-        mock_get_settings.return_value = mock_settings(expiration_minutes=-1)
+        mock_get_settings.return_value = mock_settings(jwt_expiration_minutes=-1)
         token = create_access_token({"sub": "1"})
 
         result = get_optional_user(
