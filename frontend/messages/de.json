@@ -210,5 +210,23 @@
     "generalExpenses": "Allgemeine Ausgaben",
     "noGeneralExpenses": "Noch keine allgemeinen Ausgaben.",
     "readOnlyExpensesMessage": "Reiseausgaben sind nur für Eigentümer und Bearbeiter dieses Kalenders sichtbar."
+  },
+  "tripPass": {
+    "dates": "Daten",
+    "days": "{count, plural, one {# Tag} other {# Tage}}",
+    "dayOf": "Tag {current} von {total}",
+    "departsIn": "{count, plural, =0 {Abflug heute} one {Abflug morgen} other {Abflug in # Tagen}}",
+    "complete": "Reise vorbei",
+    "travellers": "{count, plural, one {# Reisende:r} other {# Reisende}}"
+  },
+  "eventColors": {
+    "custom": "Eigene",
+    "palette": "Themenfarben",
+    "teal": "Petrol",
+    "terracotta": "Terrakotta",
+    "ochre": "Ocker",
+    "sage": "Salbei",
+    "plum": "Pflaume",
+    "slate": "Schiefer"
   }
 }

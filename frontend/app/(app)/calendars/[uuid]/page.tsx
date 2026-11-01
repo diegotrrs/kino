@@ -1,23 +1,25 @@
-import Calendar                    from '@/components/calendar-no-ssr';
-import { CalendarShareButton }     from '@/components/calendars/calendar-share-button';
-import { PrivateCalendarOverlay }  from '@/components/calendars/private-calendar-overlay';
-import { ReadOnlyBanner }          from '@/components/calendars/read-only-banner';
-import { Button }                  from '@/components/ui/button';
-import { Separator }               from '@/components/ui/separator';
-import { EventsProvider }          from '@/context/events-context';
+import Calendar                   from '@/components/calendar-no-ssr';
+import { CalendarShareButton }    from '@/components/calendars/calendar-share-button';
+import { PrivateCalendarOverlay } from '@/components/calendars/private-calendar-overlay';
+import { ReadOnlyBanner }         from '@/components/calendars/read-only-banner';
+import { TripPass }               from '@/components/calendars/trip-pass';
+import { Button }                 from '@/components/ui/button';
+import { Separator }              from '@/components/ui/separator';
+import { EventsProvider }         from '@/context/events-context';
 import type {
   Calendar as CalendarType,
   CalendarExpense,
+  CalendarMember,
   Event
-}                                  from '@/lib/types';
-import { CalendarEvent }           from '@/utils/data';
+}                                 from '@/lib/types';
+import { CalendarEvent }          from '@/utils/data';
 import {
   ArrowLeft,
   Pencil
-}                                  from 'lucide-react';
-import { cookies }                 from 'next/headers';
-import Link                        from 'next/link';
-import { redirect }                from 'next/navigation';
+}                                 from 'lucide-react';
+import { cookies }                from 'next/headers';
+import Link                       from 'next/link';
+import { redirect }               from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
@@ -88,6 +90,18 @@ const getCalendarExpenses = async (calendarUuid: string, token: string | null): 
   return res.json();
 }
 
+const getCalendarMembers = async (calendarUuid: string, token: string | null): Promise<CalendarMember[]> => {
+  if (!token) return [];
+
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarUuid}/users`, {
+    cache: 'no-store',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!res.ok) return [];
+  return res.json();
+}
+
 const CalendarPage = async ({
   params,
 }: {
@@ -117,7 +131,7 @@ const CalendarPage = async ({
               Sign in
             </Link>
             <div className='flex items-center gap-1'>
-              <h2 className='text-2xl font-semibold tracking-tight md:text-3xl select-none cursor-default'>
+              <h2 className='text-3xl font-extrabold tracking-tighter md:text-5xl select-none cursor-default'>
                 Calendar
               </h2>
             </div>
@@ -135,10 +149,12 @@ const CalendarPage = async ({
     redirect(isAuthenticated ? '/home' : '/login');
   }
 
-  const [dbEvents, calendarExpenses] = await Promise.all([
+  const [dbEvents, calendarExpenses, members] = await Promise.all([
     getCalendarEvents(uuid, token),
     getCalendarExpenses(uuid, token),
+    getCalendarMembers(uuid, token),
   ]);
+  const eventDates = dbEvents.map((event) => event.end_date ?? event.date);
   const events = dbEvents.map(dbEventToCalendarEvent);
 
   const initialDate = new Date(`${calendar.start_date}T12:00:00`);
@@ -161,7 +177,7 @@ const CalendarPage = async ({
           <div className='flex flex-col w-full items-center'>
             <div className='w-full px-5 space-y-5'>
 
-              <div className='space-y-0'>
+              <div className='space-y-3'>
 
                 <Link
                   href={backHref}
@@ -171,7 +187,7 @@ const CalendarPage = async ({
                   <ArrowLeft className='h-4 w-4' />
                 </Link>
                 <div className='flex items-center gap-1'>
-                  <h2 className='text-2xl font-semibold tracking-tight md:text-3xl select-none cursor-default'>
+                  <h2 className='text-3xl font-extrabold tracking-tighter md:text-5xl select-none cursor-default'>
                     {calendar.name}
                   </h2>
 
@@ -190,6 +206,7 @@ const CalendarPage = async ({
                     </Button>
                   )}
                 </div>
+                <TripPass startDate={calendar.start_date} eventDates={eventDates} members={members} />
               </div>
               <Separator />
               <Calendar />

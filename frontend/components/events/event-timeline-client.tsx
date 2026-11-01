@@ -1,25 +1,32 @@
 'use client';
-
-import { EventForm }        from '@/components/event-form';
-import { EventsProvider }   from '@/context/events-context';
-import { useEvents }        from '@/context/events-context';
-import type { Event }       from '@/lib/types';
+import { EventForm }          from '@/components/event-form';
+import { EventsProvider }     from '@/context/events-context';
+import { useEvents }          from '@/context/events-context';
+import {
+  DEFAULT_EVENT_COLOR,
+  getEventEdge,
+  getEventTint
+}                             from '@/lib/event-colors';
+import type { Event }         from '@/lib/types';
 import type { CalendarEvent } from '@/utils/data';
-import { format, parse }    from 'date-fns';
+import {
+  format,
+  parse
+}                             from 'date-fns';
 import {
   LinkIcon,
   MapPinIcon,
-  ReceiptIcon,
-}                           from 'lucide-react';
-import { useTranslations }  from 'next-intl';
-import { useRouter }        from 'next/navigation';
+  ReceiptIcon
+}                             from 'lucide-react';
+import { useTranslations }    from 'next-intl';
+import { useRouter }          from 'next/navigation';
 import {
   useCallback,
   useEffect,
   useRef,
-  useState,
-}                           from 'react';
-import { EventDeleteButton } from './event-delete-button';
+  useState
+}                             from 'react';
+import { EventDeleteButton }  from './event-delete-button';
 
 export const groupByDate = (events: Event[]): [string, Event[]][] => {
   const sorted = [...events].sort((a, b) =>
@@ -93,8 +100,8 @@ export const EventTimelineClient = ({
 
   if (events.length === 0) {
     return (
-      <div className='flex flex-col items-center justify-center rounded-xl border border-dashed p-12 text-center'>
-        <p className='text-lg font-medium'>{t('empty')}</p>
+      <div className='flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center'>
+        <p className='font-display text-xl font-bold'>{t('empty')}</p>
         <p className='text-sm text-muted-foreground'>{t('emptyHint')}</p>
       </div>
     );
@@ -108,7 +115,7 @@ export const EventTimelineClient = ({
         {groups.map(([date, dayEvents]) => (
           <div key={date}>
             <div className='flex items-center gap-3 mb-3'>
-              <span className='text-xs font-semibold uppercase tracking-widest text-muted-foreground'>
+              <span className='font-mono text-xs font-medium uppercase tracking-widest text-muted-foreground'>
                 {format(parse(date, 'yyyy-MM-dd', new Date()), 'EEE d MMM yyyy')}
               </span>
               <div className='flex-1 border-t' />
@@ -117,20 +124,23 @@ export const EventTimelineClient = ({
               {dayEvents.map((ev) => (
                 <div
                   key={ev.id}
-                  className='flex rounded-lg bg-card border hover:bg-accent/30 transition-colors overflow-hidden'
-                  style={{ borderLeftWidth: 4, borderLeftColor: ev.color ?? '#AEC6E4' }}
+                  className='flex rounded-md border transition-colors overflow-hidden hover:brightness-[0.98]'
+                  style={{ backgroundColor: getEventTint(ev.color ?? DEFAULT_EVENT_COLOR, 10), borderColor: getEventEdge(ev.color ?? DEFAULT_EVENT_COLOR, 30) }}
                 >
                   <button
                     type='button'
                     className='flex flex-1 min-w-0 gap-4 p-3 text-left'
                     onClick={() => setSelectedEvent(ev)}
                   >
-                    <div className='w-20 shrink-0 text-right'>
-                      <span className='text-xs font-mono text-muted-foreground'>
+                    <div
+                      className='-my-3 w-16 shrink-0 border-r border-dashed py-3 pr-3 text-right'
+                      style={{ borderRightColor: getEventEdge(ev.color ?? DEFAULT_EVENT_COLOR) }}
+                    >
+                      <span className='text-sm font-mono font-medium tabular-nums'>
                         {format(parse(ev.start_time, 'HH:mm:ss', new Date()), 'HH:mm')}
                       </span>
                       {ev.end_time && (
-                        <span className='block text-xs font-mono text-muted-foreground/60'>
+                        <span className='block text-xs font-mono text-muted-foreground tabular-nums'>
                           {format(parse(ev.end_time, 'HH:mm:ss', new Date()), 'HH:mm')}
                         </span>
                       )}

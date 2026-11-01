@@ -1,18 +1,25 @@
 'use client';
 import {
-  addCalendarExpense   as addCalendarExpenseAction,
-  deleteCalendarExpense as deleteCalendarExpenseAction,
-} from '@/app/(app)/calendars/actions';
-import { formatAmount, groupedTotals } from '@/components/events/pending-expenses';
-import { Button }                      from '@/components/ui/button';
-import { Input }                       from '@/components/ui/input';
-import { Separator }                   from '@/components/ui/separator';
-import { useEvents }                   from '@/context/events-context';
-import type { CalendarEvent }          from '@/utils/data';
-import type { CalendarExpense }        from '@/lib/types';
-import { Plus, Wallet, X }             from 'lucide-react';
-import { useTranslations }             from 'next-intl';
-import { useState }                    from 'react';
+  addCalendarExpense as addCalendarExpenseAction,
+  deleteCalendarExpense as deleteCalendarExpenseAction
+}                               from '@/app/(app)/calendars/actions';
+import {
+  formatAmount,
+  groupedTotals
+}                               from '@/components/events/pending-expenses';
+import { Button }               from '@/components/ui/button';
+import { Input }                from '@/components/ui/input';
+import { Separator }            from '@/components/ui/separator';
+import { useEvents }            from '@/context/events-context';
+import type { CalendarExpense } from '@/lib/types';
+import type { CalendarEvent }   from '@/utils/data';
+import {
+  Plus,
+  Wallet,
+  X
+}                               from 'lucide-react';
+import { useTranslations }      from 'next-intl';
+import { useState }             from 'react';
 
 const CURRENCIES = [
   { code: 'GBP', symbol: '£' },
@@ -81,7 +88,7 @@ export const ExpensesSummary = () => {
         aria-label='View trip expenses'
         data-testid='trip-cost-pill'
         onClick={() => setOpen(true)}
-        className='inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/20 px-3 py-1 text-xs font-medium text-primary hover:bg-primary/20 transition-colors'
+        className='inline-flex items-center gap-1.5 rounded-full border border-teal/25 bg-teal-soft px-3 py-1 font-mono text-xs font-medium text-teal tabular-nums hover:bg-teal-soft/70 transition-colors'
       >
         <Wallet className='h-3.5 w-3.5' />
         {pillLabel ? `${t('viewExpenses')} · ${pillLabel}` : t('viewExpenses')}
@@ -99,12 +106,12 @@ export const ExpensesSummary = () => {
         role='dialog'
         aria-label='Expenses'
         data-testid='trip-cost-drawer'
-        className={`fixed top-0 right-0 h-full w-80 bg-background border-l shadow-xl z-50 flex flex-col transition-transform duration-300 ${open ? 'translate-x-0' : 'translate-x-full'}`}
+        className={`fixed top-0 right-0 h-full w-80 bg-card border-l shadow-xl z-50 flex flex-col transition-transform duration-300 ${open ? 'translate-x-0' : 'translate-x-full'}`}
       >
         <div className='flex items-center justify-between px-4 py-3 border-b'>
           <div className='flex items-center gap-2'>
             <Wallet className='h-4 w-4 text-muted-foreground' />
-            <span className='font-semibold text-sm'>{t('drawerTitle')}</span>
+            <span className='font-display text-base font-bold'>{t('drawerTitle')}</span>
           </div>
           <button
             aria-label='Close expenses'
@@ -117,11 +124,11 @@ export const ExpensesSummary = () => {
 
         {/* Totals strip */}
         {totals.length > 0 && (
-          <div className='px-4 py-3 border-b bg-muted/30 space-y-1'>
+          <div className='px-4 py-4 border-b border-dashed space-y-1'>
             {totals.map(([cur, amt]) => (
-              <div key={cur} className='flex justify-between text-sm'>
-                <span className='text-muted-foreground'>{cur} total</span>
-                <span className='font-semibold' data-testid={`trip-total-${cur}`}>
+              <div key={cur} className='flex items-baseline justify-between'>
+                <span className='font-mono text-[0.65rem] font-medium uppercase tracking-widest text-muted-foreground'>{cur} total</span>
+                <span className='font-mono text-2xl font-medium tracking-tight tabular-nums' data-testid={`trip-total-${cur}`}>
                   {formatAmount(amt, cur)}
                 </span>
               </div>
@@ -166,7 +173,7 @@ export const ExpensesSummary = () => {
                       <select
                         value={currency}
                         onChange={(e) => setCurrency(e.target.value)}
-                        className='h-8 rounded-md border bg-background px-1.5 text-sm shrink-0 w-[72px]'
+                        className='h-8 rounded-md border bg-card px-1.5 text-sm shrink-0 w-[72px]'
                         disabled={adding}
                         data-testid='expense-currency-select'
                       >
@@ -234,7 +241,7 @@ export const ExpensesSummary = () => {
               .filter((ev) => (ev.expenses ?? []).length > 0)
               .map((ev) => (
                 <div key={ev.id}>
-                  <div className='text-xs text-muted-foreground mb-0.5'>
+                  <div className='font-mono text-[0.65rem] uppercase tracking-wider text-muted-foreground mb-0.5'>
                     {new Date(ev.start as Date).toLocaleDateString('en-GB', {
                       weekday: 'short',
                       day: 'numeric',
@@ -245,7 +252,7 @@ export const ExpensesSummary = () => {
                   {(ev.expenses ?? []).map((c) => (
                     <div key={c.id} className='flex justify-between text-sm text-muted-foreground pl-2'>
                       <span>{c.label}</span>
-                      <span>{formatAmount(c.amount, c.currency)}</span>
+                      <span className='font-mono tabular-nums'>{formatAmount(c.amount, c.currency)}</span>
                     </div>
                   ))}
                 </div>

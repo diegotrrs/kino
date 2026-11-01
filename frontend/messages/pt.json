@@ -210,5 +210,23 @@
     "generalExpenses": "Despesas gerais",
     "noGeneralExpenses": "Sem despesas gerais ainda.",
     "readOnlyExpensesMessage": "As despesas da viagem são visíveis apenas para proprietários e editores deste calendário."
+  },
+  "tripPass": {
+    "dates": "Datas",
+    "days": "{count, plural, one {# dia} other {# dias}}",
+    "dayOf": "Dia {current} de {total}",
+    "departsIn": "{count, plural, =0 {Partida hoje} one {Partida amanhã} other {Partida em # dias}}",
+    "complete": "Viagem concluída",
+    "travellers": "{count, plural, one {# viajante} other {# viajantes}}"
+  },
+  "eventColors": {
+    "custom": "Personalizada",
+    "palette": "Cores do tema",
+    "teal": "Verde-azulado",
+    "terracotta": "Terracota",
+    "ochre": "Ocre",
+    "sage": "Sálvia",
+    "plum": "Ameixa",
+    "slate": "Ardósia"
   }
 }

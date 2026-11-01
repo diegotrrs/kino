@@ -92,7 +92,7 @@ export const initialEvents: CalendarEvent[] = [
       13,
       0
     ),
-    backgroundColor: '#AEC6E4',
+    backgroundColor: '#2F5D62',
     description: "This is a daily meeting to go over today's tasks.",
   },
   {
@@ -112,7 +112,7 @@ export const initialEvents: CalendarEvent[] = [
       17,
       30
     ),
-    backgroundColor: '#FFD1DC',
+    backgroundColor: '#C8674A',
     description: 'Lunch at Cracker Barrel with integration clients.',
   },
   {
@@ -132,7 +132,7 @@ export const initialEvents: CalendarEvent[] = [
       18,
       45
     ),
-    backgroundColor: '#B2E0B2',
+    backgroundColor: '#C9973A',
     description: 'Conversation with counselor about progression.',
   },
   {
@@ -152,7 +152,7 @@ export const initialEvents: CalendarEvent[] = [
       18,
       45
     ),
-    backgroundColor: '#FFB3BA',
+    backgroundColor: '#7E9A7A',
     description: 'Team bonding and strategic planning.',
   },
   {
@@ -172,7 +172,7 @@ export const initialEvents: CalendarEvent[] = [
       15,
       30
     ),
-    backgroundColor: '#FFDFBA',
+    backgroundColor: '#7D5A7A',
     description:
       'Improve your productivity with effective time management techniques.',
   },
@@ -193,7 +193,7 @@ export const initialEvents: CalendarEvent[] = [
       15,
       0
     ),
-    backgroundColor: '#B9FBC0',
+    backgroundColor: '#5B6B7D',
     description: 'Explore health resources and wellness activities.',
   },
   {
@@ -213,7 +213,7 @@ export const initialEvents: CalendarEvent[] = [
       20,
       0
     ),
-    backgroundColor: '#C3B1E1',
+    backgroundColor: '#2F5D62',
     description: "Discussing this month's book selection with the club.",
   },
   {
@@ -233,7 +233,7 @@ export const initialEvents: CalendarEvent[] = [
       16,
       0
     ),
-    backgroundColor: '#B2E7E0',
+    backgroundColor: '#C8674A',
     description: 'Join us for a weekend of creative writing exercises.',
   },
   {
@@ -253,7 +253,7 @@ export const initialEvents: CalendarEvent[] = [
       22,
       0
     ),
-    backgroundColor: '#F6C9D8',
+    backgroundColor: '#C9973A',
     description: 'An evening of fun to raise funds for a good cause.',
   },
 ];
