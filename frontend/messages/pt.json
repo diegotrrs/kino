@@ -135,7 +135,8 @@
     "empty": "Nenhum evento ainda",
     "emptyHint": "Crie o seu primeiro evento para começar.",
     "expenseCount": "{count, plural, one {# despesa} other {# despesas}}",
-    "linkCount": "{count, plural, one {# link} other {# links}}"
+    "linkCount": "{count, plural, one {# link} other {# links}}",
+    "deleteEvent": "Eliminar {title}"
   },
   "feedback": {
     "title": "Feedback",

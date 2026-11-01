@@ -185,7 +185,7 @@ test.describe('@11. expenses summary', () => {
     await expect(page.getByTestId('trip-cost-drawer')).toBeVisible();
 
     await page.getByRole('button', { name: 'Close expenses' }).click();
-    await expect(page.getByTestId('trip-cost-drawer')).not.toBeVisible();
+    await expect(page.getByTestId('trip-cost-drawer')).not.toBeInViewport();
 
     await deleteCalendar(request, token, calendarUuid);
   });

@@ -135,7 +135,8 @@
     "empty": "Noch keine Veranstaltungen",
     "emptyHint": "Erstelle deine erste Veranstaltung, um loszulegen.",
     "expenseCount": "{count, plural, one {# Ausgabe} other {# Ausgaben}}",
-    "linkCount": "{count, plural, one {# Link} other {# Links}}"
+    "linkCount": "{count, plural, one {# Link} other {# Links}}",
+    "deleteEvent": "{title} löschen"
   },
   "feedback": {
     "title": "Feedback",

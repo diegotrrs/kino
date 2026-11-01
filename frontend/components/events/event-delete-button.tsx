@@ -1,5 +1,5 @@
 'use client';
-import { deleteEvent }   from '@/app/(app)/events/actions';
+import { deleteEvent }     from '@/app/(app)/events/actions';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -9,12 +9,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger
-}                        from '@/components/ui/alert-dialog';
-import { Button }        from '@/components/ui/button';
-import { ToastAction }   from '@/components/ui/toast';
-import { useToast }      from '@/hooks/use-toast';
-import { Trash2Icon }    from 'lucide-react';
-import { useTransition } from 'react';
+}                          from '@/components/ui/alert-dialog';
+import { Button }          from '@/components/ui/button';
+import { ToastAction }     from '@/components/ui/toast';
+import { useToast }        from '@/hooks/use-toast';
+import { Trash2Icon }      from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useTransition }   from 'react';
 
 type EventDeleteButtonProps = {
   eventId: number;
@@ -27,6 +28,7 @@ export const EventDeleteButton = ({
 }: EventDeleteButtonProps) => {
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const t = useTranslations('events');
 
   const handleDelete = () => {
     startTransition(async () => {
@@ -53,7 +55,12 @@ export const EventDeleteButton = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant='ghost' size='icon' className='h-8 w-8 text-muted-foreground hover:text-destructive'>
+        <Button
+          variant='ghost'
+          size='icon'
+          className='h-8 w-8 text-muted-foreground hover:text-destructive'
+          aria-label={t('deleteEvent', { title: eventTitle })}
+        >
           <Trash2Icon className='h-4 w-4' />
         </Button>
       </AlertDialogTrigger>

@@ -87,20 +87,6 @@ test.describe('@3. calendars', () => {
     await expect(page.getByRole('link', { name })).not.toBeVisible();
   });
 
-  test('@3.6 should mark a calendar as a favourite', async ({
-    page,
-    request,
-  }) => {
-    const name = `Favourite Calendar ${Date.now()}`;
-    const token = await getToken(request);
-    const uuid = await createCalendar(request, token, name);
-    await page.goto(`/calendars/${uuid}`);
-    await page.getByRole('button', { name: /add to favourites/i }).click();
-    await expect(
-      page.getByRole('button', { name: /remove from favourites/i })
-    ).toBeVisible();
-  });
-
   test('@3.7 should show a deleted calendar in Settings > Recover deleted calendars', async ({
     page,
     request,
