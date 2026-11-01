@@ -37,11 +37,6 @@ export const goNext = (calendarRef: calendarRef) => {
   calendarApi.next();
 }
 
-export const goToday = (calendarRef: calendarRef) => {
-  const calendarApi = calendarRef.current!.getApi();
-  calendarApi.today();
-}
-
 export const handleDayChange = (
   calendarRef: calendarRef,
   currentDate: Date,

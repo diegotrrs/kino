@@ -141,12 +141,6 @@ td.fc-daygrid-day.fc-day {
   pointer-events: none;
 }
 
-/* Back to today floating pill */
-.back-to-today-pill {
-  background-color: hsl(var(--foreground));
-  color: hsl(var(--background));
-}
-
 /* Keep position: relative so the month ribbon can be absolutely positioned */
 .fc-daygrid-day-frame {
   position: relative;

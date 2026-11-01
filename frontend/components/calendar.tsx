@@ -1,17 +1,19 @@
 'use client';
 import '@/styles/calendar.css';
-import { updateEvent }   from '@/app/(app)/events/actions';
-import { useEvents }     from '@/context/events-context';
-import { useToast }      from '@/hooks/use-toast';
+import { updateEvent }        from '@/app/(app)/events/actions';
+import { useEvents }          from '@/context/events-context';
+import { useToast }           from '@/hooks/use-toast';
 import {
-  goToday,
-  getDateFromMinutes
-}                        from '@/utils/calendar-utils';
+  DEFAULT_EVENT_COLOR,
+  getEventEdge,
+  getEventTint
+}                             from '@/lib/event-colors';
+import { getDateFromMinutes } from '@/utils/calendar-utils';
 import {
   CalendarEvent,
   earliestTime,
   latestTime
-}                        from '@/utils/data';
+}                             from '@/utils/data';
 import {
   DateSelectArg,
   DayCellContentArg,
@@ -19,26 +21,21 @@ import {
   EventChangeArg,
   EventClickArg,
   EventContentArg
-}                        from '@fullcalendar/core/index.js';
-import dayGridPlugin     from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import listPlugin        from '@fullcalendar/list';
-import multiMonthPlugin  from '@fullcalendar/multimonth';
-import FullCalendar      from '@fullcalendar/react';
-import timeGridPlugin    from '@fullcalendar/timegrid';
-import { format }        from 'date-fns';
+}                             from '@fullcalendar/core/index.js';
+import dayGridPlugin          from '@fullcalendar/daygrid';
+import interactionPlugin      from '@fullcalendar/interaction';
+import listPlugin             from '@fullcalendar/list';
+import multiMonthPlugin       from '@fullcalendar/multimonth';
+import FullCalendar           from '@fullcalendar/react';
+import timeGridPlugin         from '@fullcalendar/timegrid';
+import { format }             from 'date-fns';
 import {
   useRef,
   useState
-}                        from 'react';
-import CalendarNav  from './calendar-nav';
-import { EventForm } from './event-form';
-import { Card }      from './ui/card';
-import {
-  DEFAULT_EVENT_COLOR,
-  getEventEdge,
-  getEventTint
-}                    from '@/lib/event-colors';
+}                             from 'react';
+import CalendarNav            from './calendar-nav';
+import { EventForm }          from './event-form';
+import { Card }               from './ui/card';
 
 type EventItemProps = {
   info: EventContentArg;
@@ -267,15 +264,6 @@ const Calendar = () => {
       />
 
       <div className='relative'>
-        {(viewedDate.getMonth() !== new Date().getMonth() ||
-          viewedDate.getFullYear() !== new Date().getFullYear()) && (
-            <button
-              onClick={() => goToday(calendarRef)}
-              className='absolute -top-3 left-0 right-0 mx-auto w-fit z-30 rounded-full px-4 py-1 text-xs font-medium shadow-md cursor-pointer back-to-today-pill'
-            >
-              Back to {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-            </button>
-          )}
         <Card className='p-3'>
           <FullCalendar
             ref={calendarRef}
