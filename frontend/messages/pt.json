@@ -209,7 +209,12 @@
     "drawerTitle": "Despesas",
     "generalExpenses": "Despesas gerais",
     "noGeneralExpenses": "Sem despesas gerais ainda.",
-    "readOnlyExpensesMessage": "As despesas da viagem são visíveis apenas para proprietários e editores deste calendário."
+    "readOnlyExpensesMessage": "As despesas da viagem são visíveis apenas para proprietários e editores deste calendário.",
+    "onEvents": "Em eventos",
+    "general": "Gerais",
+    "viewAll": "Ver todas as despesas",
+    "spentSoFar": "gasto até agora",
+    "details": "Detalhes"
   },
   "tripPass": {
     "dates": "Datas",

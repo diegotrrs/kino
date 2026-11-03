@@ -1,6 +1,5 @@
 'use client';
-import { ExpensesSummary } from '@/components/calendars/expenses-summary';
-import { Button }          from '@/components/ui/button';
+import { Button }      from '@/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -8,15 +7,15 @@ import {
   CommandInput,
   CommandItem,
   CommandList
-}                          from '@/components/ui/command';
-import { Input }           from '@/components/ui/input';
+}                      from '@/components/ui/command';
+import { Input }       from '@/components/ui/input';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger
-}                          from '@/components/ui/popover';
-import { useEvents }       from '@/context/events-context';
-import { cn }              from '@/lib/utils';
+}                      from '@/components/ui/popover';
+import { useEvents }   from '@/context/events-context';
+import { cn }          from '@/lib/utils';
 import {
   generateDaysInMonth,
   goNext,
@@ -24,17 +23,16 @@ import {
   handleDayChange,
   handleMonthChange,
   handleYearChange
-}                          from '@/utils/calendar-utils';
-import { months }          from '@/utils/data';
-import { calendarRef }     from '@/utils/data';
+}                      from '@/utils/calendar-utils';
+import { months }      from '@/utils/data';
+import { calendarRef } from '@/utils/data';
 import {
   Check,
   ChevronLeft,
   ChevronRight,
   ChevronsUpDown
-}                          from 'lucide-react';
-import { PlusIcon }        from 'lucide-react';
-import { useState }        from 'react';
+}                      from 'lucide-react';
+import { useState }    from 'react';
 
 type CalendarNavProps = {
   calendarRef: calendarRef;
@@ -63,12 +61,10 @@ const CalendarNav = ({
   const [monthSelectOpen, setMonthSelectOpen] = useState(false);
 
   return (
-    <div className='flex min-w-full flex-wrap items-center justify-center gap-y-3 md:flex-nowrap md:px-10'>
-      {/* Left spacer — mirrors right column to keep centre content truly centred */}
-      <div className='hidden flex-1 md:block' />
+    <div className='flex min-w-full flex-wrap items-center justify-center gap-3 md:grid md:grid-cols-[1fr_auto_1fr]'>
+      {/* Empty left column keeps the date navigation centred */}
+      <div className='hidden md:block' />
 
-      {/* Centre: date navigation + Add Event */}
-      <div className='flex items-center gap-3'>
       <div className='flex flex-row space-x-1'>
         {/* Navigate to previous date interval */}
 
@@ -211,21 +207,16 @@ const CalendarNav = ({
         </Button>
       </div>
 
+      <div className='md:justify-self-end'>
         {!readOnly && (
           <Button
             className='w-24 md:w-28 text-xs md:text-sm'
             variant='default'
             onClick={() => setEventAddOpen(true)}
           >
-            <PlusIcon className='md:h-5 md:w-5 h-3 w-3' />
             <p>Add Event</p>
           </Button>
         )}
-      </div>
-
-      {/* Right: trip cost pill */}
-      <div className='flex w-full justify-center md:w-auto md:flex-1 md:justify-end'>
-        <ExpensesSummary />
       </div>
     </div>
   );

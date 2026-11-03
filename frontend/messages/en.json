@@ -209,7 +209,12 @@
     "drawerTitle": "Expenses",
     "generalExpenses": "General expenses",
     "noGeneralExpenses": "No general expenses yet.",
-    "readOnlyExpensesMessage": "Travel expenses are only visible to owners and editors of this calendar."
+    "readOnlyExpensesMessage": "Travel expenses are only visible to owners and editors of this calendar.",
+    "onEvents": "On events",
+    "general": "General",
+    "viewAll": "See all expenses",
+    "spentSoFar": "spent so far",
+    "details": "Details"
   },
   "tripPass": {
     "dates": "Dates",

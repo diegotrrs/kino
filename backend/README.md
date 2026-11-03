@@ -187,6 +187,27 @@ uvicorn app.main:app --reload
 
 The server will start at http://localhost:8000 with hot-reload enabled.
 
+### Switching between env files
+
+To run against a different setup (for example the local Docker database instead of Supabase) without commenting lines in `.env`, put only the values that differ in a second file and pass it with `--env-file`:
+
+```bash
+uvicorn app.main:app --reload --env-file .env.e2e
+```
+
+The file's variables become real environment variables, which take precedence over `.env`, so anything not in the file still comes from `.env`. Files matching `.env*` are gitignored.
+
+Example `.env.e2e` for running the frontend e2e tests locally:
+
+```
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/kino
+ENV=development
+TEST_USER_ID=<id of the e2e test user in the local database>
+TEST_RESET_SECRET=<same value as E2E_TEST_RESET_SECRET in frontend/.env.local>
+```
+
+Never point e2e tests at the production database: they create and delete data, and `ENV=development` enables the `/api/test/*` reset endpoints.
+
 ### Production
 
 ```bash
@@ -198,6 +219,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 | Command                         | Description                                 |
 | ------------------------------- | ------------------------------------------- |
 | `uvicorn app.main:app --reload` | Start the development server                |
+| `uvicorn app.main:app --reload --env-file .env.e2e` | Start the development server with `.env.e2e` overriding `.env` |
 | `pytest tests/unit`             | Run unit tests                              |
 | `pytest tests/unit -v`          | Run unit tests with verbose output          |
 | `pytest tests/unit --cov=app`   | Run unit tests with coverage report         |

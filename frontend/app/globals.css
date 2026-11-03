@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* next-themes toggles a .dark class, so dark: must follow it rather than the OS setting */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* FullCalendar toolbar — prevent I-beam cursor on non-interactive text */
 .fc-toolbar-title,
 .fc .fc-col-header-cell-cushion {
@@ -122,7 +125,9 @@
 }
 
 @layer base {
-  * {
+  *,
+  ::before,
+  ::after {
     border-color: hsl(var(--border));
   }
   body {

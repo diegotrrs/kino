@@ -1,5 +1,10 @@
 import Calendar                   from '@/components/calendar-no-ssr';
 import { CalendarShareButton }    from '@/components/calendars/calendar-share-button';
+import {
+  ExpensesBar,
+  ExpensesDrawer,
+  ExpensesPanel
+}                                 from '@/components/calendars/expenses-summary';
 import { PrivateCalendarOverlay } from '@/components/calendars/private-calendar-overlay';
 import { ReadOnlyBanner }         from '@/components/calendars/read-only-banner';
 import { TripPass }               from '@/components/calendars/trip-pass';
@@ -9,7 +14,6 @@ import { EventsProvider }         from '@/context/events-context';
 import type {
   Calendar as CalendarType,
   CalendarExpense,
-  CalendarMember,
   Event
 }                                 from '@/lib/types';
 import { CalendarEvent }          from '@/utils/data';
@@ -90,18 +94,6 @@ const getCalendarExpenses = async (calendarUuid: string, token: string | null): 
   return res.json();
 }
 
-const getCalendarMembers = async (calendarUuid: string, token: string | null): Promise<CalendarMember[]> => {
-  if (!token) return [];
-
-  const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarUuid}/users`, {
-    cache: 'no-store',
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  if (!res.ok) return [];
-  return res.json();
-}
-
 const CalendarPage = async ({
   params,
 }: {
@@ -149,12 +141,13 @@ const CalendarPage = async ({
     redirect(isAuthenticated ? '/home' : '/login');
   }
 
-  const [dbEvents, calendarExpenses, members] = await Promise.all([
+  const [dbEvents, calendarExpenses] = await Promise.all([
     getCalendarEvents(uuid, token),
     getCalendarExpenses(uuid, token),
-    getCalendarMembers(uuid, token),
   ]);
   const eventDates = dbEvents.map((event) => event.end_date ?? event.date);
+  const hasExpenses = calendarExpenses.length > 0 || dbEvents.some((event) => (event.expenses ?? []).length > 0);
+  const hasRail = hasExpenses;
   const events = dbEvents.map(dbEventToCalendarEvent);
 
   const initialDate = new Date(`${calendar.start_date}T12:00:00`);
@@ -177,7 +170,7 @@ const CalendarPage = async ({
           <div className='flex flex-col w-full items-center'>
             <div className='w-full px-5 space-y-5'>
 
-              <div className='space-y-3'>
+              <div className='space-y-0'>
 
                 <Link
                   href={backHref}
@@ -186,30 +179,40 @@ const CalendarPage = async ({
                 >
                   <ArrowLeft className='h-4 w-4' />
                 </Link>
-                <div className='flex items-center gap-1'>
-                  <h2 className='text-3xl font-extrabold tracking-tighter md:text-5xl select-none cursor-default'>
-                    {calendar.name}
-                  </h2>
+                <div className='flex flex-wrap items-center justify-between gap-4'>
+                  <div className='flex items-center gap-1'>
+                    <h2 className='text-3xl font-extrabold tracking-tighter md:text-5xl select-none cursor-default'>
+                      {calendar.name}
+                    </h2>
 
-                  {canShare && (
-                    <CalendarShareButton
-                      calendarUuid={String(calendar.uuid)}
-                      calendarName={calendar.name}
-                      isPublic={calendar.is_public}
-                    />
-                  )}
-                  {calendar.role === 'owner' && (
-                    <Button variant='ghost' size='icon' asChild>
-                      <Link href={`/calendars/${calendar.uuid}/edit`} aria-label='Edit calendar'>
-                        <Pencil className='h-5 w-5 text-muted-foreground' />
-                      </Link>
-                    </Button>
-                  )}
+                    {canShare && (
+                      <CalendarShareButton
+                        calendarUuid={String(calendar.uuid)}
+                        calendarName={calendar.name}
+                        isPublic={calendar.is_public}
+                      />
+                    )}
+                    {calendar.role === 'owner' && (
+                      <Button variant='ghost' size='icon' asChild>
+                        <Link href={`/calendars/${calendar.uuid}/edit`} aria-label='Edit calendar'>
+                          <Pencil className='h-5 w-5 text-muted-foreground' />
+                        </Link>
+                      </Button>
+                    )}
+                  </div>
+                  <TripPass startDate={calendar.start_date} eventDates={eventDates} />
                 </div>
-                <TripPass startDate={calendar.start_date} eventDates={eventDates} members={members} />
               </div>
-              <Separator />
-              <Calendar />
+              <div className={hasRail ? 'pt-4 pb-20 lg:pb-0 lg:grid lg:grid-cols-[minmax(0,1fr)_17rem] lg:items-start lg:gap-6' : 'pt-4'}>
+                <Calendar />
+                {hasRail && (
+                  <aside className='hidden gap-4 lg:grid' aria-label='Trip details'>
+                    <ExpensesPanel />
+                  </aside>
+                )}
+              </div>
+              <ExpensesBar />
+              <ExpensesDrawer />
             </div>
           </div>
         </div>

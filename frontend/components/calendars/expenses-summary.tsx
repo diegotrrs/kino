@@ -12,8 +12,10 @@ import { Input }                from '@/components/ui/input';
 import { Separator }            from '@/components/ui/separator';
 import { useEvents }            from '@/context/events-context';
 import type { CalendarExpense } from '@/lib/types';
+import { cn }                   from '@/lib/utils';
 import type { CalendarEvent }   from '@/utils/data';
 import {
+  ChevronUp,
   Plus,
   Wallet,
   X
@@ -36,7 +38,129 @@ export const tripTotals = (
     ...calendarExpenses,
   ]);
 
-export const ExpensesSummary = () => {
+export type ExpenseBreakdown = {
+  currency: string;
+  total: number;
+  onEvents: number;
+  general: number;
+  otherTotals: [string, number][];
+};
+
+const sumIn = (expenses: Array<{ amount: number; currency: string }>, currency: string): number =>
+  expenses.filter((e) => e.currency === currency).reduce((sum, e) => sum + e.amount, 0);
+
+// Leads with the preferred currency when the trip has any spend in it, otherwise the largest total
+export const getExpenseBreakdown = (
+  events: CalendarEvent[],
+  calendarExpenses: CalendarExpense[],
+  preferredCurrency: string,
+): ExpenseBreakdown | null => {
+  const totals = tripTotals(events, calendarExpenses);
+  if (totals.length === 0) return null;
+
+  const [currency] = totals.find(([cur]) => cur === preferredCurrency)
+    ?? [...totals].sort(([, a], [, b]) => b - a)[0];
+  const eventExpenses = events.flatMap((e) => e.expenses ?? []);
+  const onEvents = sumIn(eventExpenses, currency);
+  const general = sumIn(calendarExpenses, currency);
+
+  return {
+    currency,
+    total: onEvents + general,
+    onEvents,
+    general,
+    otherTotals: totals.filter(([cur]) => cur !== currency),
+  };
+};
+
+const useExpenseBreakdown = (): ExpenseBreakdown | null => {
+  const { events, calendarExpenses, preferredCurrency } = useEvents();
+  return getExpenseBreakdown(events, calendarExpenses, preferredCurrency);
+};
+
+export const ExpensesPanel = () => {
+  const { calendarExpenses, setExpensesOpen } = useEvents();
+  const t = useTranslations('eventCosts');
+  const breakdown = useExpenseBreakdown();
+  if (!breakdown && calendarExpenses.length === 0) return null;
+
+  return (
+      <button
+        type='button'
+        aria-label={t('viewExpenses')}
+        data-testid='trip-cost-pill'
+        onClick={() => setExpensesOpen(true)}
+        className='grid w-full gap-3 rounded-md border bg-card p-4 text-left transition-colors hover:bg-secondary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+      >
+        <span className='flex items-center justify-between font-mono text-[0.65rem] font-medium uppercase tracking-widest text-muted-foreground'>
+          {t('title')}
+          <Wallet className='h-3.5 w-3.5' />
+        </span>
+        {breakdown && (
+          <>
+            <span className='font-mono text-3xl font-medium tracking-tight tabular-nums'>
+              {formatAmount(breakdown.total, breakdown.currency)}
+            </span>
+            {breakdown.otherTotals.length > 0 && (
+              <span className='-mt-2 font-mono text-sm text-muted-foreground tabular-nums'>
+                {breakdown.otherTotals.map(([cur, amt]) => `+ ${formatAmount(amt, cur)}`).join(' · ')}
+              </span>
+            )}
+            <span className='flex h-1.5 overflow-hidden rounded-full bg-secondary' aria-hidden='true'>
+              <span className='bg-teal' style={{ width: `${breakdown.total ? (breakdown.onEvents / breakdown.total) * 100 : 0}%` }} />
+              <span className='bg-ev-ochre' style={{ width: `${breakdown.total ? (breakdown.general / breakdown.total) * 100 : 0}%` }} />
+            </span>
+            <span className='grid gap-1.5 text-sm'>
+              <span className='flex items-center justify-between gap-3'>
+                <span className='flex items-center gap-2'><span className='h-2 w-2 rounded-full bg-teal' />{t('onEvents')}</span>
+                <span className='font-mono tabular-nums'>{formatAmount(breakdown.onEvents, breakdown.currency)}</span>
+              </span>
+              <span className='flex items-center justify-between gap-3'>
+                <span className='flex items-center gap-2'><span className='h-2 w-2 rounded-full bg-ev-ochre' />{t('general')}</span>
+                <span className='font-mono tabular-nums'>{formatAmount(breakdown.general, breakdown.currency)}</span>
+              </span>
+            </span>
+          </>
+        )}
+        <span className='text-xs font-medium text-teal'>{t('viewAll')} →</span>
+      </button>
+  );
+};
+
+// Phones and tablets: floats above the bottom navigation so the spend stays in view while scrolling the calendar
+export const ExpensesBar = () => {
+  const { calendarExpenses, setExpensesOpen } = useEvents();
+  const t = useTranslations('eventCosts');
+  const breakdown = useExpenseBreakdown();
+  if (!breakdown && calendarExpenses.length === 0) return null;
+
+  return (
+    <button
+      type='button'
+      aria-label={t('viewExpenses')}
+      data-testid='trip-cost-bar'
+      onClick={() => setExpensesOpen(true)}
+      className='fixed inset-x-3 bottom-19 z-30 flex h-13 items-center gap-3 rounded-lg border bg-card px-4 text-left shadow-lg md:bottom-4 md:left-19 lg:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+    >
+      <Wallet className='h-4 w-4 shrink-0 text-teal' />
+      <span className='font-mono text-base font-medium tabular-nums'>
+        {breakdown && formatAmount(breakdown.total, breakdown.currency)}
+      </span>
+      {breakdown && breakdown.otherTotals.length > 0 && (
+        <span className='hidden font-mono text-xs text-muted-foreground tabular-nums sm:inline'>
+          {breakdown.otherTotals.map(([cur, amt]) => `+ ${formatAmount(amt, cur)}`).join(' · ')}
+        </span>
+      )}
+      <span className='truncate text-xs text-muted-foreground'>{t('spentSoFar')}</span>
+      <span className='ml-auto flex shrink-0 items-center gap-1 text-xs font-medium text-teal'>
+        {t('details')}
+        <ChevronUp className='h-4 w-4' />
+      </span>
+    </button>
+  );
+};
+
+export const ExpensesDrawer = () => {
   const {
     events,
     calendarUuid,
@@ -45,10 +169,11 @@ export const ExpensesSummary = () => {
     preferredCurrency,
     addCalendarExpense: addExpenseToContext,
     removeCalendarExpense,
+    expensesOpen: open,
+    setExpensesOpen: setOpen,
   } = useEvents();
   const t = useTranslations('eventCosts');
 
-  const [open, setOpen]           = useState(false);
   const [adding, setAdding]       = useState(false);
   const [showForm, setShowForm]   = useState(false);
   const [label, setLabel]         = useState('');
@@ -57,8 +182,6 @@ export const ExpensesSummary = () => {
 
   const totals = tripTotals(events, calendarExpenses);
   if (totals.length === 0 && calendarExpenses.length === 0) return null;
-
-  const pillLabel = totals.map(([cur, amt]) => formatAmount(amt, cur)).join(' · ');
 
   const handleAdd = async () => {
     const n = parseFloat(amount);
@@ -83,20 +206,10 @@ export const ExpensesSummary = () => {
 
   return (
     <>
-      <button
-        type='button'
-        aria-label='View trip expenses'
-        data-testid='trip-cost-pill'
-        onClick={() => setOpen(true)}
-        className='inline-flex items-center gap-1.5 rounded-full border border-teal/25 bg-teal-soft px-3 py-1 font-mono text-xs font-medium text-teal tabular-nums hover:bg-teal-soft/70 transition-colors'
-      >
-        <Wallet className='h-3.5 w-3.5' />
-        {pillLabel ? `${t('viewExpenses')} · ${pillLabel}` : t('viewExpenses')}
-      </button>
 
       {open && (
         <div
-          className='fixed inset-0 z-40'
+          className='fixed inset-0 z-40 bg-black/50 lg:bg-transparent'
           aria-hidden='true'
           onClick={() => setOpen(false)}
         />
@@ -106,8 +219,13 @@ export const ExpensesSummary = () => {
         role='dialog'
         aria-label='Expenses'
         data-testid='trip-cost-drawer'
-        className={`fixed top-0 right-0 h-full w-80 bg-card border-l shadow-xl z-50 flex flex-col transition-transform duration-300 ${open ? 'translate-x-0' : 'translate-x-full'}`}
+        className={cn(
+          'fixed inset-x-0 bottom-0 z-50 flex max-h-[85svh] flex-col rounded-t-2xl border-t bg-card shadow-xl transition-transform duration-300',
+          'lg:inset-x-auto lg:top-0 lg:right-0 lg:h-full lg:max-h-none lg:w-80 lg:rounded-none lg:border-t-0 lg:border-l',
+          open ? 'translate-y-0 lg:translate-x-0' : 'translate-y-full lg:translate-y-0 lg:translate-x-full',
+        )}
       >
+        <span aria-hidden='true' className='mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-border lg:hidden' />
         <div className='flex items-center justify-between px-4 py-3 border-b'>
           <div className='flex items-center gap-2'>
             <Wallet className='h-4 w-4 text-muted-foreground' />

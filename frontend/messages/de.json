@@ -209,7 +209,12 @@
     "drawerTitle": "Ausgaben",
     "generalExpenses": "Allgemeine Ausgaben",
     "noGeneralExpenses": "Noch keine allgemeinen Ausgaben.",
-    "readOnlyExpensesMessage": "Reiseausgaben sind nur für Eigentümer und Bearbeiter dieses Kalenders sichtbar."
+    "readOnlyExpensesMessage": "Reiseausgaben sind nur für Eigentümer und Bearbeiter dieses Kalenders sichtbar.",
+    "onEvents": "Bei Terminen",
+    "general": "Allgemein",
+    "viewAll": "Alle Ausgaben ansehen",
+    "spentSoFar": "bisher ausgegeben",
+    "details": "Details"
   },
   "tripPass": {
     "dates": "Daten",

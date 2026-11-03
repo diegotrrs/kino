@@ -43,11 +43,9 @@ export const TopBar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
             onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
             aria-label={t('toggleTheme')}
           >
-            {resolvedTheme === 'dark' ? (
-              <Sun className='h-4 w-4' />
-            ) : (
-              <Moon className='h-4 w-4' />
-            )}
+            {/* Both icons render and CSS picks one: the server can't know the theme, so a JS branch would mismatch */}
+            <Sun className='hidden h-4 w-4 dark:block' />
+            <Moon className='h-4 w-4 dark:hidden' />
           </Button>
         )}
 

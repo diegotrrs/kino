@@ -1,7 +1,15 @@
 'use client';
-import { CalendarEvent, initialEvents } from '@/utils/data';
-import type { CalendarExpense }          from '@/lib/types';
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import type { CalendarExpense } from '@/lib/types';
+import {
+  CalendarEvent,
+  initialEvents
+}                               from '@/utils/data';
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useState
+}                               from 'react';
 
 type EventsContextType = {
   calendarId?: number;
@@ -25,6 +33,8 @@ type EventsContextType = {
   setEventDeleteOpen: (value: boolean) => void;
   availabilityCheckerEventAddOpen: boolean;
   setAvailabilityCheckerEventAddOpen: (value: boolean) => void;
+  expensesOpen: boolean;
+  setExpensesOpen: (value: boolean) => void;
 }
 
 const EventsContext = createContext<EventsContextType | undefined>(undefined);
@@ -72,6 +82,7 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
   const [eventViewOpen, setEventViewOpen]                               = useState(false);
   const [eventAddOpen, setEventAddOpenState]                            = useState(false);
   const [eventEditOpen, setEventEditOpen]                               = useState(false);
+  const [expensesOpen, setExpensesOpen]                                 = useState(false);
 
   const setEventAddOpen = (value: boolean) => {
     if (readOnly && value) return;
@@ -120,6 +131,8 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
         setEventEditOpen,
         eventDeleteOpen,
         setEventDeleteOpen,
+        expensesOpen,
+        setExpensesOpen,
         availabilityCheckerEventAddOpen,
         setAvailabilityCheckerEventAddOpen,
       }}
