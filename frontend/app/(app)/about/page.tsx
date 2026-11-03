@@ -1,4 +1,4 @@
-import { Separator }      from '@/components/ui/separator';
+import { Separator }       from '@/components/ui/separator';
 import { getTranslations } from 'next-intl/server';
 import Link                from 'next/link';
 
@@ -10,7 +10,7 @@ const AboutPage = async () => {
       <div className='flex flex-col w-full items-center'>
         <div className='w-full px-5 space-y-5'>
           <div className='space-y-0'>
-            <h2 className='text-2xl font-semibold tracking-tight md:text-3xl'>
+            <h2 className='text-3xl font-extrabold tracking-tighter md:text-4xl'>
               {t('title')}
             </h2>
             <p className='text-xs md:text-sm font-medium text-muted-foreground'>

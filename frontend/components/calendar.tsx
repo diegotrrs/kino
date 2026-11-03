@@ -1,17 +1,19 @@
 'use client';
 import '@/styles/calendar.css';
-import { updateEvent }   from '@/app/(app)/events/actions';
-import { useEvents }     from '@/context/events-context';
-import { useToast }      from '@/hooks/use-toast';
+import { updateEvent }        from '@/app/(app)/events/actions';
+import { useEvents }          from '@/context/events-context';
+import { useToast }           from '@/hooks/use-toast';
 import {
-  goToday,
-  getDateFromMinutes
-}                        from '@/utils/calendar-utils';
+  DEFAULT_EVENT_COLOR,
+  getEventEdge,
+  getEventTint
+}                             from '@/lib/event-colors';
+import { getDateFromMinutes } from '@/utils/calendar-utils';
 import {
   CalendarEvent,
   earliestTime,
   latestTime
-}                        from '@/utils/data';
+}                             from '@/utils/data';
 import {
   DateSelectArg,
   DayCellContentArg,
@@ -19,21 +21,21 @@ import {
   EventChangeArg,
   EventClickArg,
   EventContentArg
-}                        from '@fullcalendar/core/index.js';
-import dayGridPlugin     from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import listPlugin        from '@fullcalendar/list';
-import multiMonthPlugin  from '@fullcalendar/multimonth';
-import FullCalendar      from '@fullcalendar/react';
-import timeGridPlugin    from '@fullcalendar/timegrid';
-import { format }        from 'date-fns';
+}                             from '@fullcalendar/core/index.js';
+import dayGridPlugin          from '@fullcalendar/daygrid';
+import interactionPlugin      from '@fullcalendar/interaction';
+import listPlugin             from '@fullcalendar/list';
+import multiMonthPlugin       from '@fullcalendar/multimonth';
+import FullCalendar           from '@fullcalendar/react';
+import timeGridPlugin         from '@fullcalendar/timegrid';
+import { format }             from 'date-fns';
 import {
   useRef,
   useState
-}                        from 'react';
-import CalendarNav  from './calendar-nav';
-import { EventForm } from './event-form';
-import { Card }      from './ui/card';
+}                             from 'react';
+import CalendarNav            from './calendar-nav';
+import { EventForm }          from './event-form';
+import { Card }               from './ui/card';
 
 type EventItemProps = {
   info: EventContentArg;
@@ -126,29 +128,38 @@ const Calendar = () => {
   const EventItem = ({ info }: EventItemProps) => {
     const { event } = info;
     const [left, right] = info.timeText.split(' - ');
+    const color = info.backgroundColor || DEFAULT_EVENT_COLOR;
+
+    if (info.view.type == 'dayGridMonth') {
+      return (
+        <div
+          style={{ backgroundColor: getEventTint(color, 22), borderLeftColor: color }}
+          className='flex w-full flex-col overflow-hidden rounded-sm border-l-[3px] px-1.5 py-0.5 text-[0.5rem] sm:text-[0.6rem] md:text-xs'
+        >
+          <p className='w-11/12 font-semibold text-foreground line-clamp-1'>
+            {event.title}
+          </p>
+          <p className='font-mono text-muted-foreground tabular-nums line-clamp-1'>
+            {right ? `${left}–${right}` : left}
+          </p>
+        </div>
+      );
+    }
 
     return (
-      <div className='overflow-hidden w-full'>
-        {info.view.type == 'dayGridMonth' ? (
-          <div
-            style={{ backgroundColor: info.backgroundColor }}
-            className={'flex flex-col rounded-md w-full px-2 py-1 line-clamp-1 text-[0.5rem] sm:text-[0.6rem] md:text-xs'}
-          >
-            <p className='font-semibold text-gray-950 line-clamp-1 w-11/12'>
-              {event.title}
-            </p>
-
-            <p className='text-gray-800'>{left}</p>
-            <p className='text-gray-800'>{right}</p>
-          </div>
-        ) : (
-          <div className='flex flex-col space-y-0 text-[0.5rem] sm:text-[0.6rem] md:text-xs'>
-            <p className='font-semibold w-full text-gray-950 line-clamp-1'>
-              {event.title}
-            </p>
-            <p className='text-gray-800 line-clamp-1'>{`${left} - ${right}`}</p>
-          </div>
-        )}
+      <div
+        style={{ backgroundColor: getEventTint(color, 22), borderColor: getEventEdge(color, 35) }}
+        className='flex h-full w-full flex-col overflow-hidden rounded-sm border text-[0.5rem] sm:text-[0.6rem] md:text-xs'
+      >
+        <p
+          style={{ borderBottomColor: getEventEdge(color) }}
+          className='border-b border-dashed px-1.5 py-0.5 font-mono text-muted-foreground tabular-nums line-clamp-1'
+        >
+          {right ? `${left}–${right}` : left}
+        </p>
+        <p className='px-1.5 py-0.5 font-semibold text-foreground line-clamp-2'>
+          {event.title}
+        </p>
       </div>
     );
   };
@@ -172,14 +183,14 @@ const Calendar = () => {
           <div className='flex flex-col space-y-0.5 rounded-sm items-center w-full text-xs sm:text-sm md:text-md'>
             <p className='flex font-semibold'>{weekday}</p>
             {info.isToday ? (
-              <div className='flex bg-foreground h-6 w-6 rounded-full items-center justify-center text-xs sm:text-sm md:text-md'>
-                <p className='font-light text-background'>
+              <div className='flex bg-primary h-6 w-6 rounded-full items-center justify-center text-xs sm:text-sm md:text-md'>
+                <p className='font-display font-semibold text-primary-foreground'>
                   {info.date.getDate()}
                 </p>
               </div>
             ) : (
               <div className='h-6 w-6 rounded-full items-center justify-center'>
-                <p className='font-light'>{info.date.getDate()}</p>
+                <p className='font-display font-semibold'>{info.date.getDate()}</p>
               </div>
             )}
           </div>
@@ -202,7 +213,7 @@ const Calendar = () => {
     return (
       <div className='flex'>
         {info.view.type == 'dayGridMonth' && info.isToday ? (
-          <div className='flex h-7 w-7 rounded-full bg-foreground items-center justify-center text-sm text-background'>
+          <div className='flex h-7 w-7 rounded-full bg-primary items-center justify-center text-sm text-primary-foreground'>
             {info.dayNumberText}
           </div>
         ) : (
@@ -253,15 +264,6 @@ const Calendar = () => {
       />
 
       <div className='relative'>
-        {(viewedDate.getMonth() !== new Date().getMonth() ||
-          viewedDate.getFullYear() !== new Date().getFullYear()) && (
-            <button
-              onClick={() => goToday(calendarRef)}
-              className='absolute -top-3 left-0 right-0 mx-auto w-fit z-30 rounded-full px-4 py-1 text-xs font-medium shadow-md cursor-pointer back-to-today-pill'
-            >
-              Back to {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-            </button>
-          )}
         <Card className='p-3'>
           <FullCalendar
             ref={calendarRef}
@@ -294,7 +296,7 @@ const Calendar = () => {
               minute: '2-digit',
               hour12: true,
             }}
-            eventBorderColor={'black'}
+            eventBorderColor={'transparent'}
             contentHeight={'auto'}
             expandRows={true}
             dayCellContent={(dayInfo) => <DayRender info={dayInfo} />}

@@ -11,7 +11,6 @@ import {
   getDateFromMinutes,
   goNext,
   goPrev,
-  goToday,
   handleDayChange,
   handleMonthChange,
   handleYearChange,
@@ -125,14 +124,6 @@ describe('goNext', () => {
     const { ref, api } = buildMockCalendarRef();
     goNext(ref);
     expect(api.next).toHaveBeenCalledOnce();
-  });
-});
-
-describe('goToday', () => {
-  it('should call today() on the calendar API', () => {
-    const { ref, api } = buildMockCalendarRef();
-    goToday(ref);
-    expect(api.today).toHaveBeenCalledOnce();
   });
 });
 

@@ -6,6 +6,7 @@ import {
   deleteEvent as deleteEventAction,
   updateEvent
 }                               from '@/app/(app)/events/actions';
+import { EventColorPicker }     from '@/components/events/event-color-picker';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,6 +19,7 @@ import {
 import { Button }               from '@/components/ui/button';
 import { useEvents }            from '@/context/events-context';
 import { useToast }             from '@/hooks/use-toast';
+import { DEFAULT_EVENT_COLOR }  from '@/lib/event-colors';
 import type {
   EventExpense,
   EventLink
@@ -30,10 +32,9 @@ import {
   useRef,
   useState
 }                               from 'react';
-import { HexColorPicker }       from 'react-colorful';
 import { z }                    from 'zod';
-import { EventExpenses }        from './events/event-expenses';
 import { EventDateRangePicker } from './events/event-date-range-picker';
+import { EventExpenses }        from './events/event-expenses';
 import { EventLinks }           from './events/event-links';
 import {
   PendingExpenses,
@@ -87,8 +88,8 @@ export const EventForm = (props: EventFormProps) => {
   });
   const [color, setColor] = useState(() =>
     mode === 'add'
-      ? (typeof window !== 'undefined' ? localStorage.getItem('lastEventColor') ?? '#76c7ef' : '#76c7ef')
-      : (editEvent?.backgroundColor ?? '#76c7ef')
+      ? (typeof window !== 'undefined' ? localStorage.getItem('lastEventColor') ?? DEFAULT_EVENT_COLOR : DEFAULT_EVENT_COLOR)
+      : (editEvent?.backgroundColor ?? DEFAULT_EVENT_COLOR)
   );
   const [titleError, setTitleError] = useState(false);
   const [dateOpen, setDateOpen] = useState(false);
@@ -109,7 +110,7 @@ export const EventForm = (props: EventFormProps) => {
     setDescription('');
     setStart(defaultStart);
     setEnd(defaultEnd);
-    setColor(localStorage.getItem('lastEventColor') ?? '#76c7ef');
+    setColor(localStorage.getItem('lastEventColor') ?? DEFAULT_EVENT_COLOR);
     setTitleError(false);
     setDateOpen(false);
     /* eslint-enable react-hooks/set-state-in-effect */
@@ -125,7 +126,7 @@ export const EventForm = (props: EventFormProps) => {
     setDescription(editEvent?.description ?? '');
     setStart(editEvent?.start as Date);
     setEnd(editEvent?.end as Date);
-    setColor(editEvent?.backgroundColor ?? '#76c7ef');
+    setColor(editEvent?.backgroundColor ?? DEFAULT_EVENT_COLOR);
     setTitleError(false);
     setConfirmingDelete(false);
     setDateOpen(false);
@@ -374,7 +375,7 @@ export const EventForm = (props: EventFormProps) => {
                   </button>
                 </PopoverTrigger>
                 <PopoverContent className='w-auto p-3' align='start'>
-                  <HexColorPicker color={color} onChange={setColor} />
+                  <EventColorPicker color={color} onChange={setColor} />
                 </PopoverContent>
               </Popover>
             )}

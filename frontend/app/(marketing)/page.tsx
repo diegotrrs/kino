@@ -33,18 +33,11 @@ const Home = async () => {
 
   return (
     <div className='flex flex-col'>
-      <section className='relative overflow-hidden px-6 py-20 md:py-32 text-center'>
-        <div
-          aria-hidden
-          className='pointer-events-none absolute inset-0 -z-10 flex items-center justify-center'
-        >
-          <div className='h-[600px] w-[600px] rounded-full bg-primary/10 blur-3xl' />
-        </div>
-
-        <p className='mb-3 text-sm font-semibold uppercase tracking-widest text-primary'>
+      <section className='px-6 py-20 md:py-28 text-center'>
+        <p className='mb-4 font-mono text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground'>
           {t('tagline')}
         </p>
-        <h1 className='mx-auto max-w-3xl text-4xl font-extrabold tracking-tight md:text-6xl'>
+        <h1 className='mx-auto max-w-3xl text-5xl font-extrabold leading-[0.95] tracking-tighter md:text-7xl'>
           {t('hero')}{' '}
           <span className='text-primary'>{t('heroHighlight')}</span>
         </h1>
@@ -57,14 +50,14 @@ const Home = async () => {
               {t('getStartedFree')} <ArrowRight className='ml-2 h-4 w-4' />
             </Link>
           </Button>
-          <Button size='lg' asChild>
+          <Button size='lg' variant='outline' asChild>
             <Link href='/login'>{t('signIn')}</Link>
           </Button>
         </div>
         <ul className='mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground'>
           {perks.map((item) => (
             <li key={item} className='flex items-center gap-1.5'>
-              <CheckCircle2 className='h-4 w-4 text-primary' />
+              <CheckCircle2 className='h-4 w-4 text-teal' />
               {item}
             </li>
           ))}
@@ -74,12 +67,12 @@ const Home = async () => {
       <section className='px-6 pb-20'>
         <div className='mx-auto max-w-5xl'>
           <div className='mb-8 text-center'>
-            <h2 className='text-2xl font-bold tracking-tight md:text-3xl'>{t('tryNowTitle')}</h2>
+            <h2 className='text-3xl font-extrabold tracking-tighter md:text-4xl'>{t('tryNowTitle')}</h2>
             <p className='mt-2 text-muted-foreground'>
               {t('tryNowSubtitle')}
             </p>
           </div>
-          <div className='rounded-xl border bg-card shadow-sm overflow-hidden p-4 md:p-6'>
+          <div className='rounded-lg border bg-card overflow-hidden p-4 md:p-6'>
             <EventsProvider>
               <CalendarNoSSR />
             </EventsProvider>
@@ -87,10 +80,10 @@ const Home = async () => {
         </div>
       </section>
 
-      <section className='bg-muted/40 px-6 py-20'>
+      <section className='border-y border-dashed bg-card/60 px-6 py-20'>
         <div className='mx-auto max-w-5xl'>
           <div className='mb-12 text-center'>
-            <h2 className='text-2xl font-bold tracking-tight md:text-3xl'>
+            <h2 className='text-3xl font-extrabold tracking-tighter md:text-4xl'>
               {t('featuresTitle')}
             </h2>
             <p className='mt-2 text-muted-foreground'>
@@ -101,12 +94,12 @@ const Home = async () => {
             {features.map(({ icon: Icon, title, description }) => (
               <div
                 key={title}
-                className='rounded-xl border bg-card p-6 shadow-sm'
+                className='rounded-lg border bg-card p-6'
               >
-                <div className='mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10'>
-                  <Icon className='h-5 w-5 text-primary' />
+                <div className='mb-4 flex h-10 w-10 items-center justify-center rounded-md bg-teal-soft'>
+                  <Icon className='h-5 w-5 text-teal' />
                 </div>
-                <h3 className='mb-2 font-semibold'>{title}</h3>
+                <h3 className='mb-2 text-lg font-bold tracking-tight'>{title}</h3>
                 <p className='text-sm text-muted-foreground'>{description}</p>
               </div>
             ))}
@@ -117,17 +110,17 @@ const Home = async () => {
       <section className='px-6 py-20'>
         <div className='mx-auto max-w-3xl'>
           <div className='mb-12 text-center'>
-            <h2 className='text-2xl font-bold tracking-tight md:text-3xl'>
+            <h2 className='text-3xl font-extrabold tracking-tighter md:text-4xl'>
               {t('stepsTitle')}
             </h2>
           </div>
           <ol className='relative border-l border-border pl-8 space-y-10'>
             {steps.map(({ step, title, body }) => (
               <li key={step} className='relative'>
-                <span className='absolute -left-[2.85rem] flex h-9 w-9 items-center justify-center rounded-full border bg-background text-xs font-bold text-primary'>
+                <span className='absolute -left-[2.85rem] flex h-9 w-9 items-center justify-center rounded-full border bg-card font-mono text-xs font-medium text-primary'>
                   {step}
                 </span>
-                <h3 className='font-semibold text-lg'>{title}</h3>
+                <h3 className='text-xl font-bold tracking-tight'>{title}</h3>
                 <p className='mt-1 text-muted-foreground'>{body}</p>
               </li>
             ))}
@@ -138,7 +131,7 @@ const Home = async () => {
       <section className='px-6 py-20'>
         <div className='mx-auto max-w-5xl'>
           <div className='mb-8 text-center'>
-            <h2 className='text-2xl font-bold tracking-tight md:text-3xl'>
+            <h2 className='text-3xl font-extrabold tracking-tighter md:text-4xl'>
               {t('hotTripsTitle')}
             </h2>
             <p className='mt-2 text-muted-foreground'>
@@ -150,16 +143,15 @@ const Home = async () => {
       </section>
 
       <section className='px-6 py-20'>
-        <div className='mx-auto max-w-2xl rounded-2xl bg-primary px-8 py-16 text-center text-primary-foreground shadow-lg'>
-          <h2 className='text-3xl font-extrabold tracking-tight'>
+        <div className='mx-auto max-w-2xl rounded-lg bg-foreground px-8 py-16 text-center text-background'>
+          <h2 className='text-4xl font-extrabold tracking-tighter'>
             {t('ctaTitle')}
           </h2>
-          <p className='mt-4 text-primary-foreground/80'>
+          <p className='mt-4 text-background/70'>
             {t('ctaSubtitle')}
           </p>
           <Button
             size='lg'
-            variant='secondary'
             className='mt-8'
             asChild
           >

@@ -1,23 +1,29 @@
-import Calendar                    from '@/components/calendar-no-ssr';
-import { CalendarShareButton }     from '@/components/calendars/calendar-share-button';
-import { PrivateCalendarOverlay }  from '@/components/calendars/private-calendar-overlay';
-import { ReadOnlyBanner }          from '@/components/calendars/read-only-banner';
-import { Button }                  from '@/components/ui/button';
-import { Separator }               from '@/components/ui/separator';
-import { EventsProvider }          from '@/context/events-context';
+import Calendar                   from '@/components/calendar-no-ssr';
+import { CalendarShareButton }    from '@/components/calendars/calendar-share-button';
+import {
+  ExpensesBar,
+  ExpensesDrawer,
+  ExpensesPanel
+}                                 from '@/components/calendars/expenses-summary';
+import { PrivateCalendarOverlay } from '@/components/calendars/private-calendar-overlay';
+import { ReadOnlyBanner }         from '@/components/calendars/read-only-banner';
+import { TripPass }               from '@/components/calendars/trip-pass';
+import { Button }                 from '@/components/ui/button';
+import { Separator }              from '@/components/ui/separator';
+import { EventsProvider }         from '@/context/events-context';
 import type {
   Calendar as CalendarType,
   CalendarExpense,
   Event
-}                                  from '@/lib/types';
-import { CalendarEvent }           from '@/utils/data';
+}                                 from '@/lib/types';
+import { CalendarEvent }          from '@/utils/data';
 import {
   ArrowLeft,
   Pencil
-}                                  from 'lucide-react';
-import { cookies }                 from 'next/headers';
-import Link                        from 'next/link';
-import { redirect }                from 'next/navigation';
+}                                 from 'lucide-react';
+import { cookies }                from 'next/headers';
+import Link                       from 'next/link';
+import { redirect }               from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
@@ -117,7 +123,7 @@ const CalendarPage = async ({
               Sign in
             </Link>
             <div className='flex items-center gap-1'>
-              <h2 className='text-2xl font-semibold tracking-tight md:text-3xl select-none cursor-default'>
+              <h2 className='text-3xl font-extrabold tracking-tighter md:text-5xl select-none cursor-default'>
                 Calendar
               </h2>
             </div>
@@ -139,6 +145,9 @@ const CalendarPage = async ({
     getCalendarEvents(uuid, token),
     getCalendarExpenses(uuid, token),
   ]);
+  const eventDates = dbEvents.map((event) => event.end_date ?? event.date);
+  const hasExpenses = calendarExpenses.length > 0 || dbEvents.some((event) => (event.expenses ?? []).length > 0);
+  const hasRail = hasExpenses;
   const events = dbEvents.map(dbEventToCalendarEvent);
 
   const initialDate = new Date(`${calendar.start_date}T12:00:00`);
@@ -170,29 +179,40 @@ const CalendarPage = async ({
                 >
                   <ArrowLeft className='h-4 w-4' />
                 </Link>
-                <div className='flex items-center gap-1'>
-                  <h2 className='text-2xl font-semibold tracking-tight md:text-3xl select-none cursor-default'>
-                    {calendar.name}
-                  </h2>
+                <div className='flex flex-wrap items-center justify-between gap-4'>
+                  <div className='flex items-center gap-1'>
+                    <h2 className='text-3xl font-extrabold tracking-tighter md:text-5xl select-none cursor-default'>
+                      {calendar.name}
+                    </h2>
 
-                  {canShare && (
-                    <CalendarShareButton
-                      calendarUuid={String(calendar.uuid)}
-                      calendarName={calendar.name}
-                      isPublic={calendar.is_public}
-                    />
-                  )}
-                  {calendar.role === 'owner' && (
-                    <Button variant='ghost' size='icon' asChild>
-                      <Link href={`/calendars/${calendar.uuid}/edit`} aria-label='Edit calendar'>
-                        <Pencil className='h-5 w-5 text-muted-foreground' />
-                      </Link>
-                    </Button>
-                  )}
+                    {canShare && (
+                      <CalendarShareButton
+                        calendarUuid={String(calendar.uuid)}
+                        calendarName={calendar.name}
+                        isPublic={calendar.is_public}
+                      />
+                    )}
+                    {calendar.role === 'owner' && (
+                      <Button variant='ghost' size='icon' asChild>
+                        <Link href={`/calendars/${calendar.uuid}/edit`} aria-label='Edit calendar'>
+                          <Pencil className='h-5 w-5 text-muted-foreground' />
+                        </Link>
+                      </Button>
+                    )}
+                  </div>
+                  <TripPass startDate={calendar.start_date} eventDates={eventDates} />
                 </div>
               </div>
-              <Separator />
-              <Calendar />
+              <div className={hasRail ? 'pt-4 pb-20 lg:pb-0 lg:grid lg:grid-cols-[minmax(0,1fr)_17rem] lg:items-start lg:gap-6' : 'pt-4'}>
+                <Calendar />
+                {hasRail && (
+                  <aside className='hidden gap-4 lg:grid' aria-label='Trip details'>
+                    <ExpensesPanel />
+                  </aside>
+                )}
+              </div>
+              <ExpensesBar />
+              <ExpensesDrawer />
             </div>
           </div>
         </div>

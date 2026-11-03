@@ -209,6 +209,38 @@
     "drawerTitle": "Expenses",
     "generalExpenses": "General expenses",
     "noGeneralExpenses": "No general expenses yet.",
-    "readOnlyExpensesMessage": "Travel expenses are only visible to owners and editors of this calendar."
+    "readOnlyExpensesMessage": "Travel expenses are only visible to owners and editors of this calendar.",
+    "onEvents": "On events",
+    "general": "General",
+    "viewAll": "See all expenses",
+    "spentSoFar": "spent so far",
+    "details": "Details"
+  },
+  "tripPass": {
+    "dates": "Dates",
+    "days": "{count, plural, one {# day} other {# days}}",
+    "dayOf": "Day {current} of {total}",
+    "departsIn": "{count, plural, =0 {Departs today} one {Departs tomorrow} other {Departs in # days}}",
+    "complete": "Trip complete",
+    "travellers": "{count, plural, one {# traveller} other {# travellers}}"
+  },
+  "eventColors": {
+    "custom": "Custom",
+    "palette": "Theme colours",
+    "teal": "Teal",
+    "terracotta": "Terracotta",
+    "ochre": "Ochre",
+    "sage": "Sage",
+    "plum": "Plum",
+    "slate": "Slate"
+  },
+  "calendarList": {
+    "emptyTitle": "No trips yet. Where to first?",
+    "emptyHint": "Create a calendar and start mapping out the days.",
+    "create": "Create a calendar"
+  },
+  "postcard": {
+    "days": "{count} days",
+    "hot": "Hot"
   }
 }

@@ -1,9 +1,13 @@
 'use server';
-import type { CalendarExpense, CreateEventInput } from '@/lib/types';
-import { getTripBySlug }        from '@/app/(marketing)/trips/trips-data';
-import { revalidatePath }       from 'next/cache';
-import { cookies }              from 'next/headers';
-import { redirect }             from 'next/navigation';
+import { getTripBySlug }  from '@/app/(marketing)/trips/trips-data';
+import { EVENT_COLORS }   from '@/lib/event-colors';
+import type {
+  CalendarExpense,
+  CreateEventInput
+}                         from '@/lib/types';
+import { revalidatePath } from 'next/cache';
+import { cookies }        from 'next/headers';
+import { redirect }       from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
@@ -46,9 +50,7 @@ export const restoreCalendar = async (uuid: string) => {
   revalidatePath('/settings/deleted-calendars');
 };
 
-const STOP_COLORS = [
-  '#16a34a', '#2563eb', '#7c3aed', '#ea580c', '#0891b2', '#dc2626', '#ca8a04',
-];
+const STOP_COLORS = EVENT_COLORS.map((c) => c.hex);
 
 const addDays = (date: string, n: number): string => {
   const d = new Date(`${date}T12:00:00`);

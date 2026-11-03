@@ -209,6 +209,38 @@
     "drawerTitle": "Gastos",
     "generalExpenses": "Gastos generales",
     "noGeneralExpenses": "Aún no hay gastos generales.",
-    "readOnlyExpensesMessage": "Los gastos del viaje solo son visibles para los propietarios y editores de este calendario."
+    "readOnlyExpensesMessage": "Los gastos del viaje solo son visibles para los propietarios y editores de este calendario.",
+    "onEvents": "En eventos",
+    "general": "Generales",
+    "viewAll": "Ver todos los gastos",
+    "spentSoFar": "gastado hasta ahora",
+    "details": "Detalles"
+  },
+  "tripPass": {
+    "dates": "Fechas",
+    "days": "{count, plural, one {# día} other {# días}}",
+    "dayOf": "Día {current} de {total}",
+    "departsIn": "{count, plural, =0 {Sales hoy} one {Sales mañana} other {Sales en # días}}",
+    "complete": "Viaje terminado",
+    "travellers": "{count, plural, one {# viajero} other {# viajeros}}"
+  },
+  "eventColors": {
+    "custom": "Personalizado",
+    "palette": "Colores del tema",
+    "teal": "Verde azulado",
+    "terracotta": "Terracota",
+    "ochre": "Ocre",
+    "sage": "Salvia",
+    "plum": "Ciruela",
+    "slate": "Pizarra"
+  },
+  "calendarList": {
+    "emptyTitle": "Aún no hay viajes. ¿Adónde primero?",
+    "emptyHint": "Crea un calendario y empieza a planear los días.",
+    "create": "Crear un calendario"
+  },
+  "postcard": {
+    "days": "{count} días",
+    "hot": "Top"
   }
 }

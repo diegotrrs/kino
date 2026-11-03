@@ -4,7 +4,6 @@ import type { calendarRef } from './data';
 type MockCalendarApi = {
   prev: ReturnType<typeof vi.fn>;
   next: ReturnType<typeof vi.fn>;
-  today: ReturnType<typeof vi.fn>;
   gotoDate: ReturnType<typeof vi.fn>;
   changeView: ReturnType<typeof vi.fn>;
 };
@@ -18,7 +17,6 @@ export const buildMockCalendarRef = (): MockCalendarRef => {
   const api: MockCalendarApi = {
     prev: vi.fn(),
     next: vi.fn(),
-    today: vi.fn(),
     gotoDate: vi.fn(),
     changeView: vi.fn(),
   };

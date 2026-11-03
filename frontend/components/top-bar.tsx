@@ -2,6 +2,7 @@
 import { logout }           from '@/app/auth/actions';
 import { updateLocale }     from '@/app/(app)/settings/actions';
 import { Button }           from '@/components/ui/button';
+import { Wordmark }         from '@/components/wordmark';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,7 +33,7 @@ export const TopBar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 
   return (
     <header className='sticky top-0 z-50 flex h-14 items-center justify-between border-b bg-background px-4'>
-      <span className='text-lg font-bold tracking-tight select-none'>Kino</span>
+      <Wordmark />
 
       <div className='flex items-center gap-2'>
         {process.env.NODE_ENV === 'development' && (
@@ -42,16 +43,14 @@ export const TopBar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
             onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
             aria-label={t('toggleTheme')}
           >
-            {resolvedTheme === 'dark' ? (
-              <Sun className='h-4 w-4' />
-            ) : (
-              <Moon className='h-4 w-4' />
-            )}
+            {/* Both icons render and CSS picks one: the server can't know the theme, so a JS branch would mismatch */}
+            <Sun className='hidden h-4 w-4 dark:block' />
+            <Moon className='h-4 w-4 dark:hidden' />
           </Button>
         )}
 
         {process.env.NODE_ENV === 'development' && (
-          <span className='rounded bg-black px-1.5 py-0.5 font-mono text-[0.6rem] text-white dark:bg-white dark:text-black'>
+          <span className='rounded bg-foreground px-1.5 py-0.5 font-mono text-[0.6rem] text-background'>
             <span className='sm:hidden'>xs</span>
             <span className='hidden sm:inline md:hidden'>sm</span>
             <span className='hidden md:inline lg:hidden'>md</span>

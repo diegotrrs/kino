@@ -76,3 +76,6 @@ test-results
 playwright-report
 .vercel
 .env*
+notes/
+ideas
+backend/.env*

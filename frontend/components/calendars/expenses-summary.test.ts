@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { tripTotals }           from './expenses-summary';
+import { getExpenseBreakdown, tripTotals } from './expenses-summary';
 import type { CalendarEvent }   from '@/utils/data';
 import type { CalendarExpense } from '@/lib/types';
 
@@ -84,5 +84,34 @@ describe('tripTotals', () => {
     const [first, second] = tripTotals(events, []);
     expect(first[0]).toBe('EUR');
     expect(second[0]).toBe('GBP');
+  });
+});
+
+describe('getExpenseBreakdown', () => {
+  it('should return null when the trip has no expenses', () => {
+    expect(getExpenseBreakdown([makeEvent('1', [])], [], 'GBP')).toBeNull();
+  });
+
+  it('should split the preferred currency total into event and general expenses', () => {
+    const events = [makeEvent('1', [{ label: 'Ticket', amount: 200, currency: 'GBP' }])];
+    const breakdown = getExpenseBreakdown(events, [makeExpense(1, 62, 'GBP')], 'GBP');
+
+    expect(breakdown).toMatchObject({ currency: 'GBP', total: 262, onEvents: 200, general: 62, otherTotals: [] });
+  });
+
+  it('should list totals in other currencies separately from the leading currency', () => {
+    const events = [makeEvent('1', [{ label: 'Room', amount: 300, currency: 'EUR' }])];
+    const breakdown = getExpenseBreakdown(events, [makeExpense(1, 62, 'GBP')], 'GBP');
+
+    expect(breakdown?.currency).toBe('GBP');
+    expect(breakdown?.otherTotals).toEqual([['EUR', 300]]);
+  });
+
+  it('should lead with the largest total when nothing was spent in the preferred currency', () => {
+    const events = [makeEvent('1', [{ label: 'Room', amount: 300, currency: 'EUR' }])];
+    const breakdown = getExpenseBreakdown(events, [makeExpense(1, 40, 'USD')], 'GBP');
+
+    expect(breakdown?.currency).toBe('EUR');
+    expect(breakdown?.otherTotals).toEqual([['USD', 40]]);
   });
 });

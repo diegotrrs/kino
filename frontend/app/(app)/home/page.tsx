@@ -1,13 +1,13 @@
-import { CalendarList }      from '@/components/calendars/calendar-list';
-import { HotTripsCarousel }  from '@/components/home/hot-trips-carousel';
-import { Button }            from '@/components/ui/button';
-import { Separator }         from '@/components/ui/separator';
-import type { Calendar }     from '@/lib/types';
-import { PlusIcon }          from 'lucide-react';
-import { getTranslations }   from 'next-intl/server';
-import { cookies }           from 'next/headers';
-import Link                  from 'next/link';
-import { redirect }          from 'next/navigation';
+import { CalendarList }     from '@/components/calendars/calendar-list';
+import { HotTripsCarousel } from '@/components/home/hot-trips-carousel';
+import { Button }           from '@/components/ui/button';
+import { Separator }        from '@/components/ui/separator';
+import type { Calendar }    from '@/lib/types';
+import { PlusIcon }         from 'lucide-react';
+import { getTranslations }  from 'next-intl/server';
+import { cookies }          from 'next/headers';
+import Link                 from 'next/link';
+import { redirect }         from 'next/navigation';
 
 const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:8000';
 
@@ -42,7 +42,7 @@ const HomePage = async () => {
       <div className='w-full px-5 space-y-8'>
 
         <div className='space-y-1'>
-          <h2 className='text-2xl font-semibold tracking-tight md:text-3xl select-none cursor-default'>
+          <h2 className='text-3xl font-extrabold tracking-tighter md:text-4xl select-none cursor-default'>
             {t('title')}
           </h2>
           <p className='text-xs md:text-sm text-muted-foreground select-none cursor-default'>
@@ -54,7 +54,7 @@ const HomePage = async () => {
 
         <section className='space-y-3'>
           <div className='flex items-center justify-between'>
-            <h3 className='text-base font-semibold tracking-tight'>
+            <h3 className='text-xl font-bold tracking-tight'>
               {t('myCalendars')}
             </h3>
             {calendars.length > 0 && (
@@ -70,7 +70,7 @@ const HomePage = async () => {
         </section>
 
         <section className='space-y-3'>
-          <h3 className='text-base font-semibold tracking-tight'>
+          <h3 className='text-xl font-bold tracking-tight'>
             {t('hotTrips')}
           </h3>
           <HotTripsCarousel />

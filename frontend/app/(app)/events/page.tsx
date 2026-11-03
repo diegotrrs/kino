@@ -39,7 +39,7 @@ export default async function EventsPage() {
         <div className='w-full px-5 space-y-5'>
           <div className='flex items-center justify-between'>
             <div className='space-y-0'>
-              <h2 className='flex items-center text-2xl font-semibold tracking-tight md:text-3xl'>
+              <h2 className='flex items-center text-3xl font-extrabold tracking-tighter md:text-4xl'>
                 {t('title')}
               </h2>
               <p className='text-xs md:text-sm font-medium text-muted-foreground'>

@@ -1,21 +1,27 @@
 'use client';
-import { updateCurrency, updateLocale } from '@/app/(app)/settings/actions';
-import { Separator }     from '@/components/ui/separator';
-import { locales }       from '@/i18n/routing';
-import { cn }            from '@/lib/utils';
+import {
+  updateCurrency,
+  updateLocale
+}                    from '@/app/(app)/settings/actions';
+import { Separator } from '@/components/ui/separator';
+import { locales }   from '@/i18n/routing';
+import { cn }        from '@/lib/utils';
 import {
   ChevronRight,
   Monitor,
   Moon,
   Sun
-}                        from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import { useTheme }      from 'next-themes';
-import Link              from 'next/link';
+}                    from 'lucide-react';
+import {
+  useLocale,
+  useTranslations
+}                    from 'next-intl';
+import { useTheme }  from 'next-themes';
+import Link          from 'next/link';
 import {
   useEffect,
   useState
-}                        from 'react';
+}                    from 'react';
 
 const CURRENCIES = ['GBP', 'EUR', 'USD'] as const;
 
@@ -45,7 +51,7 @@ const SettingsPage = () => {
       <div className='flex flex-col w-full items-center'>
         <div className='w-full px-5 space-y-5'>
           <div className='space-y-0'>
-            <h2 className='text-2xl font-semibold tracking-tight md:text-3xl'>
+            <h2 className='text-3xl font-extrabold tracking-tighter md:text-4xl'>
               {t('title')}
             </h2>
             <p className='text-xs md:text-sm font-medium text-muted-foreground'>
