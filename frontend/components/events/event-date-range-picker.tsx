@@ -2,14 +2,16 @@
 import {
   DateTimePicker,
   TimePicker
-}               from '@/components/date-picker';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+}                          from '@/components/date-picker';
+import { Button }          from '@/components/ui/button';
+import { Label }           from '@/components/ui/label';
+import { Switch }          from '@/components/ui/switch';
+import { cn }              from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 import {
   useEffect,
   useState
-}               from 'react';
+}                          from 'react';
 
 type Props = {
   start: Date | undefined;
@@ -19,6 +21,12 @@ type Props = {
   defaultMultiDay?: boolean;
   detectMultiDay?: boolean;
 };
+
+// Matches the dialog's section labels (WHEN, LINKS…) so the popover reads as part of the same ticket
+const FIELD_LABEL = 'font-mono text-[0.65rem] font-medium uppercase tracking-widest text-muted-foreground';
+
+// The inner hour/minute/AM-PM fields are taller than this box; transparent backgrounds stop them painting over its border
+const TIME_BOX = 'flex h-9 items-center rounded-md border border-input bg-card px-3 font-mono tabular-nums [&_input]:border-0 [&_input]:bg-transparent [&_input]:font-mono [&_input]:shadow-none [&_button]:border-0 [&_button]:bg-transparent [&_button]:font-mono [&_button]:shadow-none';
 
 const DURATION_PRESETS = [
   { label: '30 min', minutes: 30 },
@@ -50,6 +58,7 @@ const setDatePart = (target: Date, source: Date): Date => {
 };
 
 export const EventDateRangePicker = ({ start, end, onChange, disabled, defaultMultiDay, detectMultiDay }: Props) => {
+  const t = useTranslations('eventDialog');
   const [isMultiDay, setIsMultiDay] = useState(defaultMultiDay ?? false);
 
   useEffect(() => {
@@ -115,24 +124,25 @@ export const EventDateRangePicker = ({ start, end, onChange, disabled, defaultMu
   };
 
   return (
-    <div className='space-y-2 min-w-[312px]'>
+    <div className='space-y-3'>
       {!isMultiDay ? (
         <>
           <div className='flex flex-col gap-1.5'>
-            <Label>Date</Label>
+            <Label className={FIELD_LABEL}>{t('date')}</Label>
             <DateTimePicker
               value={start}
               onChange={handleSharedDateChange}
               granularity='day'
               displayFormat={{ hour24: 'PP', hour12: 'PP' }}
+              className='font-mono tabular-nums'
               disabled={disabled}
             />
           </div>
           {!isAllDay && (
-            <div className='grid grid-cols-2 gap-2'>
+            <div className='grid gap-2'>
               <div className='flex flex-col gap-1.5'>
-                <Label>Start time</Label>
-                <div className='flex h-9 items-center rounded-md border border-input px-3 [&_input]:border-0 [&_input]:shadow-none [&_button]:border-0 [&_button]:shadow-none'>
+                <Label className={FIELD_LABEL}>{t('startTime')}</Label>
+                <div className={TIME_BOX}>
                   <TimePicker
                     date={start}
                     onChange={handleStartTimeChange}
@@ -142,8 +152,8 @@ export const EventDateRangePicker = ({ start, end, onChange, disabled, defaultMu
                 </div>
               </div>
               <div className='flex flex-col gap-1.5'>
-                <Label>End time</Label>
-                <div className='flex h-9 items-center rounded-md border border-input px-3 [&_input]:border-0 [&_input]:shadow-none [&_button]:border-0 [&_button]:shadow-none'>
+                <Label className={FIELD_LABEL}>{t('endTime')}</Label>
+                <div className={TIME_BOX}>
                   <TimePicker
                     date={end}
                     onChange={handleEndTimeChange}
@@ -154,14 +164,14 @@ export const EventDateRangePicker = ({ start, end, onChange, disabled, defaultMu
               </div>
             </div>
           )}
-          <div className='flex gap-1.5'>
+          <div className='flex flex-wrap gap-1.5'>
             {DURATION_PRESETS.map(({ label, minutes }) => (
               <Button
                 key={label}
                 type='button'
                 size='sm'
                 variant={minutes === activeMinutes ? 'default' : 'outline'}
-                className='h-7 flex-1 px-0 text-xs'
+                className='h-8 min-w-16 flex-1 px-2 font-mono text-xs'
                 disabled={disabled}
                 onClick={() => handlePreset(minutes)}
               >
@@ -172,18 +182,19 @@ export const EventDateRangePicker = ({ start, end, onChange, disabled, defaultMu
         </>
       ) : (
         <div className='space-y-2'>
-          <div className='flex items-center gap-2'>
-            <Label className='w-10 shrink-0 text-xs text-muted-foreground'>Start</Label>
-            <div className='flex-1'>
+          <div className='flex flex-wrap items-center gap-2'>
+            <Label className={cn(FIELD_LABEL, 'w-12 shrink-0')}>{t('start')}</Label>
+            <div className='min-w-40 flex-1'>
               <DateTimePicker
                 value={start}
                 onChange={handleStartDateChange}
                 granularity='day'
                 displayFormat={{ hour24: 'PP', hour12: 'PP' }}
+              className='font-mono tabular-nums'
                 disabled={disabled}
               />
             </div>
-            <div className='flex h-9 shrink-0 items-center rounded-md border border-input px-3 [&_input]:border-0 [&_input]:shadow-none [&_button]:border-0 [&_button]:shadow-none'>
+            <div className={cn(TIME_BOX, 'shrink-0')}>
               <TimePicker
                 date={start}
                 onChange={handleStartTimeChange}
@@ -192,18 +203,19 @@ export const EventDateRangePicker = ({ start, end, onChange, disabled, defaultMu
               />
             </div>
           </div>
-          <div className='flex items-center gap-2'>
-            <Label className='w-10 shrink-0 text-xs text-muted-foreground'>End</Label>
-            <div className='flex-1'>
+          <div className='flex flex-wrap items-center gap-2'>
+            <Label className={cn(FIELD_LABEL, 'w-12 shrink-0')}>{t('end')}</Label>
+            <div className='min-w-40 flex-1'>
               <DateTimePicker
                 value={end}
                 onChange={handleEndDateChange}
                 granularity='day'
                 displayFormat={{ hour24: 'PP', hour12: 'PP' }}
+              className='font-mono tabular-nums'
                 disabled={disabled}
               />
             </div>
-            <div className='flex h-9 shrink-0 items-center rounded-md border border-input px-3 [&_input]:border-0 [&_input]:shadow-none [&_button]:border-0 [&_button]:shadow-none'>
+            <div className={cn(TIME_BOX, 'shrink-0')}>
               <TimePicker
                 date={end}
                 onChange={handleEndTimeChange}
@@ -222,7 +234,7 @@ export const EventDateRangePicker = ({ start, end, onChange, disabled, defaultMu
           disabled={disabled}
         />
         <Label htmlFor='multi-day' className='cursor-pointer font-normal text-sm'>
-          Spans multiple days
+          {t('multiDay')}
         </Label>
       </div>
     </div>

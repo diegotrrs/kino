@@ -239,5 +239,36 @@
   "postcard": {
     "days": "{count} days",
     "hot": "Hot"
+  },
+  "eventDialog": {
+    "addTitle": "Add new event",
+    "editTitle": "Edit event",
+    "titlePlaceholder": "Event title",
+    "titleRequired": "Please enter a title.",
+    "descriptionPlaceholder": "Add a description…",
+    "descriptionLabel": "Description",
+    "when": "When",
+    "changeDateTime": "Change date and time",
+    "colour": "Colour",
+    "calendar": "Calendar",
+    "noCalendars": "Create a calendar first, then add events to it.",
+    "save": "Save",
+    "add": "Add Event",
+    "cancel": "Cancel",
+    "close": "Close",
+    "delete": "Delete",
+    "confirmDelete": "Delete this event?",
+    "confirmYes": "Yes, Delete",
+    "confirmNo": "No",
+    "newEvent": "New Event",
+    "date": "Date",
+    "startTime": "Start time",
+    "endTime": "End time",
+    "start": "Start",
+    "end": "End",
+    "multiDay": "Spans multiple days",
+    "deleteTitle": "Delete “{title}”?",
+    "deleteDescription": "It will be removed from its calendar. This can’t be undone.",
+    "deleting": "Deleting…"
   }
 }

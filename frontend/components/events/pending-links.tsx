@@ -1,8 +1,12 @@
 'use client';
-import { Button } from '@/components/ui/button';
-import { Input }  from '@/components/ui/input';
-import { Link2, X } from 'lucide-react';
-import { useState } from 'react';
+import { Button }          from '@/components/ui/button';
+import { Input }           from '@/components/ui/input';
+import {
+  Link2,
+  X
+}                          from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useState }        from 'react';
 
 export const addPendingUrl = (urls: string[], url: string): string[] => {
   const trimmed = url.trim();
@@ -21,6 +25,7 @@ type Props = {
 };
 
 export const PendingLinks = ({ onChange }: Props) => {
+  const tLinks = useTranslations('eventLinks');
   const [urls, setUrls] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState('');
 
@@ -45,7 +50,7 @@ export const PendingLinks = ({ onChange }: Props) => {
 
   return (
     <div className='space-y-2'>
-      <p className='text-sm font-medium leading-none'>Links</p>
+      <p className='font-mono text-[0.65rem] font-medium uppercase tracking-widest text-muted-foreground'>{tLinks('title')}</p>
 
       {urls.length > 0 && (
         <ul className='space-y-1'>

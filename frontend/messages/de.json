@@ -239,5 +239,36 @@
   "postcard": {
     "days": "{count} Tage",
     "hot": "Top"
+  },
+  "eventDialog": {
+    "addTitle": "Neuer Termin",
+    "editTitle": "Termin bearbeiten",
+    "titlePlaceholder": "Titel des Termins",
+    "titleRequired": "Bitte gib einen Titel ein.",
+    "descriptionPlaceholder": "Beschreibung hinzufügen…",
+    "descriptionLabel": "Beschreibung",
+    "when": "Wann",
+    "changeDateTime": "Datum und Uhrzeit ändern",
+    "colour": "Farbe",
+    "calendar": "Kalender",
+    "noCalendars": "Erstelle zuerst einen Kalender und füge dann Termine hinzu.",
+    "save": "Speichern",
+    "add": "Termin hinzufügen",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "delete": "Löschen",
+    "confirmDelete": "Diesen Termin löschen?",
+    "confirmYes": "Ja, löschen",
+    "confirmNo": "Nein",
+    "newEvent": "Neuer Termin",
+    "date": "Datum",
+    "startTime": "Beginn",
+    "endTime": "Ende",
+    "start": "Beginn",
+    "end": "Ende",
+    "multiDay": "Über mehrere Tage",
+    "deleteTitle": "„{title}“ löschen?",
+    "deleteDescription": "Der Termin wird aus dem Kalender entfernt. Das lässt sich nicht rückgängig machen.",
+    "deleting": "Wird gelöscht…"
   }
 }

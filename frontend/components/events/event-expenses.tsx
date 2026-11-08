@@ -72,9 +72,9 @@ export const EventExpenses = ({
   return (
     <div className='space-y-2'>
       <div className='flex items-center justify-between'>
-        <p className='text-sm font-medium leading-none'>{t('title')}</p>
+        <p className='font-mono text-[0.65rem] font-medium uppercase tracking-widest text-muted-foreground'>{t('title')}</p>
         {totals.length > 0 && (
-          <span className='text-xs font-bold bg-primary text-primary-foreground rounded-full px-2.5 py-0.5 tabular-nums'>
+          <span className='font-mono text-xs font-medium text-teal tabular-nums'>
             {totals.map(([code, total]) => formatAmount(total, code)).join(' · ')}
           </span>
         )}
