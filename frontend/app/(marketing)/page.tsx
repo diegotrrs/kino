@@ -7,8 +7,7 @@ import {
   CalendarCheck2,
   Globe2,
   Sparkles,
-  ArrowRight,
-  CheckCircle2
+  ArrowRight
 }                         from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import Link               from 'next/link';
@@ -28,8 +27,6 @@ const Home = async () => {
     { step: '02', title: t('step2Title'), body: t('step2Body') },
     { step: '03', title: t('step3Title'), body: t('step3Body') },
   ];
-
-  const perks = [t('noCreditCard'), t('freePlan'), t('anyDevice')];
 
   return (
     <div className='flex flex-col'>
@@ -54,14 +51,6 @@ const Home = async () => {
             <Link href='/login'>{t('signIn')}</Link>
           </Button>
         </div>
-        <ul className='mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground'>
-          {perks.map((item) => (
-            <li key={item} className='flex items-center gap-1.5'>
-              <CheckCircle2 className='h-4 w-4 text-teal' />
-              {item}
-            </li>
-          ))}
-        </ul>
       </section>
 
       <section className='px-6 pb-20'>
