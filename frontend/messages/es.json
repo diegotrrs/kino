@@ -270,5 +270,10 @@
     "deleteTitle": "¿Eliminar «{title}»?",
     "deleteDescription": "Se quitará de su calendario. No se puede deshacer.",
     "deleting": "Eliminando…"
+  },
+  "daySheet": {
+    "count": "{count, plural, =0 {Sin eventos} one {# evento} other {# eventos}}",
+    "empty": "Aún no hay nada planeado.",
+    "add": "+ Añadir evento el {day}"
   }
 }

@@ -270,5 +270,10 @@
     "deleteTitle": "Delete “{title}”?",
     "deleteDescription": "It will be removed from its calendar. This can’t be undone.",
     "deleting": "Deleting…"
+  },
+  "daySheet": {
+    "count": "{count, plural, =0 {No events} one {# event} other {# events}}",
+    "empty": "Nothing planned yet.",
+    "add": "+ Add event on {day}"
   }
 }

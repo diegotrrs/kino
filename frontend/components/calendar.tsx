@@ -1,7 +1,9 @@
 'use client';
 import '@/styles/calendar.css';
 import { updateEvent }        from '@/app/(app)/events/actions';
+import { DaySheet }           from '@/components/calendars/day-sheet';
 import { useEvents }          from '@/context/events-context';
+import { useMediaQuery }      from '@/hooks/use-media-query';
 import { useToast }           from '@/hooks/use-toast';
 import {
   DEFAULT_EVENT_COLOR,
@@ -65,9 +67,30 @@ const Calendar = () => {
     CalendarEvent | undefined
   >();
   const [isDrag, setIsDrag] = useState(false);
+  const [sheetDay, setSheetDay] = useState<Date | null>(null);
+  // Phones: days and their events are too small to tap precisely, so a tap opens the whole day instead
+  const isSmallScreen = useMediaQuery('(max-width: 767px)');
+
+  const openEditDialog = (event: CalendarEvent) => {
+    // Open the dialog in read-only mode too — inputs will be disabled via context
+    setIsDrag(false);
+    setSelectedOldEvent(event);
+    setSelectedEvent(event);
+    setEventEditOpen(true);
+  };
+
+  const openAddDialog = (day: Date) => {
+    setSelectedStart(day);
+    setSelectedEnd(day);
+    setEventAddOpen(true);
+  };
 
   const handleEventClick = (info: EventClickArg) => {
-    // Open the dialog in read-only mode too — inputs will be disabled via context
+    if (isSmallScreen) {
+      setSheetDay(info.event.start);
+      return;
+    }
+
     const event: CalendarEvent = {
       id: info.event.id,
       title: info.event.title,
@@ -79,10 +102,7 @@ const Calendar = () => {
       expenses: info.event.extendedProps.expenses,
     };
 
-    setIsDrag(false);
-    setSelectedOldEvent(event);
-    setSelectedEvent(event);
-    setEventEditOpen(true);
+    openEditDialog(event);
   };
 
   const handleEventChange = async (info: EventChangeArg) => {
@@ -306,13 +326,33 @@ const Calendar = () => {
             eventChange={(eventInfo) => handleEventChange(eventInfo)}
             select={(info) => { if (!readOnly) handleDateSelect(info); }}
             datesSet={(dates) => setViewedDate(dates.view.currentStart)}
-            dateClick={() => { if (!readOnly) setEventAddOpen(true); }}
+            dateClick={(info) => {
+              if (isSmallScreen) {
+                setSheetDay(info.date);
+                return;
+              }
+              if (!readOnly) setEventAddOpen(true);
+            }}
+            dayMaxEvents={isSmallScreen ? 3 : false}
+            moreLinkClick={(info) => {
+              setSheetDay(info.date);
+              // FullCalendar still opens its popover; calendar.css hides it on phones
+              return 'popover';
+            }}
             nowIndicator
             editable={!readOnly}
             selectable={!readOnly}
           />
         </Card>
       </div>
+      <DaySheet
+        day={sheetDay}
+        events={events}
+        readOnly={readOnly}
+        onClose={() => setSheetDay(null)}
+        onAddEvent={(day) => { setSheetDay(null); openAddDialog(day); }}
+        onOpenEvent={(event) => { setSheetDay(null); openEditDialog(event); }}
+      />
       <EventForm mode='add'  start={selectedStart} end={selectedEnd} />
       <EventForm mode='edit' event={selectedEvent} oldEvent={selectedOldEvent} isDrag={isDrag} />
     </div>
