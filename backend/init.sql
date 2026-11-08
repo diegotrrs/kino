@@ -126,12 +126,8 @@ CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_token ON password_reset_tok
 
 -- Seed wishlist items
 INSERT INTO wishlist (title, description) VALUES
-    ('Recurring events', 'Create events that repeat daily, weekly, or monthly'),
     ('Event reminders', 'Receive email or push notifications before an event'),
-    ('Trip budget tracker', 'Attach a budget to a calendar and track expenses per event'),
-    ('Collaborative availability', 'Show when all calendar members are free to plan group events'),
-    ('Import/export (iCal)', 'Import and export calendars in iCal format for use with other apps'),
-    ('Mobile app', 'Native iOS and Android app for managing your calendars on the go');
+    ('Collaborative availability', 'Show when all calendar members are free to plan group events');
 
 -- Seed default user and calendar
 INSERT INTO users (name, email, password_hash) VALUES ('Default User', 'user@kino.dev', '$2b$12$6ERPYvHCD1pvZkzXimIeZu7VeCFpxFlqaUf4mbPis768E/YSzo9VC');
