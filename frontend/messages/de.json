@@ -26,9 +26,6 @@
       "subhero": "Erstelle eigene Urlaubskalender, plane jeden Tag deiner Reise und vermeide Doppelbuchungen.",
       "getStartedFree": "Kostenlos loslegen",
       "signIn": "Anmelden",
-      "noCreditCard": "Keine Kreditkarte erforderlich",
-      "freePlan": "Kostenloser Plan für immer",
-      "anyDevice": "Funktioniert auf jedem Gerät",
       "tryNowTitle": "Jetzt ausprobieren",
       "tryNowSubtitle": "Keine Anmeldung erforderlich. Klicke auf einen Tag, um ein Ereignis hinzuzufügen, ziehe es zum Verschieben, klicke darauf zum Bearbeiten oder Löschen.",
       "featuresTitle": "Alles was du für eine tolle Reise brauchst",
@@ -220,7 +217,7 @@
     "dates": "Daten",
     "days": "{count, plural, one {# Tag} other {# Tage}}",
     "dayOf": "Tag {current} von {total}",
-    "departsIn": "{count, plural, =0 {Abflug heute} one {Abflug morgen} other {Abflug in # Tagen}}",
+    "departsIn": "{count, plural, =0 {Beginnt heute} one {Beginnt morgen} other {Beginnt in # Tagen}}",
     "complete": "Reise vorbei",
     "travellers": "{count, plural, one {# Reisende:r} other {# Reisende}}"
   },
@@ -242,5 +239,41 @@
   "postcard": {
     "days": "{count} Tage",
     "hot": "Top"
+  },
+  "eventDialog": {
+    "addTitle": "Neuer Termin",
+    "editTitle": "Termin bearbeiten",
+    "titlePlaceholder": "Titel des Termins",
+    "titleRequired": "Bitte gib einen Titel ein.",
+    "descriptionPlaceholder": "Beschreibung hinzufügen…",
+    "descriptionLabel": "Beschreibung",
+    "when": "Wann",
+    "changeDateTime": "Datum und Uhrzeit ändern",
+    "colour": "Farbe",
+    "calendar": "Kalender",
+    "noCalendars": "Erstelle zuerst einen Kalender und füge dann Termine hinzu.",
+    "save": "Speichern",
+    "add": "Termin hinzufügen",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "delete": "Löschen",
+    "confirmDelete": "Diesen Termin löschen?",
+    "confirmYes": "Ja, löschen",
+    "confirmNo": "Nein",
+    "newEvent": "Neuer Termin",
+    "date": "Datum",
+    "startTime": "Beginn",
+    "endTime": "Ende",
+    "start": "Beginn",
+    "end": "Ende",
+    "multiDay": "Über mehrere Tage",
+    "deleteTitle": "„{title}“ löschen?",
+    "deleteDescription": "Der Termin wird aus dem Kalender entfernt. Das lässt sich nicht rückgängig machen.",
+    "deleting": "Wird gelöscht…"
+  },
+  "daySheet": {
+    "count": "{count, plural, =0 {Keine Termine} one {# Termin} other {# Termine}}",
+    "empty": "Noch nichts geplant.",
+    "add": "+ Termin am {day} hinzufügen"
   }
 }

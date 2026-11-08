@@ -26,9 +26,6 @@
       "subhero": "Crie calendários de férias dedicados, planeie cada dia da sua viagem e nunca faça dupla reserva numa praia.",
       "getStartedFree": "Começar grátis",
       "signIn": "Entrar",
-      "noCreditCard": "Sem cartão de crédito",
-      "freePlan": "Plano gratuito para sempre",
-      "anyDevice": "Funciona em qualquer dispositivo",
       "tryNowTitle": "Experimente agora mesmo",
       "tryNowSubtitle": "Sem registo. Clique em qualquer dia para adicionar um evento, arraste para reprogramar, clique num evento para editar ou eliminar.",
       "featuresTitle": "Tudo o que precisa para planear uma ótima viagem",
@@ -220,7 +217,7 @@
     "dates": "Datas",
     "days": "{count, plural, one {# dia} other {# dias}}",
     "dayOf": "Dia {current} de {total}",
-    "departsIn": "{count, plural, =0 {Partida hoje} one {Partida amanhã} other {Partida em # dias}}",
+    "departsIn": "{count, plural, =0 {Começa hoje} one {Começa amanhã} other {Começa em # dias}}",
     "complete": "Viagem concluída",
     "travellers": "{count, plural, one {# viajante} other {# viajantes}}"
   },
@@ -242,5 +239,41 @@
   "postcard": {
     "days": "{count} dias",
     "hot": "Top"
+  },
+  "eventDialog": {
+    "addTitle": "Novo evento",
+    "editTitle": "Editar evento",
+    "titlePlaceholder": "Título do evento",
+    "titleRequired": "Escreve um título.",
+    "descriptionPlaceholder": "Adiciona uma descrição…",
+    "descriptionLabel": "Descrição",
+    "when": "Quando",
+    "changeDateTime": "Alterar data e hora",
+    "colour": "Cor",
+    "calendar": "Calendário",
+    "noCalendars": "Cria primeiro um calendário e depois adiciona eventos.",
+    "save": "Guardar",
+    "add": "Adicionar evento",
+    "cancel": "Cancelar",
+    "close": "Fechar",
+    "delete": "Eliminar",
+    "confirmDelete": "Eliminar este evento?",
+    "confirmYes": "Sim, eliminar",
+    "confirmNo": "Não",
+    "newEvent": "Novo evento",
+    "date": "Data",
+    "startTime": "Hora de início",
+    "endTime": "Hora de fim",
+    "start": "Início",
+    "end": "Fim",
+    "multiDay": "Dura vários dias",
+    "deleteTitle": "Eliminar “{title}”?",
+    "deleteDescription": "Será removido do calendário. Não é possível desfazer.",
+    "deleting": "A eliminar…"
+  },
+  "daySheet": {
+    "count": "{count, plural, =0 {Sem eventos} one {# evento} other {# eventos}}",
+    "empty": "Ainda não há nada planeado.",
+    "add": "+ Adicionar evento a {day}"
   }
 }

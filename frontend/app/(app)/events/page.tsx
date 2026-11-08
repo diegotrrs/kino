@@ -1,7 +1,10 @@
-import { EventCreateDialog } from '@/components/events/event-create-dialog';
+import { EventCreateButton } from '@/components/events/event-create-button';
 import { EventList }         from '@/components/events/event-list';
 import { Separator }         from '@/components/ui/separator';
-import type { Event }        from '@/lib/types';
+import type {
+  Calendar,
+  Event
+}                            from '@/lib/types';
 import { getTranslations }   from 'next-intl/server';
 import { cookies }           from 'next/headers';
 import { redirect }          from 'next/navigation';
@@ -24,14 +27,32 @@ async function getEvents(): Promise<Event[]> {
   return res.json();
 }
 
+async function getCalendars(): Promise<Calendar[]> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token')?.value;
+  if (!token) redirect('/login');
+
+  const res = await fetch(`${API_BASE_URL}/api/calendars/`, {
+    cache: 'no-store',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (res.status === 401) redirect('/login');
+  if (!res.ok) return [];
+
+  return res.json();
+}
+
 export default async function EventsPage() {
   const cookieStore = await cookies();
   const preferredCurrency = cookieStore.get('currency')?.value ?? 'GBP';
 
-  const [events, t] = await Promise.all([
+  const [events, calendars, t] = await Promise.all([
     getEvents(),
+    getCalendars(),
     getTranslations('events'),
   ]);
+  const calendarOptions = calendars.map(({ id, name }) => ({ id, name }));
 
   return (
     <div className='py-4'>
@@ -46,7 +67,7 @@ export default async function EventsPage() {
                 {t('subtitle')}
               </p>
             </div>
-            <EventCreateDialog />
+            <EventCreateButton calendars={calendarOptions} preferredCurrency={preferredCurrency} />
           </div>
 
           <Separator />

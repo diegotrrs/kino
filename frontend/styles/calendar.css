@@ -203,3 +203,14 @@ td.fc-daygrid-day.fc-day {
   border-color: transparent !important;
   box-shadow: none !important;
 }
+
+/* Phones open the day sheet from "+N more" instead (components/calendars/day-sheet.tsx) */
+@media (max-width: 767px) {
+  .fc-popover.fc-more-popover {
+    display: none;
+  }
+
+  .fc .fc-daygrid-more-link {
+    @apply block px-1 font-mono text-[0.55rem] whitespace-nowrap text-teal;
+  }
+}

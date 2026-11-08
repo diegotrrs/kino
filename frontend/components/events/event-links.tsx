@@ -1,10 +1,17 @@
 'use client';
-import { addEventLink, deleteEventLink } from '@/app/(app)/events/actions';
-import { Button }                        from '@/components/ui/button';
-import { Input }                         from '@/components/ui/input';
-import type { EventLink }                from '@/lib/types';
-import { Link2, X }                      from 'lucide-react';
-import { useState }                      from 'react';
+import {
+  addEventLink,
+  deleteEventLink
+}                          from '@/app/(app)/events/actions';
+import { Button }          from '@/components/ui/button';
+import { Input }           from '@/components/ui/input';
+import type { EventLink }  from '@/lib/types';
+import {
+  Link2,
+  X
+}                          from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useState }        from 'react';
 
 type Props = {
   eventId: number;
@@ -17,6 +24,7 @@ const truncate = (text: string, max: number): string =>
   text.length <= max ? text : `${text.slice(0, max)}…`;
 
 export const EventLinks = ({ eventId, initialLinks, readOnly = false, onLinksChange }: Props) => {
+  const tLinks = useTranslations('eventLinks');
   const [links, setLinks] = useState<EventLink[]>(initialLinks);
   const [inputValue, setInputValue] = useState('');
   const [isAdding, setIsAdding] = useState(false);
@@ -53,7 +61,7 @@ export const EventLinks = ({ eventId, initialLinks, readOnly = false, onLinksCha
 
   return (
     <div className='space-y-2'>
-      <p className='text-sm font-medium leading-none'>Links</p>
+      <p className='font-mono text-[0.65rem] font-medium uppercase tracking-widest text-muted-foreground'>{tLinks('title')}</p>
 
       {links.length > 0 && (
         <ul className='space-y-1'>

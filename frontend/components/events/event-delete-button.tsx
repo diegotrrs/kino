@@ -29,6 +29,7 @@ export const EventDeleteButton = ({
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
   const t = useTranslations('events');
+  const tDialog = useTranslations('eventDialog');
 
   const handleDelete = () => {
     startTransition(async () => {
@@ -64,22 +65,24 @@ export const EventDeleteButton = ({
           <Trash2Icon className='h-4 w-4' />
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Delete &ldquo;{eventTitle}&rdquo;</AlertDialogTitle>
+      <AlertDialogContent className='max-w-sm gap-0 p-0'>
+        <AlertDialogHeader className='space-y-2 px-6 pt-6 pb-5 text-left'>
+          <span className='font-mono text-[0.65rem] font-medium uppercase tracking-widest text-destructive'>{tDialog('delete')}</span>
+          <AlertDialogTitle className='font-display text-xl font-extrabold tracking-tight'>
+            {tDialog('deleteTitle', { title: eventTitle })}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete this event? This action cannot be
-            undone.
+            {tDialog('deleteDescription')}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <AlertDialogFooter className='flex-row justify-end gap-2 border-t-2 border-dashed px-6 py-4 sm:space-x-0'>
+          <AlertDialogCancel className='mt-0'>{tDialog('cancel')}</AlertDialogCancel>
           <Button
             variant='destructive'
             onClick={handleDelete}
             disabled={isPending}
           >
-            {isPending ? 'Deleting...' : 'Delete'}
+            {isPending ? tDialog('deleting') : tDialog('delete')}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

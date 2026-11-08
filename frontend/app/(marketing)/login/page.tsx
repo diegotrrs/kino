@@ -18,6 +18,9 @@ import Link                from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useActionState }  from 'react';
 
+// Local convenience only: set NEXT_PUBLIC_DEV_LOGIN_EMAIL in .env.local; never applied in production builds
+const DEV_LOGIN_EMAIL = process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_DEV_LOGIN_EMAIL : undefined;
+
 const LoginPage = () => {
   const [state, formAction, pending] = useActionState<AuthState, FormData>(login, {});
   const searchParams = useSearchParams();
@@ -42,7 +45,7 @@ const LoginPage = () => {
               {redirect && <input type='hidden' name='redirect' value={redirect} />}
               <div className='grid gap-2'>
                 <Label htmlFor='email'>{t('email')}</Label>
-                <Input id='email' name='email' type='email' required />
+                <Input id='email' name='email' type='email' defaultValue={DEV_LOGIN_EMAIL} required />
                 {state.fieldErrors?.email && (
                   <p className='text-sm text-destructive'>{state.fieldErrors.email[0]}</p>
                 )}
