@@ -283,8 +283,9 @@ const Calendar = () => {
         readOnly={readOnly}
       />
 
-      <div className='relative'>
-        <Card className='p-3'>
+      {/* Phones: line the calendar up with the floating expenses bar (12px from the edge) to give the grid more room */}
+      <div className='relative -mx-2 md:mx-0'>
+        <Card className='p-1.5 md:p-3'>
           <FullCalendar
             ref={calendarRef}
             timeZone='local'
