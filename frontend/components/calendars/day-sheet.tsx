@@ -1,4 +1,8 @@
 'use client';
+import {
+  removeDayName,
+  setDayName
+}                             from '@/app/(app)/calendars/actions';
 import { Button }             from '@/components/ui/button';
 import {
   Dialog,
@@ -6,7 +10,13 @@ import {
   DialogDescription,
   DialogTitle
 }                             from '@/components/ui/dialog';
+import { useEvents }          from '@/context/events-context';
+import { useToast }           from '@/hooks/use-toast';
 import { getEventsOnDay }     from '@/lib/day-events';
+import {
+  MAX_DAY_NAME_LENGTH,
+  toDateKey
+}                             from '@/lib/day-names';
 import {
   DEFAULT_EVENT_COLOR,
   getEventEdge,
@@ -17,6 +27,11 @@ import {
   useLocale,
   useTranslations
 }                             from 'next-intl';
+import {
+  useEffect,
+  useRef,
+  useState
+}                             from 'react';
 
 type DaySheetProps = {
   day: Date | null;
@@ -25,6 +40,83 @@ type DaySheetProps = {
   onClose: () => void;
   onAddEvent: (day: Date) => void;
   onOpenEvent: (event: CalendarEvent) => void;
+};
+
+const SAVE_DELAY_MS = 600;
+
+type DayNameFieldProps = {
+  dateKey: string;
+  readOnly: boolean;
+};
+
+// Saves while typing (debounced) and when the sheet closes; the calendar cell updates as you type
+const DayNameField = ({ dateKey, readOnly }: DayNameFieldProps) => {
+  const { calendarUuid, dayNames, setDayNameLocal } = useEvents();
+  const { toast } = useToast();
+  const t = useTranslations('dayNames');
+  const [draft, setDraft] = useState(dayNames[dateKey] ?? '');
+  const savedRef = useRef(dayNames[dateKey] ?? '');
+  const pendingRef = useRef<string | null>(null);
+
+  const flush = async () => {
+    const value = pendingRef.current;
+    pendingRef.current = null;
+    if (value === null || !calendarUuid) return;
+
+    const name = value.trim();
+    if (name === savedRef.current) return;
+    const previous = savedRef.current;
+    savedRef.current = name;
+    try {
+      if (name) {
+        await setDayName(calendarUuid, dateKey, name);
+      } else {
+        await removeDayName(calendarUuid, dateKey);
+      }
+    } catch {
+      savedRef.current = previous;
+      setDayNameLocal(dateKey, previous || null);
+      toast({ variant: 'destructive', title: t('saveFailed') });
+    }
+  };
+  // Effects below call the latest flush without re-running when the context re-renders this field
+  const flushRef = useRef(flush);
+  useEffect(() => {
+    flushRef.current = flush;
+  });
+
+  useEffect(() => {
+    if (pendingRef.current === null) return;
+    const timer = setTimeout(() => flushRef.current(), SAVE_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [draft]);
+
+  // Closing the sheet unmounts the field: save whatever was typed last
+  useEffect(() => () => { flushRef.current(); }, []);
+
+  if (readOnly) {
+    return dayNames[dateKey] ? (
+      <p className='px-5 pb-3 font-display text-lg font-bold text-teal'>{dayNames[dateKey]}</p>
+    ) : null;
+  }
+
+  return (
+    <div className='px-5 pb-4'>
+      <label htmlFor={`day-sheet-name-${dateKey}`} className='sr-only'>{t('nameThisDay')}</label>
+      <input
+        id={`day-sheet-name-${dateKey}`}
+        value={draft}
+        maxLength={MAX_DAY_NAME_LENGTH}
+        placeholder={t('placeholder')}
+        onChange={(e) => {
+          setDraft(e.target.value);
+          pendingRef.current = e.target.value;
+          setDayNameLocal(dateKey, e.target.value.trim() || null);
+        }}
+        className='w-full border-0 border-b-2 border-dashed bg-transparent pb-2 font-display text-lg font-bold text-teal outline-none placeholder:font-sans placeholder:text-sm placeholder:font-normal placeholder:text-muted-foreground focus:border-teal'
+      />
+    </div>
+  );
 };
 
 const formatTime = (date: Date): string =>
@@ -38,7 +130,10 @@ export const DaySheet = ({ day, events, readOnly, onClose, onAddEvent, onOpenEve
 
   return (
     <Dialog open={day !== null} onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent className='top-auto bottom-0 max-h-[85svh] max-w-none translate-y-0 gap-0 overflow-y-auto rounded-t-2xl rounded-b-none border-x-0 border-b-0 p-0 sm:rounded-b-none'>
+      <DialogContent
+        // Don't focus the name field on open: on phones that would pop the keyboard over the sheet
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        className='top-auto bottom-0 max-h-[85svh] max-w-none translate-y-0 gap-0 overflow-y-auto rounded-t-2xl rounded-b-none border-x-0 border-b-0 p-0 sm:rounded-b-none'>
         <span aria-hidden='true' className='mx-auto mt-2.5 h-1 w-10 rounded-full bg-border' />
         <div className='flex items-baseline justify-between gap-3 px-5 pt-4 pb-3 pr-12'>
           <DialogTitle className='font-display text-2xl font-extrabold tracking-tight'>
@@ -48,6 +143,8 @@ export const DaySheet = ({ day, events, readOnly, onClose, onAddEvent, onOpenEve
             {t('count', { count: dayEvents.length })}
           </DialogDescription>
         </div>
+
+        {day && <DayNameField key={toDateKey(day)} dateKey={toDateKey(day)} readOnly={readOnly} />}
 
         <div className='grid gap-2 px-4'>
           {dayEvents.length === 0 && (

@@ -81,6 +81,7 @@ def calendar(db_conn, owner):
         cur.execute("DELETE FROM events WHERE calendar_id = %s", (cal["id"],))
         cur.execute("DELETE FROM calendar_users WHERE calendar_id = %s", (cal["id"],))
         cur.execute("DELETE FROM calendars WHERE id = %s", (cal["id"],))
+        cur.execute("DELETE FROM deleted_calendar_day_names WHERE calendar_id = %s", (cal["id"],))
         cur.execute("DELETE FROM deleted_calendars WHERE id = %s", (cal["id"],))
         db_conn.commit()
 

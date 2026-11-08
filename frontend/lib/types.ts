@@ -74,3 +74,9 @@ export interface CreateEventInput {
   location?: string | null;
   color?: string;
 }
+
+// A name for one day of a calendar, e.g. "Visit to Vatican" (date is yyyy-MM-dd)
+export type DayName = {
+  date: string;
+  name: string;
+};

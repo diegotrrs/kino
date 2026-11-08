@@ -133,7 +133,16 @@ def delete_calendar(db: connection, calendar_id: int) -> bool:
             """,
             (calendar_id,),
         )
-        # Delete calendar — cascade removes events and calendar_users
+        # Archive day names too, so a restored calendar gets them back
+        cur.execute(
+            """
+            INSERT INTO deleted_calendar_day_names (calendar_id, date, name, created_at, updated_at)
+            SELECT calendar_id, date, name, created_at, updated_at
+            FROM calendar_day_names WHERE calendar_id = %s
+            """,
+            (calendar_id,),
+        )
+        # Delete calendar — cascade removes events, day names and calendar_users
         cur.execute("DELETE FROM calendars WHERE id = %s", (calendar_id,))
         db.commit()
         return True
@@ -183,6 +192,16 @@ def restore_calendar(db: connection, calendar_id: int, user_id: int) -> bool:
             (calendar_id,),
         )
         cur.execute("DELETE FROM deleted_events WHERE calendar_id = %s", (calendar_id,))
+        # Restore day names
+        cur.execute(
+            """
+            INSERT INTO calendar_day_names (calendar_id, date, name, created_at, updated_at)
+            SELECT calendar_id, date, name, created_at, updated_at
+            FROM deleted_calendar_day_names WHERE calendar_id = %s
+            """,
+            (calendar_id,),
+        )
+        cur.execute("DELETE FROM deleted_calendar_day_names WHERE calendar_id = %s", (calendar_id,))
         db.commit()
         return True
 

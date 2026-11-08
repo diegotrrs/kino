@@ -1,15 +1,19 @@
 'use client';
-import type { CalendarExpense } from '@/lib/types';
+import { toDayNameMap } from '@/lib/day-names';
+import type {
+  CalendarExpense,
+  DayName
+}                       from '@/lib/types';
 import {
   CalendarEvent,
   initialEvents
-}                               from '@/utils/data';
+}                       from '@/utils/data';
 import React, {
   createContext,
   ReactNode,
   useContext,
   useState
-}                               from 'react';
+}                       from 'react';
 
 type EventsContextType = {
   calendarId?: number;
@@ -35,6 +39,9 @@ type EventsContextType = {
   setAvailabilityCheckerEventAddOpen: (value: boolean) => void;
   expensesOpen: boolean;
   setExpensesOpen: (value: boolean) => void;
+  // yyyy-MM-dd -> name
+  dayNames: Record<string, string>;
+  setDayNameLocal: (date: string, name: string | null) => void;
 }
 
 const EventsContext = createContext<EventsContextType | undefined>(undefined);
@@ -54,6 +61,7 @@ type EventsProviderProps = {
   initialDate?: Date;
   serverEvents?: CalendarEvent[];
   serverCalendarExpenses?: CalendarExpense[];
+  serverDayNames?: DayName[];
   readOnly?: boolean;
   preferredCurrency?: string;
 }
@@ -65,6 +73,7 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
   initialDate,
   serverEvents,
   serverCalendarExpenses,
+  serverDayNames,
   readOnly = false,
   preferredCurrency = 'GBP',
 }) => {
@@ -83,6 +92,19 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
   const [eventAddOpen, setEventAddOpenState]                            = useState(false);
   const [eventEditOpen, setEventEditOpen]                               = useState(false);
   const [expensesOpen, setExpensesOpen]                                 = useState(false);
+  const [dayNames, setDayNames] = useState<Record<string, string>>(() => toDayNameMap(serverDayNames ?? []));
+
+  const setDayNameLocal = (date: string, name: string | null) => {
+    setDayNames((current) => {
+      const next = { ...current };
+      if (name) {
+        next[date] = name;
+      } else {
+        delete next[date];
+      }
+      return next;
+    });
+  };
 
   const setEventAddOpen = (value: boolean) => {
     if (readOnly && value) return;
@@ -133,6 +155,8 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
         setEventDeleteOpen,
         expensesOpen,
         setExpensesOpen,
+        dayNames,
+        setDayNameLocal,
         availabilityCheckerEventAddOpen,
         setAvailabilityCheckerEventAddOpen,
       }}

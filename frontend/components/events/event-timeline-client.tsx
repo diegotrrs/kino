@@ -2,6 +2,7 @@
 import { EventForm }          from '@/components/event-form';
 import { EventsProvider }     from '@/context/events-context';
 import { useEvents }          from '@/context/events-context';
+import { formatDayHeading }   from '@/lib/day-names';
 import {
   DEFAULT_EVENT_COLOR,
   getEventEdge,
@@ -80,13 +81,16 @@ const EventEditTrigger = ({ event, onClose }: EventEditTriggerProps) => {
 };
 
 type EventTimelineClientProps = {
-  events:            Event[];
-  preferredCurrency: string;
+  events:             Event[];
+  preferredCurrency:  string;
+  // calendar id -> (yyyy-MM-dd -> day name)
+  dayNamesByCalendar?: Record<number, Record<string, string>>;
 };
 
 export const EventTimelineClient = ({
   events,
   preferredCurrency,
+  dayNamesByCalendar = {},
 }: EventTimelineClientProps) => {
   const t      = useTranslations('events');
   const router = useRouter();
@@ -116,7 +120,10 @@ export const EventTimelineClient = ({
           <div key={date}>
             <div className='flex items-center gap-3 mb-3'>
               <span className='font-mono text-xs font-medium uppercase tracking-widest text-muted-foreground'>
-                {format(parse(date, 'yyyy-MM-dd', new Date()), 'EEE d MMM yyyy')}
+                {formatDayHeading(
+                  format(parse(date, 'yyyy-MM-dd', new Date()), 'EEE d MMM yyyy'),
+                  dayEvents.map((ev) => dayNamesByCalendar[ev.calendar_id]?.[date] ?? ''),
+                )}
               </span>
               <div className='flex-1 border-t' />
             </div>

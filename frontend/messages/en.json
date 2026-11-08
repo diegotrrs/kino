@@ -275,5 +275,12 @@
     "count": "{count, plural, =0 {No events} one {# event} other {# events}}",
     "empty": "Nothing planned yet.",
     "add": "+ Add event on {day}"
+  },
+  "dayNames": {
+    "nameThisDay": "Name this day",
+    "placeholder": "Add a title for this day…",
+    "removeName": "Remove name",
+    "save": "Save",
+    "saveFailed": "Couldn't save the day's name. Try again."
   }
 }

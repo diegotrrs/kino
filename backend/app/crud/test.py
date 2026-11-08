@@ -51,7 +51,12 @@ def reset_test_user_data(db: connection, user_id: int) -> None:
         # Calendars owned by the test user
         cur.execute("DELETE FROM calendars WHERE created_by = %s", (user_id,))
 
-        # Soft-deleted calendars owned by the test user
+        # Soft-deleted calendars owned by the test user, and their archived day names
+        cur.execute(
+            "DELETE FROM deleted_calendar_day_names WHERE calendar_id IN "
+            "(SELECT id FROM deleted_calendars WHERE created_by = %s)",
+            (user_id,),
+        )
         cur.execute("DELETE FROM deleted_calendars WHERE created_by = %s", (user_id,))
 
         # Reset locale so subsequent logins don't restore a language set during tests
@@ -88,6 +93,11 @@ def delete_user(db: connection, user_id: int) -> None:
             (user_id,),
         )
         cur.execute("DELETE FROM calendars WHERE created_by = %s", (user_id,))
+        cur.execute(
+            "DELETE FROM deleted_calendar_day_names WHERE calendar_id IN "
+            "(SELECT id FROM deleted_calendars WHERE created_by = %s)",
+            (user_id,),
+        )
         cur.execute("DELETE FROM deleted_calendars WHERE created_by = %s", (user_id,))
         cur.execute("DELETE FROM users WHERE id = %s", (user_id,))
 

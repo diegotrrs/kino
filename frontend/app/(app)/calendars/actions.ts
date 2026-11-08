@@ -3,7 +3,8 @@ import { getTripBySlug }  from '@/app/(marketing)/trips/trips-data';
 import { EVENT_COLORS }   from '@/lib/event-colors';
 import type {
   CalendarExpense,
-  CreateEventInput
+  CreateEventInput,
+  DayName
 }                         from '@/lib/types';
 import { revalidatePath } from 'next/cache';
 import { cookies }        from 'next/headers';
@@ -325,5 +326,37 @@ export const deleteCalendarExpense = async (
   if (!res.ok && res.status !== 204) {
     const text = await res.text();
     throw new Error(`Failed to delete expense: ${text}`);
+  }
+};
+
+export const setDayName = async (calendarUuid: string, date: string, name: string): Promise<DayName> => {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarUuid}/day-names/${date}`, {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify({ name }),
+  });
+
+  if (res.status === 401) redirect('/login');
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Failed to name day: ${text}`);
+  }
+
+  return res.json();
+};
+
+export const removeDayName = async (calendarUuid: string, date: string): Promise<void> => {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarUuid}/day-names/${date}`, {
+    method: 'DELETE',
+    headers,
+  });
+
+  if (res.status === 401) redirect('/login');
+  // 404 means the day already had no name, which is the state we want
+  if (!res.ok && res.status !== 404) {
+    const text = await res.text();
+    throw new Error(`Failed to remove day name: ${text}`);
   }
 };

@@ -1,8 +1,10 @@
 import { EventCreateButton } from '@/components/events/event-create-button';
 import { EventList }         from '@/components/events/event-list';
 import { Separator }         from '@/components/ui/separator';
+import { toDayNameMap }      from '@/lib/day-names';
 import type {
   Calendar,
+  DayName,
   Event
 }                            from '@/lib/types';
 import { getTranslations }   from 'next-intl/server';
@@ -43,6 +45,24 @@ async function getCalendars(): Promise<Calendar[]> {
   return res.json();
 }
 
+async function getDayNamesByCalendar(calendars: Calendar[]): Promise<Record<number, Record<string, string>>> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token')?.value;
+  if (!token) return {};
+
+  const entries = await Promise.all(
+    calendars.map(async (calendar) => {
+      const res = await fetch(`${API_BASE_URL}/api/calendars/${calendar.uuid}/day-names`, {
+        cache: 'no-store',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const dayNames: DayName[] = res.ok ? await res.json() : [];
+      return [calendar.id, toDayNameMap(dayNames)] as const;
+    }),
+  );
+  return Object.fromEntries(entries);
+}
+
 export default async function EventsPage() {
   const cookieStore = await cookies();
   const preferredCurrency = cookieStore.get('currency')?.value ?? 'GBP';
@@ -53,6 +73,7 @@ export default async function EventsPage() {
     getTranslations('events'),
   ]);
   const calendarOptions = calendars.map(({ id, name }) => ({ id, name }));
+  const dayNamesByCalendar = await getDayNamesByCalendar(calendars);
 
   return (
     <div className='py-4'>
@@ -71,7 +92,7 @@ export default async function EventsPage() {
           </div>
 
           <Separator />
-          <EventList events={events} preferredCurrency={preferredCurrency} />
+          <EventList events={events} preferredCurrency={preferredCurrency} dayNamesByCalendar={dayNamesByCalendar} />
         </div>
       </div>
     </div>

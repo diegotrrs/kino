@@ -1,4 +1,5 @@
 import logging
+from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException
 from psycopg2.extensions import connection
@@ -19,6 +20,7 @@ from ..schemas.calendar import (
     CalendarUserAdd,
     DeletedCalendarResponse,
 )
+from ..schemas.day_name import DayNameResponse, DayNameSet
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -259,3 +261,46 @@ def delete_calendar_expense(
         raise HTTPException(status_code=403, detail="Not a member of this calendar")
     if not crud.delete_calendar_expense(db, expense_id, calendar_id):
         raise HTTPException(status_code=404, detail="Expense not found")
+
+
+@router.get("/{calendar_uuid}/day-names", response_model=list[DayNameResponse])
+def list_day_names(
+    calendar_uuid: str,
+    db: connection = Depends(get_db),
+    current_user: dict | None = Depends(get_optional_user),
+):
+    calendar = crud.get_calendar_by_uuid(db, calendar_uuid, current_user["id"] if current_user else None)
+    if calendar is None:
+        raise HTTPException(status_code=404, detail="Calendar not found")
+    if not calendar["is_public"]:
+        if current_user is None or calendar.get("role") is None:
+            raise HTTPException(status_code=403, detail="This calendar is private")
+    return crud.get_day_names(db, calendar["id"])
+
+
+@router.put("/{calendar_uuid}/day-names/{day}", response_model=DayNameResponse)
+def set_day_name(
+    calendar_uuid: str,
+    day: date,
+    body: DayNameSet,
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    calendar_id = _get_id_by_uuid(db, calendar_uuid)
+    if crud.get_user_role(db, calendar_id, current_user["id"]) is None:
+        raise HTTPException(status_code=403, detail="Not a member of this calendar")
+    return crud.set_day_name(db, calendar_id, day, body.name)
+
+
+@router.delete("/{calendar_uuid}/day-names/{day}", status_code=204)
+def delete_day_name(
+    calendar_uuid: str,
+    day: date,
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    calendar_id = _get_id_by_uuid(db, calendar_uuid)
+    if crud.get_user_role(db, calendar_id, current_user["id"]) is None:
+        raise HTTPException(status_code=403, detail="Not a member of this calendar")
+    if not crud.delete_day_name(db, calendar_id, day):
+        raise HTTPException(status_code=404, detail="Day has no name")

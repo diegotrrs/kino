@@ -14,6 +14,7 @@ import { EventsProvider }         from '@/context/events-context';
 import type {
   Calendar as CalendarType,
   CalendarExpense,
+  DayName,
   Event
 }                                 from '@/lib/types';
 import { CalendarEvent }          from '@/utils/data';
@@ -94,6 +95,16 @@ const getCalendarExpenses = async (calendarUuid: string, token: string | null): 
   return res.json();
 }
 
+const getCalendarDayNames = async (calendarUuid: string, token: string | null): Promise<DayName[]> => {
+  const headers: Record<string, string> = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarUuid}/day-names`, { cache: 'no-store', headers });
+
+  if (!res.ok) return [];
+  return res.json();
+}
+
 const CalendarPage = async ({
   params,
 }: {
@@ -141,9 +152,10 @@ const CalendarPage = async ({
     redirect(isAuthenticated ? '/home' : '/login');
   }
 
-  const [dbEvents, calendarExpenses] = await Promise.all([
+  const [dbEvents, calendarExpenses, dayNames] = await Promise.all([
     getCalendarEvents(uuid, token),
     getCalendarExpenses(uuid, token),
+    getCalendarDayNames(uuid, token),
   ]);
   const eventDates = dbEvents.map((event) => event.end_date ?? event.date);
   const hasExpenses = calendarExpenses.length > 0 || dbEvents.some((event) => (event.expenses ?? []).length > 0);
@@ -162,6 +174,7 @@ const CalendarPage = async ({
       initialDate={initialDate}
       serverEvents={events}
       serverCalendarExpenses={calendarExpenses}
+      serverDayNames={dayNames}
       readOnly={readOnly}
       preferredCurrency={preferredCurrency}
     >

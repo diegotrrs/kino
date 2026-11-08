@@ -1,4 +1,5 @@
 import logging
+from datetime import date
 from unittest.mock import patch
 
 import pytest
@@ -13,6 +14,7 @@ from app.schemas.calendar import (
     CalendarUpdate,
     CalendarUserAdd,
 )
+from app.schemas.day_name import DayNameSet
 from tests.unit.helpers import make_mock_db
 
 CALENDAR_ID = 9
@@ -38,12 +40,20 @@ MEMBER_HANDLERS = [
         id="create_expense",
     ),
     pytest.param(router.delete_calendar_expense, {"expense_id": 3}, "delete_calendar_expense", id="delete_expense"),
+    pytest.param(
+        router.set_day_name,
+        {"day": date(2026, 11, 7), "body": DayNameSet(name="Visit to Vatican")},
+        "set_day_name",
+        id="set_day_name",
+    ),
+    pytest.param(router.delete_day_name, {"day": date(2026, 11, 7)}, "delete_day_name", id="delete_day_name"),
 ]
 
 # Handlers readable by anyone for public calendars, members only for private ones
 PUBLIC_READ_HANDLERS = [
     pytest.param(router.get_calendar, None, id="get_calendar"),
     pytest.param(router.list_calendar_expenses, "get_calendar_expenses", id="list_expenses"),
+    pytest.param(router.list_day_names, "get_day_names", id="list_day_names"),
 ]
 
 
@@ -304,3 +314,27 @@ class TestGetIdByUuid:
 
     def test_known_uuid_returns_id(self):
         assert router._get_id_by_uuid(make_mock_db(row={"id": CALENDAR_ID}), UUID) == CALENDAR_ID
+
+
+class TestDayNames:
+    def test_setting_a_name_saves_it_for_that_day(self, crud, resolved_id, db, user):
+        crud.get_user_role.return_value = "editor"
+
+        router.set_day_name(
+            calendar_uuid=UUID,
+            day=date(2026, 11, 7),
+            body=DayNameSet(name="Visit to Vatican"),
+            db=db,
+            current_user=user,
+        )
+
+        crud.set_day_name.assert_called_once_with(db, CALENDAR_ID, date(2026, 11, 7), "Visit to Vatican")
+
+    def test_removing_a_day_without_a_name_returns_404(self, crud, resolved_id, db, user):
+        crud.get_user_role.return_value = "owner"
+        crud.delete_day_name.return_value = False
+
+        with pytest.raises(HTTPException) as exc:
+            router.delete_day_name(calendar_uuid=UUID, day=date(2026, 11, 7), db=db, current_user=user)
+
+        assert exc.value.status_code == 404

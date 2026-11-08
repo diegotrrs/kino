@@ -19,6 +19,11 @@ from .calendars import (
     set_calendar_favourite,
     update_calendar,
 )
+from .day_names import (
+    delete_day_name,
+    get_day_names,
+    set_day_name,
+)
 from .events import (
     create_event,
     create_event_expense,
@@ -51,6 +56,9 @@ from .users import (
 )
 
 __all__ = [
+    "delete_day_name",
+    "get_day_names",
+    "set_day_name",
     "add_user_to_calendar",
     "create_calendar",
     "create_calendar_expense",

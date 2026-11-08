@@ -71,16 +71,7 @@ td.fc-daygrid-day.fc-day.fc-day-today {
 }
 
 /* Today's day number in a circle */
-.fc-day-today .fc-daygrid-day-number {
-  @apply bg-primary text-primary-foreground rounded-full;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 0.25rem !important;
-  margin-left: 0.25rem !important;
-}
+/* DayRender draws today's orange circle itself, so the number link can also hold the day name */
 
 .fc-day-other {
   @apply bg-secondary/60;
@@ -97,12 +88,14 @@ td.fc-daygrid-day.fc-day.fc-day-today {
 }
 
 .fc-daygrid-day-top {
-  @apply flex flex-row h-8 w-full items-center justify-start;
+  @apply flex flex-row min-h-8 w-full items-center justify-start;
 }
 
 .fc-daygrid-day-number {
   margin-left: 0 !important;
   margin-right: auto !important;
+  flex: 1;
+  min-width: 0;
 }
 
 .fc-daygrid-dot-event {

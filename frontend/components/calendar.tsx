@@ -1,15 +1,21 @@
 'use client';
 import '@/styles/calendar.css';
 import { updateEvent }        from '@/app/(app)/events/actions';
+import { DayNamePopover }     from '@/components/calendars/day-name-popover';
 import { DaySheet }           from '@/components/calendars/day-sheet';
 import { useEvents }          from '@/context/events-context';
 import { useMediaQuery }      from '@/hooks/use-media-query';
 import { useToast }           from '@/hooks/use-toast';
 import {
+  shouldShowNameMarker,
+  toDateKey
+}                             from '@/lib/day-names';
+import {
   DEFAULT_EVENT_COLOR,
   getEventEdge,
   getEventTint
 }                             from '@/lib/event-colors';
+import { getTripSpan }        from '@/lib/trip-span';
 import { getDateFromMinutes } from '@/utils/calendar-utils';
 import {
   CalendarEvent,
@@ -31,6 +37,8 @@ import multiMonthPlugin       from '@fullcalendar/multimonth';
 import FullCalendar           from '@fullcalendar/react';
 import timeGridPlugin         from '@fullcalendar/timegrid';
 import { format }             from 'date-fns';
+import { Pencil }             from 'lucide-react';
+import { useTranslations }    from 'next-intl';
 import {
   useRef,
   useState
@@ -52,8 +60,9 @@ type DayRenderProps = {
 };
 
 const Calendar = () => {
-  const { events, calendarId, initialDate, readOnly, addEvent, deleteEvent, setEventAddOpen, setEventEditOpen } =
-    useEvents();
+  const {
+    events, calendarId, initialDate, readOnly, addEvent, deleteEvent, setEventAddOpen, setEventEditOpen, dayNames,
+  } = useEvents();
   const { toast } = useToast();
 
   const calendarRef = useRef<FullCalendar | null>(null);
@@ -70,6 +79,11 @@ const Calendar = () => {
   const [sheetDay, setSheetDay] = useState<Date | null>(null);
   // Phones: days and their events are too small to tap precisely, so a tap opens the whole day instead
   const isSmallScreen = useMediaQuery('(max-width: 767px)');
+  const tDayNames = useTranslations('dayNames');
+  // Trip = calendar start date → last event (same range as the trip ticket); unnamed days in it invite a name
+  const tripSpan = initialDate
+    ? getTripSpan(toDateKey(initialDate), events.map((e) => toDateKey(new Date(e.end ?? e.start))), toDateKey(new Date()))
+    : null;
 
   const openEditDialog = (event: CalendarEvent) => {
     // Open the dialog in read-only mode too — inputs will be disabled via context
@@ -230,17 +244,64 @@ const Calendar = () => {
       return date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
     };
 
+    const isMonthView = info.view.type === 'dayGridMonth';
+    const dateKey = toDateKey(info.date);
+    const name = isMonthView && !info.isOther ? dayNames[dateKey] : undefined;
+    const showMarker = isMonthView && !info.isOther && !readOnly && !!tripSpan
+      && shouldShowNameMarker(dateKey, dayNames, tripSpan);
+    // Keep the calendar's own click/select handlers from firing under the name controls
+    const stopCalendar = (e: React.SyntheticEvent) => e.stopPropagation();
+
     return (
-      <div className='flex'>
-        {info.view.type == 'dayGridMonth' && info.isToday ? (
-          <div className='flex h-7 w-7 rounded-full bg-primary items-center justify-center text-sm text-primary-foreground'>
-            {info.dayNumberText}
-          </div>
-        ) : (
-          <div className='flex h-7 w-7 rounded-full items-center justify-center text-sm'>
-            {info.dayNumberText}
-          </div>
+      <div className='flex w-full min-w-0 flex-col md:flex-row md:items-center md:gap-1.5'>
+        <div className='flex w-full items-center justify-between md:w-auto'>
+          {isMonthView && info.isToday ? (
+            <div className='flex h-7 w-7 shrink-0 rounded-full bg-primary items-center justify-center text-sm text-primary-foreground'>
+              {info.dayNumberText}
+            </div>
+          ) : (
+            <div className='flex h-7 w-7 shrink-0 rounded-full items-center justify-center text-sm'>
+              {info.dayNumberText}
+            </div>
+          )}
+          {showMarker && isSmallScreen && (
+            // Phones: only a hint; tapping the day opens the day sheet where the name is typed
+            <span aria-hidden='true' className='mr-1 flex h-4 w-4 items-center justify-center rounded border border-dashed border-muted-foreground/50 text-muted-foreground'>
+              <Pencil className='h-2.5 w-2.5' />
+            </span>
+          )}
+        </div>
+
+        {name && (isSmallScreen || readOnly) && (
+          <span className='truncate px-1 font-sans text-[0.6rem] font-semibold text-teal md:text-xs'>{name}</span>
         )}
+        {name && !isSmallScreen && !readOnly && (
+          <DayNamePopover dateKey={dateKey}>
+            <button
+              type='button'
+              onMouseDown={stopCalendar}
+              onPointerDown={stopCalendar}
+              onClick={stopCalendar}
+              className='pointer-events-auto min-w-0 truncate rounded-sm font-sans text-xs font-semibold text-teal hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+            >
+              {name}
+            </button>
+          </DayNamePopover>
+        )}
+        {showMarker && !isSmallScreen && (
+          <DayNamePopover dateKey={dateKey}>
+            <button
+              type='button'
+              onMouseDown={stopCalendar}
+              onPointerDown={stopCalendar}
+              onClick={stopCalendar}
+              className='pointer-events-auto truncate rounded border border-dashed border-muted-foreground/40 px-1.5 py-0.5 font-sans text-[0.7rem] font-medium text-muted-foreground transition-colors hover:border-teal hover:text-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+            >
+              + {tDayNames('nameThisDay')}
+            </button>
+          </DayNamePopover>
+        )}
+
         {isFirstOfMonth && (
           <div className='month-ribbon'>
             <span>{getMonthLabel(info.date)}</span>

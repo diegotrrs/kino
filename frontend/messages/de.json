@@ -275,5 +275,12 @@
     "count": "{count, plural, =0 {Keine Termine} one {# Termin} other {# Termine}}",
     "empty": "Noch nichts geplant.",
     "add": "+ Termin am {day} hinzufügen"
+  },
+  "dayNames": {
+    "nameThisDay": "Tag benennen",
+    "placeholder": "Titel für diesen Tag hinzufügen…",
+    "removeName": "Namen entfernen",
+    "save": "Speichern",
+    "saveFailed": "Der Name des Tages konnte nicht gespeichert werden. Versuch es nochmal."
   }
 }

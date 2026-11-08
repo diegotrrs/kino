@@ -3,6 +3,7 @@ from pydantic import ValidationError
 
 from app.schemas.auth import ResetPasswordRequest, SignupRequest
 from app.schemas.calendar import CalendarExpenseCreate
+from app.schemas.day_name import DayNameSet
 from app.schemas.event import EventCreate, EventExpenseCreate, EventUpdate
 from app.schemas.feedback import FeedbackCreate
 from app.schemas.user import UserUpdate
@@ -76,3 +77,19 @@ class TestEventDates:
                 end_date="2035-01-01",
                 end_time="09:00",
             )
+
+
+class TestDayNameSet:
+    def test_name_is_trimmed(self):
+        assert DayNameSet(name="  Visit to Vatican  ").name == "Visit to Vatican"
+
+    def test_html_tags_are_stripped(self):
+        assert DayNameSet(name="<b>Rome</b>").name == "Rome"
+
+    @pytest.mark.parametrize("name", ["", "   ", "<i></i>", "x" * 61], ids=["empty", "blank", "only_tags", "too_long"])
+    def test_invalid_names_are_rejected(self, name):
+        with pytest.raises(ValidationError):
+            DayNameSet(name=name)
+
+    def test_sixty_characters_is_allowed(self):
+        assert len(DayNameSet(name="x" * 60).name) == 60
