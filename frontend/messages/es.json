@@ -217,7 +217,7 @@
     "dates": "Fechas",
     "days": "{count, plural, one {# día} other {# días}}",
     "dayOf": "Día {current} de {total}",
-    "departsIn": "{count, plural, =0 {Sales hoy} one {Sales mañana} other {Sales en # días}}",
+    "departsIn": "{count, plural, =0 {Empieza hoy} one {Empieza mañana} other {Empieza en # días}}",
     "complete": "Viaje terminado",
     "travellers": "{count, plural, one {# viajero} other {# viajeros}}"
   },

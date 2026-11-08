@@ -1,5 +1,5 @@
 'use client';
-import { Button }      from '@/components/ui/button';
+import { Button }          from '@/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -7,15 +7,15 @@ import {
   CommandInput,
   CommandItem,
   CommandList
-}                      from '@/components/ui/command';
-import { Input }       from '@/components/ui/input';
+}                          from '@/components/ui/command';
+import { Input }           from '@/components/ui/input';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger
-}                      from '@/components/ui/popover';
-import { useEvents }   from '@/context/events-context';
-import { cn }          from '@/lib/utils';
+}                          from '@/components/ui/popover';
+import { useEvents }       from '@/context/events-context';
+import { cn }              from '@/lib/utils';
 import {
   generateDaysInMonth,
   goNext,
@@ -23,16 +23,18 @@ import {
   handleDayChange,
   handleMonthChange,
   handleYearChange
-}                      from '@/utils/calendar-utils';
-import { months }      from '@/utils/data';
-import { calendarRef } from '@/utils/data';
+}                          from '@/utils/calendar-utils';
+import { months }          from '@/utils/data';
+import { calendarRef }     from '@/utils/data';
 import {
   Check,
   ChevronLeft,
   ChevronRight,
-  ChevronsUpDown
-}                      from 'lucide-react';
-import { useState }    from 'react';
+  ChevronsUpDown,
+  PlusIcon
+}                          from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useState }        from 'react';
 
 type CalendarNavProps = {
   calendarRef: calendarRef;
@@ -48,6 +50,7 @@ const CalendarNav = ({
   readOnly = false,
 }: Omit<CalendarNavProps, 'start' | 'end'>) => {
   const { setEventAddOpen } = useEvents();
+  const t = useTranslations('eventDialog');
   const [currentView] = useState('dayGridMonth');
 
   const selectedMonth = viewedDate.getMonth() + 1;
@@ -205,16 +208,28 @@ const CalendarNav = ({
         >
           <ChevronRight className='h-4 w-4' />
         </Button>
-      </div>
 
-      <div className='md:justify-self-end'>
+        {/* Small screens: a compact + keeps the toolbar on one row */}
         {!readOnly && (
           <Button
-            className='w-24 md:w-28 text-xs md:text-sm'
+            size='icon'
+            className='ml-1 h-10 w-11 shrink-0 md:hidden'
+            aria-label={t('add')}
+            onClick={() => setEventAddOpen(true)}
+          >
+            <PlusIcon className='h-5 w-5' />
+          </Button>
+        )}
+      </div>
+
+      <div className='hidden md:block md:justify-self-end'>
+        {!readOnly && (
+          <Button
+            className='w-28 text-sm'
             variant='default'
             onClick={() => setEventAddOpen(true)}
           >
-            <p>Add Event</p>
+            {t('add')}
           </Button>
         )}
       </div>
