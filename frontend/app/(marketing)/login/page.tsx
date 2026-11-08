@@ -45,7 +45,7 @@ const LoginPage = () => {
               {redirect && <input type='hidden' name='redirect' value={redirect} />}
               <div className='grid gap-2'>
                 <Label htmlFor='email'>{t('email')}</Label>
-                <Input id='email' name='email' type='email' defaultValue={DEV_LOGIN_EMAIL} required />
+                <Input id='email' name='email' type='email' defaultValue={state.email ?? DEV_LOGIN_EMAIL} required />
                 {state.fieldErrors?.email && (
                   <p className='text-sm text-destructive'>{state.fieldErrors.email[0]}</p>
                 )}

@@ -24,6 +24,8 @@ export type AuthState = {
   error?: string;
   fieldErrors?: Record<string, string[]>;
   success?: string;
+  // Echoed back on failure so the form can keep what the user typed (React resets the form after an action)
+  email?: string;
 };
 
 const safeRedirectPath = (raw: FormDataEntryValue | null): string => {
@@ -34,13 +36,15 @@ const safeRedirectPath = (raw: FormDataEntryValue | null): string => {
 }
 
 export const login = async (_prev: AuthState, formData: FormData): Promise<AuthState> => {
+  const rawEmail = formData.get('email');
+  const email = typeof rawEmail === 'string' ? rawEmail : '';
   const parsed = loginSchema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
   });
 
   if (!parsed.success) {
-    return { fieldErrors: parsed.error.flatten().fieldErrors };
+    return { fieldErrors: parsed.error.flatten().fieldErrors, email };
   }
 
   const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
@@ -51,7 +55,7 @@ export const login = async (_prev: AuthState, formData: FormData): Promise<AuthS
 
   if (!res.ok) {
     const body = await res.json().catch(() => null);
-    return { error: body?.detail ?? 'Invalid email or password' };
+    return { error: body?.detail ?? 'Invalid email or password', email };
   }
 
   const { access_token } = await res.json();

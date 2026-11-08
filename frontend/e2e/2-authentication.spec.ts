@@ -31,6 +31,19 @@ test.describe('@2. authentication', () => {
     await expect(page.getByText('Invalid email or password')).toBeVisible({ timeout: 15000 });
   });
 
+  test('@2.2b should keep the typed email after a wrong password so only the password needs re-entering', async ({
+    page,
+  }) => {
+    await page.goto('/login');
+    await page.getByLabel('Email').fill(TEST_EMAIL);
+    await page.getByLabel('Password', { exact: true }).fill('wrongpassword');
+    await page.getByRole('button', { name: /^login$/i }).click();
+    await expect(page.getByText('Invalid email or password')).toBeVisible({ timeout: 15000 });
+
+    await expect(page.getByLabel('Email')).toHaveValue(TEST_EMAIL);
+    await expect(page.getByLabel('Password', { exact: true })).toHaveValue('');
+  });
+
   test('@2.3 should show an error when logging in with a non-existent email', async ({
     page,
   }) => {
