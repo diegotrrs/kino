@@ -8,9 +8,10 @@ from tests.unit.helpers import mock_settings
 
 @pytest.fixture
 def resend():
+    """Production-like settings, so emails really go through (the mocked) Resend."""
     with (
         patch("app.email.resend") as mock_resend,
-        patch("app.email.get_settings", return_value=mock_settings()),
+        patch("app.email.get_settings", return_value=mock_settings(env="production")),
     ):
         yield mock_resend
 
@@ -63,3 +64,41 @@ class TestCalendarInviteEmail:
         assert '<a href="https://evil.example">' not in html  # …but not as markup
         assert "&lt;a href=&quot;https://evil.example&quot;&gt;" in html
         assert "&lt;b&gt;Ana&lt;/b&gt;" in html
+
+
+class TestLocalDelivery:
+    """Locally (ENV=development) or without a key, emails are logged instead of sent."""
+
+    @pytest.mark.parametrize(
+        ("overrides", "reason"),
+        [
+            ({"env": "development"}, "ENV=development"),
+            ({"env": "production", "resend_api_key": ""}, "no RESEND_API_KEY"),
+        ],
+        ids=["development", "no_api_key"],
+    )
+    def test_email_is_logged_not_sent(self, overrides, reason, caplog):
+        with (
+            patch("app.email.resend") as mock_resend,
+            patch("app.email.get_settings", return_value=mock_settings(**overrides)),
+            caplog.at_level("WARNING", logger="app.email"),
+        ):
+            send_password_reset_email(
+                to_email="ana@example.com", reset_url="http://localhost:3000/reset-password?token=abc"
+            )
+
+        mock_resend.Emails.send.assert_not_called()
+        assert reason in caplog.text
+        assert "ana@example.com" in caplog.text
+
+    def test_logged_email_includes_its_links_so_flows_can_be_finished_locally(self, caplog):
+        with (
+            patch("app.email.resend"),
+            patch("app.email.get_settings", return_value=mock_settings(env="development")),
+            caplog.at_level("WARNING", logger="app.email"),
+        ):
+            send_password_reset_email(
+                to_email="ana@example.com", reset_url="http://localhost:3000/reset-password?token=abc"
+            )
+
+        assert "http://localhost:3000/reset-password?token=abc" in caplog.text

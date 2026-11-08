@@ -13,10 +13,14 @@ import {
 }                          from '@/components/ui/card';
 import { Input }           from '@/components/ui/input';
 import { Label }           from '@/components/ui/label';
+import { saveAuthEmail }   from '@/lib/auth-email-handoff';
 import { useTranslations } from 'next-intl';
 import Link                from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useActionState }  from 'react';
+import {
+  useActionState,
+  useRef
+}                          from 'react';
 
 // Local convenience only: set NEXT_PUBLIC_DEV_LOGIN_EMAIL in .env.local; never applied in production builds
 const DEV_LOGIN_EMAIL = process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_DEV_LOGIN_EMAIL : undefined;
@@ -26,6 +30,7 @@ const LoginPage = () => {
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') ?? '';
   const t = useTranslations('auth.login');
+  const emailRef = useRef<HTMLInputElement>(null);
 
   return (
     <div className='flex min-h-svh w-full items-center justify-center p-6 md:p-10'>
@@ -45,7 +50,7 @@ const LoginPage = () => {
               {redirect && <input type='hidden' name='redirect' value={redirect} />}
               <div className='grid gap-2'>
                 <Label htmlFor='email'>{t('email')}</Label>
-                <Input id='email' name='email' type='email' defaultValue={state.email ?? DEV_LOGIN_EMAIL} required />
+                <Input ref={emailRef} id='email' name='email' type='email' defaultValue={state.email ?? DEV_LOGIN_EMAIL} required />
                 {state.fieldErrors?.email && (
                   <p className='text-sm text-destructive'>{state.fieldErrors.email[0]}</p>
                 )}
@@ -55,6 +60,7 @@ const LoginPage = () => {
                   <Label htmlFor='password'>{t('password')}</Label>
                   <Link
                     href='/forgot-password'
+                    onClick={() => saveAuthEmail(emailRef.current?.value ?? '')}
                     className='ml-auto inline-block text-sm underline-offset-4 hover:underline'
                   >
                     {t('forgotPassword')}

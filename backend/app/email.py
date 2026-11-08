@@ -1,5 +1,6 @@
 import html
 import logging
+import re
 
 import resend
 
@@ -8,10 +9,32 @@ from .config import get_settings
 logger = logging.getLogger(__name__)
 
 
+def _deliver(message: dict) -> None:
+    """Send through Resend, or log the email instead when running locally / without a key.
+
+    Locally this keeps tests and manual testing from emailing real (or non-existent) addresses,
+    and the logged links let you finish flows like password reset by copying them from the output.
+    """
+    settings = get_settings()
+    if not settings.resend_api_key or settings.env == "development":
+        reason = "no RESEND_API_KEY" if not settings.resend_api_key else "ENV=development"
+        links = re.findall(r'href="([^"]+)"', message["html"])
+        logger.warning(
+            "Email not sent (%s) to=%s subject=%r links=%s",
+            reason,
+            ", ".join(message["to"]),
+            message["subject"],
+            links,
+        )
+        return
+
+    resend.api_key = settings.resend_api_key
+    resend.Emails.send(message)
+
+
 def send_password_reset_email(to_email: str, reset_url: str) -> None:
     settings = get_settings()
-    resend.api_key = settings.resend_api_key
-    resend.Emails.send(
+    _deliver(
         {
             "from": settings.resend_from_email,
             "to": [to_email],
@@ -33,8 +56,7 @@ def send_calendar_invite_email(
     settings = get_settings()
     safe_inviter = html.escape(inviter_name)
     safe_calendar = html.escape(calendar_name)
-    resend.api_key = settings.resend_api_key
-    resend.Emails.send(
+    _deliver(
         {
             "from": settings.resend_from_email,
             "to": [to_email],

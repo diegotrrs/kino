@@ -2,20 +2,25 @@
 import {
   requestPasswordReset,
   type AuthState
-}                         from '@/app/auth/actions';
-import { Button }         from '@/components/ui/button';
+}                          from '@/app/auth/actions';
+import { Button }          from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-}                         from '@/components/ui/card';
-import { Input }          from '@/components/ui/input';
-import { Label }          from '@/components/ui/label';
+}                          from '@/components/ui/card';
+import { Input }           from '@/components/ui/input';
+import { Label }           from '@/components/ui/label';
+import { readAuthEmail }   from '@/lib/auth-email-handoff';
 import { useTranslations } from 'next-intl';
-import Link               from 'next/link';
-import { useActionState } from 'react';
+import Link                from 'next/link';
+import {
+  useActionState,
+  useEffect,
+  useRef
+}                          from 'react';
 
 const ForgotPasswordPage = () => {
   const [state, formAction, pending] = useActionState<AuthState, FormData>(
@@ -23,6 +28,15 @@ const ForgotPasswordPage = () => {
     {}
   );
   const t = useTranslations('auth.forgotPassword');
+  const emailRef = useRef<HTMLInputElement>(null);
+
+  // Prefill with the email typed on the login page; read after mount since storage only exists in the browser
+  useEffect(() => {
+    const email = readAuthEmail();
+    if (email && emailRef.current && !emailRef.current.value) {
+      emailRef.current.value = email;
+    }
+  }, []);
 
   return (
     <div className='flex min-h-svh w-full items-center justify-center p-6 md:p-10'>
@@ -50,10 +64,12 @@ const ForgotPasswordPage = () => {
                 <div className='grid gap-2'>
                   <Label htmlFor='email'>{t('email')}</Label>
                   <Input
+                    ref={emailRef}
                     id='email'
                     name='email'
                     type='email'
                     placeholder={t('emailPlaceholder')}
+                    defaultValue={state.email}
                     required
                   />
                   {state.fieldErrors?.email && (

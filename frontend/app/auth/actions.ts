@@ -145,7 +145,7 @@ export const requestPasswordReset = async (
   });
 
   if (!res.ok) {
-    return { error: 'Something went wrong. Please try again.' };
+    return { error: 'Something went wrong. Please try again.', email };
   }
 
   const { message } = await res.json();

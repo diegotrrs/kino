@@ -129,4 +129,15 @@ test.describe('@2. authentication', () => {
       page.getByText('If that email is registered, a reset link has been sent.')
     ).toBeVisible();
   });
+
+  test('@2.10 should carry the email typed on the login page over to forgot password', async ({
+    page,
+  }) => {
+    await page.goto('/login');
+    await page.getByLabel('Email').fill(TEST_EMAIL);
+    await page.getByRole('link', { name: /forgot/i }).click();
+
+    await page.waitForURL('/forgot-password');
+    await expect(page.getByLabel('Email')).toHaveValue(TEST_EMAIL);
+  });
 });
