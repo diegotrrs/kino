@@ -32,7 +32,8 @@ export const TripPass = async ({ startDate, eventDates }: TripPassProps) => {
     if (daysUntil > 0) {
       return t('departsIn', { count: daysUntil });
     }
-    return t('complete');
+    const daysSinceEnd = Math.round((Date.parse(`${today}T00:00:00Z`) - Date.parse(`${span.end}T00:00:00Z`)) / 86_400_000);
+    return t('ended', { count: daysSinceEnd });
   };
 
   const dateRange = span.start === span.end ? formatDay(span.start) : `${formatDay(span.start)} → ${formatDay(span.end)}`;

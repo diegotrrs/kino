@@ -218,8 +218,8 @@
     "days": "{count, plural, one {# dia} other {# dias}}",
     "dayOf": "Dia {current} de {total}",
     "departsIn": "{count, plural, =0 {Começa hoje} one {Começa amanhã} other {Começa em # dias}}",
-    "complete": "Viagem concluída",
-    "travellers": "{count, plural, one {# viajante} other {# viajantes}}"
+    "travellers": "{count, plural, one {# viajante} other {# viajantes}}",
+    "ended": "{count, plural, one {Terminou ontem} other {Terminou há # dias}}"
   },
   "eventColors": {
     "custom": "Personalizada",
