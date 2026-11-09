@@ -273,7 +273,7 @@ const Calendar = () => {
         </div>
 
         {name && (isSmallScreen || readOnly) && (
-          <span className='truncate px-1 font-sans text-[0.6rem] font-semibold text-teal md:text-xs'>{name}</span>
+          <span className='truncate px-1 text-center font-sans text-[0.6rem] font-semibold text-teal md:mx-auto md:text-xs'>{name}</span>
         )}
         {name && !isSmallScreen && !readOnly && (
           <DayNamePopover dateKey={dateKey}>
@@ -282,7 +282,7 @@ const Calendar = () => {
               onMouseDown={stopCalendar}
               onPointerDown={stopCalendar}
               onClick={stopCalendar}
-              className='pointer-events-auto min-w-0 truncate rounded-sm font-sans text-xs font-semibold text-teal hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+              className='pointer-events-auto mx-auto min-w-0 truncate rounded-sm font-sans text-xs font-semibold text-teal hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
             >
               {name}
             </button>
@@ -295,12 +295,15 @@ const Calendar = () => {
               onMouseDown={stopCalendar}
               onPointerDown={stopCalendar}
               onClick={stopCalendar}
-              className='pointer-events-auto truncate rounded border border-dashed border-muted-foreground/40 px-1.5 py-0.5 font-sans text-[0.7rem] font-medium text-muted-foreground transition-colors hover:border-teal hover:text-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+              className='pointer-events-auto mx-auto truncate rounded border border-dashed border-muted-foreground/40 px-1.5 py-0.5 font-sans text-[0.7rem] font-medium text-muted-foreground transition-colors hover:border-teal hover:text-teal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
             >
               + {tDayNames('nameThisDay')}
             </button>
           </DayNamePopover>
         )}
+
+        {/* Mirrors the date's width on the right so names centre on the whole cell, not the space after the date */}
+        {(name || showMarker) && <span aria-hidden='true' className='hidden w-7 shrink-0 md:block' />}
 
         {isFirstOfMonth && (
           <div className='month-ribbon'>

@@ -4,7 +4,7 @@ export const Stamp = ({ children, className }: { children: React.ReactNode; clas
   return (
     <span
       className={cn(
-        'inline-block rotate-3 rounded-sm border-2 border-primary px-1.5 py-1 text-center font-mono text-[0.6rem] font-medium uppercase leading-tight tracking-widest text-primary',
+        'inline-block rounded-sm border-2 border-primary px-1.5 py-1 text-center font-mono text-[0.6rem] font-medium uppercase leading-tight tracking-widest text-primary',
         className,
       )}
     >

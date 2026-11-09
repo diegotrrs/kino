@@ -30,14 +30,14 @@ export const HotTripsCarousel = () => {
       <CarouselContent className='-ml-2'>
         {TRIPS.map((trip) => (
           <CarouselItem key={trip.slug} className='pl-2 basis-1/3 sm:basis-1/4 md:basis-1/5'>
-            <Link href={`/trips/${trip.slug}`} className='block group'>
-              <div className='rounded-md border bg-card p-1.5 transition-transform duration-200 group-hover:-rotate-1'>
+            <Link href={`/trips/${trip.slug}`} className='block group rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'>
+              <div className='rounded-md border bg-card p-1.5'>
                 <div className='relative aspect-[3/2] w-full overflow-hidden rounded-sm'>
                   <Image
                     src={trip.thumbnail}
                     alt={trip.title}
                     fill
-                    className='object-cover'
+                    className='object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100'
                     sizes='(max-width: 640px) 33vw, (max-width: 768px) 25vw, 20vw'
                   />
                   <Stamp className='absolute right-1.5 top-1.5 bg-card/90 px-1 py-0.5 text-[0.5rem] sm:text-[0.55rem]'>

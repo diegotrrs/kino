@@ -33,7 +33,10 @@ export const TopBar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 
   return (
     <header className='sticky top-0 z-50 flex h-14 items-center justify-between border-b bg-background px-4'>
-      <Wordmark />
+      {/* Signed-out visitors (e.g. on a public calendar) go to the landing page instead */}
+      <Link href={isLoggedIn ? '/home' : '/'} aria-label='Kino' className='rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'>
+        <Wordmark />
+      </Link>
 
       <div className='flex items-center gap-2'>
         {process.env.NODE_ENV === 'development' && (
