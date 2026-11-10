@@ -274,7 +274,8 @@
   "daySheet": {
     "count": "{count, plural, =0 {Sem eventos} one {# evento} other {# eventos}}",
     "empty": "Ainda não há nada planeado.",
-    "add": "+ Adicionar evento a {day}"
+    "add": "+ Adicionar evento a {day}",
+    "addHint": "+ Adicionar evento"
   },
   "dayNames": {
     "nameThisDay": "Dar nome a este dia",

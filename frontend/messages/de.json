@@ -274,7 +274,8 @@
   "daySheet": {
     "count": "{count, plural, =0 {Keine Termine} one {# Termin} other {# Termine}}",
     "empty": "Noch nichts geplant.",
-    "add": "+ Termin am {day} hinzufügen"
+    "add": "+ Termin am {day} hinzufügen",
+    "addHint": "+ Termin hinzufügen"
   },
   "dayNames": {
     "nameThisDay": "Tag benennen",

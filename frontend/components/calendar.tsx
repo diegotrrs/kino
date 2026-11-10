@@ -80,6 +80,7 @@ const Calendar = () => {
   // Phones: days and their events are too small to tap precisely, so a tap opens the whole day instead
   const isSmallScreen = useMediaQuery('(max-width: 767px)');
   const tDayNames = useTranslations('dayNames');
+  const tDaySheet = useTranslations('daySheet');
   // Trip = calendar start date → last event (same range as the trip ticket); unnamed days in it invite a name
   const tripSpan = initialDate
     ? getTripSpan(toDateKey(initialDate), events.map((e) => toDateKey(new Date(e.end ?? e.start))), toDateKey(new Date()))
@@ -304,6 +305,16 @@ const Calendar = () => {
 
         {/* Mirrors the date's width on the right so names centre on the whole cell, not the space after the date */}
         {(name || showMarker) && <span aria-hidden='true' className='hidden w-7 shrink-0 md:block' />}
+
+        {isMonthView && !isSmallScreen && !readOnly && (
+          // Larger screens: calendar.css reveals this on hover so people learn a click adds an event on that day
+          <span
+            aria-hidden='true'
+            className='day-add-hint pointer-events-none absolute inset-x-1.5 bottom-1.5 flex h-6 items-center rounded-md border border-dashed border-muted-foreground/40 px-2 font-sans text-xs font-medium text-muted-foreground opacity-0 transition-opacity motion-reduce:transition-none'
+          >
+            {tDaySheet('addHint')}
+          </span>
+        )}
 
         {isFirstOfMonth && (
           <div className='month-ribbon'>

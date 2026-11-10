@@ -207,3 +207,25 @@ td.fc-daygrid-day.fc-day {
     @apply block px-1 font-mono text-[0.55rem] whitespace-nowrap text-teal;
   }
 }
+
+/* Larger screens: clicking a day adds an event, so hovering an editable day shows "+ Add event" where it will go (DayRender) */
+@media (min-width: 768px) {
+  td.fc-daygrid-day.fc-day:has(.day-add-hint) {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  /* Room for the hint under the last event, so it never covers one */
+  .fc-daygrid-day-frame:has(.day-add-hint) {
+    padding-bottom: 2rem;
+  }
+
+  td.fc-daygrid-day:hover .day-add-hint {
+    opacity: 1;
+  }
+
+  /* Hovering an event or a day-name control clicks that instead, so the hint steps aside */
+  td.fc-daygrid-day:has(.fc-event:hover, button:hover) .day-add-hint {
+    opacity: 0;
+  }
+}
