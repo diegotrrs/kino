@@ -151,3 +151,37 @@ test.describe('@10. cost entries', () => {
     await expect(currencySection.getByRole('button', { name: 'EUR' })).toHaveClass(/border-foreground/);
   });
 });
+
+test.describe('@10. cost entries on phones', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+
+  test('@10.7 should add a cost from an inline form inside the event sheet', async ({
+    page,
+    request,
+  }) => {
+    const token = await getToken(request);
+    const calendarUuid = await createCalendar(request, token, `Phone Costs Test ${Date.now()}`);
+    const calendarId = await getCalendarId(request, token, calendarUuid);
+    const today = new Date().toISOString().split('T')[0];
+    await createEvent(request, token, calendarId, 'Museum', today);
+
+    await page.goto(`/calendars/${calendarUuid}`);
+    // Phones: tapping the event opens the day sheet, and its row opens the event
+    await page.locator('.fc-event').first().tap();
+    await page.getByRole('dialog').getByRole('button', { name: /Museum/ }).tap();
+
+    const sheet = page.getByRole('alertdialog');
+    await sheet.getByTestId('add-expense-trigger').tap();
+    // Part of the sheet, not a popover, so the browser can scroll it above the keyboard
+    const labelInput = sheet.getByTestId('expense-label-input');
+    await expect(labelInput).toBeFocused();
+    await labelInput.fill('Tickets');
+    await sheet.getByTestId('expense-amount-input').fill('18');
+    await sheet.getByTestId('add-expense-button').tap();
+
+    await expect(sheet.getByText('£18.00 Tickets')).toBeVisible();
+    await expect(labelInput).toHaveCount(0);
+
+    await deleteCalendar(request, token, calendarUuid);
+  });
+});

@@ -7,6 +7,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { useMediaQuery }                       from '@/hooks/use-media-query';
+import { revealWhenKeyboardOpens }             from '@/lib/keyboard';
 import type { EventExpense }                   from '@/lib/types';
 import { Plus, X }                             from 'lucide-react';
 import { useTranslations }                     from 'next-intl';
@@ -41,6 +43,8 @@ export const EventExpenses = ({
   const [currency, setCurrency] = useState(preferredCurrency);
   const [isAdding, setIsAdding] = useState(false);
   const [open, setOpen] = useState(false);
+  // Same breakpoint as the dialog's bottom-sheet layout on phones
+  const isPhone = useMediaQuery('(max-width: 639px)');
 
   const update = (next: EventExpense[]) => {
     setExpenses(next);
@@ -68,6 +72,58 @@ export const EventExpenses = ({
   };
 
   const totals = groupedTotals(expenses);
+
+  const addForm = (
+    <>
+      <Input
+        value={label}
+        onChange={(e) => setLabel(e.target.value)}
+        placeholder={t('labelPlaceholder')}
+        className='h-8 text-sm'
+        autoFocus
+        onFocus={(e) => { if (isPhone) revealWhenKeyboardOpens(e.currentTarget); }}
+        disabled={isAdding}
+        data-testid='expense-label-input'
+      />
+      <div className='flex gap-1.5'>
+        <select
+          value={currency}
+          onChange={(e) => setCurrency(e.target.value)}
+          className='h-8 rounded-md border bg-background px-1.5 text-sm shrink-0 w-[72px]'
+          disabled={isAdding}
+          data-testid='expense-currency-select'
+        >
+          {CURRENCIES.map((c) => (
+            <option key={c.code} value={c.code}>
+              {c.symbol} {c.code}
+            </option>
+          ))}
+        </select>
+        <Input
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          placeholder={t('amountPlaceholder')}
+          className='h-8 text-sm tabular-nums'
+          type='number'
+          min='0.01'
+          step='0.01'
+          disabled={isAdding}
+          data-testid='expense-amount-input'
+          onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
+        />
+      </div>
+      <Button
+        type='button'
+        size='sm'
+        className='w-full'
+        disabled={isAdding || !label.trim() || !amount || parseFloat(amount) <= 0}
+        onClick={handleAdd}
+        data-testid='add-expense-button'
+      >
+        {isAdding ? t('adding') : t('add')}
+      </Button>
+    </>
+  );
 
   return (
     <div className='space-y-2'>
@@ -99,69 +155,38 @@ export const EventExpenses = ({
             )}
           </span>
         ))}
-        {!readOnly && (
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <button
-                type='button'
-                data-testid='add-expense-trigger'
-                className='inline-flex items-center gap-1 text-xs rounded-full border border-dashed px-2.5 py-1 text-muted-foreground hover:border-solid hover:text-foreground transition-colors'
-              >
-                <Plus className='h-3 w-3' /> {t('add')}
-              </button>
-            </PopoverTrigger>
-            <PopoverContent className='w-56 p-3 space-y-2'>
-              <p className='text-xs font-semibold'>{t('title')}</p>
-              <Input
-                value={label}
-                onChange={(e) => setLabel(e.target.value)}
-                placeholder={t('labelPlaceholder')}
-                className='h-8 text-sm'
-                autoFocus
-                disabled={isAdding}
-                data-testid='expense-label-input'
-              />
-              <div className='flex gap-1.5'>
-                <select
-                  value={currency}
-                  onChange={(e) => setCurrency(e.target.value)}
-                  className='h-8 rounded-md border bg-background px-1.5 text-sm shrink-0 w-[72px]'
-                  disabled={isAdding}
-                  data-testid='expense-currency-select'
+        {!readOnly && (isPhone ? (
+            <button
+              type='button'
+              aria-expanded={open}
+              data-testid='add-expense-trigger'
+              onClick={() => setOpen((isOpen) => !isOpen)}
+              className='inline-flex items-center gap-1 text-xs rounded-full border border-dashed px-2.5 py-1 text-muted-foreground hover:border-solid hover:text-foreground transition-colors'
+            >
+              {open ? t('cancel') : <><Plus className='h-3 w-3' /> {t('add')}</>}
+            </button>
+          ) : (
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <button
+                  type='button'
+                  data-testid='add-expense-trigger'
+                  className='inline-flex items-center gap-1 text-xs rounded-full border border-dashed px-2.5 py-1 text-muted-foreground hover:border-solid hover:text-foreground transition-colors'
                 >
-                  {CURRENCIES.map((c) => (
-                    <option key={c.code} value={c.code}>
-                      {c.symbol} {c.code}
-                    </option>
-                  ))}
-                </select>
-                <Input
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder={t('amountPlaceholder')}
-                  className='h-8 text-sm tabular-nums'
-                  type='number'
-                  min='0.01'
-                  step='0.01'
-                  disabled={isAdding}
-                  data-testid='expense-amount-input'
-                  onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-                />
-              </div>
-              <Button
-                type='button'
-                size='sm'
-                className='w-full'
-                disabled={isAdding || !label.trim() || !amount || parseFloat(amount) <= 0}
-                onClick={handleAdd}
-                data-testid='add-expense-button'
-              >
-                {isAdding ? t('adding') : t('add')}
-              </Button>
-            </PopoverContent>
-          </Popover>
-        )}
+                  <Plus className='h-3 w-3' /> {t('add')}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className='w-56 p-3 space-y-2'>
+                <p className='text-xs font-semibold'>{t('title')}</p>
+                {addForm}
+              </PopoverContent>
+            </Popover>
+          ))}
       </div>
+      {!readOnly && isPhone && open && (
+        // Phones: part of the dialog's scrolling content instead of a popover, so it can be scrolled above the keyboard
+        <div className='space-y-2 rounded-md border bg-card p-3'>{addForm}</div>
+      )}
     </div>
   );
 };
