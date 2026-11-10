@@ -218,3 +218,46 @@ test.describe('@11. expenses summary', () => {
     await deleteCalendar(request, token, calendarUuid);
   });
 });
+
+test.describe('@11. expenses summary on phones', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+
+  test('@11.11 should show the spend in the trip line and open the drawer from it', async ({
+    page,
+    request,
+  }) => {
+    const token = await getToken(request);
+    const calendarUuid = await createCalendar(request, token, `Phone Expenses Chip Test ${Date.now()}`);
+    const calendarId = await getCalendarId(request, token, calendarUuid);
+    const today = new Date().toISOString().split('T')[0];
+    const eventId = await createEvent(request, token, calendarId, 'Hotel', today);
+    await createEventExpense(request, token, eventId, 'Room', 120, 'GBP');
+
+    await page.goto(`/calendars/${calendarUuid}`);
+    const chip = page.getByTestId('trip-summary-line').getByTestId('trip-cost-chip');
+    await expect(chip).toContainText('£120.00');
+
+    await chip.tap();
+    await expect(page.getByTestId('trip-cost-drawer')).toBeVisible();
+    await expect(page.getByTestId('trip-total-GBP')).toContainText('£120.00');
+
+    await deleteCalendar(request, token, calendarUuid);
+  });
+
+  test('@11.12 should not show the spend chip when a calendar has no expenses', async ({
+    page,
+    request,
+  }) => {
+    const token = await getToken(request);
+    const calendarUuid = await createCalendar(request, token, `Phone No Expenses Test ${Date.now()}`);
+    const calendarId = await getCalendarId(request, token, calendarUuid);
+    const today = new Date().toISOString().split('T')[0];
+    await createEvent(request, token, calendarId, 'Free Event', today);
+
+    await page.goto(`/calendars/${calendarUuid}`);
+    await expect(page.getByTestId('trip-summary-line')).toBeVisible();
+    await expect(page.getByTestId('trip-cost-chip')).toHaveCount(0);
+
+    await deleteCalendar(request, token, calendarUuid);
+  });
+});

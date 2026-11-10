@@ -1,4 +1,5 @@
-import { getTripSpan } from '@/lib/trip-span';
+import { ExpensesChip } from '@/components/calendars/expenses-summary';
+import { getTripSpan }  from '@/lib/trip-span';
 import { cn }          from '@/lib/utils';
 import {
   getLocale,
@@ -43,7 +44,9 @@ export const TripPass = async ({ startDate, eventDates }: TripPassProps) => {
     <>
       <p className='w-full font-mono text-[0.7rem] font-medium uppercase tracking-wider text-muted-foreground lg:hidden' data-testid='trip-summary-line'>
         {dateRange} · {t('days', { count: span.totalDays })} ·{' '}
-        <span className={cn((isCurrent || daysUntil > 0) && 'text-primary')}>{getStatus()}</span>
+        <span className={cn((isCurrent || daysUntil > 0) && 'text-primary')}>{getStatus()}</span>{' '}
+        {/* Wraps to its own line on narrow phones, lined up with the dates */}
+        <ExpensesChip />
       </p>
 
       <div className='hidden w-fit max-w-full overflow-hidden rounded-md border bg-card lg:flex' data-testid='trip-pass'>

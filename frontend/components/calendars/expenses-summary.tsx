@@ -15,7 +15,7 @@ import type { CalendarExpense } from '@/lib/types';
 import { cn }                   from '@/lib/utils';
 import type { CalendarEvent }   from '@/utils/data';
 import {
-  ChevronUp,
+  ChevronRight,
   Plus,
   Wallet,
   X
@@ -127,35 +127,30 @@ export const ExpensesPanel = () => {
   );
 };
 
-// Phones and tablets: floats above the bottom navigation so the spend stays in view while scrolling the calendar
-export const ExpensesBar = () => {
+// Phones and tablets: a chip at the end of the trip line, so the spend is visible without covering the calendar
+export const ExpensesChip = () => {
   const { calendarExpenses, setExpensesOpen } = useEvents();
   const t = useTranslations('eventCosts');
   const breakdown = useExpenseBreakdown();
   if (!breakdown && calendarExpenses.length === 0) return null;
 
+  const amounts = breakdown
+    ? [[breakdown.currency, breakdown.total] as [string, number], ...breakdown.otherTotals]
+      .map(([cur, amt]) => formatAmount(amt, cur))
+      .join(' + ')
+    : formatAmount(0, 'GBP');
+
   return (
     <button
       type='button'
       aria-label={t('viewExpenses')}
-      data-testid='trip-cost-bar'
+      data-testid='trip-cost-chip'
       onClick={() => setExpensesOpen(true)}
-      className='fixed inset-x-3 bottom-19 z-30 flex h-13 items-center gap-3 rounded-lg border bg-card px-4 text-left shadow-lg md:bottom-4 md:left-19 lg:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+      className='inline-flex h-7 items-center gap-1.5 rounded-md bg-teal/12 px-2 align-middle font-mono text-[0.7rem] font-medium uppercase tracking-wider text-teal tabular-nums transition-colors hover:bg-teal/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
     >
-      <Wallet className='h-4 w-4 shrink-0 text-teal' />
-      <span className='font-mono text-base font-medium tabular-nums'>
-        {breakdown && formatAmount(breakdown.total, breakdown.currency)}
-      </span>
-      {breakdown && breakdown.otherTotals.length > 0 && (
-        <span className='hidden font-mono text-xs text-muted-foreground tabular-nums sm:inline'>
-          {breakdown.otherTotals.map(([cur, amt]) => `+ ${formatAmount(amt, cur)}`).join(' · ')}
-        </span>
-      )}
-      <span className='truncate text-xs text-muted-foreground'>{t('spentSoFar')}</span>
-      <span className='ml-auto flex shrink-0 items-center gap-1 text-xs font-medium text-teal'>
-        {t('details')}
-        <ChevronUp className='h-4 w-4' />
-      </span>
+      <Wallet className='h-3.5 w-3.5 shrink-0' />
+      {t('spent', { amount: amounts })}
+      <ChevronRight className='h-3.5 w-3.5 shrink-0' />
     </button>
   );
 };

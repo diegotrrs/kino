@@ -210,8 +210,7 @@
     "onEvents": "Bei Terminen",
     "general": "Allgemein",
     "viewAll": "Alle Ausgaben ansehen",
-    "spentSoFar": "bisher ausgegeben",
-    "details": "Details"
+    "spent": "{amount} ausgegeben"
   },
   "tripPass": {
     "dates": "Daten",

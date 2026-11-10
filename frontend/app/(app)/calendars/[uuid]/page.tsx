@@ -1,7 +1,6 @@
 import Calendar                   from '@/components/calendar-no-ssr';
 import { CalendarShareButton }    from '@/components/calendars/calendar-share-button';
 import {
-  ExpensesBar,
   ExpensesDrawer,
   ExpensesPanel
 }                                 from '@/components/calendars/expenses-summary';
@@ -216,7 +215,7 @@ const CalendarPage = async ({
                   <TripPass startDate={calendar.start_date} eventDates={eventDates} />
                 </div>
               </div>
-              <div className={hasRail ? 'pt-4 pb-20 lg:pb-0 lg:grid lg:grid-cols-[minmax(0,1fr)_17rem] lg:items-start lg:gap-6' : 'pt-4'}>
+              <div className={hasRail ? 'pt-4 lg:grid lg:grid-cols-[minmax(0,1fr)_17rem] lg:items-start lg:gap-6' : 'pt-4'}>
                 <Calendar />
                 {hasRail && (
                   <aside className='hidden gap-4 lg:grid' aria-label='Trip details'>
@@ -224,7 +223,6 @@ const CalendarPage = async ({
                   </aside>
                 )}
               </div>
-              <ExpensesBar />
               <ExpensesDrawer />
             </div>
           </div>

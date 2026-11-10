@@ -358,7 +358,7 @@ const Calendar = () => {
         readOnly={readOnly}
       />
 
-      {/* Phones: line the calendar up with the floating expenses bar (12px from the edge) to give the grid more room */}
+      {/* Phones: 12px from the screen edge instead of the page's 20px, to give the grid more room */}
       <div className='relative -mx-2 md:mx-0'>
         <Card className='p-1.5 md:p-3'>
           <FullCalendar

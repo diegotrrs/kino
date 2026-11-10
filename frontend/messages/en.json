@@ -210,8 +210,7 @@
     "onEvents": "On events",
     "general": "General",
     "viewAll": "See all expenses",
-    "spentSoFar": "spent so far",
-    "details": "Details"
+    "spent": "{amount} spent"
   },
   "tripPass": {
     "dates": "Dates",

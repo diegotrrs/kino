@@ -132,7 +132,8 @@ test.describe('@10. cost entries', () => {
     await page.goto(`/calendars/${calendarUuid}`);
     await page.locator('.fc').getByText('Euro Trip').click();
 
-    await expect(page.getByText(/£120\.00.*€45\.00/).first()).toBeVisible();
+    // The event dialog's expense total; the calendar page also shows the trip's spend elsewhere
+    await expect(page.getByRole('alertdialog').getByText('£120.00 · €45.00')).toBeVisible();
 
     await deleteCalendar(request, token, calendarUuid);
   });
