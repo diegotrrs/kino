@@ -187,9 +187,9 @@ const CalendarPage = async ({
                 <Link
                   href={backHref}
                   aria-label='Go back'
-                  className='inline-flex items-center text-muted-foreground hover:text-foreground mb-1'
+                  className='-ml-2 mb-1 inline-flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
                 >
-                  <ArrowLeft className='h-4 w-4' />
+                  <ArrowLeft className='h-6 w-6' />
                 </Link>
                 <div className='flex flex-wrap items-center justify-between gap-4'>
                   <div className='flex items-center gap-1'>
