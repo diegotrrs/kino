@@ -19,3 +19,26 @@ export const getEventTint = (color: string, amount = 18): string =>
 
 export const getEventEdge = (color: string, amount = 45): string =>
   `color-mix(in srgb, ${color} ${amount}%, transparent)`;
+
+export const MAX_RECENT_COLORS = 6;
+
+// Custom colours the calendar's events already use, newest event first, so a trip's colours are one click away.
+// Read from the events themselves, so nothing extra is stored and everyone editing the calendar sees the same list.
+export const getRecentColors = (
+  events: { id: string; backgroundColor?: string }[],
+  limit = MAX_RECENT_COLORS,
+): string[] => {
+  const seen = new Set<string>();
+  const recent: string[] = [];
+  // Ids grow as events are created, so a higher id is a newer event
+  const newestFirst = [...events].sort((a, b) => Number(b.id) - Number(a.id));
+  for (const { backgroundColor } of newestFirst) {
+    if (!backgroundColor || isPaletteColor(backgroundColor)) continue;
+    const key = backgroundColor.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    recent.push(backgroundColor);
+    if (recent.length === limit) break;
+  }
+  return recent;
+};

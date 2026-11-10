@@ -19,7 +19,10 @@ import {
 import { Button }               from '@/components/ui/button';
 import { useEvents }            from '@/context/events-context';
 import { useToast }             from '@/hooks/use-toast';
-import { DEFAULT_EVENT_COLOR }  from '@/lib/event-colors';
+import {
+  DEFAULT_EVENT_COLOR,
+  getRecentColors
+}                               from '@/lib/event-colors';
 import type {
   Calendar,
   EventExpense,
@@ -415,7 +418,7 @@ export const EventForm = (props: EventFormProps) => {
             {isReadOnly ? (
               <span aria-hidden='true' className='h-7 w-7 rounded-md' style={{ backgroundColor: color }} />
             ) : (
-              <EventColorPicker color={color} onChange={setColor} />
+              <EventColorPicker color={color} onChange={setColor} recentColors={getRecentColors(events)} />
             )}
           </section>
 

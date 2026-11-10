@@ -223,6 +223,7 @@
   },
   "eventColors": {
     "custom": "Custom",
+    "recent": "Recent",
     "palette": "Theme colours",
     "teal": "Teal",
     "terracotta": "Terracotta",
