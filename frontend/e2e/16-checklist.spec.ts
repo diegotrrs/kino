@@ -155,7 +155,8 @@ test.describe('@16. trip checklist on phones', () => {
   });
 });
 
-// Fails every server action from now on, as if the backend refused the change
+// Fails every server action from now on, as if the backend refused the change.
+// Toast text is matched exactly: Radix briefly adds a hidden "Notification …" announcement with the same words.
 const refuseServerActions = async (page: Page): Promise<void> => {
   await page.route('**/calendars/**', async (route) => {
     if (route.request().method() === 'POST' && route.request().headers()['next-action']) {
@@ -188,7 +189,7 @@ test.describe('@16. trip checklist when the server refuses a change', () => {
     await panel.getByLabel('Add to checklist').fill('Exchange money');
     await panel.getByLabel('Add to checklist').press('Enter');
 
-    await expect(page.getByText("Couldn't add that item. Try again.")).toBeVisible();
+    await expect(page.getByText("Couldn't add that item. Try again.", { exact: true })).toBeVisible();
     await expect(panel.getByTestId('checklist-item')).toHaveText(TEXTS);
   });
 
@@ -199,7 +200,7 @@ test.describe('@16. trip checklist when the server refuses a change', () => {
 
     await checkbox.click();
 
-    await expect(page.getByText("Couldn't save that change. Try again.")).toBeVisible();
+    await expect(page.getByText("Couldn't save that change. Try again.", { exact: true })).toBeVisible();
     await expect(checkbox).not.toBeChecked();
     await expect(panel.getByTestId('checklist-progress')).toHaveText('0 / 3');
   });
@@ -212,7 +213,7 @@ test.describe('@16. trip checklist when the server refuses a change', () => {
     await panel.getByLabel('Item text').fill('Renew passports');
     await panel.getByLabel('Item text').press('Enter');
 
-    await expect(page.getByText("Couldn't save that change. Try again.")).toBeVisible();
+    await expect(page.getByText("Couldn't save that change. Try again.", { exact: true })).toBeVisible();
     await expect(panel.getByTestId('checklist-item')).toHaveText(TEXTS);
   });
 
@@ -224,7 +225,7 @@ test.describe('@16. trip checklist when the server refuses a change', () => {
     await middleRow.hover();
     await middleRow.getByRole('button', { name: 'Delete “Book airport transfer”' }).click();
 
-    await expect(page.getByText("Couldn't delete that item. Try again.")).toBeVisible();
+    await expect(page.getByText("Couldn't delete that item. Try again.", { exact: true })).toBeVisible();
     await expect(panel.getByTestId('checklist-item')).toHaveText(TEXTS);
   });
 
@@ -239,7 +240,7 @@ test.describe('@16. trip checklist when the server refuses a change', () => {
     await page.waitForTimeout(200);
     await page.keyboard.press('Space');
 
-    await expect(page.getByText("Couldn't save the new order. Try again.")).toBeVisible();
+    await expect(page.getByText("Couldn't save the new order. Try again.", { exact: true })).toBeVisible();
     await expect(panel.getByTestId('checklist-item')).toHaveText(TEXTS);
   });
 });
