@@ -278,7 +278,7 @@
     "addHint": "+ Añadir evento"
   },
   "dayNames": {
-    "nameThisDay": "Nombrar este día",
+    "nameThisDay": "Nombrar día",
     "placeholder": "Añade un título para este día…",
     "removeName": "Quitar nombre",
     "save": "Guardar",
