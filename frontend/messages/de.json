@@ -283,5 +283,12 @@
     "removeName": "Namen entfernen",
     "save": "Speichern",
     "saveFailed": "Der Name des Tages konnte nicht gespeichert werden. Versuch es nochmal."
+  },
+  "checklist": {
+    "title": "Checkliste",
+    "empty": "Noch nichts auf der Liste.",
+    "addPlaceholder": "Etwas zu erledigen hinzufügen…",
+    "addLabel": "Zur Checkliste hinzufügen",
+    "addFailed": "Konnte nicht hinzugefügt werden. Bitte erneut versuchen."
   }
 }

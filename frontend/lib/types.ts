@@ -80,3 +80,13 @@ export type DayName = {
   date: string;
   name: string;
 };
+
+// A shared to-do on a calendar's trip checklist, visible to members only
+export type ChecklistItem = {
+  id: number;
+  text: string;
+  is_done: boolean;
+  position: number;
+  created_at: string;
+  updated_at: string | null;
+};

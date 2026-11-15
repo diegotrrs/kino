@@ -3,6 +3,7 @@ import { getTripBySlug }  from '@/app/(marketing)/trips/trips-data';
 import { EVENT_COLORS }   from '@/lib/event-colors';
 import type {
   CalendarExpense,
+  ChecklistItem,
   CreateEventInput,
   DayName
 }                         from '@/lib/types';
@@ -359,4 +360,21 @@ export const removeDayName = async (calendarUuid: string, date: string): Promise
     const text = await res.text();
     throw new Error(`Failed to remove day name: ${text}`);
   }
+};
+
+export const addChecklistItem = async (calendarUuid: string, text: string): Promise<ChecklistItem> => {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarUuid}/checklist`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ text }),
+  });
+
+  if (res.status === 401) redirect('/login');
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Failed to add checklist item: ${body}`);
+  }
+
+  return res.json();
 };

@@ -2,6 +2,7 @@
 import { toDayNameMap } from '@/lib/day-names';
 import type {
   CalendarExpense,
+  ChecklistItem,
   DayName
 }                       from '@/lib/types';
 import {
@@ -42,6 +43,9 @@ type EventsContextType = {
   // yyyy-MM-dd -> name
   dayNames: Record<string, string>;
   setDayNameLocal: (date: string, name: string | null) => void;
+  // null when the viewer is not a member: the checklist is hidden from them
+  checklist: ChecklistItem[] | null;
+  setChecklist: React.Dispatch<React.SetStateAction<ChecklistItem[] | null>>;
 }
 
 const EventsContext = createContext<EventsContextType | undefined>(undefined);
@@ -62,6 +66,7 @@ type EventsProviderProps = {
   serverEvents?: CalendarEvent[];
   serverCalendarExpenses?: CalendarExpense[];
   serverDayNames?: DayName[];
+  serverChecklist?: ChecklistItem[] | null;
   readOnly?: boolean;
   preferredCurrency?: string;
 }
@@ -74,6 +79,7 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
   serverEvents,
   serverCalendarExpenses,
   serverDayNames,
+  serverChecklist = null,
   readOnly = false,
   preferredCurrency = 'GBP',
 }) => {
@@ -93,6 +99,8 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
   const [eventEditOpen, setEventEditOpen]                               = useState(false);
   const [expensesOpen, setExpensesOpen]                                 = useState(false);
   const [dayNames, setDayNames] = useState<Record<string, string>>(() => toDayNameMap(serverDayNames ?? []));
+
+  const [checklist, setChecklist] = useState<ChecklistItem[] | null>(serverChecklist);
 
   const setDayNameLocal = (date: string, name: string | null) => {
     setDayNames((current) => {
@@ -157,6 +165,8 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
         setExpensesOpen,
         dayNames,
         setDayNameLocal,
+        checklist,
+        setChecklist,
         availabilityCheckerEventAddOpen,
         setAvailabilityCheckerEventAddOpen,
       }}

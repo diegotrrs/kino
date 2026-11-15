@@ -283,5 +283,12 @@
     "removeName": "Quitar nombre",
     "save": "Guardar",
     "saveFailed": "No se pudo guardar el nombre del día. Inténtalo de nuevo."
+  },
+  "checklist": {
+    "title": "Lista de tareas",
+    "empty": "Todavía no hay nada en la lista.",
+    "addPlaceholder": "Añade algo por hacer…",
+    "addLabel": "Añadir a la lista",
+    "addFailed": "No se pudo añadir. Inténtalo de nuevo."
   }
 }

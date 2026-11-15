@@ -283,5 +283,12 @@
     "removeName": "Remove name",
     "save": "Save",
     "saveFailed": "Couldn't save the day's name. Try again."
+  },
+  "checklist": {
+    "title": "Checklist",
+    "empty": "Nothing on the list yet.",
+    "addPlaceholder": "Add something to do…",
+    "addLabel": "Add to checklist",
+    "addFailed": "Couldn't add that item. Try again."
   }
 }
