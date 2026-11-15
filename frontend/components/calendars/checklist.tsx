@@ -2,9 +2,27 @@
 import {
   addChecklistItem,
   deleteChecklistItem,
+  reorderChecklistItems,
   updateChecklistItem
 }                            from '@/app/(app)/calendars/actions';
 import { Input }             from '@/components/ui/input';
+import {
+  Announcements,
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors
+}                            from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy
+}                            from '@dnd-kit/sortable';
+import { CSS }               from '@dnd-kit/utilities';
 import { useEvents }         from '@/context/events-context';
 import { useToast }          from '@/hooks/use-toast';
 import { revealWhenKeyboardOpens } from '@/lib/keyboard';
@@ -15,12 +33,15 @@ import {
   getEditedText,
   getNewItemText,
   insertChecklistItem,
-  MAX_CHECKLIST_ITEM_LENGTH
+  MAX_CHECKLIST_ITEM_LENGTH,
+  moveChecklistItem,
+  restoreChecklistOrder
 }                            from '@/lib/checklist';
 import type { ChecklistItem } from '@/lib/types';
 import { cn }                from '@/lib/utils';
 import {
   ChevronRight,
+  GripVertical,
   ListChecks,
   Trash2,
   X
@@ -29,6 +50,7 @@ import { useTranslations }   from 'next-intl';
 import {
   KeyboardEvent,
   useEffect,
+  useId,
   useRef,
   useState
 }                            from 'react';
@@ -159,12 +181,48 @@ const ChecklistDeleteButton = ({ item }: { item: ChecklistItem }) => {
   );
 };
 
-const ChecklistRow = ({ item }: { item: ChecklistItem }) => {
+type ChecklistRowProps = {
+  item: ChecklistItem;
+  // Off while any item is still saving: the server needs every item's real id to reorder
+  canReorder: boolean;
+};
+
+const ChecklistRow = ({ item, canReorder }: ChecklistRowProps) => {
   const t = useTranslations('checklist');
   const saveChange = useChecklistChange();
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.id, disabled: !canReorder, attributes: { roleDescription: t('reorderable') } });
 
   return (
-    <li className='group flex items-start gap-2.5 py-1.5 text-sm' data-testid='checklist-item'>
+    <li
+      ref={setNodeRef}
+      style={{ transform: CSS.Transform.toString(transform), transition }}
+      className={cn(
+        // Touch screens: 44px rows, so each row's tap targets fit inside it instead of overlapping the next row's
+        'group relative flex items-start gap-2.5 bg-card py-1.5 text-sm pointer-coarse:min-h-11 pointer-coarse:items-center pointer-coarse:py-0',
+        isDragging && 'z-10 rounded-sm shadow-md',
+      )}
+      data-testid='checklist-item'
+    >
+      {/* Only the handle starts a drag, so taps on the text and checkbox behave as usual; touch-none stops
+          the page scrolling instead of dragging on touch screens */}
+      <button
+        type='button'
+        ref={setActivatorNodeRef}
+        {...attributes}
+        {...listeners}
+        aria-label={t('reorderItem', { text: item.text })}
+        className='-m-1 -mr-2 flex shrink-0 cursor-grab touch-none items-center rounded-sm p-1 text-muted-foreground/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring active:cursor-grabbing disabled:cursor-default disabled:opacity-40 pointer-coarse:my-0 pointer-coarse:-ml-4 pointer-coarse:self-stretch pointer-coarse:py-0 pointer-coarse:pl-4'
+      >
+        <GripVertical className='h-3.5 w-3.5' />
+      </button>
       {/* The padding widens the tap target to 44px on touch screens without moving the box */}
       <label className='-m-1 flex shrink-0 cursor-pointer p-1 pointer-coarse:-m-3.5 pointer-coarse:p-3.5'>
         <input
@@ -173,7 +231,7 @@ const ChecklistRow = ({ item }: { item: ChecklistItem }) => {
           disabled={isPending(item)}
           onChange={(event) => void saveChange(item, { is_done: event.target.checked })}
           aria-label={t('markDone', { text: item.text })}
-          className='mt-0.5 h-4 w-4 cursor-pointer accent-teal disabled:cursor-default'
+          className='mt-0.5 h-4 w-4 cursor-pointer accent-teal disabled:cursor-default pointer-coarse:mt-0'
         />
       </label>
       <div className='min-w-0 flex-1'>
@@ -255,6 +313,66 @@ const ChecklistAddField = ({ isInDrawer = false }: ChecklistAddFieldProps) => {
   );
 };
 
+const SortableChecklist = ({ items }: { items: ChecklistItem[] }) => {
+  const { calendarUuid, setChecklist } = useEvents();
+  const t = useTranslations('checklist');
+  const { toast } = useToast();
+  // A fixed id keeps dnd-kit's screen reader ids the same on the server and the client
+  const dndId = useId();
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+  const canReorder = !items.some(isPending);
+
+  const getText = (id: string | number): string => items.find((item) => item.id === id)?.text ?? '';
+  const getPosition = (id: string | number): number => items.findIndex((item) => item.id === id) + 1;
+  const announcements: Announcements = {
+    onDragStart: ({ active }) => t('announcePickedUp', { text: getText(active.id) }),
+    onDragOver: ({ active, over }) =>
+      over ? t('announceMoved', { text: getText(active.id), position: getPosition(over.id), total: items.length }) : undefined,
+    onDragEnd: ({ active, over }) =>
+      over ? t('announceDropped', { text: getText(active.id), position: getPosition(over.id), total: items.length }) : undefined,
+    onDragCancel: ({ active }) => t('announceCancelled', { text: getText(active.id) }),
+  };
+
+  const handleDragEnd = async ({ active, over }: DragEndEvent): Promise<void> => {
+    if (!over || !calendarUuid) {
+      return;
+    }
+    const reordered = moveChecklistItem(items, Number(active.id), Number(over.id));
+    if (reordered === items) {
+      return;
+    }
+    const previousIds = items.map((item) => item.id);
+    setChecklist(reordered);
+    try {
+      await reorderChecklistItems(calendarUuid, reordered.map((item) => item.id));
+    } catch {
+      setChecklist((current) => restoreChecklistOrder(current ?? [], previousIds));
+      toast({ variant: 'destructive', title: t('reorderFailed') });
+    }
+  };
+
+  return (
+    <DndContext
+      id={dndId}
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={(event) => void handleDragEnd(event)}
+      accessibility={{ announcements, screenReaderInstructions: { draggable: t('reorderInstructions') } }}
+    >
+      <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
+        <ul aria-label={t('title')}>
+          {items.map((item) => (
+            <ChecklistRow key={item.id} item={item} canReorder={canReorder} />
+          ))}
+        </ul>
+      </SortableContext>
+    </DndContext>
+  );
+};
+
 export const ChecklistList = ({ isInDrawer = false }: ChecklistAddFieldProps) => {
   const { checklist } = useEvents();
   const t = useTranslations('checklist');
@@ -267,11 +385,7 @@ export const ChecklistList = ({ isInDrawer = false }: ChecklistAddFieldProps) =>
       {checklist.length === 0 ? (
         <p className='text-sm text-muted-foreground'>{t('empty')}</p>
       ) : (
-        <ul aria-label={t('title')}>
-          {checklist.map((item) => (
-            <ChecklistRow key={item.id} item={item} />
-          ))}
-        </ul>
+        <SortableChecklist items={checklist} />
       )}
       <ChecklistAddField isInDrawer={isInDrawer} />
     </div>
@@ -338,7 +452,8 @@ export const ChecklistDrawer = () => {
       return;
     }
     const handleKeyDown = (event: globalThis.KeyboardEvent): void => {
-      if (event.key === 'Escape') {
+      // defaultPrevented: Esc already cancelled a keyboard drag, so the drawer stays open
+      if (event.key === 'Escape' && !event.defaultPrevented) {
         setChecklistOpen(false);
       }
     };

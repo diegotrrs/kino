@@ -414,3 +414,18 @@ export const deleteChecklistItem = async (calendarUuid: string, itemId: number):
     throw new Error(`Failed to delete checklist item: ${body}`);
   }
 };
+
+export const reorderChecklistItems = async (calendarUuid: string, itemIds: number[]): Promise<void> => {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarUuid}/checklist/order`, {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify({ item_ids: itemIds }),
+  });
+
+  if (res.status === 401) redirect('/login');
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Failed to reorder checklist: ${body}`);
+  }
+};

@@ -6,6 +6,8 @@ import {
   getNewItemText,
   insertChecklistItem,
   MAX_CHECKLIST_ITEM_LENGTH,
+  moveChecklistItem,
+  restoreChecklistOrder,
 } from './checklist';
 import { buildChecklistItem } from './checklist.test.data';
 
@@ -93,5 +95,53 @@ describe('insertChecklistItem', () => {
     const items = [buildChecklistItem({ id: 1, position: 0 })];
 
     expect(insertChecklistItem(items, buildChecklistItem({ id: 1, position: 0 }))).toHaveLength(1);
+  });
+});
+
+describe('moveChecklistItem', () => {
+  const items = [
+    buildChecklistItem({ id: 1, position: 0, is_done: true }),
+    buildChecklistItem({ id: 2, position: 1 }),
+    buildChecklistItem({ id: 3, position: 2 }),
+  ];
+
+  it('should move an item down to where it was dropped and renumber positions', () => {
+    const result = moveChecklistItem(items, 1, 3);
+
+    expect(result.map((item) => [item.id, item.position])).toEqual([[2, 0], [3, 1], [1, 2]]);
+  });
+
+  it('should move an item up to where it was dropped', () => {
+    expect(moveChecklistItem(items, 3, 1).map((item) => item.id)).toEqual([3, 1, 2]);
+  });
+
+  it('should keep each item done state when it moves', () => {
+    expect(moveChecklistItem(items, 1, 3).find((item) => item.id === 1)?.is_done).toBe(true);
+  });
+
+  it('should return the same list when an item is dropped on itself or outside the list', () => {
+    expect(moveChecklistItem(items, 2, 2)).toBe(items);
+    expect(moveChecklistItem(items, 2, 99)).toBe(items);
+  });
+});
+
+describe('restoreChecklistOrder', () => {
+  it('should put items back in an earlier order and keep their latest values', () => {
+    const current = [
+      buildChecklistItem({ id: 3, position: 0 }),
+      buildChecklistItem({ id: 1, position: 1, is_done: true }),
+      buildChecklistItem({ id: 2, position: 2 }),
+    ];
+
+    const result = restoreChecklistOrder(current, [1, 2, 3]);
+
+    expect(result.map((item) => [item.id, item.position])).toEqual([[1, 0], [2, 1], [3, 2]]);
+    expect(result[0].is_done).toBe(true);
+  });
+
+  it('should keep items added since then at the bottom', () => {
+    const current = [buildChecklistItem({ id: 2 }), buildChecklistItem({ id: 9 }), buildChecklistItem({ id: 1 })];
+
+    expect(restoreChecklistOrder(current, [1, 2]).map((item) => item.id)).toEqual([1, 2, 9]);
   });
 });

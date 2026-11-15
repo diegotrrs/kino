@@ -25,6 +25,7 @@ from ..schemas.checklist import (
     ChecklistItemCreate,
     ChecklistItemResponse,
     ChecklistItemUpdate,
+    ChecklistOrder,
 )
 from ..schemas.day_name import DayNameResponse, DayNameSet
 
@@ -369,3 +370,15 @@ def delete_checklist_item(
     calendar_id = _require_member(db, calendar_uuid, current_user["id"])
     if not crud.delete_checklist_item(db, calendar_id, item_id):
         raise HTTPException(status_code=404, detail="Checklist item not found")
+
+
+@router.put("/{calendar_uuid}/checklist/order", status_code=204)
+def reorder_checklist_items(
+    calendar_uuid: str,
+    body: ChecklistOrder,
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    calendar_id = _require_member(db, calendar_uuid, current_user["id"])
+    if not crud.reorder_checklist_items(db, calendar_id, body.item_ids):
+        raise HTTPException(status_code=400, detail="item_ids must list every item of this checklist exactly once")

@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 
-from pydantic import BaseModel, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 MAX_CHECKLIST_ITEM_LENGTH = 200
 MAX_CHECKLIST_ITEMS = 100
@@ -49,6 +49,17 @@ class ChecklistItemUpdate(BaseModel):
         if not self.model_fields_set:
             raise ValueError("Send text or is_done")
         return self
+
+
+class ChecklistOrder(BaseModel):
+    item_ids: list[int] = Field(..., max_length=MAX_CHECKLIST_ITEMS)
+
+    @field_validator("item_ids")
+    @classmethod
+    def reject_duplicates(cls, v: list[int]) -> list[int]:
+        if len(set(v)) != len(v):
+            raise ValueError("Each item may appear only once")
+        return v
 
 
 class ChecklistItemResponse(BaseModel):

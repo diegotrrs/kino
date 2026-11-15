@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from pydantic import ValidationError
 
 from app.routers import calendars as router
-from app.schemas.checklist import MAX_CHECKLIST_ITEMS, ChecklistItemCreate, ChecklistItemUpdate
+from app.schemas.checklist import MAX_CHECKLIST_ITEMS, ChecklistItemCreate, ChecklistItemUpdate, ChecklistOrder
 
 CALENDAR_ID = 9
 UUID = "cal-uuid"
@@ -26,6 +26,12 @@ CHECKLIST_HANDLERS = [
         id="update",
     ),
     pytest.param(router.delete_checklist_item, {"item_id": 4}, "delete_checklist_item", id="delete"),
+    pytest.param(
+        router.reorder_checklist_items,
+        {"body": ChecklistOrder(item_ids=[2, 1])},
+        "reorder_checklist_items",
+        id="reorder",
+    ),
 ]
 
 
@@ -146,3 +152,36 @@ class TestDeleteChecklistItem:
 
         assert exc.value.status_code == 404
         crud.delete_checklist_item.assert_called_once_with(db, CALENDAR_ID, 4)
+
+
+class TestReorderChecklistItems:
+    def test_ids_that_do_not_match_the_checklist_return_400(self, crud, resolved_id, db, user):
+        crud.get_user_role.return_value = "owner"
+        crud.reorder_checklist_items.return_value = False
+
+        with pytest.raises(HTTPException) as exc:
+            router.reorder_checklist_items(
+                calendar_uuid=UUID, body=ChecklistOrder(item_ids=[2, 1]), db=db, current_user=user
+            )
+
+        assert exc.value.status_code == 400
+
+    def test_new_order_is_passed_to_crud_for_the_resolved_calendar(self, crud, resolved_id, db, user):
+        crud.get_user_role.return_value = "editor"
+        crud.reorder_checklist_items.return_value = True
+
+        router.reorder_checklist_items(
+            calendar_uuid=UUID, body=ChecklistOrder(item_ids=[3, 1, 2]), db=db, current_user=user
+        )
+
+        crud.reorder_checklist_items.assert_called_once_with(db, CALENDAR_ID, [3, 1, 2])
+
+
+class TestChecklistOrder:
+    def test_duplicate_ids_are_rejected(self):
+        with pytest.raises(ValidationError):
+            ChecklistOrder(item_ids=[1, 2, 1])
+
+    def test_more_ids_than_a_checklist_can_hold_are_rejected(self):
+        with pytest.raises(ValidationError):
+            ChecklistOrder(item_ids=list(range(MAX_CHECKLIST_ITEMS + 1)))

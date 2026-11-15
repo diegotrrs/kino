@@ -68,3 +68,28 @@ def delete_checklist_item(db: connection, calendar_id: int, item_id: int) -> boo
         deleted = cur.rowcount > 0
         db.commit()
         return deleted
+
+
+def reorder_checklist_items(db: connection, calendar_id: int, item_ids: list[int]) -> bool:
+    """Rewrite positions 0..n-1 in the given order; False (nothing changed) unless item_ids is
+    exactly the calendar's set of items. The check and the update share one locked transaction,
+    so an item added meanwhile can't end up without a position."""
+    with db.cursor() as cur:
+        cur.execute(
+            "SELECT id FROM calendar_checklist_items WHERE calendar_id = %s FOR UPDATE",
+            (calendar_id,),
+        )
+        if {row["id"] for row in cur.fetchall()} != set(item_ids):
+            db.rollback()
+            return False
+        cur.execute(
+            """
+            UPDATE calendar_checklist_items AS item
+            SET position = new_order.position - 1, updated_at = NOW()
+            FROM unnest(%s::int[]) WITH ORDINALITY AS new_order(id, position)
+            WHERE item.id = new_order.id AND item.calendar_id = %s
+            """,
+            (item_ids, calendar_id),
+        )
+        db.commit()
+        return True

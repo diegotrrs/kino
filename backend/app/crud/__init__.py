@@ -24,6 +24,7 @@ from .checklist import (
     create_checklist_item,
     delete_checklist_item,
     get_checklist_items,
+    reorder_checklist_items,
     update_checklist_item,
 )
 from .day_names import (
@@ -67,6 +68,7 @@ __all__ = [
     "create_checklist_item",
     "delete_checklist_item",
     "get_checklist_items",
+    "reorder_checklist_items",
     "update_checklist_item",
     "delete_day_name",
     "get_day_names",

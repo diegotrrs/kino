@@ -235,8 +235,9 @@ const CalendarPage = async ({
               </div>
               <div className={hasRail ? 'pt-4 lg:grid lg:grid-cols-[minmax(0,1fr)_17rem] lg:items-start lg:gap-6' : 'pt-4'}>
                 <Calendar />
+                {/* Pinned to column 2: the calendar renders nothing until it loads in the browser, and the rail would jump into its place */}
                 {hasRail && (
-                  <aside className='hidden gap-4 lg:grid' aria-label='Trip details'>
+                  <aside className='hidden gap-4 lg:col-start-2 lg:grid' aria-label='Trip details'>
                     <ExpensesPanel />
                     <ChecklistPanel />
                   </aside>

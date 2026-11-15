@@ -297,6 +297,14 @@
     "deleteItem": "Delete “{text}”",
     "deleteFailed": "Couldn't delete that item. Try again.",
     "openChecklist": "Open checklist",
-    "closeChecklist": "Close checklist"
+    "closeChecklist": "Close checklist",
+    "reorderItem": "Move “{text}”",
+    "reorderable": "reorderable item",
+    "reorderInstructions": "To move an item, press Space or Enter on its handle, use the up and down arrow keys to choose a new place, then press Space or Enter again to drop it. Press Escape to cancel.",
+    "announcePickedUp": "Picked up “{text}”.",
+    "announceMoved": "“{text}” moved to position {position} of {total}.",
+    "announceDropped": "“{text}” dropped in position {position} of {total}.",
+    "announceCancelled": "Move cancelled. “{text}” is back in its place.",
+    "reorderFailed": "Couldn't save the new order. Try again."
   }
 }

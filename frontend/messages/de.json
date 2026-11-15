@@ -297,6 +297,14 @@
     "deleteItem": "„{text}“ löschen",
     "deleteFailed": "Der Eintrag konnte nicht gelöscht werden. Versuch es nochmal.",
     "openChecklist": "Checkliste öffnen",
-    "closeChecklist": "Checkliste schließen"
+    "closeChecklist": "Checkliste schließen",
+    "reorderItem": "„{text}“ verschieben",
+    "reorderable": "verschiebbarer Eintrag",
+    "reorderInstructions": "Um einen Eintrag zu verschieben, drück Leertaste oder Enter auf dem Griff, wähl mit den Pfeiltasten nach oben und unten den neuen Platz und drück dann erneut Leertaste oder Enter zum Ablegen. Mit Escape brichst du ab.",
+    "announcePickedUp": "„{text}“ aufgenommen.",
+    "announceMoved": "„{text}“ auf Position {position} von {total} verschoben.",
+    "announceDropped": "„{text}“ auf Position {position} von {total} abgelegt.",
+    "announceCancelled": "Verschieben abgebrochen. „{text}“ ist wieder an seinem Platz.",
+    "reorderFailed": "Die neue Reihenfolge konnte nicht gespeichert werden. Versuch es nochmal."
   }
 }

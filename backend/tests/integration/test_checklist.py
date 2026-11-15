@@ -295,3 +295,69 @@ class TestTestDataCleanupRemovesArchivedChecklists:
         delete_user(db_conn, owner["id"])
 
         assert _archived_items(db_conn, cal["id"]) == []
+
+
+def _order_url(calendar: dict) -> str:
+    return f"{_checklist_url(calendar)}/order"
+
+
+def _texts(client, calendar: dict, headers: dict) -> list[str]:
+    return [item["text"] for item in client.get(_checklist_url(calendar), headers=headers).json()]
+
+
+class TestReorderChecklist:
+    def test_member_reorders_and_positions_are_rewritten(self, client, calendar, owner_headers):
+        first, second, third = (_add_item(client, calendar, owner_headers, t) for t in ["First", "Second", "Third"])
+
+        res = client.put(
+            _order_url(calendar), json={"item_ids": [third["id"], first["id"], second["id"]]}, headers=owner_headers
+        )
+
+        assert res.status_code == 204
+        listed = client.get(_checklist_url(calendar), headers=owner_headers).json()
+        assert [(item["text"], item["position"]) for item in listed] == [("Third", 0), ("First", 1), ("Second", 2)]
+
+    def test_new_items_still_go_to_the_bottom_after_a_reorder(self, client, calendar, owner_headers):
+        first, second = (_add_item(client, calendar, owner_headers, t) for t in ["First", "Second"])
+        client.put(_order_url(calendar), json={"item_ids": [second["id"], first["id"]]}, headers=owner_headers)
+
+        _add_item(client, calendar, owner_headers, "Third")
+
+        assert _texts(client, calendar, owner_headers) == ["Second", "First", "Third"]
+
+    def test_missing_or_extra_ids_are_rejected_and_order_is_kept(self, client, calendar, owner_headers):
+        first, second = (_add_item(client, calendar, owner_headers, t) for t in ["First", "Second"])
+
+        for item_ids in [[second["id"]], [second["id"], first["id"], 999_999_999]]:
+            res = client.put(_order_url(calendar), json={"item_ids": item_ids}, headers=owner_headers)
+            assert res.status_code == 400
+
+        assert _texts(client, calendar, owner_headers) == ["First", "Second"]
+
+    def test_ids_from_another_calendar_are_rejected(self, client, db_conn, calendar, owner, owner_headers):
+        mine = _add_item(client, calendar, owner_headers, "Mine")
+        second = create_calendar(db_conn, CalendarCreate(name="Second", created_by=owner["id"]))
+        try:
+            foreign = _add_item(client, second, owner_headers, "Other trip")
+
+            res = client.put(_order_url(calendar), json={"item_ids": [foreign["id"]]}, headers=owner_headers)
+            assert res.status_code == 400
+
+            res = client.put(
+                _order_url(calendar), json={"item_ids": [foreign["id"], mine["id"]]}, headers=owner_headers
+            )
+            assert res.status_code == 400
+            assert _texts(client, second, owner_headers) == ["Other trip"]
+        finally:
+            with db_conn.cursor() as cur:
+                cur.execute("DELETE FROM calendar_users WHERE calendar_id = %s", (second["id"],))
+                cur.execute("DELETE FROM calendars WHERE id = %s", (second["id"],))
+            db_conn.commit()
+
+    def test_non_member_cannot_reorder(self, client, calendar, owner_headers, other_headers):
+        first, second = (_add_item(client, calendar, owner_headers, t) for t in ["First", "Second"])
+
+        res = client.put(_order_url(calendar), json={"item_ids": [second["id"], first["id"]]}, headers=other_headers)
+
+        assert res.status_code == 403
+        assert _texts(client, calendar, owner_headers) == ["First", "Second"]
