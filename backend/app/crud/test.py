@@ -51,9 +51,14 @@ def reset_test_user_data(db: connection, user_id: int) -> None:
         # Calendars owned by the test user
         cur.execute("DELETE FROM calendars WHERE created_by = %s", (user_id,))
 
-        # Soft-deleted calendars owned by the test user, and their archived day names
+        # Soft-deleted calendars owned by the test user, and their archived day names and checklists
         cur.execute(
             "DELETE FROM deleted_calendar_day_names WHERE calendar_id IN "
+            "(SELECT id FROM deleted_calendars WHERE created_by = %s)",
+            (user_id,),
+        )
+        cur.execute(
+            "DELETE FROM deleted_calendar_checklist_items WHERE calendar_id IN "
             "(SELECT id FROM deleted_calendars WHERE created_by = %s)",
             (user_id,),
         )
@@ -95,6 +100,11 @@ def delete_user(db: connection, user_id: int) -> None:
         cur.execute("DELETE FROM calendars WHERE created_by = %s", (user_id,))
         cur.execute(
             "DELETE FROM deleted_calendar_day_names WHERE calendar_id IN "
+            "(SELECT id FROM deleted_calendars WHERE created_by = %s)",
+            (user_id,),
+        )
+        cur.execute(
+            "DELETE FROM deleted_calendar_checklist_items WHERE calendar_id IN "
             "(SELECT id FROM deleted_calendars WHERE created_by = %s)",
             (user_id,),
         )

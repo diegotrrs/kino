@@ -142,7 +142,17 @@ def delete_calendar(db: connection, calendar_id: int) -> bool:
             """,
             (calendar_id,),
         )
-        # Delete calendar — cascade removes events, day names and calendar_users
+        # And the checklist, keeping ids, done states and order
+        cur.execute(
+            """
+            INSERT INTO deleted_calendar_checklist_items
+                (id, calendar_id, text, is_done, position, created_at, updated_at)
+            SELECT id, calendar_id, text, is_done, position, created_at, updated_at
+            FROM calendar_checklist_items WHERE calendar_id = %s
+            """,
+            (calendar_id,),
+        )
+        # Delete calendar — cascade removes events, day names, checklist items and calendar_users
         cur.execute("DELETE FROM calendars WHERE id = %s", (calendar_id,))
         db.commit()
         return True
@@ -202,6 +212,16 @@ def restore_calendar(db: connection, calendar_id: int, user_id: int) -> bool:
             (calendar_id,),
         )
         cur.execute("DELETE FROM deleted_calendar_day_names WHERE calendar_id = %s", (calendar_id,))
+        # Restore checklist items
+        cur.execute(
+            """
+            INSERT INTO calendar_checklist_items (id, calendar_id, text, is_done, position, created_at, updated_at)
+            SELECT id, calendar_id, text, is_done, position, created_at, updated_at
+            FROM deleted_calendar_checklist_items WHERE calendar_id = %s
+            """,
+            (calendar_id,),
+        )
+        cur.execute("DELETE FROM deleted_calendar_checklist_items WHERE calendar_id = %s", (calendar_id,))
         db.commit()
         return True
 

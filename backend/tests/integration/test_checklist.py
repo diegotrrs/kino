@@ -1,4 +1,5 @@
-from app.crud.calendars import add_user_to_calendar, create_calendar
+from app.crud.calendars import add_user_to_calendar, create_calendar, delete_calendar
+from app.crud.test import delete_user, reset_test_user_data
 from app.schemas.calendar import CalendarCreate
 
 
@@ -235,3 +236,62 @@ class TestDeleteChecklistItem:
         res = client.delete(f"{_checklist_url(calendar)}/{item['id']}", headers=owner_headers)
 
         assert res.status_code == 404
+
+
+def _archived_items(db_conn, calendar_id: int) -> list[dict]:
+    with db_conn.cursor() as cur:
+        cur.execute(
+            "SELECT id, text, is_done, position FROM deleted_calendar_checklist_items "
+            "WHERE calendar_id = %s ORDER BY position",
+            (calendar_id,),
+        )
+        return cur.fetchall()
+
+
+class TestChecklistSurvivesDeleteAndRestore:
+    def test_restoring_a_deleted_calendar_brings_its_checklist_back_unchanged(self, client, calendar, owner_headers):
+        for text in ["Buy travel insurance", "Book airport transfer", "Renew passport"]:
+            _add_item(client, calendar, owner_headers, text)
+        before = client.get(_checklist_url(calendar), headers=owner_headers).json()
+        client.patch(f"{_checklist_url(calendar)}/{before[1]['id']}", json={"is_done": True}, headers=owner_headers)
+        before = client.get(_checklist_url(calendar), headers=owner_headers).json()
+
+        assert client.delete(f"/api/calendars/{calendar['uuid']}", headers=owner_headers).status_code == 204
+        assert client.post(f"/api/calendars/{calendar['uuid']}/restore", headers=owner_headers).status_code == 204
+
+        assert client.get(_checklist_url(calendar), headers=owner_headers).json() == before
+
+    def test_deleting_a_calendar_archives_its_checklist(self, client, db_conn, calendar, owner_headers):
+        _add_item(client, calendar, owner_headers, "Buy travel insurance")
+
+        client.delete(f"/api/calendars/{calendar['uuid']}", headers=owner_headers)
+
+        assert [item["text"] for item in _archived_items(db_conn, calendar["id"])] == ["Buy travel insurance"]
+
+    def test_restoring_empties_the_archive(self, client, db_conn, calendar, owner_headers):
+        _add_item(client, calendar, owner_headers)
+        client.delete(f"/api/calendars/{calendar['uuid']}", headers=owner_headers)
+
+        client.post(f"/api/calendars/{calendar['uuid']}/restore", headers=owner_headers)
+
+        assert _archived_items(db_conn, calendar["id"]) == []
+
+
+class TestTestDataCleanupRemovesArchivedChecklists:
+    def test_reset_removes_archived_checklist_items(self, client, db_conn, owner, owner_headers):
+        cal = create_calendar(db_conn, CalendarCreate(name="Reset me", created_by=owner["id"]))
+        _add_item(client, cal, owner_headers)
+        delete_calendar(db_conn, cal["id"])
+
+        reset_test_user_data(db_conn, owner["id"])
+
+        assert _archived_items(db_conn, cal["id"]) == []
+
+    def test_deleting_the_user_removes_archived_checklist_items(self, client, db_conn, owner, owner_headers):
+        cal = create_calendar(db_conn, CalendarCreate(name="Delete me", created_by=owner["id"]))
+        _add_item(client, cal, owner_headers)
+        delete_calendar(db_conn, cal["id"])
+
+        delete_user(db_conn, owner["id"])
+
+        assert _archived_items(db_conn, cal["id"]) == []
