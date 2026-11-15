@@ -6,10 +6,16 @@ import {
   getCalendarId,
   getToken,
   login,
+  nameDay,
   resetTestData,
+  setCalendarStartDate,
 } from './helpers/api';
 
 // Same date convention as the other specs (calendars start "today" on the server)
+// Local yyyy-MM-dd, matching the calendar grid's data-date attributes
+const toLocalDateKey = (date: Date): string =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+
 const daysFromToday = (days: number): string => {
   const date = new Date();
   date.setDate(date.getDate() + days);
@@ -70,6 +76,32 @@ test.describe('@15. day names', () => {
     // Trip = today and tomorrow, so at most two markers; every other day of the month stays clean
     await expect(page.getByRole('button', { name: '+ Name this day' }).first()).toBeVisible();
     expect(await page.getByRole('button', { name: '+ Name this day' }).count()).toBeLessThanOrEqual(2);
+
+    await deleteCalendar(request, token, calendarUuid);
+  });
+
+  test('@15.4 should show "+ Name this day" and day names on next-month trip days shown in the month grid', async ({
+    page,
+    request,
+  }) => {
+    // A trip from two days before the end of this month to the 3rd of next month
+    const now = new Date();
+    const tripStart = toLocalDateKey(new Date(now.getFullYear(), now.getMonth() + 1, -1));
+    const nextMonthDay2 = toLocalDateKey(new Date(now.getFullYear(), now.getMonth() + 1, 2));
+    const tripEnd = toLocalDateKey(new Date(now.getFullYear(), now.getMonth() + 1, 3));
+    const token = await getToken(request);
+    const calendarUuid = await createCalendar(request, token, `Day Names Month Boundary Test ${Date.now()}`);
+    const calendarId = await getCalendarId(request, token, calendarUuid);
+    await setCalendarStartDate(request, token, calendarUuid, tripStart);
+    await createEvent(request, token, calendarId, 'Flight home', tripEnd);
+    await nameDay(request, token, calendarUuid, nextMonthDay2, 'Visit to Bruges');
+
+    // The calendar opens on the trip's first month; next month's first days fill its last row
+    await page.goto(`/calendars/${calendarUuid}`);
+    const tripEndCell = page.locator(`td.fc-daygrid-day[data-date="${tripEnd}"]`);
+    await expect(tripEndCell.getByRole('button', { name: '+ Name this day' })).toBeVisible();
+    const namedCell = page.locator(`td.fc-daygrid-day[data-date="${nextMonthDay2}"]`);
+    await expect(namedCell.getByText('Visit to Bruges')).toBeVisible();
 
     await deleteCalendar(request, token, calendarUuid);
   });

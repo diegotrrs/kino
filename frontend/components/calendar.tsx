@@ -247,8 +247,9 @@ const Calendar = () => {
 
     const isMonthView = info.view.type === 'dayGridMonth';
     const dateKey = toDateKey(info.date);
-    const name = isMonthView && !info.isOther ? dayNames[dateKey] : undefined;
-    const showMarker = isMonthView && !info.isOther && !readOnly && !!tripSpan
+    // Days of the next or previous month shown in the grid count too: a trip often crosses a month boundary
+    const name = isMonthView ? dayNames[dateKey] : undefined;
+    const showMarker = isMonthView && !readOnly && !!tripSpan
       && shouldShowNameMarker(dateKey, dayNames, tripSpan);
     // Keep the calendar's own click/select handlers from firing under the name controls
     const stopCalendar = (e: React.SyntheticEvent) => e.stopPropagation();

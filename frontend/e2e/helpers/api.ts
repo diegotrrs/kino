@@ -221,3 +221,40 @@ export const getChecklistTexts = async (
   const items = await res.json() as { text: string; is_done: boolean }[];
   return items.map((item) => (item.is_done ? `✓ ${item.text}` : item.text));
 };
+
+export const setCalendarStartDate = async (
+  request: APIRequestContext,
+  token: string,
+  calendarUuid: string,
+  startDate: string,
+): Promise<void> => {
+  const res = await request.patch(`${API_URL}/api/calendars/${calendarUuid}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    data: { start_date: startDate },
+  });
+  if (!res.ok()) {
+    throw new Error(`setCalendarStartDate: ${res.status()} ${await res.text()}`);
+  }
+};
+
+export const nameDay = async (
+  request: APIRequestContext,
+  token: string,
+  calendarUuid: string,
+  date: string,
+  name: string,
+): Promise<void> => {
+  const res = await request.put(`${API_URL}/api/calendars/${calendarUuid}/day-names/${date}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    data: { name },
+  });
+  if (!res.ok()) {
+    throw new Error(`nameDay: ${res.status()} ${await res.text()}`);
+  }
+};
