@@ -20,6 +20,7 @@ from ..schemas.calendar import (
     CalendarUserAdd,
     DeletedCalendarResponse,
 )
+from ..schemas.checklist import MAX_CHECKLIST_ITEMS, ChecklistItemCreate, ChecklistItemResponse
 from ..schemas.day_name import DayNameResponse, DayNameSet
 
 logger = logging.getLogger(__name__)
@@ -304,3 +305,35 @@ def delete_day_name(
         raise HTTPException(status_code=403, detail="Not a member of this calendar")
     if not crud.delete_day_name(db, calendar_id, day):
         raise HTTPException(status_code=404, detail="Day has no name")
+
+
+def _require_member(db: connection, calendar_uuid: str, user_id: int) -> int:
+    """Resolve the calendar and check the user is a member, returning the calendar id."""
+    calendar_id = _get_id_by_uuid(db, calendar_uuid)
+    if crud.get_user_role(db, calendar_id, user_id) is None:
+        raise HTTPException(status_code=403, detail="Not a member of this calendar")
+    return calendar_id
+
+
+# The checklist is members-only, even on public calendars: it can hold private to-dos
+@router.get("/{calendar_uuid}/checklist", response_model=list[ChecklistItemResponse])
+def list_checklist_items(
+    calendar_uuid: str,
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    calendar_id = _require_member(db, calendar_uuid, current_user["id"])
+    return crud.get_checklist_items(db, calendar_id)
+
+
+@router.post("/{calendar_uuid}/checklist", response_model=ChecklistItemResponse, status_code=201)
+def create_checklist_item(
+    calendar_uuid: str,
+    body: ChecklistItemCreate,
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    calendar_id = _require_member(db, calendar_uuid, current_user["id"])
+    if crud.count_checklist_items(db, calendar_id) >= MAX_CHECKLIST_ITEMS:
+        raise HTTPException(status_code=409, detail=f"A checklist can have at most {MAX_CHECKLIST_ITEMS} items")
+    return crud.create_checklist_item(db, calendar_id, body.text)
