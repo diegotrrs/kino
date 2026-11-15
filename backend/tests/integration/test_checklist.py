@@ -1,4 +1,12 @@
+import os
+import threading
+import time
+
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
 from app.crud.calendars import add_user_to_calendar, create_calendar, delete_calendar
+from app.crud.checklist import create_checklist_item, get_checklist_items, reorder_checklist_items
 from app.crud.test import delete_user, reset_test_user_data
 from app.schemas.calendar import CalendarCreate
 
@@ -361,3 +369,69 @@ class TestReorderChecklist:
 
         assert res.status_code == 403
         assert _texts(client, calendar, owner_headers) == ["First", "Second"]
+
+
+def _connect():
+    """A separate connection, to act as a second member working at the same time."""
+    url = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/kino")
+    return psycopg2.connect(url, cursor_factory=RealDictCursor)
+
+
+class TestChecklistOrderingEdgeCases:
+    def test_items_sharing_a_position_are_listed_oldest_first(self, client, db_conn, calendar, owner_headers):
+        # Two members adding at the same moment can both get the same position
+        with db_conn.cursor() as cur:
+            cur.execute(
+                "SELECT nextval('calendar_checklist_items_id_seq') AS a, "
+                "nextval('calendar_checklist_items_id_seq') AS b"
+            )
+            ids = cur.fetchone()
+            # Insert the newer one first, so the table's physical order disagrees with the expected order
+            cur.execute(
+                "INSERT INTO calendar_checklist_items (id, calendar_id, text, position) "
+                "VALUES (%s, %s, 'Added second', 0), (%s, %s, 'Added first', 0)",
+                (ids["b"], calendar["id"], ids["a"], calendar["id"]),
+            )
+        db_conn.commit()
+
+        assert _texts(client, calendar, owner_headers) == ["Added first", "Added second"]
+
+    def test_item_added_while_another_member_reorders_ends_up_at_the_bottom(self, calendar):
+        setup, holder, reorderer, adder, reader = (_connect() for _ in range(5))
+        try:
+            first = create_checklist_item(setup, calendar["id"], "First")
+            second = create_checklist_item(setup, calendar["id"], "Second")
+
+            # Another member's reorder is in flight and holds the checklist rows
+            with holder.cursor() as cur:
+                cur.execute(
+                    "SELECT id FROM calendar_checklist_items WHERE calendar_id = %s FOR UPDATE", (calendar["id"],)
+                )
+            result: dict = {}
+            reorder = threading.Thread(
+                target=lambda: result.update(
+                    ok=reorder_checklist_items(reorderer, calendar["id"], [second["id"], first["id"]])
+                )
+            )
+            reorder.start()
+            time.sleep(0.3)
+            assert reorder.is_alive(), "a reorder waits for the one already in flight to finish"
+
+            # Adding is not blocked by a reorder, and is appended after the existing items
+            with adder.cursor() as cur:
+                cur.execute("SET statement_timeout = 2000")
+            added = create_checklist_item(adder, calendar["id"], "Added meanwhile")
+            assert added["position"] == 2
+
+            holder.rollback()
+            reorder.join(timeout=5)
+
+            assert result == {"ok": True}
+            assert [item["text"] for item in get_checklist_items(reader, calendar["id"])] == [
+                "Second",
+                "First",
+                "Added meanwhile",
+            ]
+        finally:
+            for conn in (setup, holder, reorderer, adder, reader):
+                conn.close()

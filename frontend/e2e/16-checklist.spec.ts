@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, Page, test } from '@playwright/test';
 import {
   createCalendar,
   createChecklistItem,
@@ -152,5 +152,94 @@ test.describe('@16. trip checklist on phones', () => {
     await page.reload();
     await page.getByTestId('checklist-chip').tap();
     await expect(page.getByRole('dialog', { name: 'Checklist' }).getByTestId('checklist-item')).toHaveText(['Buy travel insurance']);
+  });
+});
+
+// Fails every server action from now on, as if the backend refused the change
+const refuseServerActions = async (page: Page): Promise<void> => {
+  await page.route('**/calendars/**', async (route) => {
+    if (route.request().method() === 'POST' && route.request().headers()['next-action']) {
+      await route.abort('failed');
+      return;
+    }
+    await route.continue();
+  });
+};
+
+test.describe('@16. trip checklist when the server refuses a change', () => {
+  const TEXTS = ['Buy travel insurance', 'Book airport transfer', 'Renew passport'];
+
+  const openSeededChecklist = async (page: Page, request: Parameters<typeof getToken>[0]): Promise<string> => {
+    const token = await getToken(request);
+    const calendarUuid = await createCalendar(request, token, `Checklist Refused Test ${Date.now()}`);
+    for (const text of TEXTS) {
+      await createChecklistItem(request, token, calendarUuid, text);
+    }
+    await page.goto(`/calendars/${calendarUuid}`);
+    await expect(page.getByTestId('checklist-panel').getByTestId('checklist-item')).toHaveText(TEXTS);
+    await refuseServerActions(page);
+    return calendarUuid;
+  };
+
+  test('@16.6 should remove a new item again and explain when adding it fails', async ({ page, request }) => {
+    await openSeededChecklist(page, request);
+    const panel = page.getByTestId('checklist-panel');
+
+    await panel.getByLabel('Add to checklist').fill('Exchange money');
+    await panel.getByLabel('Add to checklist').press('Enter');
+
+    await expect(page.getByText("Couldn't add that item. Try again.")).toBeVisible();
+    await expect(panel.getByTestId('checklist-item')).toHaveText(TEXTS);
+  });
+
+  test('@16.7 should untick an item again and explain when ticking it fails', async ({ page, request }) => {
+    await openSeededChecklist(page, request);
+    const panel = page.getByTestId('checklist-panel');
+    const checkbox = panel.getByRole('checkbox', { name: 'Mark “Book airport transfer” as done' });
+
+    await checkbox.click();
+
+    await expect(page.getByText("Couldn't save that change. Try again.")).toBeVisible();
+    await expect(checkbox).not.toBeChecked();
+    await expect(panel.getByTestId('checklist-progress')).toHaveText('0 / 3');
+  });
+
+  test('@16.8 should restore the old text and explain when editing an item fails', async ({ page, request }) => {
+    await openSeededChecklist(page, request);
+    const panel = page.getByTestId('checklist-panel');
+
+    await panel.getByRole('button', { name: 'Edit “Renew passport”' }).click();
+    await panel.getByLabel('Item text').fill('Renew passports');
+    await panel.getByLabel('Item text').press('Enter');
+
+    await expect(page.getByText("Couldn't save that change. Try again.")).toBeVisible();
+    await expect(panel.getByTestId('checklist-item')).toHaveText(TEXTS);
+  });
+
+  test('@16.9 should put an item back in its place and explain when deleting it fails', async ({ page, request }) => {
+    await openSeededChecklist(page, request);
+    const panel = page.getByTestId('checklist-panel');
+    const middleRow = panel.getByTestId('checklist-item').filter({ hasText: 'Book airport transfer' });
+
+    await middleRow.hover();
+    await middleRow.getByRole('button', { name: 'Delete “Book airport transfer”' }).click();
+
+    await expect(page.getByText("Couldn't delete that item. Try again.")).toBeVisible();
+    await expect(panel.getByTestId('checklist-item')).toHaveText(TEXTS);
+  });
+
+  test('@16.10 should restore the previous order and explain when reordering fails', async ({ page, request }) => {
+    await openSeededChecklist(page, request);
+    const panel = page.getByTestId('checklist-panel');
+
+    await panel.getByRole('button', { name: 'Move “Renew passport”' }).focus();
+    await page.keyboard.press('Space');
+    await page.waitForTimeout(200);
+    await page.keyboard.press('ArrowUp');
+    await page.waitForTimeout(200);
+    await page.keyboard.press('Space');
+
+    await expect(page.getByText("Couldn't save the new order. Try again.")).toBeVisible();
+    await expect(panel.getByTestId('checklist-item')).toHaveText(TEXTS);
   });
 });

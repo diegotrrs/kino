@@ -72,8 +72,9 @@ def delete_checklist_item(db: connection, calendar_id: int, item_id: int) -> boo
 
 def reorder_checklist_items(db: connection, calendar_id: int, item_ids: list[int]) -> bool:
     """Rewrite positions 0..n-1 in the given order; False (nothing changed) unless item_ids is
-    exactly the calendar's set of items. The check and the update share one locked transaction,
-    so an item added meanwhile can't end up without a position."""
+    exactly the calendar's set of items. FOR UPDATE keeps the checked rows from changing before the
+    update commits (a concurrent delete or reorder waits). An item added meanwhile isn't locked: it
+    keeps the bottom position it was given."""
     with db.cursor() as cur:
         cur.execute(
             "SELECT id FROM calendar_checklist_items WHERE calendar_id = %s FOR UPDATE",
