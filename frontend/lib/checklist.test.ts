@@ -4,6 +4,7 @@ import {
   getChecklistProgress,
   getEditedText,
   getNewItemText,
+  insertChecklistItem,
   MAX_CHECKLIST_ITEM_LENGTH,
 } from './checklist';
 import { buildChecklistItem } from './checklist.test.data';
@@ -68,5 +69,29 @@ describe('getEditedText', () => {
 
   it('should return null when the text was cleared so the edit is cancelled', () => {
     expect(getEditedText('Renew passport', '   ')).toBeNull();
+  });
+});
+
+describe('insertChecklistItem', () => {
+  it('should put a removed item back in its original place', () => {
+    const items = [buildChecklistItem({ id: 1, position: 0 }), buildChecklistItem({ id: 3, position: 2 })];
+
+    const result = insertChecklistItem(items, buildChecklistItem({ id: 2, position: 1 }));
+
+    expect(result.map((item) => item.id)).toEqual([1, 2, 3]);
+  });
+
+  it('should put an item with the highest position at the bottom', () => {
+    const items = [buildChecklistItem({ id: 1, position: 0 })];
+
+    const result = insertChecklistItem(items, buildChecklistItem({ id: 2, position: 5 }));
+
+    expect(result.map((item) => item.id)).toEqual([1, 2]);
+  });
+
+  it('should not add the item twice if it is already in the list', () => {
+    const items = [buildChecklistItem({ id: 1, position: 0 })];
+
+    expect(insertChecklistItem(items, buildChecklistItem({ id: 1, position: 0 }))).toHaveLength(1);
   });
 });

@@ -293,6 +293,8 @@
     "markDone": "Marcar “{text}” como feito",
     "editItem": "Editar “{text}”",
     "editLabel": "Texto da tarefa",
-    "saveFailed": "Não foi possível guardar a alteração. Tenta outra vez."
+    "saveFailed": "Não foi possível guardar a alteração. Tenta outra vez.",
+    "deleteItem": "Eliminar “{text}”",
+    "deleteFailed": "Não foi possível eliminar. Tenta outra vez."
   }
 }

@@ -293,6 +293,8 @@
     "markDone": "Mark “{text}” as done",
     "editItem": "Edit “{text}”",
     "editLabel": "Item text",
-    "saveFailed": "Couldn't save that change. Try again."
+    "saveFailed": "Couldn't save that change. Try again.",
+    "deleteItem": "Delete “{text}”",
+    "deleteFailed": "Couldn't delete that item. Try again."
   }
 }

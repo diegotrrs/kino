@@ -25,6 +25,7 @@ CHECKLIST_HANDLERS = [
         "update_checklist_item",
         id="update",
     ),
+    pytest.param(router.delete_checklist_item, {"item_id": 4}, "delete_checklist_item", id="delete"),
 ]
 
 
@@ -133,3 +134,15 @@ class TestChecklistItemUpdate:
     def test_empty_or_null_changes_are_rejected(self, body):
         with pytest.raises(ValidationError):
             ChecklistItemUpdate(**body)
+
+
+class TestDeleteChecklistItem:
+    def test_item_from_another_calendar_returns_404(self, crud, resolved_id, db, user):
+        crud.get_user_role.return_value = "editor"
+        crud.delete_checklist_item.return_value = False
+
+        with pytest.raises(HTTPException) as exc:
+            router.delete_checklist_item(calendar_uuid=UUID, item_id=4, db=db, current_user=user)
+
+        assert exc.value.status_code == 404
+        crud.delete_checklist_item.assert_called_once_with(db, CALENDAR_ID, 4)

@@ -22,6 +22,7 @@ from .calendars import (
 from .checklist import (
     count_checklist_items,
     create_checklist_item,
+    delete_checklist_item,
     get_checklist_items,
     update_checklist_item,
 )
@@ -64,6 +65,7 @@ from .users import (
 __all__ = [
     "count_checklist_items",
     "create_checklist_item",
+    "delete_checklist_item",
     "get_checklist_items",
     "update_checklist_item",
     "delete_day_name",

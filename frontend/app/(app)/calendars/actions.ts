@@ -399,3 +399,18 @@ export const updateChecklistItem = async (
 
   return res.json();
 };
+
+export const deleteChecklistItem = async (calendarUuid: string, itemId: number): Promise<void> => {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarUuid}/checklist/${itemId}`, {
+    method: 'DELETE',
+    headers,
+  });
+
+  if (res.status === 401) redirect('/login');
+  // 404 means another member already deleted it, which is the state we want
+  if (!res.ok && res.status !== 404) {
+    const body = await res.text();
+    throw new Error(`Failed to delete checklist item: ${body}`);
+  }
+};

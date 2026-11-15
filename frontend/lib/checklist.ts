@@ -25,3 +25,12 @@ export const getEditedText = (original: string, value: string): string | null =>
   const text = getNewItemText(value);
   return text && text !== original ? text : null;
 };
+
+// Puts an item back by position, e.g. when a delete is refused by the server
+export const insertChecklistItem = (items: ChecklistItem[], item: ChecklistItem): ChecklistItem[] => {
+  if (items.some((existing) => existing.id === item.id)) {
+    return items;
+  }
+  const index = items.findIndex((existing) => existing.position > item.position);
+  return index === -1 ? [...items, item] : [...items.slice(0, index), item, ...items.slice(index)];
+};

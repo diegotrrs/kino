@@ -357,3 +357,15 @@ def update_checklist_item(
     if item is None:
         raise HTTPException(status_code=404, detail="Checklist item not found")
     return item
+
+
+@router.delete("/{calendar_uuid}/checklist/{item_id}", status_code=204)
+def delete_checklist_item(
+    calendar_uuid: str,
+    item_id: int,
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    calendar_id = _require_member(db, calendar_uuid, current_user["id"])
+    if not crud.delete_checklist_item(db, calendar_id, item_id):
+        raise HTTPException(status_code=404, detail="Checklist item not found")

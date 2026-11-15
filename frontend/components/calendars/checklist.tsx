@@ -1,6 +1,7 @@
 'use client';
 import {
   addChecklistItem,
+  deleteChecklistItem,
   updateChecklistItem
 }                            from '@/app/(app)/calendars/actions';
 import { Input }             from '@/components/ui/input';
@@ -12,11 +13,15 @@ import {
   getChecklistProgress,
   getEditedText,
   getNewItemText,
+  insertChecklistItem,
   MAX_CHECKLIST_ITEM_LENGTH
 }                            from '@/lib/checklist';
 import type { ChecklistItem } from '@/lib/types';
 import { cn }                from '@/lib/utils';
-import { ListChecks }        from 'lucide-react';
+import {
+  ListChecks,
+  Trash2
+}                            from 'lucide-react';
 import { useTranslations }   from 'next-intl';
 import {
   KeyboardEvent,
@@ -118,12 +123,42 @@ const ChecklistItemText = ({ item }: { item: ChecklistItem }) => {
   );
 };
 
+const ChecklistDeleteButton = ({ item }: { item: ChecklistItem }) => {
+  const { calendarUuid, setChecklist } = useEvents();
+  const t = useTranslations('checklist');
+  const { toast } = useToast();
+
+  const handleDelete = async (): Promise<void> => {
+    if (!calendarUuid) {
+      return;
+    }
+    setChecklist((items) => (items ?? []).filter((existing) => existing.id !== item.id));
+    try {
+      await deleteChecklistItem(calendarUuid, item.id);
+    } catch {
+      setChecklist((items) => insertChecklistItem(items ?? [], item));
+      toast({ variant: 'destructive', title: t('deleteFailed') });
+    }
+  };
+
+  return (
+    <button
+      type='button'
+      onClick={() => void handleDelete()}
+      aria-label={t('deleteItem', { text: item.text })}
+      className='-m-1 shrink-0 rounded-sm p-1 text-muted-foreground opacity-0 transition-opacity hover:text-destructive focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group-hover:opacity-100 pointer-coarse:-m-3 pointer-coarse:p-3 pointer-coarse:opacity-100'
+    >
+      <Trash2 className='h-3.5 w-3.5' />
+    </button>
+  );
+};
+
 const ChecklistRow = ({ item }: { item: ChecklistItem }) => {
   const t = useTranslations('checklist');
   const saveChange = useChecklistChange();
 
   return (
-    <li className='flex items-start gap-2.5 py-1.5 text-sm' data-testid='checklist-item'>
+    <li className='group flex items-start gap-2.5 py-1.5 text-sm' data-testid='checklist-item'>
       {/* The padding widens the tap target to 44px on touch screens without moving the box */}
       <label className='-m-1 flex shrink-0 cursor-pointer p-1 pointer-coarse:-m-3.5 pointer-coarse:p-3.5'>
         <input
@@ -135,7 +170,10 @@ const ChecklistRow = ({ item }: { item: ChecklistItem }) => {
           className='mt-0.5 h-4 w-4 cursor-pointer accent-teal disabled:cursor-default'
         />
       </label>
-      <ChecklistItemText item={item} />
+      <div className='min-w-0 flex-1'>
+        <ChecklistItemText item={item} />
+      </div>
+      {!isPending(item) && <ChecklistDeleteButton item={item} />}
     </li>
   );
 };

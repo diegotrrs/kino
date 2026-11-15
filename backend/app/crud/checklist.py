@@ -57,3 +57,14 @@ def update_checklist_item(db: connection, calendar_id: int, item_id: int, change
         row = cur.fetchone()
         db.commit()
         return row
+
+
+def delete_checklist_item(db: connection, calendar_id: int, item_id: int) -> bool:
+    with db.cursor() as cur:
+        cur.execute(
+            "DELETE FROM calendar_checklist_items WHERE id = %s AND calendar_id = %s",
+            (item_id, calendar_id),
+        )
+        deleted = cur.rowcount > 0
+        db.commit()
+        return deleted
