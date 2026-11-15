@@ -1,6 +1,9 @@
 import Calendar                   from '@/components/calendar-no-ssr';
 import { CalendarShareButton }    from '@/components/calendars/calendar-share-button';
-import { ChecklistPanel }         from '@/components/calendars/checklist';
+import {
+  ChecklistDrawer,
+  ChecklistPanel
+}                                 from '@/components/calendars/checklist';
 import {
   ExpensesDrawer,
   ExpensesPanel
@@ -240,6 +243,7 @@ const CalendarPage = async ({
                 )}
               </div>
               <ExpensesDrawer />
+              <ChecklistDrawer />
             </div>
           </div>
         </div>

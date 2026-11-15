@@ -46,6 +46,8 @@ type EventsContextType = {
   // null when the viewer is not a member: the checklist is hidden from them
   checklist: ChecklistItem[] | null;
   setChecklist: React.Dispatch<React.SetStateAction<ChecklistItem[] | null>>;
+  checklistOpen: boolean;
+  setChecklistOpen: (value: boolean) => void;
 }
 
 const EventsContext = createContext<EventsContextType | undefined>(undefined);
@@ -101,6 +103,7 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
   const [dayNames, setDayNames] = useState<Record<string, string>>(() => toDayNameMap(serverDayNames ?? []));
 
   const [checklist, setChecklist] = useState<ChecklistItem[] | null>(serverChecklist);
+  const [checklistOpen, setChecklistOpen] = useState(false);
 
   const setDayNameLocal = (date: string, name: string | null) => {
     setDayNames((current) => {
@@ -167,6 +170,8 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
         setDayNameLocal,
         checklist,
         setChecklist,
+        checklistOpen,
+        setChecklistOpen,
         availabilityCheckerEventAddOpen,
         setAvailabilityCheckerEventAddOpen,
       }}

@@ -295,6 +295,8 @@
     "editLabel": "Text des Eintrags",
     "saveFailed": "Die Änderung konnte nicht gespeichert werden. Versuch es nochmal.",
     "deleteItem": "„{text}“ löschen",
-    "deleteFailed": "Der Eintrag konnte nicht gelöscht werden. Versuch es nochmal."
+    "deleteFailed": "Der Eintrag konnte nicht gelöscht werden. Versuch es nochmal.",
+    "openChecklist": "Checkliste öffnen",
+    "closeChecklist": "Checkliste schließen"
   }
 }

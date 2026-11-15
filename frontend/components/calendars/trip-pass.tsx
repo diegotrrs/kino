@@ -1,3 +1,4 @@
+import { ChecklistChip } from '@/components/calendars/checklist';
 import { ExpensesChip } from '@/components/calendars/expenses-summary';
 import { getTripSpan }  from '@/lib/trip-span';
 import { cn }          from '@/lib/utils';
@@ -46,7 +47,7 @@ export const TripPass = async ({ startDate, eventDates }: TripPassProps) => {
         {dateRange} · {t('days', { count: span.totalDays })} ·{' '}
         <span className={cn((isCurrent || daysUntil > 0) && 'text-primary')}>{getStatus()}</span>{' '}
         {/* Wraps to its own line on narrow phones, lined up with the dates */}
-        <ExpensesChip />
+        <ExpensesChip /> <ChecklistChip />
       </p>
 
       <div className='hidden w-fit max-w-full overflow-hidden rounded-md border bg-card lg:flex' data-testid='trip-pass'>

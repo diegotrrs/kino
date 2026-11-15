@@ -295,6 +295,8 @@
     "editLabel": "Item text",
     "saveFailed": "Couldn't save that change. Try again.",
     "deleteItem": "Delete “{text}”",
-    "deleteFailed": "Couldn't delete that item. Try again."
+    "deleteFailed": "Couldn't delete that item. Try again.",
+    "openChecklist": "Open checklist",
+    "closeChecklist": "Close checklist"
   }
 }

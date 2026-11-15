@@ -7,6 +7,7 @@ import {
 import { Input }             from '@/components/ui/input';
 import { useEvents }         from '@/context/events-context';
 import { useToast }          from '@/hooks/use-toast';
+import { revealWhenKeyboardOpens } from '@/lib/keyboard';
 import {
   applyChecklistChange,
   ChecklistChange,
@@ -19,12 +20,15 @@ import {
 import type { ChecklistItem } from '@/lib/types';
 import { cn }                from '@/lib/utils';
 import {
+  ChevronRight,
   ListChecks,
-  Trash2
+  Trash2,
+  X
 }                            from 'lucide-react';
 import { useTranslations }   from 'next-intl';
 import {
   KeyboardEvent,
+  useEffect,
   useRef,
   useState
 }                            from 'react';
@@ -88,6 +92,8 @@ const ChecklistItemText = ({ item }: { item: ChecklistItem }) => {
     }
     if (event.key === 'Escape') {
       event.preventDefault();
+      // Esc cancels the edit only; it must not also close the phone drawer
+      event.stopPropagation();
       handleFinish(false);
     }
   };
@@ -146,7 +152,7 @@ const ChecklistDeleteButton = ({ item }: { item: ChecklistItem }) => {
       type='button'
       onClick={() => void handleDelete()}
       aria-label={t('deleteItem', { text: item.text })}
-      className='-m-1 shrink-0 rounded-sm p-1 text-muted-foreground opacity-0 transition-opacity hover:text-destructive focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group-hover:opacity-100 pointer-coarse:-m-3 pointer-coarse:p-3 pointer-coarse:opacity-100'
+      className='-m-1 shrink-0 rounded-sm p-1 text-muted-foreground opacity-0 transition-opacity hover:text-destructive focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group-hover:opacity-100 pointer-coarse:-m-[15px] pointer-coarse:p-[15px] pointer-coarse:opacity-100'
     >
       <Trash2 className='h-3.5 w-3.5' />
     </button>
@@ -178,11 +184,26 @@ const ChecklistRow = ({ item }: { item: ChecklistItem }) => {
   );
 };
 
-const ChecklistAddField = () => {
-  const { calendarUuid, setChecklist } = useEvents();
+type ChecklistAddFieldProps = {
+  // Phones: focus the field when the drawer opens on an empty list, and keep it above the keyboard
+  isInDrawer?: boolean;
+};
+
+const ChecklistAddField = ({ isInDrawer = false }: ChecklistAddFieldProps) => {
+  const { calendarUuid, checklist, checklistOpen, setChecklist } = useEvents();
   const t = useTranslations('checklist');
   const { toast } = useToast();
   const [value, setValue] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+  const isEmpty = (checklist ?? []).length === 0;
+
+  useEffect(() => {
+    if (isInDrawer && checklistOpen && isEmpty) {
+      inputRef.current?.focus();
+    }
+    // Only when the drawer opens, not every time the list changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isInDrawer, checklistOpen]);
 
   const handleAdd = async (): Promise<void> => {
     const text = getNewItemText(value);
@@ -217,9 +238,15 @@ const ChecklistAddField = () => {
 
   return (
     <Input
+      ref={inputRef}
       value={value}
       onChange={(event) => setValue(event.target.value)}
       onKeyDown={handleKeyDown}
+      onFocus={(event) => {
+        if (isInDrawer) {
+          revealWhenKeyboardOpens(event.currentTarget);
+        }
+      }}
       maxLength={MAX_CHECKLIST_ITEM_LENGTH}
       placeholder={t('addPlaceholder')}
       aria-label={t('addLabel')}
@@ -228,7 +255,7 @@ const ChecklistAddField = () => {
   );
 };
 
-export const ChecklistList = () => {
+export const ChecklistList = ({ isInDrawer = false }: ChecklistAddFieldProps) => {
   const { checklist } = useEvents();
   const t = useTranslations('checklist');
   if (checklist === null) {
@@ -246,7 +273,7 @@ export const ChecklistList = () => {
           ))}
         </ul>
       )}
-      <ChecklistAddField />
+      <ChecklistAddField isInDrawer={isInDrawer} />
     </div>
   );
 };
@@ -275,5 +302,94 @@ export const ChecklistPanel = () => {
       </span>
       <ChecklistList />
     </section>
+  );
+};
+
+// Phones and tablets: a chip on the trip line, next to the expenses chip
+export const ChecklistChip = () => {
+  const { checklist, setChecklistOpen } = useEvents();
+  const t = useTranslations('checklist');
+  if (checklist === null) {
+    return null;
+  }
+  const { done, total } = getChecklistProgress(checklist);
+
+  return (
+    <button
+      type='button'
+      aria-label={t('openChecklist')}
+      data-testid='checklist-chip'
+      onClick={() => setChecklistOpen(true)}
+      className='inline-flex h-7 items-center gap-1.5 rounded-md bg-secondary px-2 align-middle font-mono text-[0.7rem] font-medium uppercase tracking-wider text-foreground tabular-nums transition-colors hover:bg-secondary/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+    >
+      <ListChecks className='h-3.5 w-3.5 shrink-0' />
+      {total > 0 ? `${done}/${total}` : t('title')}
+      <ChevronRight className='h-3.5 w-3.5 shrink-0' />
+    </button>
+  );
+};
+
+export const ChecklistDrawer = () => {
+  const { checklist, checklistOpen: isOpen, setChecklistOpen } = useEvents();
+  const t = useTranslations('checklist');
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+    const handleKeyDown = (event: globalThis.KeyboardEvent): void => {
+      if (event.key === 'Escape') {
+        setChecklistOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, setChecklistOpen]);
+
+  if (checklist === null) {
+    return null;
+  }
+  const { done, total } = getChecklistProgress(checklist);
+
+  return (
+    <div className='lg:hidden'>
+      {isOpen && (
+        <div className='fixed inset-0 z-40 bg-black/50' aria-hidden='true' onClick={() => setChecklistOpen(false)} />
+      )}
+      <div
+        role='dialog'
+        aria-label={t('title')}
+        aria-modal='true'
+        data-testid='checklist-drawer'
+        className={cn(
+          'fixed inset-x-0 bottom-0 z-50 flex max-h-[85svh] flex-col rounded-t-2xl border-t bg-card shadow-xl duration-300',
+          // Shown at once on open (so the add field can take focus); hidden only after the slide out on close,
+          // which keeps a closed drawer away from screen readers and Tab
+          isOpen ? 'visible translate-y-0 transition-transform' : 'invisible translate-y-full transition-[transform,visibility]',
+        )}
+      >
+        <span aria-hidden='true' className='mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-border' />
+        <div className='flex items-center justify-between border-b px-4 py-3'>
+          <div className='flex items-center gap-2'>
+            <ListChecks className='h-4 w-4 text-muted-foreground' />
+            <span className='font-display text-base font-bold'>{t('title')}</span>
+            {total > 0 && (
+              <span className='font-mono text-xs text-muted-foreground tabular-nums'>{done} / {total}</span>
+            )}
+          </div>
+          <button
+            type='button'
+            aria-label={t('closeChecklist')}
+            onClick={() => setChecklistOpen(false)}
+            className='-m-2 p-2 text-muted-foreground hover:text-foreground'
+          >
+            <X className='h-4 w-4' />
+          </button>
+        </div>
+        <div className='flex-1 overflow-y-auto px-4 py-3'>
+          <ChecklistList isInDrawer />
+        </div>
+      </div>
+    </div>
   );
 };
