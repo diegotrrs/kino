@@ -289,6 +289,10 @@
     "empty": "Ainda não há nada na lista.",
     "addPlaceholder": "Adicione algo a fazer…",
     "addLabel": "Adicionar à lista",
-    "addFailed": "Não foi possível adicionar. Tente novamente."
+    "addFailed": "Não foi possível adicionar. Tenta outra vez.",
+    "markDone": "Marcar “{text}” como feito",
+    "editItem": "Editar “{text}”",
+    "editLabel": "Texto da tarefa",
+    "saveFailed": "Não foi possível guardar a alteração. Tenta outra vez."
   }
 }

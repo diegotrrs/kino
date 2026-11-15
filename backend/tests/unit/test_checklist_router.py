@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from pydantic import ValidationError
 
 from app.routers import calendars as router
-from app.schemas.checklist import MAX_CHECKLIST_ITEMS, ChecklistItemCreate
+from app.schemas.checklist import MAX_CHECKLIST_ITEMS, ChecklistItemCreate, ChecklistItemUpdate
 
 CALENDAR_ID = 9
 UUID = "cal-uuid"
@@ -18,6 +18,12 @@ CHECKLIST_HANDLERS = [
         {"body": ChecklistItemCreate(text="Buy travel insurance")},
         "create_checklist_item",
         id="create",
+    ),
+    pytest.param(
+        router.update_checklist_item,
+        {"item_id": 4, "body": ChecklistItemUpdate(is_done=True)},
+        "update_checklist_item",
+        id="update",
     ),
 ]
 
@@ -95,3 +101,35 @@ class TestChecklistItemCreate:
 
     def test_text_of_exactly_200_characters_is_accepted(self):
         assert len(ChecklistItemCreate(text="x" * 200).text) == 200
+
+
+class TestUpdateChecklistItem:
+    def test_item_from_another_calendar_returns_404(self, crud, resolved_id, db, user):
+        crud.get_user_role.return_value = "editor"
+        crud.update_checklist_item.return_value = None
+
+        with pytest.raises(HTTPException) as exc:
+            router.update_checklist_item(
+                calendar_uuid=UUID, item_id=4, body=ChecklistItemUpdate(is_done=True), db=db, current_user=user
+            )
+
+        assert exc.value.status_code == 404
+
+    def test_only_the_fields_sent_are_updated(self, crud, resolved_id, db, user):
+        crud.get_user_role.return_value = "editor"
+
+        router.update_checklist_item(
+            calendar_uuid=UUID, item_id=4, body=ChecklistItemUpdate(text="Renew passport"), db=db, current_user=user
+        )
+
+        crud.update_checklist_item.assert_called_once_with(db, CALENDAR_ID, 4, {"text": "Renew passport"})
+
+
+class TestChecklistItemUpdate:
+    def test_text_is_cleaned_like_on_create(self):
+        assert ChecklistItemUpdate(text=" <b>Renew</b> passport ").text == "Renew passport"
+
+    @pytest.mark.parametrize("body", [{}, {"text": None}, {"is_done": None}, {"text": "  "}], ids=str)
+    def test_empty_or_null_changes_are_rejected(self, body):
+        with pytest.raises(ValidationError):
+            ChecklistItemUpdate(**body)

@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { getChecklistProgress, getNewItemText, MAX_CHECKLIST_ITEM_LENGTH } from './checklist';
+import {
+  applyChecklistChange,
+  getChecklistProgress,
+  getEditedText,
+  getNewItemText,
+  MAX_CHECKLIST_ITEM_LENGTH,
+} from './checklist';
 import { buildChecklistItem } from './checklist.test.data';
 
 describe('getChecklistProgress', () => {
@@ -29,5 +35,38 @@ describe('getNewItemText', () => {
 
   it('should cut text longer than the maximum length', () => {
     expect(getNewItemText('x'.repeat(MAX_CHECKLIST_ITEM_LENGTH + 5))).toHaveLength(MAX_CHECKLIST_ITEM_LENGTH);
+  });
+});
+
+describe('applyChecklistChange', () => {
+  it('should change only the matching item', () => {
+    const items = [buildChecklistItem({ id: 1 }), buildChecklistItem({ id: 2, text: 'Renew passport' })];
+
+    const result = applyChecklistChange(items, 2, { is_done: true });
+
+    expect(result.map((item) => item.is_done)).toEqual([false, true]);
+    expect(result[1].text).toBe('Renew passport');
+  });
+
+  it('should not mutate the original list', () => {
+    const items = [buildChecklistItem({ id: 1 })];
+
+    applyChecklistChange(items, 1, { text: 'Changed' });
+
+    expect(items[0].text).toBe('Buy travel insurance');
+  });
+});
+
+describe('getEditedText', () => {
+  it('should return the trimmed new text when it changed', () => {
+    expect(getEditedText('Renew pasport', '  Renew passport ')).toBe('Renew passport');
+  });
+
+  it('should return null when the text is unchanged so nothing is saved', () => {
+    expect(getEditedText('Renew passport', 'Renew passport ')).toBeNull();
+  });
+
+  it('should return null when the text was cleared so the edit is cancelled', () => {
+    expect(getEditedText('Renew passport', '   ')).toBeNull();
   });
 });

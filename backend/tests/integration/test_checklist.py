@@ -125,3 +125,66 @@ class TestCreateChecklistItem:
                 cur.execute("DELETE FROM calendar_users WHERE calendar_id = %s", (second["id"],))
                 cur.execute("DELETE FROM calendars WHERE id = %s", (second["id"],))
             db_conn.commit()
+
+
+def _add_item(client, calendar: dict, headers: dict, text: str = "Buy travel insurance") -> dict:
+    return client.post(_checklist_url(calendar), json={"text": text}, headers=headers).json()
+
+
+class TestUpdateChecklistItem:
+    def test_ticking_an_item_is_saved_and_stamps_updated_at(self, client, calendar, owner_headers):
+        item = _add_item(client, calendar, owner_headers)
+
+        res = client.patch(f"{_checklist_url(calendar)}/{item['id']}", json={"is_done": True}, headers=owner_headers)
+
+        assert res.status_code == 200
+        assert res.json()["is_done"] is True
+        assert res.json()["updated_at"] is not None
+        assert client.get(_checklist_url(calendar), headers=owner_headers).json()[0]["is_done"] is True
+
+    def test_editing_text_keeps_the_done_state_and_position(self, client, calendar, owner_headers):
+        _add_item(client, calendar, owner_headers, "First")
+        item = _add_item(client, calendar, owner_headers, "Renew pasport")
+        client.patch(f"{_checklist_url(calendar)}/{item['id']}", json={"is_done": True}, headers=owner_headers)
+
+        res = client.patch(
+            f"{_checklist_url(calendar)}/{item['id']}", json={"text": "Renew passport"}, headers=owner_headers
+        )
+
+        body = res.json()
+        assert (body["text"], body["is_done"], body["position"]) == ("Renew passport", True, 1)
+
+    def test_non_member_cannot_tick_an_item(self, client, calendar, owner_headers, other_headers):
+        item = _add_item(client, calendar, owner_headers)
+
+        res = client.patch(f"{_checklist_url(calendar)}/{item['id']}", json={"is_done": True}, headers=other_headers)
+
+        assert res.status_code == 403
+        assert client.get(_checklist_url(calendar), headers=owner_headers).json()[0]["is_done"] is False
+
+    def test_item_from_another_calendar_returns_404_and_is_unchanged(
+        self, client, db_conn, calendar, other_user, other_headers
+    ):
+        others_calendar = create_calendar(db_conn, CalendarCreate(name="Other trip", created_by=other_user["id"]))
+        try:
+            foreign = _add_item(client, others_calendar, other_headers, "Their item")
+            add_user_to_calendar(db_conn, calendar["id"], other_user["id"])
+
+            res = client.patch(
+                f"{_checklist_url(calendar)}/{foreign['id']}", json={"text": "Hijacked"}, headers=other_headers
+            )
+
+            assert res.status_code == 404
+            assert client.get(_checklist_url(others_calendar), headers=other_headers).json()[0]["text"] == "Their item"
+        finally:
+            with db_conn.cursor() as cur:
+                cur.execute("DELETE FROM calendar_users WHERE calendar_id = %s", (others_calendar["id"],))
+                cur.execute("DELETE FROM calendars WHERE id = %s", (others_calendar["id"],))
+            db_conn.commit()
+
+    def test_empty_change_is_rejected(self, client, calendar, owner_headers):
+        item = _add_item(client, calendar, owner_headers)
+
+        res = client.patch(f"{_checklist_url(calendar)}/{item['id']}", json={}, headers=owner_headers)
+
+        assert res.status_code == 422

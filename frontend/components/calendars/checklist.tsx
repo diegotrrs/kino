@@ -1,10 +1,16 @@
 'use client';
-import { addChecklistItem }  from '@/app/(app)/calendars/actions';
+import {
+  addChecklistItem,
+  updateChecklistItem
+}                            from '@/app/(app)/calendars/actions';
 import { Input }             from '@/components/ui/input';
 import { useEvents }         from '@/context/events-context';
 import { useToast }          from '@/hooks/use-toast';
 import {
+  applyChecklistChange,
+  ChecklistChange,
   getChecklistProgress,
+  getEditedText,
   getNewItemText,
   MAX_CHECKLIST_ITEM_LENGTH
 }                            from '@/lib/checklist';
@@ -14,26 +20,125 @@ import { ListChecks }        from 'lucide-react';
 import { useTranslations }   from 'next-intl';
 import {
   KeyboardEvent,
+  useRef,
   useState
 }                            from 'react';
 
 // Temporary ids for items that haven't come back from the server yet
 let nextPendingId = -1;
 
-const ChecklistRow = ({ item }: { item: ChecklistItem }) => (
-  <li className='flex items-start gap-2.5 py-1.5 text-sm' data-testid='checklist-item'>
-    <span
-      aria-hidden='true'
+const isPending = (item: ChecklistItem): boolean => item.id < 0;
+
+// Optimistic change to one item, put back to its previous values if the server refuses it
+const useChecklistChange = (): ((item: ChecklistItem, change: ChecklistChange) => Promise<void>) => {
+  const { calendarUuid, setChecklist } = useEvents();
+  const t = useTranslations('checklist');
+  const { toast } = useToast();
+
+  return async (item: ChecklistItem, change: ChecklistChange): Promise<void> => {
+    if (!calendarUuid) {
+      return;
+    }
+    const previous: ChecklistChange = { text: item.text, is_done: item.is_done };
+    setChecklist((items) => applyChecklistChange(items ?? [], item.id, change));
+    try {
+      await updateChecklistItem(calendarUuid, item.id, change);
+    } catch {
+      setChecklist((items) => applyChecklistChange(items ?? [], item.id, previous));
+      toast({ variant: 'destructive', title: t('saveFailed') });
+    }
+  };
+};
+
+const ChecklistItemText = ({ item }: { item: ChecklistItem }) => {
+  const t = useTranslations('checklist');
+  const saveChange = useChecklistChange();
+  const [isEditing, setIsEditing] = useState(false);
+  const [value, setValue] = useState(item.text);
+  // Enter/Esc unmount the field, which fires a blur; this stops that blur from saving a second time
+  const isClosingRef = useRef(false);
+
+  const handleStartEditing = (): void => {
+    isClosingRef.current = false;
+    setValue(item.text);
+    setIsEditing(true);
+  };
+
+  const handleFinish = (shouldSave: boolean): void => {
+    if (isClosingRef.current) {
+      return;
+    }
+    isClosingRef.current = true;
+    setIsEditing(false);
+    const text = shouldSave ? getEditedText(item.text, value) : null;
+    if (text) {
+      void saveChange(item, { text });
+    }
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleFinish(true);
+    }
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      handleFinish(false);
+    }
+  };
+
+  if (isEditing) {
+    return (
+      <Input
+        autoFocus
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+        onKeyDown={handleKeyDown}
+        onBlur={() => handleFinish(true)}
+        maxLength={MAX_CHECKLIST_ITEM_LENGTH}
+        aria-label={t('editLabel')}
+        className='-my-1 h-7 px-1.5 text-sm'
+      />
+    );
+  }
+
+  return (
+    <button
+      type='button'
+      onClick={handleStartEditing}
+      disabled={isPending(item)}
+      aria-label={t('editItem', { text: item.text })}
       className={cn(
-        'mt-0.5 h-4 w-4 shrink-0 rounded-sm border',
-        item.is_done && 'border-teal bg-teal',
+        'min-w-0 cursor-text break-words rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default',
+        item.is_done && 'text-muted-foreground line-through',
       )}
-    />
-    <span className={cn('min-w-0 break-words', item.is_done && 'text-muted-foreground line-through')}>
+    >
       {item.text}
-    </span>
-  </li>
-);
+    </button>
+  );
+};
+
+const ChecklistRow = ({ item }: { item: ChecklistItem }) => {
+  const t = useTranslations('checklist');
+  const saveChange = useChecklistChange();
+
+  return (
+    <li className='flex items-start gap-2.5 py-1.5 text-sm' data-testid='checklist-item'>
+      {/* The padding widens the tap target to 44px on touch screens without moving the box */}
+      <label className='-m-1 flex shrink-0 cursor-pointer p-1 pointer-coarse:-m-3.5 pointer-coarse:p-3.5'>
+        <input
+          type='checkbox'
+          checked={item.is_done}
+          disabled={isPending(item)}
+          onChange={(event) => void saveChange(item, { is_done: event.target.checked })}
+          aria-label={t('markDone', { text: item.text })}
+          className='mt-0.5 h-4 w-4 cursor-pointer accent-teal disabled:cursor-default'
+        />
+      </label>
+      <ChecklistItemText item={item} />
+    </li>
+  );
+};
 
 const ChecklistAddField = () => {
   const { calendarUuid, setChecklist } = useEvents();

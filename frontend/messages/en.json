@@ -289,6 +289,10 @@
     "empty": "Nothing on the list yet.",
     "addPlaceholder": "Add something to do…",
     "addLabel": "Add to checklist",
-    "addFailed": "Couldn't add that item. Try again."
+    "addFailed": "Couldn't add that item. Try again.",
+    "markDone": "Mark “{text}” as done",
+    "editItem": "Edit “{text}”",
+    "editLabel": "Item text",
+    "saveFailed": "Couldn't save that change. Try again."
   }
 }

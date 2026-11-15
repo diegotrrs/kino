@@ -378,3 +378,24 @@ export const addChecklistItem = async (calendarUuid: string, text: string): Prom
 
   return res.json();
 };
+
+export const updateChecklistItem = async (
+  calendarUuid: string,
+  itemId: number,
+  change: Partial<Pick<ChecklistItem, 'text' | 'is_done'>>,
+): Promise<ChecklistItem> => {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarUuid}/checklist/${itemId}`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify(change),
+  });
+
+  if (res.status === 401) redirect('/login');
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Failed to update checklist item: ${body}`);
+  }
+
+  return res.json();
+};

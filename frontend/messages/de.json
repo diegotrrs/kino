@@ -289,6 +289,10 @@
     "empty": "Noch nichts auf der Liste.",
     "addPlaceholder": "Etwas zu erledigen hinzufügen…",
     "addLabel": "Zur Checkliste hinzufügen",
-    "addFailed": "Konnte nicht hinzugefügt werden. Bitte erneut versuchen."
+    "addFailed": "Der Eintrag konnte nicht hinzugefügt werden. Versuch es nochmal.",
+    "markDone": "„{text}“ als erledigt markieren",
+    "editItem": "„{text}“ bearbeiten",
+    "editLabel": "Text des Eintrags",
+    "saveFailed": "Die Änderung konnte nicht gespeichert werden. Versuch es nochmal."
   }
 }
