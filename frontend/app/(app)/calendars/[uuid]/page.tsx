@@ -1,6 +1,10 @@
 import Calendar                   from '@/components/calendar-no-ssr';
 import { CalendarShareButton }    from '@/components/calendars/calendar-share-button';
 import {
+  ChecklistDrawer,
+  ChecklistPanel
+}                                 from '@/components/calendars/checklist';
+import {
   ExpensesDrawer,
   ExpensesPanel
 }                                 from '@/components/calendars/expenses-summary';
@@ -13,6 +17,7 @@ import { EventsProvider }         from '@/context/events-context';
 import type {
   Calendar as CalendarType,
   CalendarExpense,
+  ChecklistItem,
   DayName,
   Event
 }                                 from '@/lib/types';
@@ -104,6 +109,17 @@ const getCalendarDayNames = async (calendarUuid: string, token: string | null): 
   return res.json();
 }
 
+// Members only: the API refuses everyone else, and null tells the UI to hide the checklist
+const getChecklist = async (calendarUuid: string, token: string): Promise<ChecklistItem[] | null> => {
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarUuid}/checklist`, {
+    cache: 'no-store',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!res.ok) return null;
+  return res.json();
+}
+
 const CalendarPage = async ({
   params,
 }: {
@@ -151,14 +167,15 @@ const CalendarPage = async ({
     redirect(isAuthenticated ? '/home' : '/login');
   }
 
-  const [dbEvents, calendarExpenses, dayNames] = await Promise.all([
+  const [dbEvents, calendarExpenses, dayNames, checklist] = await Promise.all([
     getCalendarEvents(uuid, token),
     getCalendarExpenses(uuid, token),
     getCalendarDayNames(uuid, token),
+    calendar.role && token ? getChecklist(uuid, token) : Promise.resolve(null),
   ]);
   const eventDates = dbEvents.map((event) => event.end_date ?? event.date);
   const hasExpenses = calendarExpenses.length > 0 || dbEvents.some((event) => (event.expenses ?? []).length > 0);
-  const hasRail = hasExpenses;
+  const hasRail = hasExpenses || checklist !== null;
   const events = dbEvents.map(dbEventToCalendarEvent);
 
   const initialDate = new Date(`${calendar.start_date}T12:00:00`);
@@ -174,6 +191,7 @@ const CalendarPage = async ({
       serverEvents={events}
       serverCalendarExpenses={calendarExpenses}
       serverDayNames={dayNames}
+      serverChecklist={checklist}
       readOnly={readOnly}
       preferredCurrency={preferredCurrency}
     >
@@ -217,13 +235,16 @@ const CalendarPage = async ({
               </div>
               <div className={hasRail ? 'pt-4 lg:grid lg:grid-cols-[minmax(0,1fr)_17rem] lg:items-start lg:gap-6' : 'pt-4'}>
                 <Calendar />
+                {/* Pinned to column 2: the calendar renders nothing until it loads in the browser, and the rail would jump into its place */}
                 {hasRail && (
-                  <aside className='hidden gap-4 lg:grid' aria-label='Trip details'>
+                  <aside className='hidden gap-4 lg:col-start-2 lg:grid' aria-label='Trip details'>
                     <ExpensesPanel />
+                    <ChecklistPanel />
                   </aside>
                 )}
               </div>
               <ExpensesDrawer />
+              <ChecklistDrawer />
             </div>
           </div>
         </div>

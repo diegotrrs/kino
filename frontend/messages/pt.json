@@ -283,5 +283,28 @@
     "removeName": "Remover nome",
     "save": "Guardar",
     "saveFailed": "Não foi possível guardar o nome do dia. Tenta outra vez."
+  },
+  "checklist": {
+    "title": "Lista de tarefas",
+    "empty": "Ainda não há nada na lista.",
+    "addPlaceholder": "Adicione algo a fazer…",
+    "addLabel": "Adicionar à lista",
+    "addFailed": "Não foi possível adicionar. Tenta outra vez.",
+    "markDone": "Marcar “{text}” como feito",
+    "editItem": "Editar “{text}”",
+    "editLabel": "Texto da tarefa",
+    "saveFailed": "Não foi possível guardar a alteração. Tenta outra vez.",
+    "deleteItem": "Eliminar “{text}”",
+    "deleteFailed": "Não foi possível eliminar. Tenta outra vez.",
+    "openChecklist": "Abrir lista de tarefas",
+    "closeChecklist": "Fechar lista de tarefas",
+    "reorderItem": "Mover “{text}”",
+    "reorderable": "item reordenável",
+    "reorderInstructions": "Para mover um item, carrega em Espaço ou Enter na pega, usa as setas para cima e para baixo para escolher o novo lugar e carrega outra vez em Espaço ou Enter para o largar. Carrega em Escape para cancelar.",
+    "announcePickedUp": "Pegaste em “{text}”.",
+    "announceMoved": "“{text}” movido para a posição {position} de {total}.",
+    "announceDropped": "“{text}” largado na posição {position} de {total}.",
+    "announceCancelled": "Movimento cancelado. “{text}” voltou ao seu lugar.",
+    "reorderFailed": "Não foi possível guardar a nova ordem. Tenta outra vez."
   }
 }

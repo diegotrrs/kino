@@ -185,3 +185,39 @@ export const createCalendarExpense = async (
   const { id } = await res.json() as { id: number };
   return id;
 };
+
+export const createChecklistItem = async (
+  request: APIRequestContext,
+  token: string,
+  calendarUuid: string,
+  text: string,
+): Promise<number> => {
+  const res = await request.post(`${API_URL}/api/calendars/${calendarUuid}/checklist`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    data: { text },
+  });
+  if (!res.ok()) {
+    throw new Error(`createChecklistItem: ${res.status()} ${await res.text()}`);
+  }
+  const { id } = await res.json() as { id: number };
+  return id;
+};
+
+// The checklist as the server has it, so tests can tell a saved change from an optimistic one
+export const getChecklistTexts = async (
+  request: APIRequestContext,
+  token: string,
+  calendarUuid: string,
+): Promise<string[]> => {
+  const res = await request.get(`${API_URL}/api/calendars/${calendarUuid}/checklist`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok()) {
+    throw new Error(`getChecklistTexts: ${res.status()} ${await res.text()}`);
+  }
+  const items = await res.json() as { text: string; is_done: boolean }[];
+  return items.map((item) => (item.is_done ? `✓ ${item.text}` : item.text));
+};

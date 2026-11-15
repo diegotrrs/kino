@@ -3,6 +3,7 @@ import { getTripBySlug }  from '@/app/(marketing)/trips/trips-data';
 import { EVENT_COLORS }   from '@/lib/event-colors';
 import type {
   CalendarExpense,
+  ChecklistItem,
   CreateEventInput,
   DayName
 }                         from '@/lib/types';
@@ -358,5 +359,73 @@ export const removeDayName = async (calendarUuid: string, date: string): Promise
   if (!res.ok && res.status !== 404) {
     const text = await res.text();
     throw new Error(`Failed to remove day name: ${text}`);
+  }
+};
+
+export const addChecklistItem = async (calendarUuid: string, text: string): Promise<ChecklistItem> => {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarUuid}/checklist`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ text }),
+  });
+
+  if (res.status === 401) redirect('/login');
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Failed to add checklist item: ${body}`);
+  }
+
+  return res.json();
+};
+
+export const updateChecklistItem = async (
+  calendarUuid: string,
+  itemId: number,
+  change: Partial<Pick<ChecklistItem, 'text' | 'is_done'>>,
+): Promise<ChecklistItem> => {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarUuid}/checklist/${itemId}`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify(change),
+  });
+
+  if (res.status === 401) redirect('/login');
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Failed to update checklist item: ${body}`);
+  }
+
+  return res.json();
+};
+
+export const deleteChecklistItem = async (calendarUuid: string, itemId: number): Promise<void> => {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarUuid}/checklist/${itemId}`, {
+    method: 'DELETE',
+    headers,
+  });
+
+  if (res.status === 401) redirect('/login');
+  // 404 means another member already deleted it, which is the state we want
+  if (!res.ok && res.status !== 404) {
+    const body = await res.text();
+    throw new Error(`Failed to delete checklist item: ${body}`);
+  }
+};
+
+export const reorderChecklistItems = async (calendarUuid: string, itemIds: number[]): Promise<void> => {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_BASE_URL}/api/calendars/${calendarUuid}/checklist/order`, {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify({ item_ids: itemIds }),
+  });
+
+  if (res.status === 401) redirect('/login');
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Failed to reorder checklist: ${body}`);
   }
 };

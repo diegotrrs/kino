@@ -44,7 +44,9 @@ jobs:
           API_BASE_URL: https://www.kinocalendars.com
 
   e2e:
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest moved to 26.04 (Nov 2026), which Playwright 1.59 has no Chromium build for.
+    # Move back to ubuntu-latest once Playwright is upgraded to a version that supports it.
+    runs-on: ubuntu-24.04
 
     services:
       postgres:

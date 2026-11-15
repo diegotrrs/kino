@@ -278,10 +278,33 @@
     "addHint": "+ Añadir evento"
   },
   "dayNames": {
-    "nameThisDay": "Nombrar este día",
+    "nameThisDay": "Nombrar día",
     "placeholder": "Añade un título para este día…",
     "removeName": "Quitar nombre",
     "save": "Guardar",
     "saveFailed": "No se pudo guardar el nombre del día. Inténtalo de nuevo."
+  },
+  "checklist": {
+    "title": "Lista de tareas",
+    "empty": "Todavía no hay nada en la lista.",
+    "addPlaceholder": "Añade algo por hacer…",
+    "addLabel": "Añadir a la lista",
+    "addFailed": "No se pudo añadir. Inténtalo de nuevo.",
+    "markDone": "Marcar «{text}» como hecho",
+    "editItem": "Editar «{text}»",
+    "editLabel": "Texto de la tarea",
+    "saveFailed": "No se pudo guardar el cambio. Inténtalo de nuevo.",
+    "deleteItem": "Eliminar «{text}»",
+    "deleteFailed": "No se pudo eliminar. Inténtalo de nuevo.",
+    "openChecklist": "Abrir lista de tareas",
+    "closeChecklist": "Cerrar lista de tareas",
+    "reorderItem": "Mover «{text}»",
+    "reorderable": "elemento reordenable",
+    "reorderInstructions": "Para mover un elemento, pulsa Espacio o Intro sobre su asa, usa las flechas arriba y abajo para elegir el nuevo lugar y vuelve a pulsar Espacio o Intro para soltarlo. Pulsa Escape para cancelar.",
+    "announcePickedUp": "Has cogido «{text}».",
+    "announceMoved": "«{text}» movido a la posición {position} de {total}.",
+    "announceDropped": "«{text}» soltado en la posición {position} de {total}.",
+    "announceCancelled": "Movimiento cancelado. «{text}» vuelve a su sitio.",
+    "reorderFailed": "No se pudo guardar el nuevo orden. Inténtalo de nuevo."
   }
 }

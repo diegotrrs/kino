@@ -1,0 +1,381 @@
+<title>Kino Boarding Pass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: app bar → trip header with a boarding-pass strip → week grid of ticket-stub events + side rail → theme sheet */
+:root {
+  --paper: #F7F4EE;
+  --surface: #FFFDF9;
+  --ink: #1C1B19;
+  --ink-soft: #5E5A53;
+  --muted: #8A857C;
+  --line: #E9E4DA;
+  --orange: #E8542F;
+  --on-orange: #FFFFFF;
+  --teal: #2F5D62;
+  --teal-soft: #E3ECEC;
+  --ev-terracotta: #C8674A;
+  --ev-teal: #2F5D62;
+  --ev-ochre: #C9973A;
+  --ev-sage: #7E9A7A;
+  --ev-plum: #7D5A7A;
+  --ev-slate: #5B6B7D;
+  --ev-tint: 14%;
+  --f-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Geist", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+  --f-mono: "Geist Mono", "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --radius: 6px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #16181D; --surface: #1E2128; --ink: #F1EEE8; --ink-soft: #B9B4AB; --muted: #8C877F;
+    --line: #2C3039; --orange: #F06A45; --on-orange: #16181D; --teal: #7FB3B8; --teal-soft: #22343A;
+    --ev-terracotta: #E08A6E; --ev-teal: #7FB3B8; --ev-ochre: #E0B45E; --ev-sage: #A3BE9F; --ev-plum: #B88FB4; --ev-slate: #94A6BA;
+    --ev-tint: 18%;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #16181D; --surface: #1E2128; --ink: #F1EEE8; --ink-soft: #B9B4AB; --muted: #8C877F;
+  --line: #2C3039; --orange: #F06A45; --on-orange: #16181D; --teal: #7FB3B8; --teal-soft: #22343A;
+  --ev-terracotta: #E08A6E; --ev-teal: #7FB3B8; --ev-ochre: #E0B45E; --ev-sage: #A3BE9F; --ev-plum: #B88FB4; --ev-slate: #94A6BA;
+  --ev-tint: 18%;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink);
+  font: 15px/1.5 var(--f-body);
+  padding: 0 clamp(16px, 4vw, 40px);
+}
+.wrap { max-width: 1180px; margin: 0 auto; padding-block: 20px 64px; display: grid; gap: 28px; }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
+.label { font: 500 11px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+
+/* App bar */
+.bar { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+.logo { font: 800 26px/1 var(--f-display); letter-spacing: -.03em; display: flex; align-items: baseline; gap: 2px; }
+.logo i { width: 8px; height: 8px; border-radius: 50%; background: var(--orange); display: inline-block; }
+.nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.nav a { color: var(--ink-soft); text-decoration: none; padding: 6px 10px; border-radius: var(--radius); font-weight: 500; }
+.nav a[aria-current] { color: var(--ink); background: var(--line); }
+.bar .spacer { flex: 1; }
+.toggle { border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius); padding: 6px 10px; font-size: 13px; }
+
+/* Trip header */
+.trip { display: grid; grid-template-columns: 1fr auto; gap: 20px 32px; align-items: end; }
+.trip h1 { font-size: clamp(34px, 5vw, 56px); font-weight: 800; letter-spacing: -.035em; line-height: 1; }
+.trip p { margin: 8px 0 0; color: var(--ink-soft); }
+.pass {
+  display: flex; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  overflow: hidden;
+}
+.pass > div { padding: 12px 18px; display: grid; gap: 6px; }
+.pass .route { font: 500 22px/1 var(--f-mono); letter-spacing: .02em; display: flex; gap: 10px; align-items: center; }
+.pass .route span { color: var(--orange); }
+.pass .stub { border-left: 2px dashed var(--line); position: relative; }
+.pass .stub::before, .pass .stub::after {
+  content: ""; position: absolute; left: -8px; width: 14px; height: 14px; border-radius: 50%; background: var(--paper);
+  border: 1px solid var(--line);
+}
+.pass .stub::before { top: -8px; } .pass .stub::after { bottom: -8px; }
+.pass .val { font: 500 15px/1 var(--f-mono); }
+
+/* Main layout */
+.main { display: grid; grid-template-columns: 1fr 280px; gap: 24px; align-items: start; }
+.toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.toolbar h2 { font-size: 20px; font-weight: 700; letter-spacing: -.01em; }
+.toolbar .spacer { flex: 1; }
+.seg { display: flex; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
+.seg button { border: 0; background: none; padding: 6px 12px; font-size: 13px; color: var(--ink-soft); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.btn { border: 0; background: var(--orange); color: var(--on-orange); border-radius: var(--radius); padding: 8px 14px; font-weight: 600; font-size: 14px; }
+
+.week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+.day { border-left: 1px solid var(--line); min-height: 420px; display: flex; flex-direction: column; }
+.day:first-child { border-left: 0; }
+.day-head { padding: 10px 10px 8px; border-bottom: 1px solid var(--line); display: grid; gap: 4px; }
+.day-head .num { font: 700 22px/1 var(--f-display); }
+.day.today .num { color: var(--orange); }
+.day.today .day-head { box-shadow: inset 0 3px 0 var(--orange); }
+.day-title { font-size: 12px; color: var(--teal); font-weight: 600; min-height: 18px; }
+.events { padding: 8px; display: grid; gap: 8px; align-content: start; }
+.empty { padding: 12px 10px; color: var(--muted); font-size: 13px; }
+
+.ev {
+  --c: var(--ev-slate);
+  display: grid; grid-template-rows: auto auto; border-radius: 4px;
+  background: color-mix(in srgb, var(--c) var(--ev-tint), var(--surface));
+  border: 1px solid color-mix(in srgb, var(--c) 30%, transparent);
+}
+.ev .t { font: 500 11px/1 var(--f-mono); color: var(--c); padding: 7px 8px 6px; border-bottom: 1px dashed color-mix(in srgb, var(--c) 45%, transparent); display: flex; justify-content: space-between; gap: 6px; }
+.ev .b { padding: 6px 8px 8px; display: grid; gap: 2px; }
+.ev .title { font-weight: 600; font-size: 13px; line-height: 1.3; }
+.ev .where { font-size: 12px; color: var(--ink-soft); }
+.ev.flight .title { font-family: var(--f-mono); font-weight: 500; letter-spacing: .02em; }
+
+/* Rail */
+.rail { display: grid; gap: 16px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 12px; }
+.panel h3 { font-size: 16px; font-weight: 700; }
+.total { font: 500 30px/1 var(--f-mono); letter-spacing: -.02em; }
+.total small { font-size: 14px; color: var(--muted); }
+.rows { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.rows li { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; }
+.rows li span:last-child { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.meter { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.meter i { display: block; height: 100%; width: 68%; background: var(--teal); }
+.people { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.av { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font: 600 13px/1 var(--f-body); color: var(--surface); }
+
+/* Theme sheet */
+.sheet { border-top: 2px dashed var(--line); padding-top: 28px; display: grid; gap: 24px; }
+.sheet > header { display: grid; gap: 6px; }
+.sheet h2 { font-size: 28px; font-weight: 800; letter-spacing: -.02em; }
+.sheet > header p { margin: 0; color: var(--ink-soft); max-width: 62ch; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+.sw { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
+.sw div { height: 52px; }
+.sw p { margin: 0; padding: 8px 10px; display: grid; gap: 2px; font-size: 13px; font-weight: 500; }
+.sw p span { font: 400 11px/1.2 var(--f-mono); color: var(--muted); }
+.evsw { display: flex; gap: 6px; flex-wrap: wrap; }
+.evsw span { width: 28px; height: 28px; border-radius: 4px; }
+.spec { display: grid; gap: 4px; }
+.spec .big { font: 800 40px/1 var(--f-display); letter-spacing: -.03em; }
+.spec .body { font: 400 15px/1.5 var(--f-body); color: var(--ink-soft); }
+.spec .data { font: 500 18px/1 var(--f-mono); }
+.voice { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.voice li { display: grid; gap: 2px; }
+.voice b { font-family: var(--f-display); font-size: 18px; font-weight: 700; }
+.voice span { font-size: 13px; color: var(--muted); }
+
+.postcard {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px;
+  display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px;
+}
+.postcard .img {
+  aspect-ratio: 4 / 3; max-width: 100%; border-radius: 3px;
+  background:
+    radial-gradient(circle at 72% 30%, #F4C26B 0 12%, transparent 13%),
+    linear-gradient(180deg, #F3B48A 0%, #E8785A 45%, #2F5D62 46%, #24484C 100%);
+}
+.postcard .side { border-left: 1px dashed var(--line); padding-left: 14px; display: grid; gap: 8px; align-content: start; position: relative; }
+.stamp {
+  justify-self: end; border: 2px solid var(--orange); color: var(--orange); border-radius: 3px;
+  font: 500 10px/1.2 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; padding: 5px 6px; text-align: center;
+  transform: rotate(4deg);
+}
+.postcard h3 { font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
+.postcard p { margin: 0; font-size: 13px; color: var(--ink-soft); }
+
+@media (max-width: 1000px) {
+  .main { grid-template-columns: 1fr; }
+  .rail { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .grid3 { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .trip { grid-template-columns: 1fr; }
+  .week { grid-template-columns: 1fr; }
+  .day { border-left: 0; border-top: 1px solid var(--line); min-height: 0; }
+  .day:first-child { border-top: 0; }
+  .day-head { grid-template-columns: auto auto 1fr; align-items: baseline; gap: 10px; }
+  .postcard { grid-template-columns: 1fr; }
+  .postcard .side { border-left: 0; border-top: 1px dashed var(--line); padding: 12px 0 0; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="bar">
+    <div class="logo">kino<i aria-hidden="true"></i></div>
+    <nav class="nav" aria-label="Main">
+      <a href="#" aria-current="page">Calendars</a>
+      <a href="#">Hot Trips</a>
+      <a href="#">Cheap flights</a>
+    </nav>
+    <div class="spacer"></div>
+    <button class="toggle" id="theme-toggle" type="button">Switch to dark</button>
+  </header>
+
+  <section class="trip" aria-label="Trip">
+    <div>
+      <span class="label">Shared calendar · 3 travellers</span>
+      <h1>Lisbon &amp; Porto</h1>
+      <p>Seven days of pastéis, trams and port. Example trip to preview the theme.</p>
+    </div>
+    <div class="pass" aria-label="Trip summary">
+      <div>
+        <span class="label">Route</span>
+        <div class="route">LHR <span>→</span> LIS <span>→</span> OPO</div>
+      </div>
+      <div class="stub">
+        <span class="label">Dates</span>
+        <div class="val">12–18 MAY</div>
+        <span class="label">Day 3 of 7</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="main">
+    <section aria-label="Week view">
+      <div class="toolbar">
+        <h2>Week of 12 May</h2>
+        <div class="spacer"></div>
+        <div class="seg" role="group" aria-label="View">
+          <button type="button" aria-pressed="false">Month</button>
+          <button type="button" aria-pressed="true">Week</button>
+          <button type="button" aria-pressed="false">List</button>
+        </div>
+        <button class="btn" type="button">Add event</button>
+      </div>
+
+      <div class="week">
+        <div class="day">
+          <div class="day-head"><span class="label">Wed</span><span class="num">12</span><span class="day-title">Arrive Lisbon</span></div>
+          <div class="events">
+            <div class="ev flight" style="--c: var(--ev-slate)"><div class="t"><span>09:40</span><span>2h 45m</span></div><div class="b"><span class="title">TP1351 LHR → LIS</span><span class="where">Seat 14C · bag dropped</span></div></div>
+            <div class="ev" style="--c: var(--ev-teal)"><div class="t"><span>15:00</span><span>CHECK-IN</span></div><div class="b"><span class="title">Casa do Alfama</span><span class="where">Rua de São Miguel 18</span></div></div>
+            <div class="ev" style="--c: var(--ev-terracotta)"><div class="t"><span>20:30</span><span>€ 64</span></div><div class="b"><span class="title">Dinner at Taberna da Rua das Flores</span><span class="where">Chiado</span></div></div>
+          </div>
+        </div>
+        <div class="day">
+          <div class="day-head"><span class="label">Thu</span><span class="num">13</span><span class="day-title">Belém</span></div>
+          <div class="events">
+            <div class="ev" style="--c: var(--ev-ochre)"><div class="t"><span>10:00</span><span>€ 12</span></div><div class="b"><span class="title">Jerónimos Monastery</span><span class="where">Tram 15E from Praça da Figueira</span></div></div>
+            <div class="ev" style="--c: var(--ev-terracotta)"><div class="t"><span>12:30</span><span>€ 9</span></div><div class="b"><span class="title">Pastéis de Belém</span><span class="where">Rua de Belém 84</span></div></div>
+          </div>
+        </div>
+        <div class="day today">
+          <div class="day-head"><span class="label">Fri · Today</span><span class="num">14</span><span class="day-title">Sintra</span></div>
+          <div class="events">
+            <div class="ev" style="--c: var(--ev-slate)"><div class="t"><span>08:41</span><span>€ 4.80</span></div><div class="b"><span class="title">Train to Sintra</span><span class="where">Rossio station, platform 3</span></div></div>
+            <div class="ev" style="--c: var(--ev-sage)"><div class="t"><span>10:30</span><span>€ 20</span></div><div class="b"><span class="title">Pena Palace</span><span class="where">Timed entry, 10:30</span></div></div>
+            <div class="ev" style="--c: var(--ev-plum)"><div class="t"><span>21:30</span><span>€ 35</span></div><div class="b"><span class="title">Fado at Tasca do Chico</span><span class="where">Bairro Alto</span></div></div>
+          </div>
+        </div>
+        <div class="day">
+          <div class="day-head"><span class="label">Sat</span><span class="num">15</span><span class="day-title"></span></div>
+          <div class="empty">Nothing planned. The best kind of day.</div>
+        </div>
+        <div class="day">
+          <div class="day-head"><span class="label">Sun</span><span class="num">16</span><span class="day-title">To Porto</span></div>
+          <div class="events">
+            <div class="ev" style="--c: var(--ev-slate)"><div class="t"><span>11:09</span><span>2h 49m</span></div><div class="b"><span class="title">Alfa Pendular to Porto</span><span class="where">Santa Apolónia → Campanhã</span></div></div>
+            <div class="ev" style="--c: var(--ev-teal)"><div class="t"><span>15:00</span><span>CHECK-IN</span></div><div class="b"><span class="title">Ribeira flat</span><span class="where">Cais da Ribeira 31</span></div></div>
+          </div>
+        </div>
+        <div class="day">
+          <div class="day-head"><span class="label">Mon</span><span class="num">17</span><span class="day-title">Douro</span></div>
+          <div class="events">
+            <div class="ev" style="--c: var(--ev-plum)"><div class="t"><span>16:00</span><span>€ 18</span></div><div class="b"><span class="title">Port tasting at Graham's</span><span class="where">Vila Nova de Gaia</span></div></div>
+          </div>
+        </div>
+        <div class="day">
+          <div class="day-head"><span class="label">Tue</span><span class="num">18</span><span class="day-title">Home</span></div>
+          <div class="events">
+            <div class="ev flight" style="--c: var(--ev-slate)"><div class="t"><span>18:25</span><span>2h 15m</span></div><div class="b"><span class="title">FR8341 OPO → STN</span><span class="where">Online check-in opens Sun</span></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="rail" aria-label="Trip details">
+      <div class="panel">
+        <span class="label">Expenses</span>
+        <div class="total">€ 1,284<small> of € 1,900</small></div>
+        <div class="meter" aria-hidden="true"><i></i></div>
+        <ul class="rows">
+          <li><span>Stays</span><span>€ 642</span></li>
+          <li><span>Transport</span><span>€ 318</span></li>
+          <li><span>Food &amp; drink</span><span>€ 211</span></li>
+          <li><span>Tickets</span><span>€ 113</span></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <span class="label">Travellers</span>
+        <div class="people">
+          <span class="av" style="background: var(--ev-terracotta)">AT</span>
+          <span class="av" style="background: var(--ev-teal)">LM</span>
+          <span class="av" style="background: var(--ev-ochre)">SR</span>
+        </div>
+        <p style="margin:0; font-size:13px; color:var(--ink-soft)">Leo added "Port tasting at Graham's" 2 hours ago.</p>
+      </div>
+    </aside>
+  </div>
+
+  <section class="sheet" aria-label="Theme sheet">
+    <header>
+      <span class="label">Theme sheet</span>
+      <h2>Boarding pass</h2>
+      <p>Warm paper, near-black ink, one departure-board orange. Character comes from the monospaced times, routes and prices, and from the perforated ticket edges.</p>
+    </header>
+
+    <div class="swatches">
+      <div class="sw"><div style="background: var(--paper)"></div><p>Paper<span>#F7F4EE · #16181D</span></p></div>
+      <div class="sw"><div style="background: var(--ink)"></div><p>Ink<span>#1C1B19 · #F1EEE8</span></p></div>
+      <div class="sw"><div style="background: var(--orange)"></div><p>Departure orange<span>#E8542F · #F06A45</span></p></div>
+      <div class="sw"><div style="background: var(--teal)"></div><p>Harbour teal<span>#2F5D62 · #7FB3B8</span></p></div>
+      <div class="sw"><div style="background: var(--line)"></div><p>Line<span>#E9E4DA · #2C3039</span></p></div>
+      <div class="sw"><div style="background: var(--muted)"></div><p>Muted<span>#8A857C · #8C877F</span></p></div>
+    </div>
+
+    <div class="grid3">
+      <div class="panel">
+        <span class="label">Type</span>
+        <div class="spec"><span class="big">Lisbon</span><span class="label">Bricolage Grotesque · headings</span></div>
+        <div class="spec"><span class="body">Seven days of pastéis, trams and port.</span><span class="label">Geist · body</span></div>
+        <div class="spec"><span class="data">09:40 · LIS → OPO · € 64</span><span class="label">Geist Mono · times, routes, money</span></div>
+      </div>
+      <div class="panel">
+        <span class="label">Voice</span>
+        <ul class="voice">
+          <li><b>Nothing planned. The best kind of day.</b><span>Empty day</span></li>
+          <li><b>Wheels up. Add your first event.</b><span>New calendar</span></li>
+          <li><b>That didn't land. Try again?</b><span>Error</span></li>
+        </ul>
+        <span class="label">Event colours</span>
+        <div class="evsw" aria-label="Event colour palette">
+          <span style="background: var(--ev-terracotta)" title="Terracotta"></span>
+          <span style="background: var(--ev-teal)" title="Teal"></span>
+          <span style="background: var(--ev-ochre)" title="Ochre"></span>
+          <span style="background: var(--ev-sage)" title="Sage"></span>
+          <span style="background: var(--ev-plum)" title="Plum"></span>
+          <span style="background: var(--ev-slate)" title="Slate"></span>
+        </div>
+      </div>
+      <div class="postcard" aria-label="Hot Trips card">
+        <div class="img" role="img" aria-label="Illustrated sunset over the sea"></div>
+        <div class="side">
+          <span class="stamp">Hot<br>May</span>
+          <span class="label">Hot Trips</span>
+          <h3>Seville</h3>
+          <p>From <span class="mono">£ 89</span> return · 27°C · orange blossom season.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  function isDark() {
+    var t = root.getAttribute('data-theme');
+    if (t) return t === 'dark';
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  function label() { btn.textContent = isDark() ? 'Switch to light' : 'Switch to dark'; }
+  btn.addEventListener('click', function () {
+    root.setAttribute('data-theme', isDark() ? 'light' : 'dark');
+    label();
+  });
+  label();
+})();
+</script>

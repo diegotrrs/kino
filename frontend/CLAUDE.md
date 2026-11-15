@@ -65,12 +65,14 @@ The project uses **next-intl** for translations.
 
 **Key files:**
 
-| File | Purpose |
-| --- | --- |
-| `i18n/routing.ts` | Locale list and default locale |
-| `i18n/request.ts` | Resolves locale from `locale` cookie per request, loads message file |
-| `lib/locale.ts` | `detectLocale()` — parses `Accept-Language` header to pick the best locale |
-| `messages/<locale>.json` | Translation strings for each locale (`en`, `es`, `pt`, `de`) |
+| File                     | Purpose                                                                    |
+| ------------------------ | -------------------------------------------------------------------------- |
+| `i18n/routing.ts`        | Locale list and default locale                                             |
+| `i18n/request.ts`        | Resolves locale from `locale` cookie per request, loads message file       |
+| `lib/locale.ts`          | `detectLocale()` — parses `Accept-Language` header to pick the best locale |
+| `messages/<locale>.json` | Translation strings for each locale (`en`, `es`, `pt`, `de`)               |
+
+Translations must be considered for every feature.
 
 **How to use translations:**
 

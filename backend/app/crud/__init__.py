@@ -19,6 +19,14 @@ from .calendars import (
     set_calendar_favourite,
     update_calendar,
 )
+from .checklist import (
+    count_checklist_items,
+    create_checklist_item,
+    delete_checklist_item,
+    get_checklist_items,
+    reorder_checklist_items,
+    update_checklist_item,
+)
 from .day_names import (
     delete_day_name,
     get_day_names,
@@ -56,6 +64,12 @@ from .users import (
 )
 
 __all__ = [
+    "count_checklist_items",
+    "create_checklist_item",
+    "delete_checklist_item",
+    "get_checklist_items",
+    "reorder_checklist_items",
+    "update_checklist_item",
     "delete_day_name",
     "get_day_names",
     "set_day_name",

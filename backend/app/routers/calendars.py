@@ -20,6 +20,13 @@ from ..schemas.calendar import (
     CalendarUserAdd,
     DeletedCalendarResponse,
 )
+from ..schemas.checklist import (
+    MAX_CHECKLIST_ITEMS,
+    ChecklistItemCreate,
+    ChecklistItemResponse,
+    ChecklistItemUpdate,
+    ChecklistOrder,
+)
 from ..schemas.day_name import DayNameResponse, DayNameSet
 
 logger = logging.getLogger(__name__)
@@ -304,3 +311,74 @@ def delete_day_name(
         raise HTTPException(status_code=403, detail="Not a member of this calendar")
     if not crud.delete_day_name(db, calendar_id, day):
         raise HTTPException(status_code=404, detail="Day has no name")
+
+
+def _require_member(db: connection, calendar_uuid: str, user_id: int) -> int:
+    """Resolve the calendar and check the user is a member, returning the calendar id."""
+    calendar_id = _get_id_by_uuid(db, calendar_uuid)
+    if crud.get_user_role(db, calendar_id, user_id) is None:
+        raise HTTPException(status_code=403, detail="Not a member of this calendar")
+    return calendar_id
+
+
+# The checklist is members-only, even on public calendars: it can hold private to-dos
+@router.get("/{calendar_uuid}/checklist", response_model=list[ChecklistItemResponse])
+def list_checklist_items(
+    calendar_uuid: str,
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    calendar_id = _require_member(db, calendar_uuid, current_user["id"])
+    return crud.get_checklist_items(db, calendar_id)
+
+
+@router.post("/{calendar_uuid}/checklist", response_model=ChecklistItemResponse, status_code=201)
+def create_checklist_item(
+    calendar_uuid: str,
+    body: ChecklistItemCreate,
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    calendar_id = _require_member(db, calendar_uuid, current_user["id"])
+    if crud.count_checklist_items(db, calendar_id) >= MAX_CHECKLIST_ITEMS:
+        raise HTTPException(status_code=409, detail=f"A checklist can have at most {MAX_CHECKLIST_ITEMS} items")
+    return crud.create_checklist_item(db, calendar_id, body.text)
+
+
+@router.patch("/{calendar_uuid}/checklist/{item_id}", response_model=ChecklistItemResponse)
+def update_checklist_item(
+    calendar_uuid: str,
+    item_id: int,
+    body: ChecklistItemUpdate,
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    calendar_id = _require_member(db, calendar_uuid, current_user["id"])
+    item = crud.update_checklist_item(db, calendar_id, item_id, body.model_dump(exclude_unset=True))
+    if item is None:
+        raise HTTPException(status_code=404, detail="Checklist item not found")
+    return item
+
+
+@router.delete("/{calendar_uuid}/checklist/{item_id}", status_code=204)
+def delete_checklist_item(
+    calendar_uuid: str,
+    item_id: int,
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    calendar_id = _require_member(db, calendar_uuid, current_user["id"])
+    if not crud.delete_checklist_item(db, calendar_id, item_id):
+        raise HTTPException(status_code=404, detail="Checklist item not found")
+
+
+@router.put("/{calendar_uuid}/checklist/order", status_code=204)
+def reorder_checklist_items(
+    calendar_uuid: str,
+    body: ChecklistOrder,
+    db: connection = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    calendar_id = _require_member(db, calendar_uuid, current_user["id"])
+    if not crud.reorder_checklist_items(db, calendar_id, body.item_ids):
+        raise HTTPException(status_code=400, detail="item_ids must list every item of this checklist exactly once")
