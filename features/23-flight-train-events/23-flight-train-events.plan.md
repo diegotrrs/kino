@@ -187,19 +187,19 @@ In `EventForm`:
 
 **Estimated scope:** M
 
-#### Task 6: Changing the travel mode
+#### Task 6: Changing the travel mode ✅
 
 **Description:**
 - **Backend:** `set_travel_details` handles a mode change. Setting the mode to `NULL` deletes the row. Switching between flight and train keeps the shared fields (origin, destination, seat, booking reference) and clears the ones that don't apply.
 - **Frontend:** the form keeps the fields you've typed while you switch between modes before saving, but only saves the ones for the chosen mode. Choosing None sends `travel_mode: null`.
 
 **Acceptance criteria:**
-- [ ] Changing a flight to None and saving removes its details; after a reload it's an ordinary event everywhere (no strip, no card, the title back in the month cell).
-- [ ] Changing a flight to a train keeps the route, seat and reference and drops the terminal, gate and number.
+- [x] Changing a flight to None and saving removes its details; after a reload it's an ordinary event everywhere (no strip, no card, the title back in the month cell).
+- [x] Changing a flight to a train keeps the route, seat and reference and drops the terminal, gate and number.
 
 **Verification:**
-- [ ] `make check`, with the new integration tests (`NULL` deletes the row, flight → train keeps and drops the right columns)
-- [ ] `npx vitest run lib/travel` for the payload per mode; a temporary browser test of switching and reloading
+- [x] `make check`, with the new integration tests (`NULL` deletes the row, flight → train keeps and drops the right columns)
+- [x] `npx vitest run lib/travel` for the payload per mode; a temporary browser test of switching and reloading
 
 **Dependencies:** Tasks 2 and 5
 

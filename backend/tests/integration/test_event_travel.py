@@ -126,3 +126,47 @@ class TestTravelWithLinksAndExpenses:
         assert len(listed[0]["links"]) == 2
         assert len(listed[0]["expenses"]) == 2
         assert listed[0]["travel"]["gate"] == "B32"
+
+
+def _details_row(db_conn, event_id: int) -> dict | None:
+    with db_conn.cursor() as cur:
+        cur.execute("SELECT * FROM event_travel_details WHERE event_id = %s", (event_id,))
+        return cur.fetchone()
+
+
+class TestChangingTheTravelMode:
+    def test_back_to_an_ordinary_event_deletes_the_details(self, client, db_conn, calendar, owner_headers):
+        created = _create(client, calendar, owner_headers, travel_mode="flight", travel=FLIGHT)
+
+        res = client.patch(f"/api/events/{created['id']}", json={"travel_mode": None}, headers=owner_headers)
+
+        assert res.json()["travel_mode"] is None
+        assert res.json()["travel"] is None
+        assert _details_row(db_conn, created["id"]) is None
+
+    def test_flight_to_train_keeps_shared_fields_and_drops_flight_only_ones(self, client, calendar, owner_headers):
+        created = _create(client, calendar, owner_headers, travel_mode="flight", travel=FLIGHT)
+
+        res = client.patch(f"/api/events/{created['id']}", json={"travel_mode": "train"}, headers=owner_headers)
+
+        assert res.json()["travel_mode"] == "train"
+        assert res.json()["travel"] == EMPTY_TRAVEL | {
+            "origin": "LHR", "destination": "FCO", "seat": "14A", "booking_reference": "K7XQ2M",
+        }
+
+    def test_train_to_flight_drops_the_coach(self, client, calendar, owner_headers):
+        created = _create(client, calendar, owner_headers, travel_mode="train", travel=TRAIN)
+
+        res = client.patch(f"/api/events/{created['id']}", json={"travel_mode": "flight"}, headers=owner_headers)
+
+        assert res.json()["travel"]["coach"] is None
+        assert res.json()["travel"]["seat"] == "61"
+
+    def test_making_an_ordinary_event_a_flight_creates_empty_details(self, client, db_conn, calendar, owner_headers):
+        created = _create(client, calendar, owner_headers)
+
+        res = client.patch(f"/api/events/{created['id']}", json={"travel_mode": "flight"}, headers=owner_headers)
+
+        assert res.json()["travel_mode"] == "flight"
+        assert res.json()["travel"] == EMPTY_TRAVEL
+        assert _details_row(db_conn, created["id"]) is not None

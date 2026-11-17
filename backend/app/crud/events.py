@@ -1,6 +1,6 @@
 from psycopg2.extensions import connection
 
-from ..schemas.event import EventCreate, EventUpdate
+from ..schemas.event import TRAVEL_FIELDS_BY_MODE, EventCreate, EventUpdate
 
 # Links, expenses and travel details are each read in their own subquery. Joining links and expenses
 # into one GROUP BY repeated every link once per expense and every expense once per link.
@@ -84,6 +84,19 @@ def set_travel_details(db: connection, event_id: int, travel_mode: str | None, t
                 seat = EXCLUDED.seat, booking_reference = EXCLUDED.booking_reference, updated_at = NOW()
             """,
             values | {"event_id": event_id},
+        )
+
+
+def keep_travel_details_for_mode(db: connection, event_id: int, travel_mode: str) -> None:
+    """After a mode change without new details: make sure the row exists, and clear the fields the new
+    mode doesn't have (a train keeps the route, seat and reference but not the gate). The caller commits."""
+    cleared = [column for column in TRAVEL_COLUMNS if column not in TRAVEL_FIELDS_BY_MODE[travel_mode]]
+    set_clause = ", ".join([f"{column} = NULL" for column in cleared] + ["updated_at = NOW()"])
+    with db.cursor() as cur:
+        cur.execute(
+            f"INSERT INTO event_travel_details (event_id) VALUES (%s) "
+            f"ON CONFLICT (event_id) DO UPDATE SET {set_clause}",
+            (event_id,),
         )
 
 
@@ -174,11 +187,16 @@ def update_event(db: connection, event_id: int, event: EventUpdate) -> dict | No
             " WHERE id = %(id)s RETURNING id",
             update_data,
         )
-    # Only a request that names the travel fields changes them; a date-only drag leaves them alone
-    if "travel_mode" in update_data and update_data["travel_mode"] is None:
-        set_travel_details(db, event_id, None, None)
-    elif "travel" in event.model_fields_set:
-        set_travel_details(db, event_id, update_data["travel_mode"], travel)
+    # Only a request that names the travel mode changes the details; a date-only drag leaves them alone.
+    # (The schema refuses travel without a travel_mode, so travel alone never gets here.)
+    if "travel_mode" in update_data:
+        travel_mode = update_data["travel_mode"]
+        if travel_mode is None:
+            set_travel_details(db, event_id, None, None)
+        elif "travel" in event.model_fields_set:
+            set_travel_details(db, event_id, travel_mode, travel)
+        else:
+            keep_travel_details_for_mode(db, event_id, travel_mode)
     db.commit()
     return get_event(db, event_id)
 
