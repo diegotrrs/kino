@@ -347,6 +347,12 @@
       "flight": "Flug",
       "trainTo": "Zug nach {destination}",
       "train": "Zug"
+    },
+    "card": {
+      "flightTicket": "Flugticket",
+      "trainTicket": "Zugticket",
+      "copy": "Kopieren",
+      "copyReference": "Buchungsnummer kopieren"
     }
   }
 }

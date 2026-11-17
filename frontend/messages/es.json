@@ -347,6 +347,12 @@
       "flight": "Vuelo",
       "trainTo": "Tren a {destination}",
       "train": "Tren"
+    },
+    "card": {
+      "flightTicket": "Billete de avión",
+      "trainTicket": "Billete de tren",
+      "copy": "Copiar",
+      "copyReference": "Copiar código de reserva"
     }
   }
 }

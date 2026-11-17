@@ -1,4 +1,5 @@
 'use client';
+import { useCopyToClipboard }           from '@/hooks/use-copy-to-clipboard';
 import {
   getRouteLabel,
   getTravelChips,
@@ -14,15 +15,9 @@ import {
   TrainFront
 }                                       from 'lucide-react';
 import { useTranslations }              from 'next-intl';
-import {
-  type ReactElement,
-  useEffect,
-  useState
-}                                       from 'react';
+import type { ReactElement }            from 'react';
 
 const CHIP = 'inline-flex items-center gap-1 rounded border bg-card px-1.5 py-0.5 font-mono text-[0.7rem] leading-none tabular-nums';
-
-const COPIED_FOR_MS = 2000;
 
 export const TravelModeIcon = ({ travelMode, className }: { travelMode: TravelMode; className?: string }): ReactElement =>
   travelMode === 'flight'
@@ -40,25 +35,12 @@ const ChipValue = ({ chip }: { chip: TravelChip }): ReactElement => {
 // Sits above the row's full-size open button (z-10), so tapping it copies instead of opening the event
 const CopyReferenceChip = ({ chip }: { chip: TravelChip }): ReactElement => {
   const t = useTranslations('travel');
-  const [isCopied, setIsCopied] = useState(false);
-
-  useEffect(() => {
-    if (!isCopied) {
-      return;
-    }
-    const timer = setTimeout(() => setIsCopied(false), COPIED_FOR_MS);
-    return () => clearTimeout(timer);
-  }, [isCopied]);
-
-  const handleCopy = async (): Promise<void> => {
-    await navigator.clipboard.writeText(chip.value);
-    setIsCopied(true);
-  };
+  const { isCopied, copy } = useCopyToClipboard();
 
   return (
     <button
       type='button'
-      onClick={() => void handleCopy()}
+      onClick={() => void copy(chip.value)}
       aria-label={t('copyReference', { reference: chip.value })}
       className={cn(
         CHIP,

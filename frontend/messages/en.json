@@ -347,6 +347,12 @@
       "flight": "Flight",
       "trainTo": "Train to {destination}",
       "train": "Train"
+    },
+    "card": {
+      "flightTicket": "Flight ticket",
+      "trainTicket": "Train ticket",
+      "copy": "Copy",
+      "copyReference": "Copy booking reference"
     }
   }
 }

@@ -164,7 +164,7 @@ In `EventForm`:
 
 **Estimated scope:** S
 
-#### Task 5: Boarding-pass card (A) at the top of the event dialog
+#### Task 5: Boarding-pass card (A) at the top of the event dialog ✅
 
 **Description:** `components/events/travel-card.tsx`, shown at the top of `EventForm` in edit and read-only modes:
 - **Desktop / `sm`+ (prototype A):** big origin → destination; a departs / terminal / gate row (trains: departs / coach); a perforated stub with the seat and booking reference and a Copy button.
@@ -172,14 +172,14 @@ In `EventForm`:
 - Fields with no value are left out; with only a route it's a slim header. The accent is the event's colour. Departure and arrival times come from the event's start and end.
 
 **Acceptance criteria:**
-- [ ] Opening a flight or train shows the card above the form fields, at both desktop width and 390px. Ordinary events have no card.
-- [ ] Copy copies the reference; visitors see the card without the reference or a Copy button.
-- [ ] Missing fields don't leave gaps; the card works in light and dark themes.
+- [x] Opening a flight or train shows the card above the form fields, at both desktop width and 390px. Ordinary events have no card.
+- [x] Copy copies the reference; visitors see the card without the reference or a Copy button.
+- [x] Missing fields don't leave gaps; the card works in light and dark themes.
 
 **Verification:**
-- [ ] Build and lint
-- [ ] A temporary browser test with screenshots at 1280 and 390px, in light and dark, plus copying to the clipboard
-- [ ] Compare the screenshots against prototypes A and E
+- [x] Build and lint
+- [x] A temporary browser test with screenshots at 1280 and 390px, in light and dark, plus copying to the clipboard
+- [x] Compare the screenshots against prototypes A and E
 
 **Dependencies:** Task 2
 

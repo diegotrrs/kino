@@ -347,6 +347,12 @@
       "flight": "Voo",
       "trainTo": "Comboio para {destination}",
       "train": "Comboio"
+    },
+    "card": {
+      "flightTicket": "Bilhete de avião",
+      "trainTicket": "Bilhete de comboio",
+      "copy": "Copiar",
+      "copyReference": "Copiar referência da reserva"
     }
   }
 }

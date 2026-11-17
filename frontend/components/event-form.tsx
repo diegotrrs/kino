@@ -27,6 +27,7 @@ import {
   getSuggestedTitle,
   getTravelFormValues,
   getTravelPayload,
+  toTravelDetails,
   type TravelFormValues
 }                               from '@/lib/travel';
 import type {
@@ -53,6 +54,7 @@ import { z }                    from 'zod';
 import { EventDateRangePicker } from './events/event-date-range-picker';
 import { EventExpenses }        from './events/event-expenses';
 import { EventLinks }           from './events/event-links';
+import { TravelCard }           from './events/travel-card';
 import { TravelFields }         from './events/travel-fields';
 import {
   PendingExpenses,
@@ -209,7 +211,8 @@ export const EventForm = (props: EventFormProps) => {
   };
   // The local copy mirrors what the API will store, so the calendar shows it before a reload
   const getLocalTravel = (): TravelDetails | null =>
-    travelMode === null ? null : { ...getTravelFormValues(null), ...travelPayload.travel } as TravelDetails;
+    travelMode === null ? null : toTravelDetails(travelPayload.travel);
+  const localTravel = getLocalTravel();
 
   const handleCancel = () => {
     if (mode === 'edit' && isDrag && editOldEvent) {
@@ -419,6 +422,17 @@ export const EventForm = (props: EventFormProps) => {
             readOnly={isReadOnly}
             className={cn('w-full resize-none bg-transparent text-sm outline-none placeholder:text-muted-foreground/60', isReadOnly && 'cursor-default')}
           />
+
+          {/* The boarding pass shows what the form holds right now, so it updates while editing */}
+          {mode === 'edit' && travelMode !== null && localTravel && start && end && (
+            <TravelCard
+              travelMode={travelMode}
+              travel={localTravel}
+              departs={formatTime(start)}
+              arrives={formatTime(end)}
+              color={color}
+            />
+          )}
         </div>
 
         <div aria-hidden='true' className='border-t-2 border-dashed' />

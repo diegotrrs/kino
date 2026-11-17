@@ -4,9 +4,11 @@ import {
   getCalendarCellLabel,
   getRouteLabel,
   getSuggestedTitle,
+  getTravelCardDetails,
   getTravelChips,
   getTravelFormValues,
   getTravelPayload,
+  toTravelDetails,
 } from './travel';
 import { buildFlightDetails } from './travel.test.data';
 
@@ -142,5 +144,36 @@ describe('getSuggestedTitle', () => {
 
   it('should suggest nothing for an ordinary event', () => {
     expect(getSuggestedTitle(null, { destination: 'FCO' })).toBeNull();
+  });
+});
+
+describe('getTravelCardDetails', () => {
+  it('should give a flight\'s terminal and gate for the card\'s middle row', () => {
+    expect(getTravelCardDetails('flight', buildFlightDetails())).toEqual([
+      { field: 'terminal', value: '5' },
+      { field: 'gate', value: 'B32' },
+    ]);
+  });
+
+  it('should give a train\'s coach', () => {
+    expect(getTravelCardDetails('train', buildFlightDetails({ coach: '7' }))).toEqual([{ field: 'coach', value: '7' }]);
+  });
+
+  it('should leave out details that are not filled in', () => {
+    expect(getTravelCardDetails('flight', buildFlightDetails({ terminal: null }))).toEqual([{ field: 'gate', value: 'B32' }]);
+  });
+});
+
+describe('toTravelDetails', () => {
+  it('should turn what the form sends into stored details, with every missing field as null', () => {
+    const details = toTravelDetails({ origin: 'MAD', destination: 'BCN' });
+
+    expect(details).toEqual({
+      origin: 'MAD', destination: 'BCN', number: null, terminal: null, gate: null, coach: null, seat: null, booking_reference: null,
+    });
+  });
+
+  it('should give all-null details when nothing was filled in', () => {
+    expect(Object.values(toTravelDetails(undefined)).every((value) => value === null)).toBe(true);
   });
 });

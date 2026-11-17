@@ -103,3 +103,19 @@ export const getSuggestedTitle = (
   }
   return { key: travelMode, values: {} };
 };
+
+// The card shows the route, number, seat and reference in their own places; this is its middle row
+const CARD_DETAIL_FIELDS: Record<TravelMode, readonly TravelField[]> = {
+  flight: ['terminal', 'gate'],
+  train: ['coach'],
+};
+
+export const getTravelCardDetails = (travelMode: TravelMode, travel: TravelDetails): TravelChip[] =>
+  CARD_DETAIL_FIELDS[travelMode].flatMap((field) => {
+    const value = travel[field];
+    return value ? [{ field, value }] : [];
+  });
+
+// The same shape the API returns: unfilled fields are null, never empty strings
+export const toTravelDetails = (travel: Partial<TravelDetails> | undefined): TravelDetails =>
+  Object.fromEntries(ALL_TRAVEL_FIELDS.map((field) => [field, travel?.[field] || null])) as TravelDetails;
