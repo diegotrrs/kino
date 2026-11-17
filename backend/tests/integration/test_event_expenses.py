@@ -163,3 +163,25 @@ class TestExpensesInEventResponse:
         assert len(expenses) == 2
         labels = {e["label"] for e in expenses}
         assert labels == {"Coffee", "Ticket"}
+
+
+class TestExpensesNextToLinks:
+    """Links and expenses used to be joined in one GROUP BY, so each repeated once per row of the other."""
+
+    def test_an_event_with_links_lists_each_expense_once(self, client, calendar, event, owner_headers):
+        for url in ["https://example.com/a", "https://example.com/b"]:
+            client.post(f"/api/events/{event['id']}/links", json={"url": url}, headers=owner_headers)
+        for label in ["Museum", "Taxi"]:
+            client.post(
+                f"/api/events/{event['id']}/expenses",
+                json={"label": label, "amount": 10, "currency": "EUR"},
+                headers=owner_headers,
+            )
+
+        fetched = client.get(f"/api/events/{event['id']}", headers=owner_headers).json()
+        listed = client.get(f"/api/events/?calendar_uuid={calendar['uuid']}", headers=owner_headers).json()[0]
+        all_events = client.get("/api/events/", headers=owner_headers).json()[0]
+
+        for found in (fetched, listed, all_events):
+            assert [expense["label"] for expense in found["expenses"]] == ["Museum", "Taxi"]
+            assert [link["url"] for link in found["links"]] == ["https://example.com/a", "https://example.com/b"]

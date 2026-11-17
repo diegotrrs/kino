@@ -2,33 +2,43 @@ from psycopg2.extensions import connection
 
 from ..schemas.event import EventCreate, EventUpdate
 
+# Links and expenses are each read in their own subquery. Joining links and expenses
+# into one GROUP BY repeated every link once per expense and every expense once per link.
 _LINKS_AGG = """
     COALESCE(
-        json_agg(
-            json_build_object(
-                'id', el.id,
-                'event_id', el.event_id,
-                'url', el.url,
-                'title', el.title,
-                'created_at', el.created_at
-            ) ORDER BY el.id
-        ) FILTER (WHERE el.id IS NOT NULL),
+        (
+            SELECT json_agg(
+                json_build_object(
+                    'id', el.id,
+                    'event_id', el.event_id,
+                    'url', el.url,
+                    'title', el.title,
+                    'created_at', el.created_at
+                ) ORDER BY el.id
+            )
+            FROM event_links el
+            WHERE el.event_id = e.id
+        ),
         '[]'
     ) AS links
 """
 
 _EXPENSES_AGG = """
     COALESCE(
-        json_agg(
-            json_build_object(
-                'id',         ec.id,
-                'event_id',   ec.event_id,
-                'label',      ec.label,
-                'amount',     ec.amount,
-                'currency',   ec.currency,
-                'created_at', ec.created_at
-            ) ORDER BY ec.id
-        ) FILTER (WHERE ec.id IS NOT NULL),
+        (
+            SELECT json_agg(
+                json_build_object(
+                    'id',         ec.id,
+                    'event_id',   ec.event_id,
+                    'label',      ec.label,
+                    'amount',     ec.amount,
+                    'currency',   ec.currency,
+                    'created_at', ec.created_at
+                ) ORDER BY ec.id
+            )
+            FROM event_expenses ec
+            WHERE ec.event_id = e.id
+        ),
         '[]'
     ) AS expenses
 """
@@ -41,10 +51,7 @@ def get_event(db: connection, event_id: int) -> dict | None:
             SELECT e.*, c.uuid AS calendar_uuid, {_LINKS_AGG}, {_EXPENSES_AGG}
             FROM events e
             JOIN calendars c ON c.id = e.calendar_id
-            LEFT JOIN event_links el ON el.event_id = e.id
-            LEFT JOIN event_expenses ec ON ec.event_id = e.id
             WHERE e.id = %s
-            GROUP BY e.id, c.uuid
             """,
             (event_id,),
         )
@@ -60,9 +67,6 @@ def get_events(db: connection, user_id: int, skip: int = 0, limit: int = 100) ->
             FROM events e
             JOIN calendars c ON c.id = e.calendar_id
             JOIN calendar_users cu ON cu.calendar_id = e.calendar_id AND cu.user_id = %s
-            LEFT JOIN event_links el ON el.event_id = e.id
-            LEFT JOIN event_expenses ec ON ec.event_id = e.id
-            GROUP BY e.id, c.uuid
             ORDER BY e.date, e.start_time
             OFFSET %s LIMIT %s
             """,
@@ -80,10 +84,7 @@ def get_events_by_calendar(
             SELECT e.*, c.uuid AS calendar_uuid, {_LINKS_AGG}, {_EXPENSES_AGG}
             FROM events e
             JOIN calendars c ON c.id = e.calendar_id
-            LEFT JOIN event_links el ON el.event_id = e.id
-            LEFT JOIN event_expenses ec ON ec.event_id = e.id
             WHERE e.calendar_id = %s
-            GROUP BY e.id, c.uuid
             ORDER BY e.date, e.start_time
             OFFSET %s LIMIT %s
             """,
