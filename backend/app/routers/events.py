@@ -17,6 +17,14 @@ from ..schemas.event import (
 router = APIRouter()
 
 
+def _without_booking_references(events: list[dict]) -> list[dict]:
+    """A booking reference is enough to manage someone's real booking, so only members ever get one."""
+    return [
+        event | {"travel": event["travel"] | {"booking_reference": None}} if event.get("travel") else event
+        for event in events
+    ]
+
+
 @router.get("/", response_model=list[EventResponse])
 def list_events(
     skip: int = 0,
@@ -32,7 +40,10 @@ def list_events(
         if not calendar["is_public"]:
             if current_user is None or calendar.get("role") is None:
                 raise HTTPException(status_code=403, detail="Not authorized to view this calendar's events")
-        return crud.get_events_by_calendar(db, calendar["id"], skip=skip, limit=limit)
+        events = crud.get_events_by_calendar(db, calendar["id"], skip=skip, limit=limit)
+        if calendar.get("role") is None:
+            return _without_booking_references(events)
+        return events
     if current_user is None:
         raise HTTPException(status_code=401, detail="Authentication required")
     return crud.get_events(db, current_user["id"], skip=skip, limit=limit)

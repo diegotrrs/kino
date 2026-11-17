@@ -2,7 +2,7 @@ from psycopg2.extensions import connection
 
 from ..schemas.event import EventCreate, EventUpdate
 
-# Links and expenses are each read in their own subquery. Joining links and expenses
+# Links, expenses and travel details are each read in their own subquery. Joining links and expenses
 # into one GROUP BY repeated every link once per expense and every expense once per link.
 _LINKS_AGG = """
     COALESCE(
@@ -44,11 +44,54 @@ _EXPENSES_AGG = """
 """
 
 
+_TRAVEL_SUBQUERY = """
+    (
+        SELECT json_build_object(
+            'origin',            t.origin,
+            'destination',       t.destination,
+            'number',            t.number,
+            'terminal',          t.terminal,
+            'gate',              t.gate,
+            'coach',             t.coach,
+            'seat',              t.seat,
+            'booking_reference', t.booking_reference
+        )
+        FROM event_travel_details t
+        WHERE t.event_id = e.id
+    ) AS travel
+"""
+
+TRAVEL_COLUMNS = ("origin", "destination", "number", "terminal", "gate", "coach", "seat", "booking_reference")
+
+
+def set_travel_details(db: connection, event_id: int, travel_mode: str | None, travel: dict | None) -> None:
+    """Replace an event's ticket details, or delete them when it has no travel mode. The caller commits."""
+    with db.cursor() as cur:
+        if travel_mode is None:
+            cur.execute("DELETE FROM event_travel_details WHERE event_id = %s", (event_id,))
+            return
+        values = {column: (travel or {}).get(column) for column in TRAVEL_COLUMNS}
+        cur.execute(
+            """
+            INSERT INTO event_travel_details
+                (event_id, origin, destination, number, terminal, gate, coach, seat, booking_reference)
+            VALUES
+                (%(event_id)s, %(origin)s, %(destination)s, %(number)s, %(terminal)s, %(gate)s,
+                 %(coach)s, %(seat)s, %(booking_reference)s)
+            ON CONFLICT (event_id) DO UPDATE SET
+                origin = EXCLUDED.origin, destination = EXCLUDED.destination, number = EXCLUDED.number,
+                terminal = EXCLUDED.terminal, gate = EXCLUDED.gate, coach = EXCLUDED.coach,
+                seat = EXCLUDED.seat, booking_reference = EXCLUDED.booking_reference, updated_at = NOW()
+            """,
+            values | {"event_id": event_id},
+        )
+
+
 def get_event(db: connection, event_id: int) -> dict | None:
     with db.cursor() as cur:
         cur.execute(
             f"""
-            SELECT e.*, c.uuid AS calendar_uuid, {_LINKS_AGG}, {_EXPENSES_AGG}
+            SELECT e.*, c.uuid AS calendar_uuid, {_LINKS_AGG}, {_EXPENSES_AGG}, {_TRAVEL_SUBQUERY}
             FROM events e
             JOIN calendars c ON c.id = e.calendar_id
             WHERE e.id = %s
@@ -63,7 +106,7 @@ def get_events(db: connection, user_id: int, skip: int = 0, limit: int = 100) ->
     with db.cursor() as cur:
         cur.execute(
             f"""
-            SELECT e.*, c.uuid AS calendar_uuid, {_LINKS_AGG}, {_EXPENSES_AGG}
+            SELECT e.*, c.uuid AS calendar_uuid, {_LINKS_AGG}, {_EXPENSES_AGG}, {_TRAVEL_SUBQUERY}
             FROM events e
             JOIN calendars c ON c.id = e.calendar_id
             JOIN calendar_users cu ON cu.calendar_id = e.calendar_id AND cu.user_id = %s
@@ -81,7 +124,7 @@ def get_events_by_calendar(
     with db.cursor() as cur:
         cur.execute(
             f"""
-            SELECT e.*, c.uuid AS calendar_uuid, {_LINKS_AGG}, {_EXPENSES_AGG}
+            SELECT e.*, c.uuid AS calendar_uuid, {_LINKS_AGG}, {_EXPENSES_AGG}, {_TRAVEL_SUBQUERY}
             FROM events e
             JOIN calendars c ON c.id = e.calendar_id
             WHERE e.calendar_id = %s
@@ -98,30 +141,26 @@ def create_event(db: connection, event: EventCreate) -> dict:
     with db.cursor() as cur:
         cur.execute(
             """
-            WITH new_event AS (
-                INSERT INTO events
-                    (calendar_id, title, description, date, start_time,
-                     end_date, end_time, location, color)
-                VALUES
-                    (%(calendar_id)s, %(title)s, %(description)s, %(date)s,
-                     %(start_time)s, %(end_date)s, %(end_time)s, %(location)s, %(color)s)
-                RETURNING *
-            )
-            SELECT ne.*, c.uuid AS calendar_uuid
-            FROM new_event ne
-            JOIN calendars c ON c.id = ne.calendar_id
+            INSERT INTO events
+                (calendar_id, title, description, date, start_time,
+                 end_date, end_time, location, color, travel_mode)
+            VALUES
+                (%(calendar_id)s, %(title)s, %(description)s, %(date)s,
+                 %(start_time)s, %(end_date)s, %(end_time)s, %(location)s, %(color)s, %(travel_mode)s)
+            RETURNING id
             """,
             data,
         )
-        row = cur.fetchone()
-        db.commit()
-    row["links"] = []
-    row["expenses"] = []
-    return row
+        event_id = cur.fetchone()["id"]
+    if event.travel_mode is not None:
+        set_travel_details(db, event_id, event.travel_mode, data["travel"])
+    db.commit()
+    return get_event(db, event_id)
 
 
 def update_event(db: connection, event_id: int, event: EventUpdate) -> dict | None:
     update_data = event.model_dump(exclude_unset=True)
+    travel = update_data.pop("travel", None)
     if not update_data:
         return get_event(db, event_id)
 
@@ -135,7 +174,12 @@ def update_event(db: connection, event_id: int, event: EventUpdate) -> dict | No
             " WHERE id = %(id)s RETURNING id",
             update_data,
         )
-        db.commit()
+    # Only a request that names the travel fields changes them; a date-only drag leaves them alone
+    if "travel_mode" in update_data and update_data["travel_mode"] is None:
+        set_travel_details(db, event_id, None, None)
+    elif "travel" in event.model_fields_set:
+        set_travel_details(db, event_id, update_data["travel_mode"], travel)
+    db.commit()
     return get_event(db, event_id)
 
 

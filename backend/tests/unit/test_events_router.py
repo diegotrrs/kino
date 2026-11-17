@@ -169,10 +169,12 @@ class TestListEvents:
 
     def test_public_calendar_returns_events_to_anonymous_user(self, crud, db):
         crud.get_calendar_by_uuid.return_value = {"id": 9, "is_public": True, "role": None}
+        crud.get_events_by_calendar.return_value = [{"id": 5, "title": "Museum", "travel": None}]
 
         result = self._list(db, None, calendar_uuid="abc")
 
-        assert result is crud.get_events_by_calendar.return_value
+        # Visitors get a copy (booking references removed), so compare contents rather than identity
+        assert result == [{"id": 5, "title": "Museum", "travel": None}]
 
     def test_listing_all_events_requires_authentication(self, crud, db):
         with pytest.raises(HTTPException) as exc:
