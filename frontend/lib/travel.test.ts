@@ -3,6 +3,7 @@ import {
   FIELDS_BY_TRAVEL_MODE,
   getCalendarCellLabel,
   getRouteLabel,
+  getSuggestedTitle,
   getTravelChips,
   getTravelFormValues,
   getTravelPayload,
@@ -112,5 +113,34 @@ describe('getCalendarCellLabel', () => {
 
   it('should keep the title of an ordinary event', () => {
     expect(getCalendarCellLabel('Museum', null, null)).toBe('Museum');
+  });
+});
+
+describe('getSuggestedTitle', () => {
+  it('should name a flight after its destination', () => {
+    expect(getSuggestedTitle('flight', { destination: 'FCO', number: 'BA 234' })).toEqual({
+      key: 'flightTo', values: { destination: 'FCO' },
+    });
+  });
+
+  it('should fall back to the flight number when there is no destination', () => {
+    expect(getSuggestedTitle('flight', { destination: '  ', number: ' BA 234 ' })).toEqual({
+      key: 'flightNumber', values: { number: 'BA 234' },
+    });
+  });
+
+  it('should call it just a flight when neither is known', () => {
+    expect(getSuggestedTitle('flight', {})).toEqual({ key: 'flight', values: {} });
+  });
+
+  it('should name a train after its destination, or just a train', () => {
+    expect(getSuggestedTitle('train', { destination: 'Paris Gare du Nord' })).toEqual({
+      key: 'trainTo', values: { destination: 'Paris Gare du Nord' },
+    });
+    expect(getSuggestedTitle('train', { number: 'ignored for trains' })).toEqual({ key: 'train', values: {} });
+  });
+
+  it('should suggest nothing for an ordinary event', () => {
+    expect(getSuggestedTitle(null, { destination: 'FCO' })).toBeNull();
   });
 });

@@ -79,3 +79,27 @@ export const getCalendarCellLabel = (
   travelMode: TravelMode | null | undefined,
   travel: TravelDetails | null | undefined,
 ): string => (travelMode ? getRouteLabel(travel) ?? title : title);
+
+export type SuggestedTitle =
+  | { key: 'flightTo' | 'trainTo'; values: { destination: string } }
+  | { key: 'flightNumber'; values: { number: string } }
+  | { key: 'flight' | 'train'; values: Record<string, never> };
+
+// A flight or train doesn't need a typed title: this names it from the ticket (translated by the caller)
+export const getSuggestedTitle = (
+  travelMode: TravelMode | null,
+  values: Partial<TravelFormValues>,
+): SuggestedTitle | null => {
+  if (travelMode === null) {
+    return null;
+  }
+  const destination = values.destination?.trim();
+  if (destination) {
+    return { key: travelMode === 'flight' ? 'flightTo' : 'trainTo', values: { destination } };
+  }
+  const number = values.number?.trim();
+  if (travelMode === 'flight' && number) {
+    return { key: 'flightNumber', values: { number } };
+  }
+  return { key: travelMode, values: {} };
+};

@@ -25,6 +25,7 @@ An event can be marked as a **flight** or a **train**. That event then carries t
 | Storing the details | A 1:1 table `event_travel_details`, holding one row exactly when `travel_mode` is set. Its columns are typed and nullable, because people often don't know the gate or seat when they book. |
 | Fields per mode | **Flight:** origin, destination, flight number, terminal, gate, seat, booking reference. **Train:** origin, destination, coach, seat, booking reference. Columns that don't apply to the mode are rejected (`422`), not stored. |
 | Route | `origin` and `destination` are free text (`LHR`, `London St Pancras`). There's no airport or station lookup, so V1 shows no airline names, flight durations or live status. |
+| Title | For flights and trains the title is **suggested from the ticket** and may be left empty: **"Flight to {destination}"** → **"Flight {number}"** → **"Flight"**, and **"Train to {destination}"** → **"Train"**, in the member's language. While the member hasn't typed a title of their own, the suggestion fills the field and follows the route; an empty field saves the suggestion; a typed title is kept. Ordinary events still need a title. Frontend only: every saved event still has a real `title`. |
 | Times | Departure and arrival are the event's existing start and end, so nothing is stored twice. Each is the **local time** where it happens; there's no time-zone conversion (see Known limitations). |
 | Lengths | `number`, `terminal`, `gate`, `coach`, `seat`: ≤ 10 characters. `booking_reference`: ≤ 20. `origin`, `destination`: ≤ 60. HTML is stripped and whitespace trimmed; empty strings are stored as `NULL`. |
 | Booking reference privacy | With a surname, a booking reference is enough to manage or cancel a real booking. So the API returns `booking_reference` **only to members**. Visitors to a public calendar see the route, times, number, terminal, gate, coach and seat, but not the reference. |
@@ -52,6 +53,8 @@ An event can be marked as a **flight** or a **train**. That event then carries t
 - The accent colour is the event's colour, as on the prototypes' Tweaks.
 
 **Entering the details** (`EventForm`, add and edit modes)
+
+- For flights and trains the title is optional and suggested from the ticket (see Decisions › Title).
 
 - A **Travel** row under the title: **None · Flight · Train**, as a segmented control with None selected by default, so ordinary events look as they do today. Choosing Flight or Train shows that mode's fields. Choosing None hides them; if fields were filled in, saving clears them.
 - Field labels and placeholders are translated in all four locales. Labels for screen readers come from the visible labels.
@@ -230,6 +233,7 @@ export const FIELDS_BY_TRAVEL_MODE = {
 7. Deleting and restoring a calendar keeps every event's travel mode and travel details.
 8. A fresh database built from `init.sql` (as CI does) has the new schema, and CI's e2e job passes.
 9. All new strings are translated in en, es, pt and de.
+11. A member can save a flight or train without typing a title. It gets the suggested title, which follows the route while untouched; a title they typed is never overwritten.
 10. `make check`, `npm run build`, `npm run lint` and `npm run check` all pass.
 
 ## Known limitations
@@ -254,3 +258,4 @@ export const FIELDS_BY_TRAVEL_MODE = {
 2. **Where the travel mode is chosen:** in the event form, as a **None · Flight · Train** row. A shortcut that opens the form already set to a mode is deferred.
 3. **Month cell:** shows the **route instead of the title**, falling back to the title when there's no route.
 4. **Naming the default:** there's no "event" kind. `travel_mode` is `NULL` for ordinary events and only names `flight` or `train`.
+5. **Title of a flight or train:** optional and suggested from the ticket rather than stored as empty (frontend only, no schema change).

@@ -340,6 +340,13 @@
       "booking_reference": "BUCHUNG"
     },
     "copyReference": "Buchungsnummer {reference} kopieren",
-    "copied": "Kopiert"
+    "copied": "Kopiert",
+    "suggestedTitle": {
+      "flightTo": "Flug nach {destination}",
+      "flightNumber": "Flug {number}",
+      "flight": "Flug",
+      "trainTo": "Zug nach {destination}",
+      "train": "Zug"
+    }
   }
 }

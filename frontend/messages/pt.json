@@ -340,6 +340,13 @@
       "booking_reference": "RESERVA"
     },
     "copyReference": "Copiar referência da reserva {reference}",
-    "copied": "Copiado"
+    "copied": "Copiado",
+    "suggestedTitle": {
+      "flightTo": "Voo para {destination}",
+      "flightNumber": "Voo {number}",
+      "flight": "Voo",
+      "trainTo": "Comboio para {destination}",
+      "train": "Comboio"
+    }
   }
 }

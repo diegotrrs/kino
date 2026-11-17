@@ -90,6 +90,33 @@ T8 E2E spec, domain terms, final checks ← all of the above
 
 **Estimated scope:** L. The form is the biggest piece. If it grows, move the field grid into `components/events/travel-fields.tsx`.
 
+#### Task 2b: Suggested title for flights and trains (added after the Phase 1 review) ✅
+
+**Description:** `getSuggestedTitle(travelMode, values)` in `lib/travel.ts` returns a translation key and values, picking the first that applies:
+- flights: "Flight to {destination}" → "Flight {number}" → "Flight"
+- trains: "Train to {destination}" → "Train"
+
+In `EventForm`:
+- While the title is untouched (a new event, or one whose saved title equals its suggestion), the title field shows the suggestion and follows the ticket.
+- Typing takes over; an empty field shows the suggestion as placeholder text and saves it.
+- Switching to None while the title was untouched empties it, since ordinary events need a real title.
+- Read-only visitors see the saved title only.
+
+**Acceptance criteria:**
+- [x] A flight saved without typing a title gets "Flight to FCO" (or the number- or bare fallback); a train gets "Train to …".
+- [x] Changing the destination of an untouched title updates it, before or after saving; a typed title is never overwritten.
+- [x] Ordinary events still require a title.
+
+**Verification:**
+- [x] `npx vitest run lib/travel`; build and lint
+- [x] A temporary browser test: an add with no title, a route change on an untouched title, a typed title kept, None needing a title
+
+**Dependencies:** Task 2
+
+**Files likely touched:** `lib/travel.ts` (+ tests), `components/event-form.tsx`, `messages/*.json`
+
+**Estimated scope:** S
+
 ### Checkpoint: Phase 1
 - [ ] `make check`, build, lint and unit tests pass
 - [ ] A member can create and edit a flight and a train in the UI, and the details persist
@@ -213,6 +240,7 @@ T8 E2E spec, domain terms, final checks ← all of the above
 - **@17.4:** the phone day sheet shows the strip
 - **@17.5:** a public visitor sees the flight but no booking reference
 - **@17.6:** the card renders in Spanish
+- **@17.7:** a flight saved without a title gets the suggested one, and reopening "Add event" from the header starts with a blank form
 
 Also add **Travel mode** and **Travel details** to `domain-terms.md`, and set the spec to `Status: implemented`.
 
