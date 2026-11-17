@@ -72,3 +72,10 @@ export const getRouteLabel = (travel: TravelDetails | null | undefined): string 
   }
   return null;
 };
+
+// Month cells are tiny: a flight or train shows its route there, and the title only when there's no route
+export const getCalendarCellLabel = (
+  title: string,
+  travelMode: TravelMode | null | undefined,
+  travel: TravelDetails | null | undefined,
+): string => (travelMode ? getRouteLabel(travel) ?? title : title);

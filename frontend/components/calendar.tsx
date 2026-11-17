@@ -3,6 +3,7 @@ import '@/styles/calendar.css';
 import { updateEvent }        from '@/app/(app)/events/actions';
 import { DayNamePopover }     from '@/components/calendars/day-name-popover';
 import { DaySheet }           from '@/components/calendars/day-sheet';
+import { TravelModeIcon }     from '@/components/events/travel-strip';
 import { useEvents }          from '@/context/events-context';
 import { useMediaQuery }      from '@/hooks/use-media-query';
 import { useToast }           from '@/hooks/use-toast';
@@ -15,6 +16,7 @@ import {
   getEventEdge,
   getEventTint
 }                             from '@/lib/event-colors';
+import { getCalendarCellLabel } from '@/lib/travel';
 import { getTripSpan }        from '@/lib/trip-span';
 import { getDateFromMinutes } from '@/utils/calendar-utils';
 import {
@@ -170,13 +172,18 @@ const Calendar = () => {
     const color = info.backgroundColor || DEFAULT_EVENT_COLOR;
 
     if (info.view.type == 'dayGridMonth') {
+      const { travelMode, travel } = event.extendedProps as Pick<CalendarEvent, 'travelMode' | 'travel'>;
+      const label = getCalendarCellLabel(event.title, travelMode, travel);
       return (
         <div
           style={{ backgroundColor: getEventTint(color, 22), borderLeftColor: color }}
           className='flex w-full flex-col overflow-hidden rounded-sm border-l-[3px] px-1.5 py-0.5 text-[0.5rem] sm:text-[0.6rem] md:text-xs'
         >
-          <p className='w-11/12 font-semibold text-foreground line-clamp-1'>
-            {event.title}
+          <p className='flex w-11/12 items-center gap-1 font-semibold text-foreground'>
+            {travelMode && <TravelModeIcon travelMode={travelMode} className='h-[1.1em] w-[1.1em] shrink-0' />}
+            <span className='line-clamp-1'>{label}</span>
+            {/* The route replaces the title on screen; screen readers still get the event's name */}
+            {label !== event.title && <span className='sr-only'>{event.title}</span>}
           </p>
           <p className='font-mono text-muted-foreground tabular-nums line-clamp-1'>
             {right ? `${left}–${right}` : left}

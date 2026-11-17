@@ -119,17 +119,17 @@ T8 E2E spec, domain terms, final checks ← all of the above
 
 **Estimated scope:** M
 
-#### Task 4: Month cell — icon, time and route instead of the title
+#### Task 4: Month cell — icon, time and route instead of the title ✅
 
 **Description:** `EventItem` in `components/calendar.tsx` reads `extendedProps.travelMode` and `extendedProps.travel`. For flights and trains it shows the icon, the start time and the route (`✈ 07:15 LHR→FCO`), falling back to the title when there's no route. The calendar page passes the two fields into FullCalendar's events as `extendedProps`.
 
 **Acceptance criteria:**
-- [ ] In the month view, a flight shows its icon and route; a flight without a route shows its title; ordinary events look the same as before.
-- [ ] Dragging a flight to another day keeps its travel details. (This checks Task 1's PATCH behaviour from the UI.)
+- [x] In the month view, a flight shows its icon and route; a flight without a route shows its title; ordinary events look the same as before.
+- [x] Dragging a flight to another day keeps its travel details. (This checks Task 1's PATCH behaviour from the UI.)
 
 **Verification:**
-- [ ] `npx vitest run lib/travel`, extended for the cell label if it moves into the helper; build and lint
-- [ ] A temporary browser test: the month cell, the fallback to the title, and a drag followed by a reload that keeps the details
+- [x] `npx vitest run lib/travel`, extended for the cell label if it moves into the helper; build and lint
+- [x] A temporary browser test: the month cell, the fallback to the title, and a drag followed by a reload that keeps the details
 
 **Dependencies:** Task 2
 

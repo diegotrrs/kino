@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { FIELDS_BY_TRAVEL_MODE, getRouteLabel, getTravelChips, getTravelFormValues, getTravelPayload } from './travel';
+import {
+  FIELDS_BY_TRAVEL_MODE,
+  getCalendarCellLabel,
+  getRouteLabel,
+  getTravelChips,
+  getTravelFormValues,
+  getTravelPayload,
+} from './travel';
 import { buildFlightDetails } from './travel.test.data';
 
 describe('FIELDS_BY_TRAVEL_MODE', () => {
@@ -89,5 +96,21 @@ describe('getRouteLabel', () => {
   it('should be null when there is no route', () => {
     expect(getRouteLabel(buildFlightDetails({ origin: null, destination: null }))).toBeNull();
     expect(getRouteLabel(null)).toBeNull();
+  });
+});
+
+describe('getCalendarCellLabel', () => {
+  it('should show a flight\'s route instead of its title', () => {
+    expect(getCalendarCellLabel('Flight to Rome', 'flight', buildFlightDetails())).toBe('LHR → FCO');
+  });
+
+  it('should fall back to the title when a flight has no route', () => {
+    const noRoute = buildFlightDetails({ origin: null, destination: null });
+
+    expect(getCalendarCellLabel('Flight to Rome', 'flight', noRoute)).toBe('Flight to Rome');
+  });
+
+  it('should keep the title of an ordinary event', () => {
+    expect(getCalendarCellLabel('Museum', null, null)).toBe('Museum');
   });
 });
