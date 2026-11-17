@@ -97,7 +97,7 @@ T8 E2E spec, domain terms, final checks ← all of the above
 
 ### Phase 2: Showing flights and trains
 
-#### Task 3: Ticket strip (B) on the Events timeline and in the phone day sheet
+#### Task 3: Ticket strip (B) on the Events timeline and in the phone day sheet ✅
 
 **Description:**
 - **Helpers:** `getTravelChips(mode, travel)` returns the ordered chips with empty values dropped (`BA 2490`, `TERM 5`, `GATE B32`, `SEAT 14A`, `REF …` for flights; `COACH 7`, `SEAT 61`, `REF …` for trains). `getRouteLabel` returns `LHR → FCO`, or `null`.
@@ -105,13 +105,13 @@ T8 E2E spec, domain terms, final checks ← all of the above
 - **Where:** in timeline rows (`event-timeline-client.tsx`) and day sheet rows (`day-sheet.tsx`). Ordinary events don't change.
 
 **Acceptance criteria:**
-- [ ] The timeline and day sheet rows of a flight and a train show the icon, the route and only the chips that have values. Ordinary event rows are unchanged.
-- [ ] The strip wraps without overflowing at 390px.
-- [ ] Tapping `REF` copies the reference; visitors to a public calendar see no `REF` chip.
+- [x] The timeline and day sheet rows of a flight and a train show the icon, the route and only the chips that have values. Ordinary event rows are unchanged.
+- [x] The strip wraps without overflowing at 390px.
+- [x] Tapping `REF` copies the reference; visitors to a public calendar see no `REF` chip.
 
 **Verification:**
-- [ ] `npx vitest run lib/travel` (chips per mode, empty values dropped, route label); build and lint
-- [ ] A temporary browser test: the timeline on desktop, the day sheet at 390px, copying to the clipboard, and the public visitor view
+- [x] `npx vitest run lib/travel` (chips per mode, empty values dropped, route label); build and lint
+- [x] A temporary browser test: the timeline on desktop, the day sheet at 390px, copying to the clipboard, and the public visitor view
 
 **Dependencies:** Task 2
 

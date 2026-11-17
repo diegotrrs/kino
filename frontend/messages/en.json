@@ -331,6 +331,15 @@
       "train": "e.g. Paris Gare du Nord"
     },
     "numberPlaceholder": "e.g. BA 2490",
-    "booking_referencePlaceholder": "e.g. K7XQ2M"
+    "booking_referencePlaceholder": "e.g. K7XQ2M",
+    "chips": {
+      "terminal": "TERM",
+      "gate": "GATE",
+      "coach": "COACH",
+      "seat": "SEAT",
+      "booking_reference": "REF"
+    },
+    "copyReference": "Copy booking reference {reference}",
+    "copied": "Copied"
   }
 }

@@ -331,6 +331,15 @@
       "train": "z. B. München Hbf"
     },
     "numberPlaceholder": "z. B. LH 232",
-    "booking_referencePlaceholder": "z. B. K7XQ2M"
+    "booking_referencePlaceholder": "z. B. K7XQ2M",
+    "chips": {
+      "terminal": "TERM",
+      "gate": "GATE",
+      "coach": "WAGEN",
+      "seat": "PLATZ",
+      "booking_reference": "BUCHUNG"
+    },
+    "copyReference": "Buchungsnummer {reference} kopieren",
+    "copied": "Kopiert"
   }
 }

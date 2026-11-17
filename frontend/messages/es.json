@@ -331,6 +331,15 @@
       "train": "p. ej. Barcelona Sants"
     },
     "numberPlaceholder": "p. ej. IB 3230",
-    "booking_referencePlaceholder": "p. ej. K7XQ2M"
+    "booking_referencePlaceholder": "p. ej. K7XQ2M",
+    "chips": {
+      "terminal": "TERM",
+      "gate": "PUERTA",
+      "coach": "COCHE",
+      "seat": "ASIENTO",
+      "booking_reference": "RESERVA"
+    },
+    "copyReference": "Copiar código de reserva {reference}",
+    "copied": "Copiado"
   }
 }

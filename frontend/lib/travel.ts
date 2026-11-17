@@ -37,3 +37,38 @@ export const getTravelPayload = (
     .filter(([, value]) => value !== '');
   return { travel_mode: travelMode, travel: Object.fromEntries(filled) };
 };
+
+// The route isn't a chip: it's shown on its own (strip header, month cell, card)
+const ROUTE_FIELDS: ReadonlySet<TravelField> = new Set(['origin', 'destination']);
+
+export type TravelChip = { field: TravelField; value: string };
+
+export const getTravelChips = (
+  travelMode: TravelMode | null | undefined,
+  travel: TravelDetails | null | undefined,
+): TravelChip[] => {
+  if (!travelMode || !travel) {
+    return [];
+  }
+  return FIELDS_BY_TRAVEL_MODE[travelMode]
+    .filter((field) => !ROUTE_FIELDS.has(field))
+    .flatMap((field) => {
+      const value = travel[field];
+      return value ? [{ field, value }] : [];
+    });
+};
+
+export const getRouteLabel = (travel: TravelDetails | null | undefined): string | null => {
+  const origin = travel?.origin;
+  const destination = travel?.destination;
+  if (origin && destination) {
+    return `${origin} → ${destination}`;
+  }
+  if (origin) {
+    return `${origin} →`;
+  }
+  if (destination) {
+    return `→ ${destination}`;
+  }
+  return null;
+};

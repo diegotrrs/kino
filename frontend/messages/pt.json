@@ -331,6 +331,15 @@
       "train": "p. ex. Porto Campanhã"
     },
     "numberPlaceholder": "p. ex. TP 836",
-    "booking_referencePlaceholder": "p. ex. K7XQ2M"
+    "booking_referencePlaceholder": "p. ex. K7XQ2M",
+    "chips": {
+      "terminal": "TERM",
+      "gate": "PORTA",
+      "coach": "CARR.",
+      "seat": "LUGAR",
+      "booking_reference": "RESERVA"
+    },
+    "copyReference": "Copiar referência da reserva {reference}",
+    "copied": "Copiado"
   }
 }
