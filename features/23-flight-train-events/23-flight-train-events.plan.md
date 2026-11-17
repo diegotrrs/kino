@@ -118,9 +118,9 @@ In `EventForm`:
 **Estimated scope:** S
 
 ### Checkpoint: Phase 1
-- [ ] `make check`, build, lint and unit tests pass
-- [ ] A member can create and edit a flight and a train in the UI, and the details persist
-- [ ] **Review with Diego.** He tries the form at desktop and phone widths before any display work.
+- [x] `make check`, build, lint and unit tests pass
+- [x] A member can create and edit a flight and a train in the UI, and the details persist
+- [x] **Review with Diego.** He tries the form at desktop and phone widths before any display work.
 
 ### Phase 2: Showing flights and trains
 
@@ -208,9 +208,9 @@ In `EventForm`:
 **Estimated scope:** S/M
 
 ### Checkpoint: Phase 2
-- [ ] `make check`, build, lint and `npm run check` all pass
-- [ ] Flights and trains look right in the month cell, the timeline, the day sheet and the dialog, on desktop and phone
-- [ ] **Review with Diego** against the prototypes
+- [x] `make check`, build, lint and `npm run check` all pass
+- [x] Flights and trains look right in the month cell, the timeline, the day sheet and the dialog, on desktop and phone
+- [x] **Review with Diego** against the prototypes
 
 ### Phase 3: Lifecycle and finish
 
@@ -231,7 +231,7 @@ In `EventForm`:
 
 **Estimated scope:** S
 
-#### Task 8: End-to-end spec, domain terms and final checks
+#### Task 8: End-to-end spec, domain terms and final checks ✅
 
 **Description:** `e2e/17-travel-events.spec.ts`:
 - **@17.1:** create a flight with every field → B strip on the timeline, route in the month cell, A card in the dialog; copying works
@@ -245,13 +245,13 @@ In `EventForm`:
 Also add **Travel mode** and **Travel details** to `domain-terms.md`, and set the spec to `Status: implemented`.
 
 **Acceptance criteria:**
-- [ ] All six tests pass on a full run. Each one is confirmed to fail once with the code it guards broken.
-- [ ] Every spec success criterion (1–10) can be ticked.
+- [x] All six tests pass on a full run. Each one is confirmed to fail once with the code it guards broken.
+- [x] Every spec success criterion (1–10) can be ticked.
 
 **Verification:**
-- [ ] Confirm the :8000 backend is on `.env.local`
-- [ ] `make check`; `npm run build && npm run lint && npm run check`
-- [ ] Rebuild a throwaway database from `init.sql`
+- [x] Confirm the :8000 backend is on `.env.local`
+- [x] `make check`; `npm run build && npm run lint && npm run check`
+- [x] Rebuild a throwaway database from `init.sql`
 
 **Dependencies:** Tasks 1–7
 
@@ -260,9 +260,9 @@ Also add **Travel mode** and **Travel details** to `domain-terms.md`, and set th
 **Estimated scope:** M
 
 ### Checkpoint: Complete
-- [ ] Every spec success criterion is met, and CI is green on the PR
+- [x] Every spec success criterion is met, and CI is green on the PR
 - [ ] **Run `backend/migrations/add_event_travel_mode.sql` on production *before* merging.** Merging deploys the backend; the checklist release showed what happens when the tables arrive after the code.
-- [ ] Ready for review and merge
+- [x] Ready for review and merge
 
 ## Parallelisation
 

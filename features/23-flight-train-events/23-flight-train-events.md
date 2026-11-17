@@ -1,6 +1,6 @@
 # Spec: 23 — Flight and train events — V1
 
-Status: approved
+Status: implemented
 GitHub issue #23: *Flight/Train event type* — "flight number, terminal, gate, seat, booking reference; rendered as a dedicated ✈ card." Extended here to trains.
 Prototypes: https://claude.ai/artifact/KFrX57cqnCGEAjCSocF5Ev (V1 uses directions **A** and **B**; E is A's phone layout)
 
