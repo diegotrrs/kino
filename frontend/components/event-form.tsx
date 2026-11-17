@@ -23,10 +23,16 @@ import {
   DEFAULT_EVENT_COLOR,
   getRecentColors
 }                               from '@/lib/event-colors';
+import {
+  getTravelFormValues,
+  getTravelPayload
+}                               from '@/lib/travel';
 import type {
   Calendar,
   EventExpense,
-  EventLink
+  EventLink,
+  TravelDetails,
+  TravelMode
 }                               from '@/lib/types';
 import { cn }                   from '@/lib/utils';
 import { CalendarEvent }        from '@/utils/data';
@@ -45,6 +51,7 @@ import { z }                    from 'zod';
 import { EventDateRangePicker } from './events/event-date-range-picker';
 import { EventExpenses }        from './events/event-expenses';
 import { EventLinks }           from './events/event-links';
+import { TravelFields }         from './events/travel-fields';
 import {
   PendingExpenses,
   type PendingExpense
@@ -112,6 +119,8 @@ export const EventForm = (props: EventFormProps) => {
       ? (typeof window !== 'undefined' ? localStorage.getItem('lastEventColor') ?? DEFAULT_EVENT_COLOR : DEFAULT_EVENT_COLOR)
       : (editEvent?.backgroundColor ?? DEFAULT_EVENT_COLOR)
   );
+  const [travelMode, setTravelMode] = useState<TravelMode | null>(() => mode === 'add' ? null : (editEvent?.travelMode ?? null));
+  const [travelValues, setTravelValues] = useState(() => getTravelFormValues(mode === 'add' ? null : editEvent?.travel));
   const [titleError, setTitleError] = useState(false);
   const [dateOpen, setDateOpen] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
@@ -134,6 +143,8 @@ export const EventForm = (props: EventFormProps) => {
     setStart(defaultStart);
     setEnd(defaultEnd);
     setColor(localStorage.getItem('lastEventColor') ?? DEFAULT_EVENT_COLOR);
+    setTravelMode(null);
+    setTravelValues(getTravelFormValues(null));
     setTitleError(false);
     setDateOpen(false);
     /* eslint-enable react-hooks/set-state-in-effect */
@@ -150,6 +161,8 @@ export const EventForm = (props: EventFormProps) => {
     setStart(editEvent?.start as Date);
     setEnd(editEvent?.end as Date);
     setColor(editEvent?.backgroundColor ?? DEFAULT_EVENT_COLOR);
+    setTravelMode(editEvent?.travelMode ?? null);
+    setTravelValues(getTravelFormValues(editEvent?.travel));
     setTitleError(false);
     setConfirmingDelete(false);
     setDateOpen(false);
@@ -163,6 +176,11 @@ export const EventForm = (props: EventFormProps) => {
   const formatTime = (d: Date): string => d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
   const isMultiDayRange = !!start && !!end && start.toDateString() !== end.toDateString();
 
+  const travelPayload = getTravelPayload(travelMode, travelValues);
+  // The local copy mirrors what the API will store, so the calendar shows it before a reload
+  const getLocalTravel = (): TravelDetails | null =>
+    travelMode === null ? null : { ...getTravelFormValues(null), ...travelPayload.travel } as TravelDetails;
+
   const handleCancel = () => {
     if (mode === 'edit' && isDrag && editOldEvent) {
       deleteEvent(editOldEvent.id);
@@ -173,6 +191,10 @@ export const EventForm = (props: EventFormProps) => {
         start: editOldEvent.start,
         end: editOldEvent.end,
         backgroundColor: editOldEvent.backgroundColor,
+        links: editOldEvent.links,
+        expenses: editOldEvent.expenses,
+        travelMode: editOldEvent.travelMode,
+        travel: editOldEvent.travel,
       });
     }
     setConfirmingDelete(false);
@@ -193,6 +215,8 @@ export const EventForm = (props: EventFormProps) => {
         start,
         end,
         backgroundColor: color,
+        travelMode,
+        travel: getLocalTravel(),
       };
 
       if (saveCalendarId !== undefined) {
@@ -206,6 +230,7 @@ export const EventForm = (props: EventFormProps) => {
             end_date: format(end, 'yyyy-MM-dd'),
             end_time: format(end, 'HH:mm:ss'),
             color,
+            ...travelPayload,
           });
           const [linkResults, expenseResults] = await Promise.all([
             Promise.allSettled(pendingUrlsRef.current.map((url) => addEventLink(created.id, url))),
@@ -247,6 +272,8 @@ export const EventForm = (props: EventFormProps) => {
         backgroundColor: color,
         links: currentLinksRef.current,
         expenses: currentExpensesRef.current,
+        travelMode,
+        travel: getLocalTravel(),
       };
 
       if (calendarId !== undefined) {
@@ -259,6 +286,7 @@ export const EventForm = (props: EventFormProps) => {
             end_date: format(end, 'yyyy-MM-dd'),
             end_time: format(end, 'HH:mm:ss'),
             color,
+            ...travelPayload,
           });
         } catch (e) {
           console.error(e);
@@ -360,6 +388,14 @@ export const EventForm = (props: EventFormProps) => {
         <div aria-hidden='true' className='border-t-2 border-dashed' />
 
         <div className='grid gap-5 px-6 py-5'>
+          <TravelFields
+            travelMode={travelMode}
+            values={travelValues}
+            isReadOnly={isReadOnly}
+            onTravelModeChange={setTravelMode}
+            onValueChange={(field, value) => setTravelValues((current) => ({ ...current, [field]: value }))}
+          />
+
           {calendars && (
             <label className='grid gap-2'>
               <span className={SECTION_LABEL}>{t('calendar')}</span>

@@ -54,6 +54,8 @@ const toCalendarEvent = (ev: Event): CalendarEvent => ({
   backgroundColor: ev.color,
   links:           ev.links,
   expenses:        ev.expenses,
+  travelMode:      ev.travel_mode,
+  travel:          ev.travel,
 });
 
 type EventEditTriggerProps = {

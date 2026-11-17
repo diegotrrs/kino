@@ -306,5 +306,31 @@
     "announceDropped": "“{text}” dropped in position {position} of {total}.",
     "announceCancelled": "Move cancelled. “{text}” is back in its place.",
     "reorderFailed": "Couldn't save the new order. Try again."
+  },
+  "travel": {
+    "label": "Travel",
+    "none": "None",
+    "flight": "Flight",
+    "train": "Train",
+    "fields": {
+      "origin": "From",
+      "destination": "To",
+      "number": "Flight number",
+      "terminal": "Terminal",
+      "gate": "Gate",
+      "coach": "Coach",
+      "seat": "Seat",
+      "booking_reference": "Booking reference"
+    },
+    "originPlaceholder": {
+      "flight": "e.g. LHR",
+      "train": "e.g. London St Pancras"
+    },
+    "destinationPlaceholder": {
+      "flight": "e.g. FCO",
+      "train": "e.g. Paris Gare du Nord"
+    },
+    "numberPlaceholder": "e.g. BA 2490",
+    "booking_referencePlaceholder": "e.g. K7XQ2M"
   }
 }

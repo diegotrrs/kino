@@ -115,6 +115,8 @@ const Calendar = () => {
       end: info.event.end ?? new Date(info.event.start!.getTime() + 60 * 60 * 1000),
       links: info.event.extendedProps.links,
       expenses: info.event.extendedProps.expenses,
+      travelMode: info.event.extendedProps.travelMode,
+      travel: info.event.extendedProps.travel,
     };
 
     openEditDialog(event);
@@ -135,6 +137,8 @@ const Calendar = () => {
       end: newEnd,
       links: storedEvent?.links,
       expenses: storedEvent?.expenses,
+      travelMode: storedEvent?.travelMode,
+      travel: storedEvent?.travel,
     };
 
     if (calendarId !== undefined) {

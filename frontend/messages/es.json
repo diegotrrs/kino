@@ -306,5 +306,31 @@
     "announceDropped": "«{text}» soltado en la posición {position} de {total}.",
     "announceCancelled": "Movimiento cancelado. «{text}» vuelve a su sitio.",
     "reorderFailed": "No se pudo guardar el nuevo orden. Inténtalo de nuevo."
+  },
+  "travel": {
+    "label": "Viaje",
+    "none": "Ninguno",
+    "flight": "Vuelo",
+    "train": "Tren",
+    "fields": {
+      "origin": "Origen",
+      "destination": "Destino",
+      "number": "Número de vuelo",
+      "terminal": "Terminal",
+      "gate": "Puerta",
+      "coach": "Coche",
+      "seat": "Asiento",
+      "booking_reference": "Código de reserva"
+    },
+    "originPlaceholder": {
+      "flight": "p. ej. MAD",
+      "train": "p. ej. Madrid Atocha"
+    },
+    "destinationPlaceholder": {
+      "flight": "p. ej. FCO",
+      "train": "p. ej. Barcelona Sants"
+    },
+    "numberPlaceholder": "p. ej. IB 3230",
+    "booking_referencePlaceholder": "p. ej. K7XQ2M"
   }
 }

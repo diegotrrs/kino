@@ -67,7 +67,7 @@ T8 E2E spec, domain terms, final checks ← all of the above
 
 **Estimated scope:** L. If it runs long, split the redaction and its tests into Task 1b.
 
-#### Task 2: Event form — Travel row and fields, saved and reloaded
+#### Task 2: Event form — Travel row and fields, saved and reloaded ✅
 
 **Description:**
 - **Types:** `TravelMode` and `TravelDetails` in `lib/types.ts`; `travelMode` and `travel` on `CalendarEvent` (`utils/data.ts`), mapped in `dbEventToCalendarEvent` (calendar page) and `toCalendarEvent` (Events timeline); `CreateEventInput` and the `createEvent` / `updateEvent` server actions send them.
@@ -76,13 +76,13 @@ T8 E2E spec, domain terms, final checks ← all of the above
 - **Translations:** a `travel` set of strings in all four locales.
 
 **Acceptance criteria:**
-- [ ] Creating an event with Travel = Flight and its fields, then reopening it after a reload, shows the same mode and values. The same goes for Train.
-- [ ] Travel = None (the default) looks exactly like today's form; ordinary events save as before.
-- [ ] Every label is translated (en, es, pt, de), and the segmented control works with the keyboard.
+- [x] Creating an event with Travel = Flight and its fields, then reopening it after a reload, shows the same mode and values. The same goes for Train.
+- [x] Travel = None (the default) looks exactly like today's form; ordinary events save as before.
+- [x] Every label is translated (en, es, pt, de), and the segmented control works with the keyboard.
 
 **Verification:**
-- [ ] `npx vitest run lib/travel`; `npm run build && npm run lint && npx tsc --noEmit`
-- [ ] A temporary browser test against the local stack: create a flight, reload, check the fields; check that an ordinary event's form is unchanged. Delete the test afterwards.
+- [x] `npx vitest run lib/travel`; `npm run build && npm run lint && npx tsc --noEmit`
+- [x] A temporary browser test against the local stack: create a flight, reload, check the fields; check that an ordinary event's form is unchanged. Delete the test afterwards.
 
 **Dependencies:** Task 1
 

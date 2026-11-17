@@ -48,6 +48,8 @@ const dbEventToCalendarEvent = (event: Event): CalendarEvent => {
     backgroundColor: event.color,
     links: event.links,
     expenses: event.expenses,
+    travelMode: event.travel_mode,
+    travel: event.travel,
   };
 }
 
