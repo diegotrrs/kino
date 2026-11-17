@@ -83,6 +83,11 @@ def calendar(db_conn, owner):
         cur.execute("DELETE FROM calendars WHERE id = %s", (cal["id"],))
         cur.execute("DELETE FROM deleted_calendar_day_names WHERE calendar_id = %s", (cal["id"],))
         cur.execute("DELETE FROM deleted_calendar_checklist_items WHERE calendar_id = %s", (cal["id"],))
+        cur.execute(
+            "DELETE FROM deleted_event_travel_details WHERE event_id IN "
+            "(SELECT id FROM deleted_events WHERE calendar_id = %s)",
+            (cal["id"],),
+        )
         cur.execute("DELETE FROM deleted_calendars WHERE id = %s", (cal["id"],))
         db_conn.commit()
 
@@ -106,5 +111,10 @@ def track_calendar(db_conn):
             cur.execute("DELETE FROM calendar_users WHERE calendar_id = %s", (cal_id,))
             cur.execute("DELETE FROM calendars WHERE id = %s", (cal_id,))
             cur.execute("DELETE FROM deleted_calendar_checklist_items WHERE calendar_id = %s", (cal_id,))
+            cur.execute(
+                "DELETE FROM deleted_event_travel_details WHERE event_id IN "
+                "(SELECT id FROM deleted_events WHERE calendar_id = %s)",
+                (cal_id,),
+            )
             cur.execute("DELETE FROM deleted_calendars WHERE id = %s", (cal_id,))
             db_conn.commit()

@@ -1,3 +1,7 @@
+from app.crud.calendars import create_calendar, delete_calendar
+from app.crud.test import delete_user, reset_test_user_data
+from app.schemas.calendar import CalendarCreate
+
 FLIGHT = {
     "origin": "LHR",
     "destination": "FCO",
@@ -170,3 +174,61 @@ class TestChangingTheTravelMode:
         assert res.json()["travel_mode"] == "flight"
         assert res.json()["travel"] == EMPTY_TRAVEL
         assert _details_row(db_conn, created["id"]) is not None
+
+
+def _archived_travel(db_conn, event_ids: list[int]) -> list[dict]:
+    with db_conn.cursor() as cur:
+        cur.execute(
+            "SELECT event_id, gate, coach FROM deleted_event_travel_details WHERE event_id = ANY(%s) ORDER BY event_id",
+            (event_ids,),
+        )
+        return cur.fetchall()
+
+
+class TestTravelSurvivesDeleteAndRestore:
+    def test_restoring_a_calendar_brings_back_flights_and_trains_unchanged(self, client, calendar, owner_headers):
+        flight = _create(client, calendar, owner_headers, travel_mode="flight", travel=FLIGHT)
+        train = _create(client, calendar, owner_headers, travel_mode="train", travel=TRAIN)
+        ordinary = _create(client, calendar, owner_headers)
+
+        assert client.delete(f"/api/calendars/{calendar['uuid']}", headers=owner_headers).status_code == 204
+        assert client.post(f"/api/calendars/{calendar['uuid']}/restore", headers=owner_headers).status_code == 204
+
+        restored = {event["id"]: event for event in _list(client, calendar, owner_headers)}
+        assert restored[flight["id"]]["travel_mode"] == "flight"
+        assert restored[flight["id"]]["travel"] == EMPTY_TRAVEL | FLIGHT
+        assert restored[train["id"]]["travel_mode"] == "train"
+        assert restored[train["id"]]["travel"] == EMPTY_TRAVEL | TRAIN
+        assert restored[ordinary["id"]]["travel_mode"] is None
+        assert restored[ordinary["id"]]["travel"] is None
+
+    def test_deleting_archives_the_details_and_restoring_empties_the_archive(
+        self, client, db_conn, calendar, owner_headers
+    ):
+        flight = _create(client, calendar, owner_headers, travel_mode="flight", travel=FLIGHT)
+
+        client.delete(f"/api/calendars/{calendar['uuid']}", headers=owner_headers)
+        assert _archived_travel(db_conn, [flight["id"]]) == [{"event_id": flight["id"], "gate": "B32", "coach": None}]
+
+        client.post(f"/api/calendars/{calendar['uuid']}/restore", headers=owner_headers)
+        assert _archived_travel(db_conn, [flight["id"]]) == []
+
+
+class TestTestDataCleanupRemovesArchivedTravel:
+    def test_reset_removes_archived_travel_details(self, client, db_conn, owner, owner_headers):
+        cal = create_calendar(db_conn, CalendarCreate(name="Reset me", created_by=owner["id"]))
+        flight = _create(client, cal, owner_headers, travel_mode="flight", travel=FLIGHT)
+        delete_calendar(db_conn, cal["id"])
+
+        reset_test_user_data(db_conn, owner["id"])
+
+        assert _archived_travel(db_conn, [flight["id"]]) == []
+
+    def test_deleting_the_user_removes_archived_travel_details(self, client, db_conn, owner, owner_headers):
+        cal = create_calendar(db_conn, CalendarCreate(name="Delete me", created_by=owner["id"]))
+        flight = _create(client, cal, owner_headers, travel_mode="flight", travel=FLIGHT)
+        delete_calendar(db_conn, cal["id"])
+
+        delete_user(db_conn, owner["id"])
+
+        assert _archived_travel(db_conn, [flight["id"]]) == []

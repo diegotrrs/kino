@@ -214,16 +214,16 @@ In `EventForm`:
 
 ### Phase 3: Lifecycle and finish
 
-#### Task 7: Keep travel details when a calendar is deleted and restored
+#### Task 7: Keep travel details when a calendar is deleted and restored ✅
 
 **Description:** `delete_calendar` copies `travel_mode` into `deleted_events`, and the details rows into `deleted_event_travel_details`. `restore_calendar` copies both back. `crud/test.py` and the `tests/conftest.py` fixtures also clear the archive table. This follows the day names and checklist (`64de909`).
 
 **Acceptance criteria:**
-- [ ] Deleting and restoring a calendar keeps every event's travel mode and travel details exactly as they were.
-- [ ] The e2e reset and user deletion leave no archived travel details behind.
+- [x] Deleting and restoring a calendar keeps every event's travel mode and travel details exactly as they were.
+- [x] The e2e reset and user deletion leave no archived travel details behind.
 
 **Verification:**
-- [ ] `make check`, with integration tests for delete then restore, plus the cleanup paths (each confirmed to fail before its fix, as on feature 22)
+- [x] `make check`, with integration tests for delete then restore, plus the cleanup paths (each confirmed to fail before its fix, as on feature 22)
 
 **Dependencies:** Task 1 (it can run in parallel with Tasks 2–6)
 
