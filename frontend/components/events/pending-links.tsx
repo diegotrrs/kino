@@ -65,7 +65,7 @@ export const PendingLinks = ({ onChange }: Props) => {
                 variant='ghost'
                 size='icon'
                 className='h-6 w-6 shrink-0'
-                aria-label='Delete link'
+                aria-label={tLinks('deleteLink')}
                 data-testid='pending-delete-link-button'
                 onClick={() => update(removePendingUrl(urls, url))}
               >
@@ -91,7 +91,7 @@ export const PendingLinks = ({ onChange }: Props) => {
           disabled={!inputValue.trim()}
           onClick={handleAdd}
         >
-          Add
+          {tLinks('add')}
         </Button>
       </div>
     </div>

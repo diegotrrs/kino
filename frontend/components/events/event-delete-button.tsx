@@ -30,23 +30,24 @@ export const EventDeleteButton = ({
   const { toast } = useToast();
   const t = useTranslations('events');
   const tDialog = useTranslations('eventDialog');
+  const tToast = useTranslations('toasts');
 
   const handleDelete = () => {
     startTransition(async () => {
       try {
         await deleteEvent(eventId);
         toast({
-          title: 'Event deleted!',
+          title: tToast('eventDeleted'),
           action: (
-            <ToastAction altText='Dismiss'>Dismiss</ToastAction>
+            <ToastAction altText={tToast('dismiss')}>{tToast('dismiss')}</ToastAction>
           ),
         });
       } catch {
         toast({
           variant: 'destructive',
-          title: 'Failed to delete event',
+          title: tToast('eventDeleteFailed'),
           action: (
-            <ToastAction altText='Dismiss'>Dismiss</ToastAction>
+            <ToastAction altText={tToast('dismiss')}>{tToast('dismiss')}</ToastAction>
           ),
         });
       }

@@ -71,7 +71,7 @@ export const EventLinks = ({ eventId, initialLinks, readOnly = false, onLinksCha
                 href={link.url}
                 target='_blank'
                 rel='noreferrer'
-                aria-label='Open link'
+                aria-label={tLinks('openLink')}
                 data-testid='event-link'
                 className='flex items-center gap-1.5 flex-1 min-w-0 text-sm text-primary hover:underline'
               >
@@ -86,7 +86,7 @@ export const EventLinks = ({ eventId, initialLinks, readOnly = false, onLinksCha
                   variant='ghost'
                   size='icon'
                   className='h-6 w-6 shrink-0'
-                  aria-label='Delete link'
+                  aria-label={tLinks('deleteLink')}
                   data-testid='delete-link-button'
                   onClick={() => handleDelete(link.id)}
                 >
@@ -115,7 +115,7 @@ export const EventLinks = ({ eventId, initialLinks, readOnly = false, onLinksCha
             disabled={isAdding || !inputValue.trim()}
             onClick={handleAdd}
           >
-            {isAdding ? 'Adding...' : 'Add'}
+            {isAdding ? tLinks('adding') : tLinks('add')}
           </Button>
         </div>
       )}

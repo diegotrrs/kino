@@ -78,4 +78,38 @@ test.describe('@7. i18n', () => {
     await page.goto('/feedback');
     await expect(page.getByPlaceholder(/Comparte/)).toBeVisible();
   });
+
+  test('@7.3 should show calendar actions, sharing, event toasts and calendar settings in the selected language', async ({
+    page,
+    request,
+  }) => {
+    const token = await getToken(request);
+    const name = `Viaje ${Date.now()}`;
+    const calendarUuid = await createCalendar(request, token, name);
+    await page.context().addCookies([{ name: 'locale', value: 'es', domain: 'localhost', path: '/' }]);
+
+    // Calendar page: header actions and the share dialog
+    await page.goto(`/calendars/${calendarUuid}`);
+    await expect(page.getByRole('link', { name: 'Volver' })).toBeVisible();
+    await page.getByRole('button', { name: 'Compartir calendario' }).click();
+    const shareDialog = page.getByRole('dialog');
+    await expect(shareDialog.getByRole('heading', { name: `Compartir «${name}»` })).toBeVisible();
+    await expect(shareDialog.getByText('Hazlo público para compartirlo')).toBeVisible();
+    await expect(shareDialog.getByRole('button', { name: 'Copiar enlace' })).toBeVisible();
+    await page.keyboard.press('Escape');
+
+    // Adding an event: the confirmation toast
+    await page.getByRole('button', { name: /añadir evento/i }).first().click();
+    const eventDialog = page.getByRole('alertdialog');
+    await eventDialog.getByLabel('Título del evento').fill('Cena');
+    await eventDialog.getByRole('button', { name: /añadir evento/i }).click();
+    // Exact: Radix also renders a hidden "Notification …" announcement with the same words
+    await expect(page.getByText('¡Evento añadido!', { exact: true })).toBeVisible();
+
+    // Calendar settings page
+    await page.goto(`/calendars/${calendarUuid}/edit`);
+    await expect(page.getByRole('heading', { name: 'Editar calendario' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Miembros' })).toBeVisible();
+    await expect(page.getByText('Eliminar este calendario')).toBeVisible();
+  });
 });

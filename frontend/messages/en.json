@@ -16,7 +16,8 @@
     "profile": "Profile",
     "settings": "Settings",
     "about": "About",
-    "logOut": "Log out"
+    "logOut": "Log out",
+    "menu": "Menu"
   },
   "marketing": {
     "goToApp": "Go to app",
@@ -167,7 +168,10 @@
     "sent": "Feedback sent. Thank you!",
     "sendFailed": "Failed to send feedback. Please try again.",
     "send": "Send feedback",
-    "sending": "Sending..."
+    "sending": "Sending...",
+    "removeVote": "Remove vote",
+    "vote": "Vote for this feature",
+    "voteFailed": "Failed to update vote"
   },
   "settings": {
     "title": "Settings",
@@ -236,7 +240,8 @@
     "onEvents": "On events",
     "general": "General",
     "viewAll": "See all expenses",
-    "spent": "{amount} spent"
+    "spent": "{amount} spent",
+    "closeExpenses": "Close expenses"
   },
   "tripPass": {
     "dates": "Dates",
@@ -410,5 +415,63 @@
     "deleting": "Deleting...",
     "deleted": "Calendar deleted",
     "deleteFailed": "Failed to delete calendar"
+  },
+  "toasts": {
+    "eventAdded": "Event added!",
+    "eventAddFailed": "Failed to add event",
+    "eventEdited": "Event edited!",
+    "eventSaveFailed": "Failed to save event",
+    "eventDeleted": "Event deleted!",
+    "eventDeleteFailed": "Failed to delete event",
+    "dismiss": "Dismiss",
+    "dismissNotification": "Click here to dismiss notification"
+  },
+  "calendarNav": {
+    "selectDay": "Select day...",
+    "searchDay": "Search day...",
+    "noDay": "No day found.",
+    "selectMonth": "Select month...",
+    "searchMonth": "Search month...",
+    "noMonth": "No month found."
+  },
+  "calendarPage": {
+    "signIn": "Sign in",
+    "calendar": "Calendar",
+    "goBack": "Go back",
+    "editCalendar": "Edit calendar",
+    "editTitle": "Edit Calendar",
+    "editSubtitle": "Update your calendar details.",
+    "privateTitle": "This calendar is private",
+    "privateHint": "Ask the owner to share access.",
+    "membersTitle": "Members",
+    "membersHint": "Invite people to collaborate on this calendar.",
+    "deleteTitle": "Delete this calendar",
+    "deleteHint": "You can recover it later from Settings.",
+    "tripDetails": "Trip details"
+  },
+  "restoreCalendar": {
+    "restore": "Restore",
+    "restoring": "Restoring...",
+    "restored": "Calendar restored",
+    "restoreFailed": "Failed to restore calendar"
+  },
+  "shareCalendar": {
+    "button": "Share calendar",
+    "title": "Share “{name}”",
+    "makePublic": "Make public to share",
+    "privateHint": "This calendar is private. Enable sharing to let anyone with the link view it.",
+    "publicLabel": "Public — anyone with the link can view",
+    "email": "Email",
+    "copyLink": "Copy link",
+    "copied": "Copied!",
+    "pasteHint": "Now paste the url in an app",
+    "nowPublic": "Calendar is now public",
+    "nowPrivate": "Calendar is now private",
+    "visibilityFailed": "Failed to update visibility"
+  },
+  "favourite": {
+    "add": "Add to favourites",
+    "remove": "Remove from favourites",
+    "failed": "Failed to update favourite"
   }
 }

@@ -6,6 +6,7 @@ import type {
   Calendar,
   CalendarMember
 }                               from '@/lib/types';
+import { getTranslations }      from 'next-intl/server';
 import { cookies }              from 'next/headers';
 import { redirect }             from 'next/navigation';
 
@@ -22,6 +23,7 @@ const EditCalendarPage = async ({
   params: Promise<{ uuid: string }>;
 }) => {
   const { uuid } = await params;
+  const t = await getTranslations('calendarPage');
 
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
@@ -51,10 +53,10 @@ const EditCalendarPage = async ({
         <div className='w-full px-5 space-y-5'>
           <div className='space-y-0'>
             <h2 className='text-3xl font-extrabold tracking-tighter md:text-4xl'>
-              Edit Calendar
+              {t('editTitle')}
             </h2>
             <p className='text-xs md:text-sm font-medium text-muted-foreground'>
-              Update your calendar details.
+              {t('editSubtitle')}
             </p>
           </div>
 
@@ -71,8 +73,8 @@ const EditCalendarPage = async ({
 
           <div className='space-y-3'>
             <div className='space-y-0'>
-              <h3 className='text-sm font-medium'>Members</h3>
-              <p className='text-xs text-muted-foreground'>Invite people to collaborate on this calendar.</p>
+              <h3 className='text-sm font-medium'>{t('membersTitle')}</h3>
+              <p className='text-xs text-muted-foreground'>{t('membersHint')}</p>
             </div>
             <CalendarMembers calendarUuid={uuid} calendarName={calendar.name} members={members} currentUserId={currentUserId} />
           </div>
@@ -82,8 +84,8 @@ const EditCalendarPage = async ({
           <div className='space-y-2'>
             <div className='flex items-center justify-between rounded-md border border-destructive/30 px-4 py-3'>
               <div>
-                <p className='text-sm font-medium'>Delete this calendar</p>
-                <p className='text-xs text-muted-foreground'>You can recover it later from Settings.</p>
+                <p className='text-sm font-medium'>{t('deleteTitle')}</p>
+                <p className='text-xs text-muted-foreground'>{t('deleteHint')}</p>
               </div>
               <CalendarDeleteButton calendarUuid={uuid} calendarName={calendar.name} variant='button' />
             </div>

@@ -107,7 +107,7 @@ export const TopBar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
               className={!isLoggedIn ? 'pointer-events-none opacity-40' : ''}
             >
               <EllipsisVertical className='h-5 w-5' />
-              <span className='sr-only'>Menu</span>
+              <span className='sr-only'>{t('menu')}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>

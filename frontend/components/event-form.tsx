@@ -102,6 +102,7 @@ export const EventForm = (props: EventFormProps) => {
   const { toast } = useToast();
   const t = useTranslations('eventDialog');
   const tSuggestedTitle = useTranslations('travel.suggestedTitle');
+  const tToast = useTranslations('toasts');
   const locale = useLocale();
 
   const open = mode === 'add' ? eventAddOpen : eventEditOpen;
@@ -279,8 +280,8 @@ export const EventForm = (props: EventFormProps) => {
         } catch {
           toast({
             variant: 'destructive',
-            title: 'Failed to add event',
-            action: <ToastAction altText='Dismiss'>Dismiss</ToastAction>,
+            title: tToast('eventAddFailed'),
+            action: <ToastAction altText={tToast('dismiss')}>{tToast('dismiss')}</ToastAction>,
           });
           return;
         }
@@ -292,8 +293,8 @@ export const EventForm = (props: EventFormProps) => {
       setOpen(false);
       onSaved?.();
       toast({
-        title: 'Event added!',
-        action: <ToastAction altText='Click here to dismiss notification'>Dismiss</ToastAction>,
+        title: tToast('eventAdded'),
+        action: <ToastAction altText={tToast('dismissNotification')}>{tToast('dismiss')}</ToastAction>,
       });
     } else {
       const newEvent = {
@@ -325,8 +326,8 @@ export const EventForm = (props: EventFormProps) => {
           console.error(e);
           toast({
             variant: 'destructive',
-            title: 'Failed to save event',
-            action: <ToastAction altText='Dismiss'>Dismiss</ToastAction>,
+            title: tToast('eventSaveFailed'),
+            action: <ToastAction altText={tToast('dismiss')}>{tToast('dismiss')}</ToastAction>,
           });
           return;
         }
@@ -336,8 +337,8 @@ export const EventForm = (props: EventFormProps) => {
       addEvent(newEvent);
       setOpen(false);
       toast({
-        title: 'Event edited!',
-        action: <ToastAction altText='Click here to dismiss notification'>Dismiss</ToastAction>,
+        title: tToast('eventEdited'),
+        action: <ToastAction altText={tToast('dismissNotification')}>{tToast('dismiss')}</ToastAction>,
       });
     }
   };
@@ -351,8 +352,8 @@ export const EventForm = (props: EventFormProps) => {
       } catch {
         toast({
           variant: 'destructive',
-          title: 'Failed to delete event',
-          action: <ToastAction altText='Dismiss'>Dismiss</ToastAction>,
+          title: tToast('eventDeleteFailed'),
+          action: <ToastAction altText={tToast('dismiss')}>{tToast('dismiss')}</ToastAction>,
         });
         return;
       }
@@ -362,8 +363,8 @@ export const EventForm = (props: EventFormProps) => {
     setConfirmingDelete(false);
     setOpen(false);
     toast({
-      title: 'Event deleted!',
-      action: <ToastAction altText='Click here to dismiss notification'>Dismiss</ToastAction>,
+      title: tToast('eventDeleted'),
+      action: <ToastAction altText={tToast('dismissNotification')}>{tToast('dismiss')}</ToastAction>,
     });
   };
 

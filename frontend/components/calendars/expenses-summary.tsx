@@ -216,7 +216,7 @@ export const ExpensesDrawer = () => {
 
       <div
         role='dialog'
-        aria-label='Expenses'
+        aria-label={t('drawerTitle')}
         data-testid='trip-cost-drawer'
         className={cn(
           'fixed inset-x-0 bottom-0 z-50 flex max-h-[85svh] flex-col rounded-t-2xl border-t bg-card shadow-xl transition-transform duration-300',
@@ -231,7 +231,7 @@ export const ExpensesDrawer = () => {
             <span className='font-display text-base font-bold'>{t('drawerTitle')}</span>
           </div>
           <button
-            aria-label='Close expenses'
+            aria-label={t('closeExpenses')}
             onClick={() => setOpen(false)}
             className='text-muted-foreground hover:text-foreground'
           >

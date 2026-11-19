@@ -3,6 +3,7 @@ import { toggleFavourite } from '@/app/(app)/calendars/actions';
 import { Button }          from '@/components/ui/button';
 import { useToast }        from '@/hooks/use-toast';
 import { Star }            from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import {
   useOptimistic,
   useTransition
@@ -20,6 +21,7 @@ export const CalendarFavouriteButton = ({
   disabled = false,
 }: CalendarFavouriteButtonProps) => {
   const { toast } = useToast();
+  const t = useTranslations('favourite');
   const [, startTransition] = useTransition();
   const [optimisticFavourite, setOptimisticFavourite] = useOptimistic(isFavourite);
 
@@ -30,7 +32,7 @@ export const CalendarFavouriteButton = ({
       try {
         await toggleFavourite(calendarUuid, next);
       } catch {
-        toast({ variant: 'destructive', title: 'Failed to update favourite' });
+        toast({ variant: 'destructive', title: t('failed') });
       }
     });
   }
@@ -41,7 +43,7 @@ export const CalendarFavouriteButton = ({
       size='icon'
       onClick={handleClick}
       disabled={disabled}
-      aria-label={optimisticFavourite ? 'Remove from favourites' : 'Add to favourites'}
+      aria-label={optimisticFavourite ? t('remove') : t('add')}
       className={optimisticFavourite ? 'text-ev-ochre hover:text-ev-ochre/80' : 'text-muted-foreground hover:text-ev-ochre'}
     >
       <Star

@@ -15,6 +15,7 @@ import {
   Mail,
   MessageCircle
 }                                   from 'lucide-react';
+import { useTranslations }     from 'next-intl';
 import {
   useState,
   useTransition
@@ -39,6 +40,7 @@ export const CalendarShareDialog = ({
   const [isPending, startTransition] = useTransition();
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
+  const t = useTranslations('shareCalendar');
 
   const shareUrl =
     typeof window !== 'undefined'
@@ -50,9 +52,9 @@ export const CalendarShareDialog = ({
       try {
         await updateCalendarVisibility(calendarUuid, checked);
         setIsPublic(checked);
-        toast({ title: checked ? 'Calendar is now public' : 'Calendar is now private' });
+        toast({ title: checked ? t('nowPublic') : t('nowPrivate') });
       } catch {
-        toast({ variant: 'destructive', title: 'Failed to update visibility' });
+        toast({ variant: 'destructive', title: t('visibilityFailed') });
       }
     });
   }
@@ -86,7 +88,7 @@ export const CalendarShareDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='sm:max-w-sm'>
         <DialogHeader>
-          <DialogTitle>Share &ldquo;{calendarName}&rdquo;</DialogTitle>
+          <DialogTitle>{t('title', { name: calendarName })}</DialogTitle>
         </DialogHeader>
 
         <div className='space-y-5 pt-1'>
@@ -103,11 +105,11 @@ export const CalendarShareDialog = ({
                   htmlFor='share-visibility-toggle'
                   className='text-sm text-muted-foreground cursor-pointer select-none'
                 >
-                  Make public to share
+                  {t('makePublic')}
                 </label>
               </div>
               <p className='text-xs text-muted-foreground'>
-                This calendar is private. Enable sharing to let anyone with the link view it.
+                {t('privateHint')}
               </p>
             </div>
           )}
@@ -125,7 +127,7 @@ export const CalendarShareDialog = ({
                   htmlFor='share-visibility-toggle'
                   className='text-sm text-muted-foreground cursor-pointer select-none'
                 >
-                  Public — anyone with the link can view
+                  {t('publicLabel')}
                 </label>
               </div>
             </div>
@@ -159,7 +161,7 @@ export const CalendarShareDialog = ({
               disabled={!isPublic}
             >
               <Mail className='h-4 w-4' />
-              Email
+              {t('email')}
             </Button>
 
             <Button
@@ -169,13 +171,13 @@ export const CalendarShareDialog = ({
               disabled={!isPublic}
             >
               <Copy className='h-4 w-4' />
-              {copied ? 'Copied!' : 'Copy link'}
+              {copied ? t('copied') : t('copyLink')}
             </Button>
           </div>
 
           {copied && (
             <p className='text-xs text-center text-muted-foreground'>
-              Now paste the url in an app
+              {t('pasteHint')}
             </p>
           )}
         </div>

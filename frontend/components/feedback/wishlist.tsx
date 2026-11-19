@@ -2,6 +2,7 @@
 import { toggleVote } from '@/app/(app)/feedback/actions';
 import { useToast }   from '@/hooks/use-toast';
 import { ThumbsUp }   from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import {
   useOptimistic,
   useTransition
@@ -35,6 +36,7 @@ export const Wishlist = ({ items }: WishlistProps) => {
   );
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const t = useTranslations('feedback');
 
   const handleToggle = (item: WishlistItem) => {
     const voted = !item.user_has_voted;
@@ -43,7 +45,7 @@ export const Wishlist = ({ items }: WishlistProps) => {
       try {
         await toggleVote(item.id, item.user_has_voted);
       } catch {
-        toast({ variant: 'destructive', title: 'Failed to update vote' });
+        toast({ variant: 'destructive', title: t('voteFailed') });
       }
     });
   }
@@ -60,7 +62,7 @@ export const Wishlist = ({ items }: WishlistProps) => {
             onClick={() => handleToggle(item)}
             disabled={isPending}
             className='flex items-center gap-1.5 shrink-0 text-sm disabled:opacity-50'
-            aria-label={item.user_has_voted ? 'Remove vote' : 'Vote for this feature'}
+            aria-label={item.user_has_voted ? t('removeVote') : t('vote')}
           >
             <ThumbsUp
               className={`h-4 w-4 transition-colors ${

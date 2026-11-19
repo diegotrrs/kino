@@ -2,6 +2,7 @@
 import { restoreCalendar } from '@/app/(app)/calendars/actions';
 import { Button }          from '@/components/ui/button';
 import { useToast }        from '@/hooks/use-toast';
+import { useTranslations } from 'next-intl';
 import { useRouter }       from 'next/navigation';
 import { useTransition }   from 'react';
 
@@ -13,22 +14,23 @@ export const RestoreCalendarButton = ({ calendarUuid }: RestoreCalendarButtonPro
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
   const router = useRouter();
+  const t = useTranslations('restoreCalendar');
 
   const handleRestore = () => {
     startTransition(async () => {
       try {
         await restoreCalendar(calendarUuid);
-        toast({ title: 'Calendar restored' });
+        toast({ title: t('restored') });
         router.refresh();
       } catch {
-        toast({ variant: 'destructive', title: 'Failed to restore calendar' });
+        toast({ variant: 'destructive', title: t('restoreFailed') });
       }
     });
   }
 
   return (
     <Button variant='outline' size='sm' onClick={handleRestore} disabled={isPending}>
-      {isPending ? 'Restoring...' : 'Restore'}
+      {isPending ? t('restoring') : t('restore')}
     </Button>
   );
 }

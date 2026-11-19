@@ -26,6 +26,7 @@ import {
   ArrowLeft,
   Pencil
 }                                 from 'lucide-react';
+import { getTranslations }        from 'next-intl/server';
 import { cookies }                from 'next/headers';
 import Link                       from 'next/link';
 import { redirect }               from 'next/navigation';
@@ -128,6 +129,7 @@ const CalendarPage = async ({
   params: Promise<{ uuid: string }>;
 }) => {
   const { uuid } = await params;
+  const t = await getTranslations('calendarPage');
   const backHref = '/home';
 
   const token = await getToken();
@@ -148,11 +150,11 @@ const CalendarPage = async ({
               className='inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-1'
             >
               <ArrowLeft className='h-4 w-4' />
-              Sign in
+              {t('signIn')}
             </Link>
             <div className='flex items-center gap-1'>
               <h2 className='text-3xl font-extrabold tracking-tighter md:text-5xl select-none cursor-default'>
-                Calendar
+                {t('calendar')}
               </h2>
             </div>
             <Separator />
@@ -206,7 +208,7 @@ const CalendarPage = async ({
 
                 <Link
                   href={backHref}
-                  aria-label='Go back'
+                  aria-label={t('goBack')}
                   className='-ml-2 mb-1 inline-flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
                 >
                   <ArrowLeft className='h-6 w-6' />
@@ -226,7 +228,7 @@ const CalendarPage = async ({
                     )}
                     {calendar.role === 'owner' && (
                       <Button variant='ghost' size='icon' asChild>
-                        <Link href={`/calendars/${calendar.uuid}/edit`} aria-label='Edit calendar'>
+                        <Link href={`/calendars/${calendar.uuid}/edit`} aria-label={t('editCalendar')}>
                           <Pencil className='h-5 w-5 text-muted-foreground' />
                         </Link>
                       </Button>
@@ -239,7 +241,7 @@ const CalendarPage = async ({
                 <Calendar />
                 {/* Pinned to column 2: the calendar renders nothing until it loads in the browser, and the rail would jump into its place */}
                 {hasRail && (
-                  <aside className='hidden gap-4 lg:col-start-2 lg:grid' aria-label='Trip details'>
+                  <aside className='hidden gap-4 lg:col-start-2 lg:grid' aria-label={t('tripDetails')}>
                     <ExpensesPanel />
                     <ChecklistPanel />
                   </aside>

@@ -55,6 +55,7 @@ const CalendarNav = ({
   const { setEventAddOpen } = useEvents();
   const t = useTranslations('eventDialog');
   const months = getMonthNames(useLocale());
+  const tNav = useTranslations('calendarNav');
   const [currentView] = useState('dayGridMonth');
 
   const selectedMonth = viewedDate.getMonth() + 1;
@@ -98,15 +99,15 @@ const CalendarNav = ({
                 {selectedDay
                   ? dayOptions.find((day) => day.value === String(selectedDay))
                     ?.label
-                  : 'Select day...'}
+                  : tNav('selectDay')}
                 <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
               </Button>
             </PopoverTrigger>
             <PopoverContent className='w-[200px] p-0'>
               <Command>
-                <CommandInput placeholder='Search day...' />
+                <CommandInput placeholder={tNav('searchDay')} />
                 <CommandList>
-                  <CommandEmpty>No day found.</CommandEmpty>
+                  <CommandEmpty>{tNav('noDay')}</CommandEmpty>
                   <CommandGroup>
                     {dayOptions.map((day) => (
                       <CommandItem
@@ -151,15 +152,15 @@ const CalendarNav = ({
               {selectedMonth
                 ? months.find((month) => month.value === String(selectedMonth))
                   ?.label
-                : 'Select month...'}
+                : tNav('selectMonth')}
               <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
             </Button>
           </PopoverTrigger>
           <PopoverContent className='w-[200px] p-0'>
             <Command>
-              <CommandInput placeholder='Search month...' />
+              <CommandInput placeholder={tNav('searchMonth')} />
               <CommandList>
-                <CommandEmpty>No month found.</CommandEmpty>
+                <CommandEmpty>{tNav('noMonth')}</CommandEmpty>
                 <CommandGroup>
                   {months.map((month) => (
                     <CommandItem

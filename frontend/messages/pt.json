@@ -16,7 +16,8 @@
     "profile": "Perfil",
     "settings": "Configurações",
     "about": "Sobre",
-    "logOut": "Sair"
+    "logOut": "Sair",
+    "menu": "Menu"
   },
   "marketing": {
     "goToApp": "Ir para o app",
@@ -167,7 +168,10 @@
     "sent": "Comentário enviado. Obrigado!",
     "sendFailed": "Não foi possível enviar o comentário. Tenta outra vez.",
     "send": "Enviar comentário",
-    "sending": "A enviar…"
+    "sending": "A enviar…",
+    "removeVote": "Remover voto",
+    "vote": "Votar nesta funcionalidade",
+    "voteFailed": "Não foi possível atualizar o voto"
   },
   "settings": {
     "title": "Configurações",
@@ -236,7 +240,8 @@
     "onEvents": "Em eventos",
     "general": "Gerais",
     "viewAll": "Ver todas as despesas",
-    "spent": "{amount} gastos"
+    "spent": "{amount} gastos",
+    "closeExpenses": "Fechar despesas"
   },
   "tripPass": {
     "dates": "Datas",
@@ -410,5 +415,63 @@
     "deleting": "A eliminar…",
     "deleted": "Calendário eliminado",
     "deleteFailed": "Não foi possível eliminar o calendário"
+  },
+  "toasts": {
+    "eventAdded": "Evento adicionado!",
+    "eventAddFailed": "Não foi possível adicionar o evento",
+    "eventEdited": "Evento editado!",
+    "eventSaveFailed": "Não foi possível guardar o evento",
+    "eventDeleted": "Evento eliminado!",
+    "eventDeleteFailed": "Não foi possível eliminar o evento",
+    "dismiss": "Fechar",
+    "dismissNotification": "Clica para fechar a notificação"
+  },
+  "calendarNav": {
+    "selectDay": "Escolhe um dia...",
+    "searchDay": "Procurar dia...",
+    "noDay": "Dia não encontrado.",
+    "selectMonth": "Escolhe um mês...",
+    "searchMonth": "Procurar mês...",
+    "noMonth": "Mês não encontrado."
+  },
+  "calendarPage": {
+    "signIn": "Iniciar sessão",
+    "calendar": "Calendário",
+    "goBack": "Voltar",
+    "editCalendar": "Editar calendário",
+    "editTitle": "Editar calendário",
+    "editSubtitle": "Atualiza os dados do teu calendário.",
+    "privateTitle": "Este calendário é privado",
+    "privateHint": "Pede ao proprietário que partilhe o acesso.",
+    "membersTitle": "Membros",
+    "membersHint": "Convida outras pessoas para colaborar neste calendário.",
+    "deleteTitle": "Eliminar este calendário",
+    "deleteHint": "Podes recuperá-lo mais tarde nas Definições.",
+    "tripDetails": "Detalhes da viagem"
+  },
+  "restoreCalendar": {
+    "restore": "Restaurar",
+    "restoring": "A restaurar...",
+    "restored": "Calendário restaurado",
+    "restoreFailed": "Não foi possível restaurar o calendário"
+  },
+  "shareCalendar": {
+    "button": "Partilhar calendário",
+    "title": "Partilhar “{name}”",
+    "makePublic": "Torna-o público para partilhar",
+    "privateHint": "Este calendário é privado. Ativa a partilha para que qualquer pessoa com o link o possa ver.",
+    "publicLabel": "Público — qualquer pessoa com o link pode ver",
+    "email": "Email",
+    "copyLink": "Copiar link",
+    "copied": "Copiado!",
+    "pasteHint": "Agora cola o link numa app",
+    "nowPublic": "O calendário agora é público",
+    "nowPrivate": "O calendário agora é privado",
+    "visibilityFailed": "Não foi possível alterar a visibilidade"
+  },
+  "favourite": {
+    "add": "Adicionar aos favoritos",
+    "remove": "Remover dos favoritos",
+    "failed": "Não foi possível atualizar o favorito"
   }
 }

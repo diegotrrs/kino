@@ -92,6 +92,7 @@ const Calendar = () => {
   const isSmallScreen = useMediaQuery('(max-width: 767px)');
   const tDayNames = useTranslations('dayNames');
   const locale = useLocale();
+  const tToast = useTranslations('toasts');
   const tDaySheet = useTranslations('daySheet');
   // Trip = calendar start date → last event (same range as the trip ticket); unnamed days in it invite a name
   const tripSpan = initialDate
@@ -167,7 +168,7 @@ const Calendar = () => {
       } catch (e) {
         console.error(e);
         info.revert();
-        toast({ variant: 'destructive', title: 'Failed to save event' });
+        toast({ variant: 'destructive', title: tToast('eventSaveFailed') });
         return;
       }
     }
