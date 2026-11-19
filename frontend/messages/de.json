@@ -4,7 +4,10 @@
     "myCalendars": "Meine Kalender",
     "createCalendar": "Kalender erstellen",
     "events": "Veranstaltungen",
-    "settings": "Einstellungen"
+    "settings": "Einstellungen",
+    "account": "Konto",
+    "signIn": "Anmelden",
+    "logOut": "Abmelden"
   },
   "topBar": {
     "feedback": "Feedback",
@@ -124,7 +127,25 @@
     "title": "Kalender erstellen",
     "subtitle": "Richte einen neuen Kalender ein.",
     "startDate": "Startdatum",
-    "startDatePlaceholder": "Datum wählen"
+    "startDatePlaceholder": "Datum wählen",
+    "name": "Name",
+    "namePlaceholder": "Mein Kalender",
+    "cancel": "Abbrechen",
+    "create": "Erstellen",
+    "creating": "Wird erstellt…",
+    "save": "Speichern",
+    "saving": "Wird gespeichert…",
+    "createdWithItinerary": "Kalender mit deiner Reiseroute erstellt!",
+    "created": "Kalender erstellt!",
+    "createFailed": "Kalender konnte nicht erstellt werden",
+    "updated": "Kalender aktualisiert!",
+    "updateFailed": "Kalender konnte nicht aktualisiert werden",
+    "visibility": "Sichtbarkeit",
+    "public": "Öffentlich — alle mit dem Link können ihn sehen",
+    "private": "Privat — nur Mitglieder können ihn sehen",
+    "nowPublic": "Der Kalender ist jetzt öffentlich",
+    "nowPrivate": "Der Kalender ist jetzt privat",
+    "visibilityFailed": "Sichtbarkeit konnte nicht geändert werden"
   },
   "events": {
     "title": "Veranstaltungen",
@@ -141,7 +162,12 @@
     "shareTitle": "Teile dein Feedback",
     "shareSubtitle": "Sag uns, was funktioniert, was nicht, oder was dir sonst noch auf dem Herzen liegt.",
     "wishlistTitle": "Wunschliste",
-    "wishlistSubtitle": "Stimme für die Funktionen ab, die du als nächstes sehen möchtest."
+    "wishlistSubtitle": "Stimme für die Funktionen ab, die du als nächstes sehen möchtest.",
+    "placeholder": "Teile deine Gedanken und Ideen oder melde ein Problem…",
+    "sent": "Feedback gesendet. Danke!",
+    "sendFailed": "Feedback konnte nicht gesendet werden. Versuch es nochmal.",
+    "send": "Feedback senden",
+    "sending": "Wird gesendet…"
   },
   "settings": {
     "title": "Einstellungen",
@@ -354,5 +380,35 @@
       "copy": "Kopieren",
       "copyReference": "Buchungsnummer kopieren"
     }
+  },
+  "calendarMembers": {
+    "invite": "Einladen",
+    "inviting": "Wird eingeladen…",
+    "inviteSent": "Eine E-Mail wurde an {email} gesendet",
+    "inviteFailed": "Einladung fehlgeschlagen",
+    "inviteFailedDescription": "Prüfe, ob die E-Mail registriert ist und die Person noch kein Mitglied ist.",
+    "removed": "Mitglied entfernt.",
+    "removeFailed": "Mitglied konnte nicht entfernt werden",
+    "removeTitle": "Mitglied entfernen",
+    "removeDescription": "Möchtest du <strong>{name}</strong> wirklich als Bearbeiter von <strong>{calendar}</strong> entfernen?",
+    "removeLabel": "{name} entfernen",
+    "cancel": "Abbrechen",
+    "remove": "Entfernen",
+    "role": {
+      "owner": "Eigentümer",
+      "editor": "Bearbeiter"
+    }
+  },
+  "calendarDelete": {
+    "options": "Optionen",
+    "share": "Teilen",
+    "delete": "Löschen",
+    "deleteCalendar": "Kalender löschen",
+    "title": "„{name}“ löschen?",
+    "description": "„{name}“ wird mit allen Terminen gelöscht. Du kannst den Kalender später in den Einstellungen wiederherstellen.",
+    "cancel": "Abbrechen",
+    "deleting": "Wird gelöscht…",
+    "deleted": "Kalender gelöscht",
+    "deleteFailed": "Kalender konnte nicht gelöscht werden"
   }
 }

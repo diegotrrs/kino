@@ -36,11 +36,17 @@ import dayGridPlugin          from '@fullcalendar/daygrid';
 import interactionPlugin      from '@fullcalendar/interaction';
 import listPlugin             from '@fullcalendar/list';
 import multiMonthPlugin       from '@fullcalendar/multimonth';
+import deLocale               from '@fullcalendar/core/locales/de';
+import esLocale               from '@fullcalendar/core/locales/es';
+import ptLocale               from '@fullcalendar/core/locales/pt';
 import FullCalendar           from '@fullcalendar/react';
 import timeGridPlugin         from '@fullcalendar/timegrid';
 import { format }             from 'date-fns';
 import { Pencil }             from 'lucide-react';
-import { useTranslations }    from 'next-intl';
+import {
+  useLocale,
+  useTranslations
+}                             from 'next-intl';
 import {
   useRef,
   useState
@@ -48,6 +54,9 @@ import {
 import CalendarNav            from './calendar-nav';
 import { EventForm }          from './event-form';
 import { Card }               from './ui/card';
+
+// Defined once: a new array on every render makes FullCalendar re-initialise and loop through datesSet
+const CALENDAR_LOCALES = [esLocale, ptLocale, deLocale];
 
 type EventItemProps = {
   info: EventContentArg;
@@ -82,6 +91,7 @@ const Calendar = () => {
   // Phones: days and their events are too small to tap precisely, so a tap opens the whole day instead
   const isSmallScreen = useMediaQuery('(max-width: 767px)');
   const tDayNames = useTranslations('dayNames');
+  const locale = useLocale();
   const tDaySheet = useTranslations('daySheet');
   // Trip = calendar start date → last event (same range as the trip ticket); unnamed days in it invite a name
   const tripSpan = initialDate
@@ -218,7 +228,7 @@ const Calendar = () => {
         {info.view.type == 'timeGridDay' ? (
           <div className='flex flex-col rounded-sm'>
             <p>
-              {info.date.toLocaleDateString('en-US', {
+              {info.date.toLocaleDateString(locale, {
                 month: 'long',
                 day: 'numeric',
                 year: 'numeric',
@@ -253,7 +263,7 @@ const Calendar = () => {
     const isFirstOfMonth = info.date.getDate() === 1 && info.view.type === 'dayGridMonth';
 
     const getMonthLabel = (date: Date) => {
-      return date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+      return date.toLocaleDateString(locale, { month: 'short' }).toUpperCase();
     };
 
     const isMonthView = info.view.type === 'dayGridMonth';
@@ -389,6 +399,9 @@ const Calendar = () => {
             slotMinTime={calendarEarliestTime}
             slotMaxTime={calendarLatestTime}
             allDaySlot={false}
+            // Weekday headers and event times follow the app's language (English is FullCalendar's default)
+            locales={CALENDAR_LOCALES}
+            locale={locale}
             firstDay={1}
             height={'32vh'}
             displayEventEnd={true}

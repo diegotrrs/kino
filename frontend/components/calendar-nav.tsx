@@ -24,8 +24,8 @@ import {
   handleMonthChange,
   handleYearChange
 }                          from '@/utils/calendar-utils';
-import { months }          from '@/utils/data';
 import { calendarRef }     from '@/utils/data';
+import { getMonthNames }    from '@/lib/date-locale';
 import {
   Check,
   ChevronLeft,
@@ -33,7 +33,10 @@ import {
   ChevronsUpDown,
   PlusIcon
 }                          from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import {
+  useLocale,
+  useTranslations
+}                          from 'next-intl';
 import { useState }        from 'react';
 
 type CalendarNavProps = {
@@ -51,6 +54,7 @@ const CalendarNav = ({
 }: Omit<CalendarNavProps, 'start' | 'end'>) => {
   const { setEventAddOpen } = useEvents();
   const t = useTranslations('eventDialog');
+  const months = getMonthNames(useLocale());
   const [currentView] = useState('dayGridMonth');
 
   const selectedMonth = viewedDate.getMonth() + 1;

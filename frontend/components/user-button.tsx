@@ -19,6 +19,7 @@ import {
   LogOut,
   User
 }                           from 'lucide-react';
+import { useTranslations }  from 'next-intl';
 import Link                 from 'next/link';
 
 type UserButtonProps = {
@@ -26,6 +27,7 @@ type UserButtonProps = {
 }
 
 export const UserButton = ({ user }: UserButtonProps) => {
+  const t = useTranslations('nav');
 
   const btnClass = cn(
     'flex h-10 w-10 items-center justify-center rounded-lg transition-colors',
@@ -38,10 +40,10 @@ export const UserButton = ({ user }: UserButtonProps) => {
         <TooltipTrigger asChild>
           <Link href='/login' className={btnClass}>
             <LogIn className='h-5 w-5' />
-            <span className='sr-only'>Sign in</span>
+            <span className='sr-only'>{t('signIn')}</span>
           </Link>
         </TooltipTrigger>
-        <TooltipContent side='right'>Sign in</TooltipContent>
+        <TooltipContent side='right'>{t('signIn')}</TooltipContent>
       </Tooltip>
     );
   }
@@ -56,10 +58,10 @@ export const UserButton = ({ user }: UserButtonProps) => {
             className={cn(btnClass, 'outline-none')}
           >
             <User className='h-5 w-5' />
-            <span className='sr-only'>Account</span>
+            <span className='sr-only'>{t('account')}</span>
           </DropdownMenuTrigger>
         </TooltipTrigger>
-        <TooltipContent side='right'>Account</TooltipContent>
+        <TooltipContent side='right'>{t('account')}</TooltipContent>
       </Tooltip>
 
       <DropdownMenuContent side='right' align='end' className='w-52 p-2'>
@@ -83,7 +85,7 @@ export const UserButton = ({ user }: UserButtonProps) => {
           onSelect={() => logout()}
         >
           <LogOut className='mr-2 h-4 w-4' />
-          Log out
+          {t('logOut')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

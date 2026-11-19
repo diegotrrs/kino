@@ -25,6 +25,7 @@ import {
   Share2,
   Trash2
 }                              from 'lucide-react';
+import { useTranslations }     from 'next-intl';
 import { useRouter }           from 'next/navigation';
 import {
   useState,
@@ -50,6 +51,7 @@ export const CalendarDeleteButton = ({
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const t = useTranslations('calendarDelete');
   const router = useRouter();
 
   const canShare = role === 'owner' || role === 'editor';
@@ -59,10 +61,10 @@ export const CalendarDeleteButton = ({
       try {
         await deleteCalendar(calendarUuid);
         setDeleteDialogOpen(false);
-        toast({ title: 'Calendar deleted' });
+        toast({ title: t('deleted') });
         router.push('/home');
       } catch {
-        toast({ variant: 'destructive', title: 'Failed to delete calendar' });
+        toast({ variant: 'destructive', title: t('deleteFailed') });
       }
     });
   }
@@ -75,7 +77,7 @@ export const CalendarDeleteButton = ({
             <DropdownMenuTrigger asChild>
               <Button variant='ghost' size='icon' className='h-8 w-8 text-muted-foreground'>
                 <MoreHorizontal className='h-4 w-4' />
-                <span className='sr-only'>Options</span>
+                <span className='sr-only'>{t('options')}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
@@ -88,7 +90,7 @@ export const CalendarDeleteButton = ({
                     }}
                   >
                     <Share2 className='mr-2 h-4 w-4' />
-                    Share
+                    {t('share')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                 </>
@@ -99,7 +101,7 @@ export const CalendarDeleteButton = ({
                   onSelect={(e) => e.preventDefault()}
                 >
                   <Trash2 className='mr-2 h-4 w-4' />
-                  Delete
+                  {t('delete')}
                 </DropdownMenuItem>
               </AlertDialogTrigger>
             </DropdownMenuContent>
@@ -108,22 +110,22 @@ export const CalendarDeleteButton = ({
           <AlertDialogTrigger asChild>
             <Button variant='destructive' size='sm'>
               <Trash2 className='mr-2 h-4 w-4' />
-              Delete calendar
+              {t('deleteCalendar')}
             </Button>
           </AlertDialogTrigger>
         )}
 
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete &ldquo;{calendarName}&rdquo;?</AlertDialogTitle>
+            <AlertDialogTitle>{t('title', { name: calendarName })}</AlertDialogTitle>
             <AlertDialogDescription>
-              This will delete &ldquo;{calendarName}&rdquo; and all its events. You can recover the calendar later from Settings.
+              {t('description', { name: calendarName })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
             <Button variant='destructive' onClick={handleDelete} disabled={isPending}>
-              {isPending ? 'Deleting...' : 'Delete'}
+              {isPending ? t('deleting') : t('delete')}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

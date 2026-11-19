@@ -18,6 +18,7 @@ import { Input }               from '@/components/ui/input';
 import { useToast }            from '@/hooks/use-toast';
 import type { CalendarMember } from '@/lib/types';
 import { X }                   from 'lucide-react';
+import { useTranslations }     from 'next-intl';
 import {
   useTransition,
   useRef,
@@ -35,6 +36,7 @@ export const CalendarMembers = ({ calendarUuid, calendarName, members, currentUs
   const [isPending, startTransition] = useTransition();
   const [memberToRemove, setMemberToRemove] = useState<CalendarMember | null>(null);
   const { toast } = useToast();
+  const t = useTranslations('calendarMembers');
   const emailRef = useRef<HTMLInputElement>(null);
 
   const handleInvite = (e: React.FormEvent) => {
@@ -45,10 +47,10 @@ export const CalendarMembers = ({ calendarUuid, calendarName, members, currentUs
     startTransition(async () => {
       try {
         await inviteToCalendar(calendarUuid, email);
-        toast({ title: `An email has been sent to ${email}` });
+        toast({ title: t('inviteSent', { email }) });
         if (emailRef.current) emailRef.current.value = '';
       } catch {
-        toast({ variant: 'destructive', title: 'Failed to invite user', description: 'Make sure the email is registered and not already a member.' });
+        toast({ variant: 'destructive', title: t('inviteFailed'), description: t('inviteFailedDescription') });
       }
     });
   }
@@ -57,9 +59,9 @@ export const CalendarMembers = ({ calendarUuid, calendarName, members, currentUs
     startTransition(async () => {
       try {
         await removeMember(calendarUuid, userId);
-        toast({ title: 'Member removed.' });
+        toast({ title: t('removed') });
       } catch {
-        toast({ variant: 'destructive', title: 'Failed to remove member' });
+        toast({ variant: 'destructive', title: t('removeFailed') });
       } finally {
         setMemberToRemove(null);
       }
@@ -77,12 +79,13 @@ export const CalendarMembers = ({ calendarUuid, calendarName, members, currentUs
                 <p className='text-xs text-muted-foreground'>{member.email}</p>
               </div>
               <div className='flex items-center gap-2'>
-                <span className='text-xs text-muted-foreground capitalize'>{member.role}</span>
+                <span className='text-xs text-muted-foreground'>{t(`role.${member.role}`)}</span>
                 {member.role !== 'owner' && member.id !== currentUserId && (
                   <Button
                     variant='ghost'
                     size='icon'
                     className='h-7 w-7'
+                    aria-label={t('removeLabel', { name: member.name })}
                     disabled={isPending}
                     onClick={() => setMemberToRemove(member)}
                   >
@@ -102,7 +105,7 @@ export const CalendarMembers = ({ calendarUuid, calendarName, members, currentUs
             className='flex-1'
           />
           <Button type='submit' disabled={isPending}>
-            {isPending ? 'Inviting...' : 'Invite'}
+            {isPending ? t('inviting') : t('invite')}
           </Button>
         </form>
       </div>
@@ -110,19 +113,23 @@ export const CalendarMembers = ({ calendarUuid, calendarName, members, currentUs
       <AlertDialog open={memberToRemove !== null} onOpenChange={(open) => { if (!open) setMemberToRemove(null); }}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove member</AlertDialogTitle>
+            <AlertDialogTitle>{t('removeTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to remove <strong>{memberToRemove?.name}</strong> as an editor from <strong>{calendarName}</strong>?
+              {t.rich('removeDescription', {
+                name: memberToRemove?.name ?? '',
+                calendar: calendarName,
+                strong: (chunks) => <strong>{chunks}</strong>,
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
             <AlertDialogAction
               className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
               disabled={isPending}
               onClick={() => memberToRemove && handleRemove(memberToRemove.id)}
             >
-              Remove
+              {t('remove')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

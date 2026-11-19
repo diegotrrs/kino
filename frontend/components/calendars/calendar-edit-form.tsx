@@ -58,10 +58,10 @@ export const CalendarEditForm = ({ calendarUuid, currentName, isPublic, currentS
       try {
         const startDate = data.startDate ? format(data.startDate, 'yyyy-MM-dd') : undefined;
         await updateCalendar(calendarUuid, data.name, startDate);
-        toast({ title: 'Calendar updated!' });
+        toast({ title: t('updated') });
         router.push(`/calendars/${calendarUuid}`);
       } catch {
-        toast({ variant: 'destructive', title: 'Failed to update calendar' });
+        toast({ variant: 'destructive', title: t('updateFailed') });
       }
     });
   }
@@ -70,9 +70,9 @@ export const CalendarEditForm = ({ calendarUuid, currentName, isPublic, currentS
     startVisibilityTransition(async () => {
       try {
         await updateCalendarVisibility(calendarUuid, checked);
-        toast({ title: checked ? 'Calendar is now public' : 'Calendar is now private' });
+        toast({ title: checked ? t('nowPublic') : t('nowPrivate') });
       } catch {
-        toast({ variant: 'destructive', title: 'Failed to update visibility' });
+        toast({ variant: 'destructive', title: t('visibilityFailed') });
       }
     });
   }
@@ -85,9 +85,9 @@ export const CalendarEditForm = ({ calendarUuid, currentName, isPublic, currentS
           name='name'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>{t('name')}</FormLabel>
               <FormControl>
-                <Input placeholder='My Calendar' {...field} />
+                <Input placeholder={t('namePlaceholder')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -115,7 +115,7 @@ export const CalendarEditForm = ({ calendarUuid, currentName, isPublic, currentS
         />
 
         <div className='space-y-2'>
-          <p className='text-sm font-medium leading-none'>Visibility</p>
+          <p className='text-sm font-medium leading-none'>{t('visibility')}</p>
           <div className='flex items-center gap-3'>
             <Switch
               id='visibility-toggle'
@@ -127,17 +127,17 @@ export const CalendarEditForm = ({ calendarUuid, currentName, isPublic, currentS
               htmlFor='visibility-toggle'
               className='text-sm text-muted-foreground cursor-pointer select-none'
             >
-              {isPublic ? 'Public — anyone with the link can view' : 'Private — only members can view'}
+              {isPublic ? t('public') : t('private')}
             </label>
           </div>
         </div>
 
         <div className='flex gap-2'>
           <Button type='button' variant='outline' onClick={() => router.back()}>
-            Cancel
+            {t('cancel')}
           </Button>
           <Button type='submit' disabled={isPending}>
-            {isPending ? 'Saving...' : 'Save'}
+            {isPending ? t('saving') : t('save')}
           </Button>
         </div>
       </form>

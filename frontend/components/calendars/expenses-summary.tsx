@@ -20,7 +20,10 @@ import {
   Wallet,
   X
 }                               from 'lucide-react';
-import { useTranslations }      from 'next-intl';
+import {
+  useLocale,
+  useTranslations
+}                               from 'next-intl';
 import { useState }             from 'react';
 
 const CURRENCIES = [
@@ -168,6 +171,7 @@ export const ExpensesDrawer = () => {
     setExpensesOpen: setOpen,
   } = useEvents();
   const t = useTranslations('eventCosts');
+  const locale = useLocale();
 
   const [adding, setAdding]       = useState(false);
   const [showForm, setShowForm]   = useState(false);
@@ -355,7 +359,7 @@ export const ExpensesDrawer = () => {
               .map((ev) => (
                 <div key={ev.id}>
                   <div className='font-mono text-[0.65rem] uppercase tracking-wider text-muted-foreground mb-0.5'>
-                    {new Date(ev.start as Date).toLocaleDateString('en-GB', {
+                    {new Date(ev.start as Date).toLocaleDateString(locale, {
                       weekday: 'short',
                       day: 'numeric',
                       month: 'short',

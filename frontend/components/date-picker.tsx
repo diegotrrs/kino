@@ -19,6 +19,7 @@ import {
   SelectValue
 }                             from '@/components/ui/select';
 import { cn }                 from '@/lib/utils';
+import { getDateFnsLocale }   from '@/lib/date-locale';
 import {
   add,
   format
@@ -33,6 +34,7 @@ import {
   ChevronRight,
   Clock
 }                             from 'lucide-react';
+import { useLocale }          from 'next-intl';
 import * as React             from 'react';
 import {
   useEffect,
@@ -766,7 +768,7 @@ const DateTimePicker = React.forwardRef<
 >(
   (
     {
-      locale = enUS,
+      locale: localeProp,
       value,
       onChange,
       hourCycle = 24,
@@ -780,6 +782,9 @@ const DateTimePicker = React.forwardRef<
     },
     ref
   ) => {
+    // Without an explicit locale, dates follow the app's language
+    const appLocale = useLocale();
+    const locale = localeProp ?? getDateFnsLocale(appLocale);
     const [month, setMonth] = React.useState<Date>(value ?? new Date());
     const [open, setOpen] = useState(false);
     const buttonRef = useRef<HTMLButtonElement>(null);

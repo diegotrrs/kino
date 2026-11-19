@@ -52,15 +52,15 @@ export const CalendarCreateForm = ({ initialName, tripSlug }: CalendarCreateForm
 
         if (tripSlug) {
           const { uuid } = await createTripCalendar(tripSlug, data.name, startDate);
-          toast({ title: 'Calendar created with your itinerary!' });
+          toast({ title: t('createdWithItinerary') });
           router.push(`/calendars/${uuid}`);
         } else {
           await createCalendar(data.name, data.startDate ? startDate : undefined);
-          toast({ title: 'Calendar created!' });
+          toast({ title: t('created') });
           router.push('/home');
         }
       } catch {
-        toast({ variant: 'destructive', title: 'Failed to create calendar' });
+        toast({ variant: 'destructive', title: t('createFailed') });
       }
     });
   }
@@ -73,9 +73,9 @@ export const CalendarCreateForm = ({ initialName, tripSlug }: CalendarCreateForm
           name='name'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>{t('name')}</FormLabel>
               <FormControl>
-                <Input placeholder='My Calendar' {...field} />
+                <Input placeholder={t('namePlaceholder')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -104,10 +104,10 @@ export const CalendarCreateForm = ({ initialName, tripSlug }: CalendarCreateForm
 
         <div className='flex gap-2'>
           <Button type='button' variant='outline' onClick={() => router.back()}>
-            Cancel
+            {t('cancel')}
           </Button>
           <Button type='submit' disabled={isPending}>
-            {isPending ? 'Creating...' : 'Create'}
+            {isPending ? t('creating') : t('create')}
           </Button>
         </div>
       </form>

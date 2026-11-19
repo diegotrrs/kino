@@ -11,6 +11,7 @@ import {
 }                             from '@/lib/event-colors';
 import type { Event }         from '@/lib/types';
 import type { CalendarEvent } from '@/utils/data';
+import { getDateFnsLocale }  from '@/lib/date-locale';
 import {
   format,
   parse
@@ -20,7 +21,10 @@ import {
   MapPinIcon,
   ReceiptIcon
 }                             from 'lucide-react';
-import { useTranslations }    from 'next-intl';
+import {
+  useLocale,
+  useTranslations
+}                             from 'next-intl';
 import { useRouter }          from 'next/navigation';
 import {
   useCallback,
@@ -96,6 +100,7 @@ export const EventTimelineClient = ({
   dayNamesByCalendar = {},
 }: EventTimelineClientProps) => {
   const t      = useTranslations('events');
+  const locale = useLocale();
   const router = useRouter();
 
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -124,7 +129,7 @@ export const EventTimelineClient = ({
             <div className='flex items-center gap-3 mb-3'>
               <span className='font-mono text-xs font-medium uppercase tracking-widest text-muted-foreground'>
                 {formatDayHeading(
-                  format(parse(date, 'yyyy-MM-dd', new Date()), 'EEE d MMM yyyy'),
+                  format(parse(date, 'yyyy-MM-dd', new Date()), 'EEE d MMM yyyy', { locale: getDateFnsLocale(locale) }),
                   dayEvents.map((ev) => dayNamesByCalendar[ev.calendar_id]?.[date] ?? ''),
                 )}
               </span>

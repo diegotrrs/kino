@@ -4,7 +4,10 @@
     "myCalendars": "Meus Calendários",
     "createCalendar": "Criar Calendário",
     "events": "Eventos",
-    "settings": "Configurações"
+    "settings": "Configurações",
+    "account": "Conta",
+    "signIn": "Iniciar sessão",
+    "logOut": "Terminar sessão"
   },
   "topBar": {
     "feedback": "Feedback",
@@ -124,7 +127,25 @@
     "title": "Criar Calendário",
     "subtitle": "Configure um novo calendário.",
     "startDate": "Data de início",
-    "startDatePlaceholder": "Escolha uma data"
+    "startDatePlaceholder": "Escolha uma data",
+    "name": "Nome",
+    "namePlaceholder": "O meu calendário",
+    "cancel": "Cancelar",
+    "create": "Criar",
+    "creating": "A criar…",
+    "save": "Guardar",
+    "saving": "A guardar…",
+    "createdWithItinerary": "Calendário criado com o teu itinerário!",
+    "created": "Calendário criado!",
+    "createFailed": "Não foi possível criar o calendário",
+    "updated": "Calendário atualizado!",
+    "updateFailed": "Não foi possível atualizar o calendário",
+    "visibility": "Visibilidade",
+    "public": "Público — qualquer pessoa com o link pode ver",
+    "private": "Privado — só os membros podem ver",
+    "nowPublic": "O calendário agora é público",
+    "nowPrivate": "O calendário agora é privado",
+    "visibilityFailed": "Não foi possível alterar a visibilidade"
   },
   "events": {
     "title": "Eventos",
@@ -141,7 +162,12 @@
     "shareTitle": "Partilhe o seu feedback",
     "shareSubtitle": "Diga-nos o que está a funcionar, o que não está, ou qualquer outra coisa.",
     "wishlistTitle": "Lista de desejos",
-    "wishlistSubtitle": "Vote nas funcionalidades que gostaria de ver a seguir."
+    "wishlistSubtitle": "Vote nas funcionalidades que gostaria de ver a seguir.",
+    "placeholder": "Partilha as tuas ideias, opiniões ou reporta um problema…",
+    "sent": "Comentário enviado. Obrigado!",
+    "sendFailed": "Não foi possível enviar o comentário. Tenta outra vez.",
+    "send": "Enviar comentário",
+    "sending": "A enviar…"
   },
   "settings": {
     "title": "Configurações",
@@ -354,5 +380,35 @@
       "copy": "Copiar",
       "copyReference": "Copiar referência da reserva"
     }
+  },
+  "calendarMembers": {
+    "invite": "Convidar",
+    "inviting": "A convidar…",
+    "inviteSent": "Foi enviado um email para {email}",
+    "inviteFailed": "Não foi possível convidar o utilizador",
+    "inviteFailedDescription": "Confirma que o email está registado e que ainda não é membro.",
+    "removed": "Membro removido.",
+    "removeFailed": "Não foi possível remover o membro",
+    "removeTitle": "Remover membro",
+    "removeDescription": "Tens a certeza de que queres remover <strong>{name}</strong> como editor de <strong>{calendar}</strong>?",
+    "removeLabel": "Remover {name}",
+    "cancel": "Cancelar",
+    "remove": "Remover",
+    "role": {
+      "owner": "Proprietário",
+      "editor": "Editor"
+    }
+  },
+  "calendarDelete": {
+    "options": "Opções",
+    "share": "Partilhar",
+    "delete": "Eliminar",
+    "deleteCalendar": "Eliminar calendário",
+    "title": "Eliminar “{name}”?",
+    "description": "Isto elimina “{name}” e todos os seus eventos. Podes recuperar o calendário mais tarde nas Definições.",
+    "cancel": "Cancelar",
+    "deleting": "A eliminar…",
+    "deleted": "Calendário eliminado",
+    "deleteFailed": "Não foi possível eliminar o calendário"
   }
 }

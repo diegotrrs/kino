@@ -4,7 +4,10 @@
     "myCalendars": "My Calendars",
     "createCalendar": "Create Calendar",
     "events": "Events",
-    "settings": "Settings"
+    "settings": "Settings",
+    "account": "Account",
+    "signIn": "Sign in",
+    "logOut": "Log out"
   },
   "topBar": {
     "feedback": "Feedback",
@@ -124,7 +127,25 @@
     "title": "Create Calendar",
     "subtitle": "Set up a new calendar.",
     "startDate": "Start date",
-    "startDatePlaceholder": "Pick a date"
+    "startDatePlaceholder": "Pick a date",
+    "name": "Name",
+    "namePlaceholder": "My Calendar",
+    "cancel": "Cancel",
+    "create": "Create",
+    "creating": "Creating...",
+    "save": "Save",
+    "saving": "Saving...",
+    "createdWithItinerary": "Calendar created with your itinerary!",
+    "created": "Calendar created!",
+    "createFailed": "Failed to create calendar",
+    "updated": "Calendar updated!",
+    "updateFailed": "Failed to update calendar",
+    "visibility": "Visibility",
+    "public": "Public — anyone with the link can view",
+    "private": "Private — only members can view",
+    "nowPublic": "Calendar is now public",
+    "nowPrivate": "Calendar is now private",
+    "visibilityFailed": "Failed to update visibility"
   },
   "events": {
     "title": "Events",
@@ -141,7 +162,12 @@
     "shareTitle": "Share your feedback",
     "shareSubtitle": "Tell us what's working, what's not, or anything else on your mind.",
     "wishlistTitle": "Wishlist",
-    "wishlistSubtitle": "Vote for the features you'd like to see next."
+    "wishlistSubtitle": "Vote for the features you'd like to see next.",
+    "placeholder": "Share your thoughts, ideas, or report an issue...",
+    "sent": "Feedback sent. Thank you!",
+    "sendFailed": "Failed to send feedback. Please try again.",
+    "send": "Send feedback",
+    "sending": "Sending..."
   },
   "settings": {
     "title": "Settings",
@@ -354,5 +380,35 @@
       "copy": "Copy",
       "copyReference": "Copy booking reference"
     }
+  },
+  "calendarMembers": {
+    "invite": "Invite",
+    "inviting": "Inviting...",
+    "inviteSent": "An email has been sent to {email}",
+    "inviteFailed": "Failed to invite user",
+    "inviteFailedDescription": "Make sure the email is registered and not already a member.",
+    "removed": "Member removed.",
+    "removeFailed": "Failed to remove member",
+    "removeTitle": "Remove member",
+    "removeDescription": "Are you sure you want to remove <strong>{name}</strong> as an editor from <strong>{calendar}</strong>?",
+    "removeLabel": "Remove {name}",
+    "cancel": "Cancel",
+    "remove": "Remove",
+    "role": {
+      "owner": "Owner",
+      "editor": "Editor"
+    }
+  },
+  "calendarDelete": {
+    "options": "Options",
+    "share": "Share",
+    "delete": "Delete",
+    "deleteCalendar": "Delete calendar",
+    "title": "Delete “{name}”?",
+    "description": "This will delete “{name}” and all its events. You can recover the calendar later from Settings.",
+    "cancel": "Cancel",
+    "deleting": "Deleting...",
+    "deleted": "Calendar deleted",
+    "deleteFailed": "Failed to delete calendar"
   }
 }
