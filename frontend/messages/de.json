@@ -306,5 +306,53 @@
     "announceDropped": "„{text}“ auf Position {position} von {total} abgelegt.",
     "announceCancelled": "Verschieben abgebrochen. „{text}“ ist wieder an seinem Platz.",
     "reorderFailed": "Die neue Reihenfolge konnte nicht gespeichert werden. Versuch es nochmal."
+  },
+  "travel": {
+    "label": "Reise",
+    "none": "Keine",
+    "flight": "Flug",
+    "train": "Zug",
+    "fields": {
+      "origin": "Von",
+      "destination": "Nach",
+      "number": "Flugnummer",
+      "terminal": "Terminal",
+      "gate": "Gate",
+      "coach": "Wagen",
+      "seat": "Sitzplatz",
+      "booking_reference": "Buchungsnummer"
+    },
+    "originPlaceholder": {
+      "flight": "z. B. FRA",
+      "train": "z. B. Berlin Hbf"
+    },
+    "destinationPlaceholder": {
+      "flight": "z. B. FCO",
+      "train": "z. B. München Hbf"
+    },
+    "numberPlaceholder": "z. B. LH 232",
+    "booking_referencePlaceholder": "z. B. K7XQ2M",
+    "chips": {
+      "terminal": "TERM",
+      "gate": "GATE",
+      "coach": "WAGEN",
+      "seat": "PLATZ",
+      "booking_reference": "BUCHUNG"
+    },
+    "copyReference": "Buchungsnummer {reference} kopieren",
+    "copied": "Kopiert",
+    "suggestedTitle": {
+      "flightTo": "Flug nach {destination}",
+      "flightNumber": "Flug {number}",
+      "flight": "Flug",
+      "trainTo": "Zug nach {destination}",
+      "train": "Zug"
+    },
+    "card": {
+      "flightTicket": "Flugticket",
+      "trainTicket": "Zugticket",
+      "copy": "Kopieren",
+      "copyReference": "Buchungsnummer kopieren"
+    }
   }
 }

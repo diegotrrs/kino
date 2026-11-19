@@ -24,6 +24,8 @@ const makeEvent = (
   updated_at: null,
   links: [],
   expenses: [],
+  travel_mode: null,
+  travel: null,
 });
 
 describe('groupByDate', () => {

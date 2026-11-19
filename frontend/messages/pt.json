@@ -306,5 +306,53 @@
     "announceDropped": "“{text}” largado na posição {position} de {total}.",
     "announceCancelled": "Movimento cancelado. “{text}” voltou ao seu lugar.",
     "reorderFailed": "Não foi possível guardar a nova ordem. Tenta outra vez."
+  },
+  "travel": {
+    "label": "Viagem",
+    "none": "Nenhuma",
+    "flight": "Voo",
+    "train": "Comboio",
+    "fields": {
+      "origin": "Origem",
+      "destination": "Destino",
+      "number": "Número do voo",
+      "terminal": "Terminal",
+      "gate": "Porta",
+      "coach": "Carruagem",
+      "seat": "Lugar",
+      "booking_reference": "Referência da reserva"
+    },
+    "originPlaceholder": {
+      "flight": "p. ex. LIS",
+      "train": "p. ex. Lisboa Santa Apolónia"
+    },
+    "destinationPlaceholder": {
+      "flight": "p. ex. FCO",
+      "train": "p. ex. Porto Campanhã"
+    },
+    "numberPlaceholder": "p. ex. TP 836",
+    "booking_referencePlaceholder": "p. ex. K7XQ2M",
+    "chips": {
+      "terminal": "TERM",
+      "gate": "PORTA",
+      "coach": "CARR.",
+      "seat": "LUGAR",
+      "booking_reference": "RESERVA"
+    },
+    "copyReference": "Copiar referência da reserva {reference}",
+    "copied": "Copiado",
+    "suggestedTitle": {
+      "flightTo": "Voo para {destination}",
+      "flightNumber": "Voo {number}",
+      "flight": "Voo",
+      "trainTo": "Comboio para {destination}",
+      "train": "Comboio"
+    },
+    "card": {
+      "flightTicket": "Bilhete de avião",
+      "trainTicket": "Bilhete de comboio",
+      "copy": "Copiar",
+      "copyReference": "Copiar referência da reserva"
+    }
   }
 }

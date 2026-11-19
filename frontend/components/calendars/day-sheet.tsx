@@ -10,6 +10,7 @@ import {
   DialogDescription,
   DialogTitle
 }                             from '@/components/ui/dialog';
+import { TravelStrip }        from '@/components/events/travel-strip';
 import { useEvents }          from '@/context/events-context';
 import { useToast }           from '@/hooks/use-toast';
 import { getEventsOnDay }     from '@/lib/day-events';
@@ -153,12 +154,10 @@ export const DaySheet = ({ day, events, readOnly, onClose, onAddEvent, onOpenEve
           {dayEvents.map((event) => {
             const color = event.backgroundColor ?? DEFAULT_EVENT_COLOR;
             return (
-              <button
+              <div
                 key={event.id}
-                type='button'
-                onClick={() => onOpenEvent(event)}
                 style={{ backgroundColor: getEventTint(color, 12), borderColor: getEventEdge(color, 35) }}
-                className='flex min-h-12 overflow-hidden rounded-md border text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+                className='relative flex min-h-12 overflow-hidden rounded-md border has-[button:focus-visible]:ring-2 has-[button:focus-visible]:ring-ring'
               >
                 <span
                   style={{ borderRightColor: getEventEdge(color) }}
@@ -166,10 +165,19 @@ export const DaySheet = ({ day, events, readOnly, onClose, onAddEvent, onOpenEve
                 >
                   {formatTime(new Date(event.start))}
                 </span>
-                <span className='flex min-w-0 items-center px-3 py-2 text-sm font-semibold'>
-                  <span className='truncate'>{event.title}</span>
+                <span className='flex min-w-0 flex-1 flex-col justify-center gap-1.5 px-3 py-2'>
+                  {/* The title is the open button; its ::after covers the whole row, so a tap anywhere opens the event.
+                      Kept out of a <button> row so the strip's copy button isn't nested inside another button. */}
+                  <button
+                    type='button'
+                    onClick={() => onOpenEvent(event)}
+                    className='truncate text-left text-sm font-semibold after:absolute after:inset-0 after:content-[""] focus-visible:outline-none'
+                  >
+                    {event.title}
+                  </button>
+                  {event.travelMode && <TravelStrip travelMode={event.travelMode} travel={event.travel} />}
                 </span>
-              </button>
+              </div>
             );
           })}
         </div>

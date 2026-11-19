@@ -23,10 +23,19 @@ import {
   DEFAULT_EVENT_COLOR,
   getRecentColors
 }                               from '@/lib/event-colors';
+import {
+  getSuggestedTitle,
+  getTravelFormValues,
+  getTravelPayload,
+  toTravelDetails,
+  type TravelFormValues
+}                               from '@/lib/travel';
 import type {
   Calendar,
   EventExpense,
-  EventLink
+  EventLink,
+  TravelDetails,
+  TravelMode
 }                               from '@/lib/types';
 import { cn }                   from '@/lib/utils';
 import { CalendarEvent }        from '@/utils/data';
@@ -45,6 +54,8 @@ import { z }                    from 'zod';
 import { EventDateRangePicker } from './events/event-date-range-picker';
 import { EventExpenses }        from './events/event-expenses';
 import { EventLinks }           from './events/event-links';
+import { TravelCard }           from './events/travel-card';
+import { TravelFields }         from './events/travel-fields';
 import {
   PendingExpenses,
   type PendingExpense
@@ -90,6 +101,7 @@ export const EventForm = (props: EventFormProps) => {
   } = useEvents();
   const { toast } = useToast();
   const t = useTranslations('eventDialog');
+  const tSuggestedTitle = useTranslations('travel.suggestedTitle');
   const locale = useLocale();
 
   const open = mode === 'add' ? eventAddOpen : eventEditOpen;
@@ -97,7 +109,17 @@ export const EventForm = (props: EventFormProps) => {
 
   const isReadOnly = mode === 'edit' && readOnly;
 
+  // A flight or train can go without a typed title: this is the one named from its ticket
+  const getSuggestionText = (travelModeForTitle: TravelMode | null, values: Partial<TravelFormValues>): string => {
+    const suggestion = getSuggestedTitle(travelModeForTitle, values);
+    return suggestion ? tSuggestedTitle(suggestion.key, suggestion.values) : '';
+  };
+  // A saved title that equals its suggestion was never typed, so it keeps following the ticket
+  const isSavedTitleAuto = (event: CalendarEvent | undefined): boolean =>
+    !!event?.travelMode && event.title === getSuggestionText(event.travelMode, getTravelFormValues(event.travel));
+
   const [title, setTitle] = useState(() => mode === 'add' ? '' : (editEvent?.title ?? ''));
+  const [isTitleAuto, setIsTitleAuto] = useState(() => mode === 'add' || isSavedTitleAuto(editEvent));
   const [description, setDescription] = useState(() => mode === 'add' ? '' : (editEvent?.description ?? ''));
   const [start, setStart] = useState<Date>(() => {
     if (mode === 'add') { const d = new Date(addStart!); d.setHours(8, 0, 0, 0); return d; }
@@ -112,6 +134,8 @@ export const EventForm = (props: EventFormProps) => {
       ? (typeof window !== 'undefined' ? localStorage.getItem('lastEventColor') ?? DEFAULT_EVENT_COLOR : DEFAULT_EVENT_COLOR)
       : (editEvent?.backgroundColor ?? DEFAULT_EVENT_COLOR)
   );
+  const [travelMode, setTravelMode] = useState<TravelMode | null>(() => mode === 'add' ? null : (editEvent?.travelMode ?? null));
+  const [travelValues, setTravelValues] = useState(() => getTravelFormValues(mode === 'add' ? null : editEvent?.travel));
   const [titleError, setTitleError] = useState(false);
   const [dateOpen, setDateOpen] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
@@ -123,9 +147,11 @@ export const EventForm = (props: EventFormProps) => {
   const currentLinksRef = useRef<EventLink[]>(editEvent?.links ?? []);
   const currentExpensesRef = useRef<EventExpense[]>(editEvent?.expenses ?? []);
 
-  // Reset when the user selects a different date on the calendar (add mode)
+  // Start every add from a blank form: on opening (the header's Add Event button keeps the last date, so
+  // a date change alone missed it) and when a different date is picked. Otherwise the last event's title,
+  // description and hidden travel fields came back.
   useEffect(() => {
-    if (mode !== 'add' || !addStart) return;
+    if (mode !== 'add' || !addStart || !open) return;
     const defaultStart = new Date(addStart); defaultStart.setHours(8, 0, 0, 0);
     const defaultEnd = new Date(addStart); defaultEnd.setHours(9, 0, 0, 0);
     /* eslint-disable react-hooks/set-state-in-effect */
@@ -134,12 +160,15 @@ export const EventForm = (props: EventFormProps) => {
     setStart(defaultStart);
     setEnd(defaultEnd);
     setColor(localStorage.getItem('lastEventColor') ?? DEFAULT_EVENT_COLOR);
+    setTravelMode(null);
+    setTravelValues(getTravelFormValues(null));
+    setIsTitleAuto(true);
     setTitleError(false);
     setDateOpen(false);
     /* eslint-enable react-hooks/set-state-in-effect */
     pendingUrlsRef.current = [];
     pendingExpensesRef.current = [];
-  }, [addStart, addEnd]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [open, addStart, addEnd]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Reset when the user clicks a different event (edit mode)
   useEffect(() => {
@@ -150,6 +179,9 @@ export const EventForm = (props: EventFormProps) => {
     setStart(editEvent?.start as Date);
     setEnd(editEvent?.end as Date);
     setColor(editEvent?.backgroundColor ?? DEFAULT_EVENT_COLOR);
+    setTravelMode(editEvent?.travelMode ?? null);
+    setTravelValues(getTravelFormValues(editEvent?.travel));
+    setIsTitleAuto(isSavedTitleAuto(editEvent));
     setTitleError(false);
     setConfirmingDelete(false);
     setDateOpen(false);
@@ -163,6 +195,25 @@ export const EventForm = (props: EventFormProps) => {
   const formatTime = (d: Date): string => d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
   const isMultiDayRange = !!start && !!end && start.toDateString() !== end.toDateString();
 
+  const travelPayload = getTravelPayload(travelMode, travelValues);
+  const suggestionText = getSuggestionText(travelMode, travelValues);
+  const isTitleFollowingTicket = !isReadOnly && isTitleAuto && travelMode !== null;
+  const shownTitle = isTitleFollowingTicket ? suggestionText : title;
+  // An empty title on a flight or train saves its suggestion
+  const titleToSave = shownTitle.trim() || suggestionText;
+
+  const handleTravelModeChange = (nextTravelMode: TravelMode | null): void => {
+    // Back to an ordinary event: the suggestion no longer applies and a real title is needed
+    if (nextTravelMode === null && isTitleAuto) {
+      setTitle('');
+    }
+    setTravelMode(nextTravelMode);
+  };
+  // The local copy mirrors what the API will store, so the calendar shows it before a reload
+  const getLocalTravel = (): TravelDetails | null =>
+    travelMode === null ? null : toTravelDetails(travelPayload.travel);
+  const localTravel = getLocalTravel();
+
   const handleCancel = () => {
     if (mode === 'edit' && isDrag && editOldEvent) {
       deleteEvent(editOldEvent.id);
@@ -173,6 +224,10 @@ export const EventForm = (props: EventFormProps) => {
         start: editOldEvent.start,
         end: editOldEvent.end,
         backgroundColor: editOldEvent.backgroundColor,
+        links: editOldEvent.links,
+        expenses: editOldEvent.expenses,
+        travelMode: editOldEvent.travelMode,
+        travel: editOldEvent.travel,
       });
     }
     setConfirmingDelete(false);
@@ -180,7 +235,7 @@ export const EventForm = (props: EventFormProps) => {
   };
 
   const onSave = async () => {
-    if (!titleSchema.safeParse(title.trim()).success) {
+    if (!titleSchema.safeParse(titleToSave).success) {
       setTitleError(true);
       return;
     }
@@ -188,24 +243,27 @@ export const EventForm = (props: EventFormProps) => {
     if (mode === 'add') {
       const localEvent = {
         id: String(events.length + 1),
-        title: title.trim(),
+        title: titleToSave,
         description,
         start,
         end,
         backgroundColor: color,
+        travelMode,
+        travel: getLocalTravel(),
       };
 
       if (saveCalendarId !== undefined) {
         try {
           const created = await createEvent({
             calendar_id: saveCalendarId,
-            title: title.trim(),
+            title: titleToSave,
             description,
             date: format(start, 'yyyy-MM-dd'),
             start_time: format(start, 'HH:mm:ss'),
             end_date: format(end, 'yyyy-MM-dd'),
             end_time: format(end, 'HH:mm:ss'),
             color,
+            ...travelPayload,
           });
           const [linkResults, expenseResults] = await Promise.all([
             Promise.allSettled(pendingUrlsRef.current.map((url) => addEventLink(created.id, url))),
@@ -240,25 +298,28 @@ export const EventForm = (props: EventFormProps) => {
     } else {
       const newEvent = {
         id: editEvent!.id,
-        title: title.trim(),
+        title: titleToSave,
         description,
         start,
         end,
         backgroundColor: color,
         links: currentLinksRef.current,
         expenses: currentExpensesRef.current,
+        travelMode,
+        travel: getLocalTravel(),
       };
 
       if (calendarId !== undefined) {
         try {
           await updateEvent(Number(editEvent!.id), {
-            title: title.trim(),
+            title: titleToSave,
             description,
             date: format(start, 'yyyy-MM-dd'),
             start_time: format(start, 'HH:mm:ss'),
             end_date: format(end, 'yyyy-MM-dd'),
             end_time: format(end, 'HH:mm:ss'),
             color,
+            ...travelPayload,
           });
         } catch (e) {
           console.error(e);
@@ -330,9 +391,15 @@ export const EventForm = (props: EventFormProps) => {
           </AlertDialogHeader>
 
           <input
-            value={title}
-            onChange={(e) => { setTitle(e.target.value); if (e.target.value.trim()) setTitleError(false); }}
-            placeholder={t('titlePlaceholder')}
+            value={shownTitle}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              setIsTitleAuto(false);
+              if (e.target.value.trim()) {
+                setTitleError(false);
+              }
+            }}
+            placeholder={travelMode !== null && !isReadOnly ? suggestionText : t('titlePlaceholder')}
             aria-label={t('titlePlaceholder')}
             readOnly={isReadOnly}
             autoFocus={mode === 'add'}
@@ -355,11 +422,30 @@ export const EventForm = (props: EventFormProps) => {
             readOnly={isReadOnly}
             className={cn('w-full resize-none bg-transparent text-sm outline-none placeholder:text-muted-foreground/60', isReadOnly && 'cursor-default')}
           />
+
+          {/* The boarding pass shows what the form holds right now, so it updates while editing */}
+          {mode === 'edit' && travelMode !== null && localTravel && start && end && (
+            <TravelCard
+              travelMode={travelMode}
+              travel={localTravel}
+              departs={formatTime(start)}
+              arrives={formatTime(end)}
+              color={color}
+            />
+          )}
         </div>
 
         <div aria-hidden='true' className='border-t-2 border-dashed' />
 
         <div className='grid gap-5 px-6 py-5'>
+          <TravelFields
+            travelMode={travelMode}
+            values={travelValues}
+            isReadOnly={isReadOnly}
+            onTravelModeChange={handleTravelModeChange}
+            onValueChange={(field, value) => setTravelValues((current) => ({ ...current, [field]: value }))}
+          />
+
           {calendars && (
             <label className='grid gap-2'>
               <span className={SECTION_LABEL}>{t('calendar')}</span>

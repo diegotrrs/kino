@@ -1,5 +1,6 @@
 'use client';
 import { EventForm }          from '@/components/event-form';
+import { TravelStrip }        from '@/components/events/travel-strip';
 import { EventsProvider }     from '@/context/events-context';
 import { useEvents }          from '@/context/events-context';
 import { formatDayHeading }   from '@/lib/day-names';
@@ -54,6 +55,8 @@ const toCalendarEvent = (ev: Event): CalendarEvent => ({
   backgroundColor: ev.color,
   links:           ev.links,
   expenses:        ev.expenses,
+  travelMode:      ev.travel_mode,
+  travel:          ev.travel,
 });
 
 type EventEditTriggerProps = {
@@ -134,11 +137,7 @@ export const EventTimelineClient = ({
                   className='flex rounded-md border transition-colors overflow-hidden hover:brightness-[0.98]'
                   style={{ backgroundColor: getEventTint(ev.color ?? DEFAULT_EVENT_COLOR, 10), borderColor: getEventEdge(ev.color ?? DEFAULT_EVENT_COLOR, 30) }}
                 >
-                  <button
-                    type='button'
-                    className='flex flex-1 min-w-0 gap-4 p-3 text-left'
-                    onClick={() => setSelectedEvent(ev)}
-                  >
+                  <div className='relative flex flex-1 min-w-0 gap-4 p-3 has-[button:focus-visible]:ring-2 has-[button:focus-visible]:ring-ring has-[button:focus-visible]:ring-inset'>
                     <div
                       className='-my-3 w-16 shrink-0 border-r border-dashed py-3 pr-3 text-right'
                       style={{ borderRightColor: getEventEdge(ev.color ?? DEFAULT_EVENT_COLOR) }}
@@ -153,7 +152,14 @@ export const EventTimelineClient = ({
                       )}
                     </div>
                     <div className='flex-1 min-w-0'>
-                      <p className='font-semibold text-sm leading-tight'>{ev.title}</p>
+                      {/* The title is the open button; its ::after covers the row so a click anywhere opens the event */}
+                      <button
+                        type='button'
+                        onClick={() => setSelectedEvent(ev)}
+                        className='text-left font-semibold text-sm leading-tight after:absolute after:inset-0 after:content-[""] focus-visible:outline-none'
+                      >
+                        {ev.title}
+                      </button>
                       {ev.description && (
                         <p className='text-xs text-muted-foreground mt-0.5 line-clamp-1'>
                           {ev.description}
@@ -179,8 +185,9 @@ export const EventTimelineClient = ({
                           </span>
                         )}
                       </div>
+                      {ev.travel_mode && <TravelStrip travelMode={ev.travel_mode} travel={ev.travel} className='mt-2' />}
                     </div>
-                  </button>
+                  </div>
                   {/* Separate div so clicks on the delete button don't open the dialog */}
                   <div className='shrink-0 p-3 pl-0'>
                     <EventDeleteButton eventId={ev.id} eventTitle={ev.title} />

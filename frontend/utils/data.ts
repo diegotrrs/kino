@@ -72,6 +72,8 @@ export interface CalendarEvent {
   description?: string;
   links?: import('@/lib/types').EventLink[];
   expenses?: import('@/lib/types').EventExpense[];
+  travelMode?: import('@/lib/types').TravelMode | null;
+  travel?: import('@/lib/types').TravelDetails | null;
 }
 
 export const initialEvents: CalendarEvent[] = [

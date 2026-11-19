@@ -258,3 +258,49 @@ export const nameDay = async (
     throw new Error(`nameDay: ${res.status()} ${await res.text()}`);
   }
 };
+
+export const createTravelEvent = async (
+  request: APIRequestContext,
+  token: string,
+  calendarId: number,
+  title: string,
+  date: string,
+  travelMode: 'flight' | 'train',
+  travel: Record<string, string>,
+): Promise<number> => {
+  const res = await request.post(`${API_URL}/api/events/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    data: {
+      calendar_id: calendarId,
+      title,
+      date,
+      start_time: '07:15:00',
+      end_time: '10:45:00',
+      travel_mode: travelMode,
+      travel,
+    },
+  });
+  if (!res.ok()) {
+    throw new Error(`createTravelEvent: ${res.status()} ${await res.text()}`);
+  }
+  const { id } = await res.json() as { id: number };
+  return id;
+};
+
+// The event as the server has it, to tell a saved change from what the form shows
+export const getEventById = async (
+  request: APIRequestContext,
+  token: string,
+  eventId: number,
+): Promise<{ title: string; travel_mode: string | null; travel: Record<string, string | null> | null }> => {
+  const res = await request.get(`${API_URL}/api/events/${eventId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok()) {
+    throw new Error(`getEventById: ${res.status()} ${await res.text()}`);
+  }
+  return res.json();
+};

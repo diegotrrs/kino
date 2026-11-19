@@ -126,10 +126,24 @@ def delete_calendar(db: connection, calendar_id: int) -> bool:
         cur.execute(
             """
             INSERT INTO deleted_events (id, uuid, calendar_id, title, description, date,
-                start_time, end_date, end_time, location, color, created_at, updated_at)
+                start_time, end_date, end_time, location, color, travel_mode, created_at, updated_at)
             SELECT id, uuid, calendar_id, title, description, date,
-                start_time, end_date, end_time, location, color, created_at, updated_at
+                start_time, end_date, end_time, location, color, travel_mode, created_at, updated_at
             FROM events WHERE calendar_id = %s
+            """,
+            (calendar_id,),
+        )
+        # Flight and train tickets go with their events
+        cur.execute(
+            """
+            INSERT INTO deleted_event_travel_details
+                (event_id, origin, destination, number, terminal, gate, coach, seat, booking_reference,
+                 created_at, updated_at)
+            SELECT t.event_id, t.origin, t.destination, t.number, t.terminal, t.gate, t.coach, t.seat,
+                t.booking_reference, t.created_at, t.updated_at
+            FROM event_travel_details t
+            JOIN events e ON e.id = t.event_id
+            WHERE e.calendar_id = %s
             """,
             (calendar_id,),
         )
@@ -152,7 +166,8 @@ def delete_calendar(db: connection, calendar_id: int) -> bool:
             """,
             (calendar_id,),
         )
-        # Delete calendar — cascade removes events, day names, checklist items and calendar_users
+        # Delete calendar — cascade removes events (and their travel details), day names, checklist items
+        # and calendar_users
         cur.execute("DELETE FROM calendars WHERE id = %s", (calendar_id,))
         db.commit()
         return True
@@ -194,11 +209,30 @@ def restore_calendar(db: connection, calendar_id: int, user_id: int) -> bool:
         cur.execute(
             """
             INSERT INTO events (id, uuid, calendar_id, title, description, date,
-                start_time, end_date, end_time, location, color, created_at, updated_at)
+                start_time, end_date, end_time, location, color, travel_mode, created_at, updated_at)
             SELECT id, uuid, calendar_id, title, description, date,
-                start_time, end_date, end_time, location, color, created_at, updated_at
+                start_time, end_date, end_time, location, color, travel_mode, created_at, updated_at
             FROM deleted_events WHERE calendar_id = %s
             """,
+            (calendar_id,),
+        )
+        # Their flight and train tickets, before the archived events that link them to this calendar go
+        cur.execute(
+            """
+            INSERT INTO event_travel_details
+                (event_id, origin, destination, number, terminal, gate, coach, seat, booking_reference,
+                 created_at, updated_at)
+            SELECT t.event_id, t.origin, t.destination, t.number, t.terminal, t.gate, t.coach, t.seat,
+                t.booking_reference, t.created_at, t.updated_at
+            FROM deleted_event_travel_details t
+            JOIN deleted_events d ON d.id = t.event_id
+            WHERE d.calendar_id = %s
+            """,
+            (calendar_id,),
+        )
+        cur.execute(
+            "DELETE FROM deleted_event_travel_details WHERE event_id IN "
+            "(SELECT id FROM deleted_events WHERE calendar_id = %s)",
             (calendar_id,),
         )
         cur.execute("DELETE FROM deleted_events WHERE calendar_id = %s", (calendar_id,))
