@@ -107,7 +107,7 @@ T6 Migration step 2 file, e2e 18-stays-and-booking-references, domain terms, fin
 **Description:**
 - **Helper:** `lib/maps.ts`, where `getGoogleMapsUrl(address)` returns `https://www.google.com/maps/search/?api=1&query=<encoded>`, or `null` for a blank address. Tested.
 - **Data:** `CalendarEvent.location`, mapped everywhere `bookingReference` is.
-- **Form:** an always-visible **Address** input with a map button (icon, `aria-label`) that opens the link. Read-only visitors see the address as a link.
+- **Form:** an always-visible **Address** input, placed just under **When**, with a map button (icon, `aria-label`) that opens the link. Read-only visitors see the address as a link.
 - **Events timeline:** the existing pin-and-address line becomes a link above the row's overlay.
 - **Day sheet:** each row shows its address link.
 - **Translations:** labels in all four languages.
