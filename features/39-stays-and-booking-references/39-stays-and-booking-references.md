@@ -42,7 +42,7 @@ Changes: feature 23, *Flight and train events* (`features/23-flight-train-events
 
 - **Event form:**
   - The Travel row becomes **None · Flight · Train · Stay**.
-  - Two fields are **always visible** under the Travel row, for every event:
+  - Two fields are **always visible** for every event (the booking reference sits just above Links):
     - **Address** (≤ 255 characters), with a small map button next to it that opens the address in Google Maps;
     - **Booking reference** (≤ 20 characters, monospace). It moves out of the flight and train fields, so flights and trains use it too.
   - Read-only visitors see the address as a link and no booking reference.

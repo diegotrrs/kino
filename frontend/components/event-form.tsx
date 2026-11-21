@@ -459,8 +459,6 @@ export const EventForm = (props: EventFormProps) => {
             onValueChange={(field, value) => setTravelValues((current) => ({ ...current, [field]: value }))}
           />
 
-          <BookingReferenceField value={bookingReference} isReadOnly={isReadOnly} onChange={setBookingReference} />
-
           {calendars && (
             <label className='grid gap-2'>
               <span className={SECTION_LABEL}>{t('calendar')}</span>
@@ -522,6 +520,8 @@ export const EventForm = (props: EventFormProps) => {
               <EventColorPicker color={color} onChange={setColor} recentColors={getRecentColors(events)} />
             )}
           </section>
+
+          <BookingReferenceField value={bookingReference} isReadOnly={isReadOnly} onChange={setBookingReference} />
 
           {mode === 'edit' ? (
             <EventLinks

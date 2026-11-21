@@ -27,8 +27,10 @@ export const BookingReferenceField = ({ value, isReadOnly, onChange }: BookingRe
   }
 
   return (
-    <div className='grid gap-1.5'>
-      <label htmlFor={inputId} className='text-xs text-muted-foreground'>{t('fields.booking_reference')}</label>
+    <div className='grid gap-2'>
+      <label htmlFor={inputId} className='font-mono text-[0.65rem] font-medium uppercase tracking-widest text-muted-foreground'>
+        {t('fields.booking_reference')}
+      </label>
       <div className='flex gap-2'>
         <input
           id={inputId}
