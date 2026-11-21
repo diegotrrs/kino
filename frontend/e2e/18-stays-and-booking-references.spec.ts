@@ -89,4 +89,28 @@ test.describe('@18. booking references on every event', () => {
       await visitor.close();
     }
   });
+
+  test('@18.3 should show the recent colours on the same row as the theme colours', async ({ page, request }) => {
+    await login(page);
+    const token = await getToken(request);
+    const calendarUuid = await createCalendar(request, token, `Colour Row Test ${Date.now()}`);
+    const calendarId = await getCalendarId(request, token, calendarUuid);
+    await createTravelEvent(request, token, calendarId, `Custom colour ${Date.now()}`, getToday(), null, null, {
+      color: '#5DB7E8',
+    });
+
+    await page.goto(`/calendars/${calendarUuid}`);
+    await page.getByRole('button', { name: 'Add Event' }).click();
+    const dialog = page.getByRole('alertdialog');
+    const palette = dialog.getByRole('radiogroup', { name: 'Theme colours' });
+    const recent = dialog.getByRole('radiogroup', { name: 'Recent' });
+    await expect(recent.getByRole('radio', { name: '#5DB7E8' })).toBeVisible();
+
+    const paletteBox = await palette.boundingBox();
+    const recentBox = await recent.boundingBox();
+    expect(paletteBox && recentBox).toBeTruthy();
+    // Same row: the recent swatches sit beside the palette, not under it
+    expect(Math.abs((recentBox?.y ?? 0) - (paletteBox?.y ?? 0))).toBeLessThan(8);
+    expect(recentBox?.x ?? 0).toBeGreaterThan(paletteBox?.x ?? 0);
+  });
 });

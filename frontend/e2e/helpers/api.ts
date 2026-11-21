@@ -267,7 +267,7 @@ export const createTravelEvent = async (
   date: string,
   travelMode: 'flight' | 'train' | null,
   travel: Record<string, string> | null,
-  extra: { booking_reference?: string; location?: string } = {},
+  extra: { booking_reference?: string; location?: string; color?: string } = {},
 ): Promise<number> => {
   const res = await request.post(`${API_URL}/api/events/`, {
     headers: {
