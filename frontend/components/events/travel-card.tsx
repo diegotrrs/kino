@@ -17,6 +17,7 @@ const PLACE = 'font-display text-3xl font-extrabold leading-none tracking-tight 
 type TravelCardProps = {
   travelMode: TravelMode;
   travel: TravelDetails;
+  bookingReference: string | null;
   departs: string;
   arrives: string;
   color: string;
@@ -24,13 +25,13 @@ type TravelCardProps = {
 
 // Direction A of the prototypes: a boarding pass at the top of the event dialog. From `sm` it's a ticket
 // with a perforated stub on the right; on phones the stub drops below (direction E).
-export const TravelCard = ({ travelMode, travel, departs, arrives, color }: TravelCardProps): ReactElement => {
+export const TravelCard = ({ travelMode, travel, bookingReference, departs, arrives, color }: TravelCardProps): ReactElement => {
   const t = useTranslations('travel');
   const { isCopied, copy } = useCopyToClipboard();
   const details = getTravelCardDetails(travelMode, travel);
   const hasRoute = !!travel.origin || !!travel.destination;
-  const hasStub = !!travel.seat || !!travel.booking_reference;
-  const reference = travel.booking_reference;
+  const reference = bookingReference;
+  const hasStub = !!travel.seat || !!reference;
 
   return (
     <section

@@ -26,6 +26,7 @@ const makeEvent = (
   expenses: [],
   travel_mode: null,
   travel: null,
+  booking_reference: null,
 });
 
 describe('groupByDate', () => {

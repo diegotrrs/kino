@@ -14,11 +14,11 @@ import { buildFlightDetails } from './travel.test.data';
 
 describe('FIELDS_BY_TRAVEL_MODE', () => {
   it('should give flights a flight number, terminal and gate but no coach', () => {
-    expect(FIELDS_BY_TRAVEL_MODE.flight).toEqual(['origin', 'destination', 'number', 'terminal', 'gate', 'seat', 'booking_reference']);
+    expect(FIELDS_BY_TRAVEL_MODE.flight).toEqual(['origin', 'destination', 'number', 'terminal', 'gate', 'seat']);
   });
 
   it('should give trains a coach but no flight number, terminal or gate', () => {
-    expect(FIELDS_BY_TRAVEL_MODE.train).toEqual(['origin', 'destination', 'coach', 'seat', 'booking_reference']);
+    expect(FIELDS_BY_TRAVEL_MODE.train).toEqual(['origin', 'destination', 'coach', 'seat']);
   });
 });
 
@@ -34,6 +34,12 @@ describe('getTravelPayload', () => {
       travel_mode: 'train',
       travel: { origin: 'London St Pancras', coach: '7', seat: '61' },
     });
+  });
+
+  it('should never send a booking reference inside the ticket, since it belongs to the event', () => {
+    const values = { origin: 'LHR', booking_reference: 'K7XQ2M' } as Parameters<typeof getTravelPayload>[1];
+
+    expect(getTravelPayload('flight', values)).toEqual({ travel_mode: 'flight', travel: { origin: 'LHR' } });
   });
 
   it('should leave out fields that are empty or only spaces', () => {
@@ -59,8 +65,8 @@ describe('getTravelFormValues', () => {
 });
 
 describe('getTravelChips', () => {
-  it('should list a flight\'s ticket fields in order, without the route', () => {
-    expect(getTravelChips('flight', buildFlightDetails()).map((chip) => chip.field)).toEqual([
+  it('should list a flight\'s ticket fields in order, without the route, and the booking reference last', () => {
+    expect(getTravelChips('flight', buildFlightDetails(), 'K7XQ2M').map((chip) => chip.field)).toEqual([
       'number', 'terminal', 'gate', 'seat', 'booking_reference',
     ]);
   });
@@ -68,21 +74,25 @@ describe('getTravelChips', () => {
   it('should list a train\'s coach, seat and booking reference', () => {
     const train = buildFlightDetails({ number: 'X', terminal: 'X', gate: 'X', coach: '7', seat: '61' });
 
-    expect(getTravelChips('train', train)).toEqual([
+    expect(getTravelChips('train', train, 'Q4PL9X')).toEqual([
       { field: 'coach', value: '7' },
       { field: 'seat', value: '61' },
-      { field: 'booking_reference', value: 'K7XQ2M' },
+      { field: 'booking_reference', value: 'Q4PL9X' },
     ]);
   });
 
   it('should leave out fields with no value, like a reference hidden from visitors', () => {
-    const chips = getTravelChips('flight', buildFlightDetails({ gate: null, booking_reference: null }));
+    const chips = getTravelChips('flight', buildFlightDetails({ gate: null }), null);
 
     expect(chips.map((chip) => chip.field)).toEqual(['number', 'terminal', 'seat']);
   });
 
-  it('should give no chips for an ordinary event', () => {
-    expect(getTravelChips(null, null)).toEqual([]);
+  it('should give an ordinary event with a booking reference just the reference chip', () => {
+    expect(getTravelChips(null, null, 'VM-2035')).toEqual([{ field: 'booking_reference', value: 'VM-2035' }]);
+  });
+
+  it('should give no chips for an ordinary event without a booking reference', () => {
+    expect(getTravelChips(null, null, null)).toEqual([]);
   });
 });
 
@@ -169,7 +179,7 @@ describe('toTravelDetails', () => {
     const details = toTravelDetails({ origin: 'MAD', destination: 'BCN' });
 
     expect(details).toEqual({
-      origin: 'MAD', destination: 'BCN', number: null, terminal: null, gate: null, coach: null, seat: null, booking_reference: null,
+      origin: 'MAD', destination: 'BCN', number: null, terminal: null, gate: null, coach: null, seat: null,
     });
   });
 

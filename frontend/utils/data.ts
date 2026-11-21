@@ -23,6 +23,7 @@ export interface CalendarEvent {
   expenses?: import('@/lib/types').EventExpense[];
   travelMode?: import('@/lib/types').TravelMode | null;
   travel?: import('@/lib/types').TravelDetails | null;
+  bookingReference?: string | null;
 }
 
 export const initialEvents: CalendarEvent[] = [

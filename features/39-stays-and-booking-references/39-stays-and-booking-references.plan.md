@@ -69,7 +69,7 @@ T6 Migration step 2 file, e2e 18-stays-and-booking-references, domain terms, fin
 
 **Estimated scope:** L. It's mostly mechanical but touches every travel path. If it grows, split archive and restore into Task 1b.
 
-#### Task 2: Frontend — a Booking reference field on every event
+#### Task 2: Frontend — a Booking reference field on every event ✅
 
 **Description:**
 - **Types:** `Event.booking_reference`; `CalendarEvent.bookingReference`, mapped in the two converters, `extendedProps` and the form's local copies. `TravelDetails` / `TravelField` drop `booking_reference`. `FIELDS_BY_TRAVEL_MODE` loses it.
@@ -80,14 +80,14 @@ T6 Migration step 2 file, e2e 18-stays-and-booking-references, domain terms, fin
 - **e2e:** `createTravelEvent` and `@17` updated to the new payload.
 
 **Acceptance criteria:**
-- [ ] An ordinary event saved with a reference shows a copyable REF chip on the Events page and in the phone day sheet, and the reference after a reload.
-- [ ] Flights and trains look and behave exactly as before, boarding-pass Copy included, with the reference now read from the event.
-- [ ] Visitors never see a reference anywhere.
+- [x] An ordinary event saved with a reference shows a copyable REF chip on the Events page and in the phone day sheet, and the reference after a reload.
+- [x] Flights and trains look and behave exactly as before, boarding-pass Copy included, with the reference now read from the event.
+- [x] Visitors never see a reference anywhere.
 
 **Verification:**
-- [ ] `npx vitest run lib/travel`; build, lint, `npx tsc --noEmit`
-- [ ] `npx playwright test e2e/17-travel-events.spec.ts`, all 7 tests passing with the updated helper
-- [ ] A temporary browser test: an ordinary event with a reference shows its REF chip and copies it
+- [x] `npx vitest run lib/travel`; build, lint, `npx tsc --noEmit`
+- [x] `npx playwright test e2e/17-travel-events.spec.ts`, all 7 tests passing with the updated helper
+- [x] A temporary browser test: an ordinary event with a reference shows its REF chip and copies it
 
 **Dependencies:** Task 1
 

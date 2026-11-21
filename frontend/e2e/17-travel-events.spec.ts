@@ -11,7 +11,9 @@ import {
   resetTestData,
 } from './helpers/api';
 
-const FLIGHT = { origin: 'LHR', destination: 'FCO', number: 'BA 2490', terminal: '5', gate: 'B32', seat: '14A', booking_reference: 'K7XQ2M' };
+const FLIGHT = { origin: 'LHR', destination: 'FCO', number: 'BA 2490', terminal: '5', gate: 'B32', seat: '14A' };
+// The booking reference belongs to the event, not the ticket
+const FLIGHT_REFERENCE = { booking_reference: 'K7XQ2M' };
 const TRAIN = { origin: 'London St Pancras', destination: 'Paris Gare du Nord', coach: '7', seat: '61' };
 
 // Local yyyy-MM-dd, matching the calendar grid's data-date attributes
@@ -109,7 +111,7 @@ test.describe('@17. flight and train events', () => {
     const calendarUuid = await createCalendar(request, token, `Flight To None Test ${Date.now()}`);
     const calendarId = await getCalendarId(request, token, calendarUuid);
     const title = `Cancelled flight ${Date.now()}`;
-    const eventId = await createTravelEvent(request, token, calendarId, title, getToday(), 'flight', FLIGHT);
+    const eventId = await createTravelEvent(request, token, calendarId, title, getToday(), 'flight', FLIGHT, FLIGHT_REFERENCE);
 
     await page.goto('/events');
     await page.getByRole('button', { name: title, exact: true }).click();
@@ -131,7 +133,7 @@ test.describe('@17. flight and train events', () => {
     const token = await getToken(request);
     const calendarUuid = await createCalendar(request, token, `Public Flight Test ${Date.now()}`);
     const calendarId = await getCalendarId(request, token, calendarUuid);
-    await createTravelEvent(request, token, calendarId, `Public flight ${Date.now()}`, getToday(), 'flight', FLIGHT);
+    await createTravelEvent(request, token, calendarId, `Public flight ${Date.now()}`, getToday(), 'flight', FLIGHT, FLIGHT_REFERENCE);
     await makeCalendarPublic(request, token, calendarUuid);
 
     const visitor = await browser.newContext();
@@ -152,7 +154,7 @@ test.describe('@17. flight and train events', () => {
     const token = await getToken(request);
     const calendarUuid = await createCalendar(request, token, `Flight i18n Test ${Date.now()}`);
     const calendarId = await getCalendarId(request, token, calendarUuid);
-    await createTravelEvent(request, token, calendarId, `Vuelo a Roma ${Date.now()}`, getToday(), 'flight', FLIGHT);
+    await createTravelEvent(request, token, calendarId, `Vuelo a Roma ${Date.now()}`, getToday(), 'flight', FLIGHT, FLIGHT_REFERENCE);
     await page.context().addCookies([{ name: 'locale', value: 'es', domain: 'localhost', path: '/' }]);
 
     await page.goto(`/calendars/${calendarUuid}`);
@@ -196,7 +198,7 @@ test.describe('@17. flight and train events on phones', () => {
     const calendarUuid = await createCalendar(request, token, `Phone Flight Test ${Date.now()}`);
     const calendarId = await getCalendarId(request, token, calendarUuid);
     const title = `Phone flight ${Date.now()}`;
-    await createTravelEvent(request, token, calendarId, title, getToday(), 'flight', FLIGHT);
+    await createTravelEvent(request, token, calendarId, title, getToday(), 'flight', FLIGHT, FLIGHT_REFERENCE);
 
     await page.goto(`/calendars/${calendarUuid}`);
     await page.locator(`td.fc-daygrid-day[data-date="${getToday()}"]`).click();

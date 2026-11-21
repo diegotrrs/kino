@@ -25,7 +25,7 @@ const MODE_OPTIONS = [
 ] as const;
 
 // Route fields take the full width; the short ticket fields share rows
-const WIDE_FIELDS: ReadonlySet<TravelField> = new Set(['origin', 'destination', 'booking_reference']);
+const WIDE_FIELDS: ReadonlySet<TravelField> = new Set(['origin', 'destination']);
 
 type TravelFieldsProps = {
   travelMode: TravelMode | null;
@@ -54,13 +54,13 @@ export const TravelFields = ({
     if (field === 'origin' || field === 'destination') {
       return t(`${field}Placeholder.${travelMode ?? 'flight'}`);
     }
-    if (field === 'number' || field === 'booking_reference') {
+    if (field === 'number') {
       return t(`${field}Placeholder`);
     }
     return undefined;
   };
 
-  // A visitor's booking reference is withheld by the API, and empty fields say nothing when read-only
+  // Empty fields say nothing when read-only
   const visibleFields = travelMode === null
     ? []
     : FIELDS_BY_TRAVEL_MODE[travelMode].filter((field) => !isReadOnly || values[field] !== '');

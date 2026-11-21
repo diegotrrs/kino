@@ -2,8 +2,8 @@ import type { CreateEventInput, TravelDetails, TravelField, TravelMode } from '@
 
 // The order fields appear in the form and are sent to the API; anything else is rejected by the API
 export const FIELDS_BY_TRAVEL_MODE = {
-  flight: ['origin', 'destination', 'number', 'terminal', 'gate', 'seat', 'booking_reference'],
-  train: ['origin', 'destination', 'coach', 'seat', 'booking_reference'],
+  flight: ['origin', 'destination', 'number', 'terminal', 'gate', 'seat'],
+  train: ['origin', 'destination', 'coach', 'seat'],
 } as const satisfies Record<TravelMode, readonly TravelField[]>;
 
 export const TRAVEL_FIELD_MAX_LENGTH: Record<TravelField, number> = {
@@ -14,8 +14,10 @@ export const TRAVEL_FIELD_MAX_LENGTH: Record<TravelField, number> = {
   gate: 10,
   coach: 10,
   seat: 10,
-  booking_reference: 20,
 };
+
+// Any event can have a booking reference, so it isn't a ticket field
+export const BOOKING_REFERENCE_MAX_LENGTH = 20;
 
 const ALL_TRAVEL_FIELDS = Object.keys(TRAVEL_FIELD_MAX_LENGTH) as TravelField[];
 
@@ -41,21 +43,23 @@ export const getTravelPayload = (
 // The route isn't a chip: it's shown on its own (strip header, month cell, card)
 const ROUTE_FIELDS: ReadonlySet<TravelField> = new Set(['origin', 'destination']);
 
-export type TravelChip = { field: TravelField; value: string };
+export type TravelChip = { field: TravelField | 'booking_reference'; value: string };
 
+// A flight's or train's ticket chips, then the booking reference (any event can have one) last
 export const getTravelChips = (
   travelMode: TravelMode | null | undefined,
   travel: TravelDetails | null | undefined,
+  bookingReference: string | null | undefined,
 ): TravelChip[] => {
-  if (!travelMode || !travel) {
-    return [];
-  }
-  return FIELDS_BY_TRAVEL_MODE[travelMode]
-    .filter((field) => !ROUTE_FIELDS.has(field))
-    .flatMap((field) => {
-      const value = travel[field];
-      return value ? [{ field, value }] : [];
-    });
+  const ticketChips: TravelChip[] = travelMode && travel
+    ? FIELDS_BY_TRAVEL_MODE[travelMode]
+      .filter((field) => !ROUTE_FIELDS.has(field))
+      .flatMap((field) => {
+        const value = travel[field];
+        return value ? [{ field, value }] : [];
+      })
+    : [];
+  return bookingReference ? [...ticketChips, { field: 'booking_reference', value: bookingReference }] : ticketChips;
 };
 
 export const getRouteLabel = (travel: TravelDetails | null | undefined): string | null => {

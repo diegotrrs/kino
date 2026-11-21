@@ -63,6 +63,8 @@ export interface Event {
   expenses: EventExpense[];
   travel_mode: TravelMode | null;
   travel: TravelDetails | null;
+  // Any event can have one; null for visitors who aren't members of the calendar
+  booking_reference: string | null;
 }
 
 export interface CreateEventInput {
@@ -77,6 +79,7 @@ export interface CreateEventInput {
   color?: string;
   travel_mode?: TravelMode | null;
   travel?: Partial<TravelDetails>;
+  booking_reference?: string | null;
 }
 
 // A name for one day of a calendar, e.g. "Visit to Vatican" (date is yyyy-MM-dd)
@@ -105,8 +108,6 @@ export type TravelField =
   | 'terminal'
   | 'gate'
   | 'coach'
-  | 'seat'
-  | 'booking_reference';
+  | 'seat';
 
-// booking_reference is null for visitors who aren't members of the calendar
 export type TravelDetails = Record<TravelField, string | null>;

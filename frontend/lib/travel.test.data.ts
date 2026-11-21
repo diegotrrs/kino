@@ -8,6 +8,5 @@ export const buildFlightDetails = (overrides: Partial<TravelDetails> = {}): Trav
   gate: 'B32',
   coach: null,
   seat: '14A',
-  booking_reference: 'K7XQ2M',
   ...overrides,
 });

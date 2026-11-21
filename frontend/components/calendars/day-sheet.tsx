@@ -175,7 +175,9 @@ export const DaySheet = ({ day, events, readOnly, onClose, onAddEvent, onOpenEve
                   >
                     {event.title}
                   </button>
-                  {event.travelMode && <TravelStrip travelMode={event.travelMode} travel={event.travel} />}
+                  {(event.travelMode || event.bookingReference) && (
+                    <TravelStrip travelMode={event.travelMode} travel={event.travel} bookingReference={event.bookingReference} />
+                  )}
                 </span>
               </div>
             );

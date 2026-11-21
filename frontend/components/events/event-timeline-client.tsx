@@ -61,6 +61,7 @@ const toCalendarEvent = (ev: Event): CalendarEvent => ({
   expenses:        ev.expenses,
   travelMode:      ev.travel_mode,
   travel:          ev.travel,
+  bookingReference: ev.booking_reference,
 });
 
 type EventEditTriggerProps = {
@@ -190,7 +191,9 @@ export const EventTimelineClient = ({
                           </span>
                         )}
                       </div>
-                      {ev.travel_mode && <TravelStrip travelMode={ev.travel_mode} travel={ev.travel} className='mt-2' />}
+                      {(ev.travel_mode || ev.booking_reference) && (
+                        <TravelStrip travelMode={ev.travel_mode} travel={ev.travel} bookingReference={ev.booking_reference} className='mt-2' />
+                      )}
                     </div>
                   </div>
                   {/* Separate div so clicks on the delete button don't open the dialog */}

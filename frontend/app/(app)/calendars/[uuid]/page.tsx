@@ -51,6 +51,7 @@ const dbEventToCalendarEvent = (event: Event): CalendarEvent => {
     expenses: event.expenses,
     travelMode: event.travel_mode,
     travel: event.travel,
+    bookingReference: event.booking_reference,
   };
 }
 
