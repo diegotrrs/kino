@@ -24,6 +24,7 @@ export interface CalendarEvent {
   travelMode?: import('@/lib/types').TravelMode | null;
   travel?: import('@/lib/types').TravelDetails | null;
   bookingReference?: string | null;
+  location?: string | null;
 }
 
 export const initialEvents: CalendarEvent[] = [

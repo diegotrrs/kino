@@ -54,6 +54,7 @@ import { z }                    from 'zod';
 import { EventDateRangePicker } from './events/event-date-range-picker';
 import { EventExpenses }        from './events/event-expenses';
 import { EventLinks }           from './events/event-links';
+import { AddressField }         from './events/address-field';
 import { BookingReferenceField } from './events/booking-reference-field';
 import { TravelCard }           from './events/travel-card';
 import { TravelFields }         from './events/travel-fields';
@@ -139,6 +140,7 @@ export const EventForm = (props: EventFormProps) => {
   const [travelMode, setTravelMode] = useState<TravelMode | null>(() => mode === 'add' ? null : (editEvent?.travelMode ?? null));
   const [travelValues, setTravelValues] = useState(() => getTravelFormValues(mode === 'add' ? null : editEvent?.travel));
   const [bookingReference, setBookingReference] = useState(() => mode === 'add' ? '' : (editEvent?.bookingReference ?? ''));
+  const [address, setAddress] = useState(() => mode === 'add' ? '' : (editEvent?.location ?? ''));
   const [titleError, setTitleError] = useState(false);
   const [dateOpen, setDateOpen] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
@@ -166,6 +168,7 @@ export const EventForm = (props: EventFormProps) => {
     setTravelMode(null);
     setTravelValues(getTravelFormValues(null));
     setBookingReference('');
+    setAddress('');
     setIsTitleAuto(true);
     setTitleError(false);
     setDateOpen(false);
@@ -186,6 +189,7 @@ export const EventForm = (props: EventFormProps) => {
     setTravelMode(editEvent?.travelMode ?? null);
     setTravelValues(getTravelFormValues(editEvent?.travel));
     setBookingReference(editEvent?.bookingReference ?? '');
+    setAddress(editEvent?.location ?? '');
     setIsTitleAuto(isSavedTitleAuto(editEvent));
     setTitleError(false);
     setConfirmingDelete(false);
@@ -203,6 +207,7 @@ export const EventForm = (props: EventFormProps) => {
   const travelPayload = getTravelPayload(travelMode, travelValues);
   // The same value the API stores, so the calendar shows it before a reload
   const bookingReferenceToSave = bookingReference.trim() || null;
+  const addressToSave = address.trim() || null;
   const suggestionText = getSuggestionText(travelMode, travelValues);
   const isTitleFollowingTicket = !isReadOnly && isTitleAuto && travelMode !== null;
   const shownTitle = isTitleFollowingTicket ? suggestionText : title;
@@ -236,6 +241,7 @@ export const EventForm = (props: EventFormProps) => {
         travelMode: editOldEvent.travelMode,
         travel: editOldEvent.travel,
         bookingReference: editOldEvent.bookingReference,
+        location: editOldEvent.location,
       });
     }
     setConfirmingDelete(false);
@@ -259,6 +265,7 @@ export const EventForm = (props: EventFormProps) => {
         travelMode,
         travel: getLocalTravel(),
         bookingReference: bookingReferenceToSave,
+        location: addressToSave,
       };
 
       if (saveCalendarId !== undefined) {
@@ -274,6 +281,7 @@ export const EventForm = (props: EventFormProps) => {
             color,
             ...travelPayload,
             booking_reference: bookingReferenceToSave,
+            location: addressToSave,
           });
           const [linkResults, expenseResults] = await Promise.all([
             Promise.allSettled(pendingUrlsRef.current.map((url) => addEventLink(created.id, url))),
@@ -318,6 +326,7 @@ export const EventForm = (props: EventFormProps) => {
         travelMode,
         travel: getLocalTravel(),
         bookingReference: bookingReferenceToSave,
+        location: addressToSave,
       };
 
       if (calendarId !== undefined) {
@@ -332,6 +341,7 @@ export const EventForm = (props: EventFormProps) => {
             color,
             ...travelPayload,
             booking_reference: bookingReferenceToSave,
+            location: addressToSave,
           });
         } catch (e) {
           console.error(e);
@@ -511,6 +521,8 @@ export const EventForm = (props: EventFormProps) => {
               </Popover>
             )}
           </section>
+
+          <AddressField value={address} isReadOnly={isReadOnly} onChange={setAddress} />
 
           <section className='grid gap-2'>
             <span className={SECTION_LABEL}>{t('colour')}</span>

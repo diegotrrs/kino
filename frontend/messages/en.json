@@ -473,5 +473,10 @@
     "add": "Add to favourites",
     "remove": "Remove from favourites",
     "failed": "Failed to update favourite"
+  },
+  "address": {
+    "label": "Address",
+    "placeholder": "e.g. Via del Corso 12, Rome",
+    "openInMaps": "Open {address} in Google Maps"
   }
 }

@@ -102,7 +102,7 @@ T6 Migration step 2 file, e2e 18-stays-and-booking-references, domain terms, fin
 
 ### Phase 2: Address and Stay
 
-#### Task 3: An address on every event, with Google Maps links
+#### Task 3: An address on every event, with Google Maps links ✅
 
 **Description:**
 - **Helper:** `lib/maps.ts`, where `getGoogleMapsUrl(address)` returns `https://www.google.com/maps/search/?api=1&query=<encoded>`, or `null` for a blank address. Tested.
@@ -113,13 +113,13 @@ T6 Migration step 2 file, e2e 18-stays-and-booking-references, domain terms, fin
 - **Translations:** labels in all four languages.
 
 **Acceptance criteria:**
-- [ ] Any event can be saved with an address, and it persists.
-- [ ] Wherever it's shown (form button, timeline, day sheet, a visitor's dialog), tapping it opens Google Maps for the encoded address in a new tab and does **not** open the event.
-- [ ] Ordinary events without an address look as they do today, apart from the empty field in the form.
+- [x] Any event can be saved with an address, and it persists.
+- [x] Wherever it's shown (form button, timeline, day sheet, a visitor's dialog), tapping it opens Google Maps for the encoded address in a new tab and does **not** open the event.
+- [x] Ordinary events without an address look as they do today, apart from the empty field in the form.
 
 **Verification:**
-- [ ] `npx vitest run lib/maps` (encoding of spaces, accents and `&`; blank → null); build and lint
-- [ ] A temporary browser test: the link `href` is right in each place, `target="_blank"` is set, and tapping the address in a row doesn't open the event
+- [x] `npx vitest run lib/maps` (encoding of spaces, accents and `&`; blank → null); build and lint
+- [x] A temporary browser test: the link `href` is right in each place, `target="_blank"` is set, and tapping the address in a row doesn't open the event
 
 **Dependencies:** Task 2
 

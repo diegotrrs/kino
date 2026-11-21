@@ -473,5 +473,10 @@
     "add": "Adicionar aos favoritos",
     "remove": "Remover dos favoritos",
     "failed": "Não foi possível atualizar o favorito"
+  },
+  "address": {
+    "label": "Morada",
+    "placeholder": "ex.: Via del Corso 12, Roma",
+    "openInMaps": "Abrir {address} no Google Maps"
   }
 }

@@ -473,5 +473,10 @@
     "add": "Zu Favoriten hinzufügen",
     "remove": "Aus Favoriten entfernen",
     "failed": "Favorit konnte nicht aktualisiert werden"
+  },
+  "address": {
+    "label": "Adresse",
+    "placeholder": "z. B. Via del Corso 12, Rom",
+    "openInMaps": "{address} in Google Maps öffnen"
   }
 }
