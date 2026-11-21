@@ -18,11 +18,9 @@ router = APIRouter()
 
 
 def _without_booking_references(events: list[dict]) -> list[dict]:
-    """A booking reference is enough to manage someone's real booking, so only members ever get one."""
-    return [
-        event | {"travel": event["travel"] | {"booking_reference": None}} if event.get("travel") else event
-        for event in events
-    ]
+    """A booking reference is enough to manage someone's real booking, so only members ever get one,
+    whatever kind of event it's on."""
+    return [event | {"booking_reference": None} for event in events]
 
 
 @router.get("/", response_model=list[EventResponse])

@@ -52,8 +52,10 @@ CREATE TABLE events (
     end_time TIME,
     location VARCHAR(255),
     color VARCHAR(7) NOT NULL DEFAULT '#AEC6E4',
-    -- NULL = an ordinary event (feature 23)
-    travel_mode VARCHAR(10) CONSTRAINT events_travel_mode_check CHECK (travel_mode IN ('flight', 'train')),
+    -- NULL = an ordinary event (feature 23); 'stay' = a hotel, hostel, Airbnb... (feature 39)
+    travel_mode VARCHAR(10) CONSTRAINT events_travel_mode_check CHECK (travel_mode IN ('flight', 'train', 'stay')),
+    -- Members only: never returned to visitors of a public calendar (feature 39)
+    booking_reference VARCHAR(20),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ
 );
@@ -92,6 +94,7 @@ CREATE TABLE deleted_events (
     location VARCHAR(255),
     color VARCHAR(7) NOT NULL DEFAULT '#AEC6E4',
     travel_mode VARCHAR(10),
+    booking_reference VARCHAR(20),
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ,
     deleted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -182,7 +185,7 @@ ALTER TABLE calendar_checklist_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE deleted_calendar_checklist_items ENABLE ROW LEVEL SECURITY;
 
 -- Flight and train events (feature 23)
--- Ticket details, one row exactly when an event has a travel_mode
+-- Ticket details, one row exactly when an event is a flight or a train (a stay has none)
 CREATE TABLE IF NOT EXISTS event_travel_details (
     event_id          INTEGER PRIMARY KEY REFERENCES events(id) ON DELETE CASCADE,
     origin            VARCHAR(60),
@@ -192,7 +195,6 @@ CREATE TABLE IF NOT EXISTS event_travel_details (
     gate              VARCHAR(10),   -- flights only
     coach             VARCHAR(10),   -- trains only
     seat              VARCHAR(10),
-    booking_reference VARCHAR(20),
     created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at        TIMESTAMPTZ
 );
@@ -207,7 +209,6 @@ CREATE TABLE IF NOT EXISTS deleted_event_travel_details (
     gate              VARCHAR(10),
     coach             VARCHAR(10),
     seat              VARCHAR(10),
-    booking_reference VARCHAR(20),
     created_at        TIMESTAMPTZ NOT NULL,
     updated_at        TIMESTAMPTZ,
     deleted_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()

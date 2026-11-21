@@ -38,7 +38,7 @@ T6 Migration step 2 file, e2e 18-stays-and-booking-references, domain terms, fin
 
 ### Phase 1: A booking reference on every event
 
-#### Task 1: Backend — the reference moves onto the event
+#### Task 1: Backend — the reference moves onto the event ✅
 
 **Description:**
 - **Migration and schema:** write migration step 1 and give `init.sql` the final shape.
@@ -50,15 +50,15 @@ T6 Migration step 2 file, e2e 18-stays-and-booking-references, domain terms, fin
 - **Existing tests:** update `test_event_travel.py` (unit and integration) to the new shape.
 
 **Acceptance criteria:**
-- [ ] An ordinary event, a flight and a train can each be created and updated with a `booking_reference`. It comes back top-level from create, GET and list, and `travel` no longer contains it.
-- [ ] Non-members and anonymous visitors get `booking_reference: null` on every event of a public calendar; owners and editors get the value.
-- [ ] Deleting and restoring a calendar keeps every event's reference; a date-only PATCH (a drag) leaves it alone.
-- [ ] Migration step 1, applied to a copy of the local database that has flight and train references, copies all of them. The **old** backend code (`main`) still runs its event queries against that database.
+- [x] An ordinary event, a flight and a train can each be created and updated with a `booking_reference`. It comes back top-level from create, GET and list, and `travel` no longer contains it.
+- [x] Non-members and anonymous visitors get `booking_reference: null` on every event of a public calendar; owners and editors get the value.
+- [x] Deleting and restoring a calendar keeps every event's reference; a date-only PATCH (a drag) leaves it alone.
+- [x] Migration step 1, applied to a copy of the local database that has flight and train references, copies all of them. The **old** backend code (`main`) still runs its event queries against that database.
 
 **Verification:**
-- [ ] `make check`
-- [ ] Throwaway database built from `init.sql` the way CI does: the final shape
-- [ ] A second throwaway copy of the local database with step 1 applied: references copied, and the old `get_events_by_calendar` SQL still runs
+- [x] `make check`
+- [x] Throwaway database built from `init.sql` the way CI does: the final shape
+- [x] A second throwaway copy of the local database with step 1 applied: references copied, and the old `get_events_by_calendar` SQL still runs
 
 **Dependencies:** None
 

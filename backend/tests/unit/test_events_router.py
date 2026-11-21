@@ -174,7 +174,7 @@ class TestListEvents:
         result = self._list(db, None, calendar_uuid="abc")
 
         # Visitors get a copy (booking references removed), so compare contents rather than identity
-        assert result == [{"id": 5, "title": "Museum", "travel": None}]
+        assert result == [{"id": 5, "title": "Museum", "travel": None, "booking_reference": None}]
 
     def test_listing_all_events_requires_authentication(self, crud, db):
         with pytest.raises(HTTPException) as exc:
