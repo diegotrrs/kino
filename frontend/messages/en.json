@@ -487,7 +487,7 @@
   },
   "analytics": {
     "label": "Usage analytics",
-    "bannerText": "Kino uses PostHog, hosted in the EU, to see which features people use. It never receives what you write: calendar names, events, addresses or booking references. If you accept, it remembers your visits; if you decline, nothing is stored on your device.",
+    "bannerText": "Kino uses PostHog, hosted in the EU, to see which features people use. It never receives what you write: calendar names, events, addresses or booking references. If you accept, it remembers your visits; if you decline, it only counts anonymous visits and stores nothing on your device.",
     "accept": "Accept",
     "decline": "Decline",
     "settingsSwitch": "Help improve Kino",

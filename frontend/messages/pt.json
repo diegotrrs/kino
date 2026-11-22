@@ -487,7 +487,7 @@
   },
   "analytics": {
     "label": "Estatísticas de utilização",
-    "bannerText": "O Kino usa o PostHog, alojado na UE, para perceber que funcionalidades são usadas. Nunca recebe o que escreves: nomes de calendários, eventos, moradas ou códigos de reserva. Se aceitares, lembra-se das tuas visitas; se recusares, nada fica guardado no teu dispositivo.",
+    "bannerText": "O Kino usa o PostHog, alojado na UE, para perceber que funcionalidades são usadas. Nunca recebe o que escreves: nomes de calendários, eventos, moradas ou códigos de reserva. Se aceitares, lembra-se das tuas visitas; se recusares, só conta visitas anónimas e não guarda nada no teu dispositivo.",
     "accept": "Aceitar",
     "decline": "Recusar",
     "settingsSwitch": "Ajuda a melhorar o Kino",
