@@ -4,6 +4,7 @@ import {
   createTravelEvent,
   getCalendarId,
   getEventById,
+  getEventsByCalendar,
   getToken,
   login,
   makeCalendarPublic,
@@ -154,6 +155,56 @@ test.describe('@18. booking references on every event', () => {
   });
 });
 
+test.describe('@18. stays', () => {
+  test('@18.6 should add a stay named "Stay" and keep its address and reference when switching to a flight and back', async ({
+    page,
+    request,
+  }) => {
+    await login(page);
+    const token = await getToken(request);
+    const calendarUuid = await createCalendar(request, token, `Stay Test ${Date.now()}`);
+
+    await page.goto(`/calendars/${calendarUuid}`);
+    await page.getByRole('button', { name: 'Add Event' }).click();
+    let dialog = page.getByRole('alertdialog');
+    await dialog.getByRole('group', { name: 'Travel' }).getByText('Stay', { exact: true }).click();
+    await expect(dialog.getByLabel('Event title')).toHaveValue('Stay');
+    // A stay has no ticket fields
+    await expect(dialog.getByLabel('From', { exact: true })).toHaveCount(0);
+    await dialog.getByLabel('Address', { exact: true }).fill('Largo Febo 2, Roma');
+    await dialog.getByLabel('Booking reference', { exact: true }).fill('HTL-881');
+    await dialog.getByRole('button', { name: 'Add Event' }).click();
+    await expect(dialog).toBeHidden();
+
+    const [stay] = await getEventsByCalendar(request, token, calendarUuid);
+    expect(stay).toMatchObject({
+      title: 'Stay', travel_mode: 'stay', travel: null, location: 'Largo Febo 2, Roma', booking_reference: 'HTL-881',
+    });
+
+    // The month cell and the strip show a bed
+    await page.reload();
+    await expect(page.locator(`td.fc-daygrid-day[data-date="${getToday()}"] .fc-event .lucide-bed-double`)).toHaveCount(1);
+    await page.goto('/events');
+    await expect(page.getByTestId('travel-strip').locator('.lucide-bed-double')).toHaveCount(1);
+
+    // The untouched title follows the mode: Stay, then Flight, then Stay again
+    let shownTitle = 'Stay';
+    for (const travelMode of ['Flight', 'Stay'] as const) {
+      await page.getByRole('button', { name: shownTitle, exact: true }).click();
+      dialog = page.getByRole('alertdialog');
+      await dialog.getByRole('group', { name: 'Travel' }).getByText(travelMode, { exact: true }).click();
+      await dialog.getByRole('button', { name: 'Save' }).click();
+      await expect(dialog).toBeHidden();
+      await expect.poll(async () => (await getEventById(request, token, stay.id)).travel_mode).toBe(travelMode.toLowerCase());
+      expect(await getEventById(request, token, stay.id)).toMatchObject({
+        title: travelMode, location: 'Largo Febo 2, Roma', booking_reference: 'HTL-881',
+      });
+      shownTitle = travelMode;
+      await page.reload();
+    }
+  });
+});
+
 test.describe('@18. addresses on phones', () => {
   test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
 
@@ -171,5 +222,18 @@ test.describe('@18. addresses on phones', () => {
     const link = page.getByRole('dialog').getByRole('link', { name: 'Open Giolitti, Roma in Google Maps' });
     await expect(link).toHaveAttribute('href', 'https://www.google.com/maps/search/?api=1&query=Giolitti%2C%20Roma');
     await link.click({ trial: true });
+  });
+
+  test('@18.7 should fit the four travel modes on a phone in the language with the longest labels', async ({ page, request }) => {
+    await login(page);
+    await page.context().addCookies([{ name: 'locale', value: 'pt', domain: 'localhost', path: '/' }]);
+    const calendarUuid = await createCalendar(request, await getToken(request), `Phone Modes Test ${Date.now()}`);
+
+    await page.goto(`/calendars/${calendarUuid}`);
+    await page.getByRole('button', { name: 'Adicionar evento', exact: true }).first().click();
+    const dialog = page.getByRole('alertdialog');
+    await expect(dialog.getByRole('group', { name: 'Viagem' }).getByText('Alojamento', { exact: true })).toBeVisible();
+
+    expect(await dialog.evaluate((el) => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(0);
   });
 });

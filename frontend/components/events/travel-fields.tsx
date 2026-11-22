@@ -7,9 +7,11 @@ import {
 }                                       from '@/lib/travel';
 import { cn }                           from '@/lib/utils';
 import {
+  BedDouble,
   Plane,
   TrainFront
 }                                       from 'lucide-react';
+import { TravelModeIcon }               from './travel-strip';
 import { useTranslations }              from 'next-intl';
 import {
   type ReactElement,
@@ -22,6 +24,7 @@ const MODE_OPTIONS = [
   { mode: null, labelKey: 'none', Icon: null },
   { mode: 'flight', labelKey: 'flight', Icon: Plane },
   { mode: 'train', labelKey: 'train', Icon: TrainFront },
+  { mode: 'stay', labelKey: 'stay', Icon: BedDouble },
 ] as const;
 
 // Route fields take the full width; the short ticket fields share rows
@@ -52,7 +55,7 @@ export const TravelFields = ({
 
   const getPlaceholder = (field: TravelField): string | undefined => {
     if (field === 'origin' || field === 'destination') {
-      return t(`${field}Placeholder.${travelMode ?? 'flight'}`);
+      return t(`${field}Placeholder.${travelMode === 'train' ? 'train' : 'flight'}`);
     }
     if (field === 'number') {
       return t(`${field}Placeholder`);
@@ -87,7 +90,8 @@ export const TravelFields = ({
                 checked={travelMode === mode}
                 onChange={() => onTravelModeChange(mode)}
               />
-              {Icon && <Icon aria-hidden='true' className='h-4 w-4' />}
+              {/* Four modes with their icons don't fit a phone in every language (Portuguese), so phones get words only */}
+              {Icon && <Icon aria-hidden='true' className='hidden h-4 w-4 sm:block' />}
               {t(labelKey)}
             </label>
           ))}
@@ -96,9 +100,7 @@ export const TravelFields = ({
 
       {isReadOnly && travelMode !== null && (
         <span className='flex items-center gap-1.5 text-sm font-medium'>
-          {travelMode === 'flight'
-            ? <Plane aria-hidden='true' className='h-4 w-4' />
-            : <TrainFront aria-hidden='true' className='h-4 w-4' />}
+          <TravelModeIcon travelMode={travelMode} className='h-4 w-4' />
           {t(travelMode)}
         </span>
       )}

@@ -121,6 +121,23 @@ class TestBookingReferenceAndAddress:
         assert "booking_reference" not in EventUpdate(date="2035-06-02").model_fields_set
 
 
+class TestStay:
+    def test_a_stay_needs_no_travel_details(self):
+        event = EventCreate(**_event(travel_mode="stay", booking_reference="HTL-881", location="Hotel Raphael"))
+
+        assert event.travel_mode == "stay"
+        assert event.travel is None
+
+    @pytest.mark.parametrize("travel", [{"seat": "12"}, {"origin": "LHR"}, {}])
+    def test_travel_details_are_rejected_on_a_stay(self, travel):
+        with pytest.raises(ValidationError):
+            EventCreate(**_event(travel_mode="stay", travel=travel))
+
+    def test_an_update_to_a_stay_rejects_travel_details(self):
+        with pytest.raises(ValidationError):
+            EventUpdate(travel_mode="stay", travel={"gate": "B32"})
+
+
 class TestTravelOnUpdate:
     def test_travel_without_a_travel_mode_is_rejected(self):
         with pytest.raises(ValidationError):

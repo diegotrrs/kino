@@ -11,6 +11,7 @@ import type {
 }                                       from '@/lib/types';
 import { cn }                           from '@/lib/utils';
 import {
+  BedDouble,
   Plane,
   TrainFront
 }                                       from 'lucide-react';
@@ -19,10 +20,12 @@ import type { ReactElement }            from 'react';
 
 const CHIP = 'inline-flex items-center gap-1 rounded border bg-card px-1.5 py-0.5 font-mono text-[0.7rem] leading-none tabular-nums';
 
-export const TravelModeIcon = ({ travelMode, className }: { travelMode: TravelMode; className?: string }): ReactElement =>
-  travelMode === 'flight'
-    ? <Plane aria-hidden='true' className={className} />
-    : <TrainFront aria-hidden='true' className={className} />;
+const TRAVEL_MODE_ICONS = { flight: Plane, train: TrainFront, stay: BedDouble } as const;
+
+export const TravelModeIcon = ({ travelMode, className }: { travelMode: TravelMode; className?: string }): ReactElement => {
+  const Icon = TRAVEL_MODE_ICONS[travelMode];
+  return <Icon aria-hidden='true' className={className} />;
+};
 
 const ChipValue = ({ chip }: { chip: TravelChip }): ReactElement => {
   const t = useTranslations('travel.chips');

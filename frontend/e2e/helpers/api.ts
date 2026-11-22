@@ -292,6 +292,30 @@ export const createTravelEvent = async (
   return id;
 };
 
+type ApiEvent = {
+  id: number;
+  title: string;
+  travel_mode: string | null;
+  travel: Record<string, string | null> | null;
+  booking_reference: string | null;
+  location: string | null;
+};
+
+// A calendar's events as the server has them (as its owner, so booking references are included)
+export const getEventsByCalendar = async (
+  request: APIRequestContext,
+  token: string,
+  calendarUuid: string,
+): Promise<ApiEvent[]> => {
+  const res = await request.get(`${API_URL}/api/events/?calendar_uuid=${calendarUuid}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok()) {
+    throw new Error(`getEventsByCalendar: ${res.status()} ${await res.text()}`);
+  }
+  return res.json();
+};
+
 // The event as the server has it, to tell a saved change from what the form shows
 export const getEventById = async (
   request: APIRequestContext,

@@ -377,14 +377,16 @@
       "flightNumber": "Flight {number}",
       "flight": "Flight",
       "trainTo": "Train to {destination}",
-      "train": "Train"
+      "train": "Train",
+      "stay": "Stay"
     },
     "card": {
       "flightTicket": "Flight ticket",
       "trainTicket": "Train ticket",
       "copy": "Copy",
       "copyReference": "Copy booking reference"
-    }
+    },
+    "stay": "Stay"
   },
   "calendarMembers": {
     "invite": "Invite",

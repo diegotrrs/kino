@@ -127,7 +127,7 @@ T6 Migration step 2 file, e2e 18-stays-and-booking-references, domain terms, fin
 
 **Estimated scope:** M
 
-#### Task 4: Stay — backend and form
+#### Task 4: Stay — backend and form ✅
 
 **Description:**
 - **Backend:**
@@ -139,12 +139,12 @@ T6 Migration step 2 file, e2e 18-stays-and-booking-references, domain terms, fin
   - `TravelMode` includes `'stay'`.
 
 **Acceptance criteria:**
-- [ ] A member can create a stay with an address and a reference and no title typed; it gets "Stay" (translated) as its title. Switching it to a flight and back keeps the address and reference.
-- [ ] The API refuses travel fields on a stay (`422`).
+- [x] A member can create a stay with an address and a reference and no title typed; it gets "Stay" (translated) as its title. Switching it to a flight and back keeps the address and reference.
+- [x] The API refuses travel fields on a stay (`422`).
 
 **Verification:**
-- [ ] `make check`, with new unit tests for `'stay'` validation and integration tests for the mode changes
-- [ ] `npx vitest run lib/travel` (suggested title, fields per mode); build and lint
+- [x] `make check`, with new unit tests for `'stay'` validation and integration tests for the mode changes
+- [x] `npx vitest run lib/travel` (suggested title, fields per mode); build and lint
 
 **Dependencies:** Task 2 (and Task 3 for the address field)
 

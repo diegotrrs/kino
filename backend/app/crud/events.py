@@ -1,6 +1,6 @@
 from psycopg2.extensions import connection
 
-from ..schemas.event import TRAVEL_FIELDS_BY_MODE, EventCreate, EventUpdate
+from ..schemas.event import TICKETED_MODES, TRAVEL_FIELDS_BY_MODE, EventCreate, EventUpdate
 
 # Links, expenses and travel details are each read in their own subquery. Joining links and expenses
 # into one GROUP BY repeated every link once per expense and every expense once per link.
@@ -64,9 +64,10 @@ TRAVEL_COLUMNS = ("origin", "destination", "number", "terminal", "gate", "coach"
 
 
 def set_travel_details(db: connection, event_id: int, travel_mode: str | None, travel: dict | None) -> None:
-    """Replace an event's ticket details, or delete them when it has no travel mode. The caller commits."""
+    """Replace an event's ticket details, or delete them when it has no ticket (an ordinary event or a
+    stay). The caller commits."""
     with db.cursor() as cur:
-        if travel_mode is None:
+        if travel_mode not in TICKETED_MODES:
             cur.execute("DELETE FROM event_travel_details WHERE event_id = %s", (event_id,))
             return
         values = {column: (travel or {}).get(column) for column in TRAVEL_COLUMNS}
@@ -165,7 +166,7 @@ def create_event(db: connection, event: EventCreate) -> dict:
             data,
         )
         event_id = cur.fetchone()["id"]
-    if event.travel_mode is not None:
+    if event.travel_mode in TICKETED_MODES:
         set_travel_details(db, event_id, event.travel_mode, data["travel"])
     db.commit()
     return get_event(db, event_id)
@@ -191,7 +192,7 @@ def update_event(db: connection, event_id: int, event: EventUpdate) -> dict | No
     # (The schema refuses travel without a travel_mode, so travel alone never gets here.)
     if "travel_mode" in update_data:
         travel_mode = update_data["travel_mode"]
-        if travel_mode is None:
+        if travel_mode not in TICKETED_MODES:
             set_travel_details(db, event_id, None, None)
         elif "travel" in event.model_fields_set:
             set_travel_details(db, event_id, travel_mode, travel)

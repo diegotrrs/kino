@@ -223,7 +223,7 @@ export const EventForm = (props: EventFormProps) => {
   };
   // The local copy mirrors what the API will store, so the calendar shows it before a reload
   const getLocalTravel = (): TravelDetails | null =>
-    travelMode === null ? null : toTravelDetails(travelPayload.travel);
+    travelMode === null || travelMode === 'stay' ? null : toTravelDetails(travelPayload.travel);
   const localTravel = getLocalTravel();
 
   const handleCancel = () => {
@@ -446,7 +446,7 @@ export const EventForm = (props: EventFormProps) => {
           />
 
           {/* The boarding pass shows what the form holds right now, so it updates while editing */}
-          {mode === 'edit' && travelMode !== null && localTravel && start && end && (
+          {mode === 'edit' && (travelMode === 'flight' || travelMode === 'train') && localTravel && start && end && (
             <TravelCard
               travelMode={travelMode}
               travel={localTravel}

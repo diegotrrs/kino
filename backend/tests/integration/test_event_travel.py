@@ -232,6 +232,70 @@ class TestChangingTheTravelMode:
         assert _details_row(db_conn, created["id"]) is not None
 
 
+class TestStays:
+    def test_a_stay_round_trips_with_its_address_and_reference_and_no_ticket(
+        self, client, db_conn, calendar, owner_headers
+    ):
+        created = _create(
+            client, calendar, owner_headers, title="Hotel Raphael", travel_mode="stay",
+            booking_reference="HTL-881", location="Largo Febo 2, Roma",
+        )
+
+        fetched = client.get(f"/api/events/{created['id']}", headers=owner_headers).json()
+
+        assert fetched["travel_mode"] == "stay"
+        assert fetched["travel"] is None
+        assert fetched["booking_reference"] == "HTL-881"
+        assert fetched["location"] == "Largo Febo 2, Roma"
+        assert _details_row(db_conn, created["id"]) is None
+
+    def test_travel_details_on_a_stay_are_rejected(self, client, calendar, owner_headers):
+        payload = {"calendar_id": calendar["id"], "title": "Hotel", "date": "2035-06-01", "start_time": "15:00:00"}
+
+        stay_with_a_seat = payload | {"travel_mode": "stay", "travel": {"seat": "1"}}
+
+        res = client.post("/api/events/", json=stay_with_a_seat, headers=owner_headers)
+
+        assert res.status_code == 422
+
+    def test_a_flight_turned_into_a_stay_loses_its_ticket_but_keeps_the_reference_and_address(
+        self, client, db_conn, calendar, owner_headers
+    ):
+        created = _create(
+            client, calendar, owner_headers, travel_mode="flight", travel=FLIGHT,
+            booking_reference="K7XQ2M", location="Heathrow T5",
+        )
+
+        res = client.patch(f"/api/events/{created['id']}", json={"travel_mode": "stay"}, headers=owner_headers)
+
+        assert res.status_code == 200
+        assert res.json()["travel_mode"] == "stay"
+        assert res.json()["travel"] is None
+        assert res.json()["booking_reference"] == "K7XQ2M"
+        assert res.json()["location"] == "Heathrow T5"
+        assert _details_row(db_conn, created["id"]) is None
+
+    def test_a_stay_turned_into_a_flight_gets_an_empty_ticket(self, client, db_conn, calendar, owner_headers):
+        created = _create(client, calendar, owner_headers, travel_mode="stay", booking_reference="HTL-881")
+
+        res = client.patch(f"/api/events/{created['id']}", json={"travel_mode": "flight"}, headers=owner_headers)
+
+        assert res.json()["travel"] == EMPTY_TRAVEL
+        assert res.json()["booking_reference"] == "HTL-881"
+        assert _details_row(db_conn, created["id"]) is not None
+
+    def test_a_stay_survives_delete_and_restore(self, client, calendar, owner_headers):
+        created = _create(client, calendar, owner_headers, travel_mode="stay", booking_reference="HTL-881")
+
+        client.delete(f"/api/calendars/{calendar['uuid']}", headers=owner_headers)
+        client.post(f"/api/calendars/{calendar['uuid']}/restore", headers=owner_headers)
+
+        restored = _list(client, calendar, owner_headers)[0]
+        assert (restored["id"], restored["travel_mode"], restored["booking_reference"]) == (
+            created["id"], "stay", "HTL-881",
+        )
+
+
 def _archived_travel(db_conn, event_ids: list[int]) -> list[dict]:
     with db_conn.cursor() as cur:
         cur.execute(

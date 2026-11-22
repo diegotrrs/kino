@@ -22,7 +22,17 @@ describe('FIELDS_BY_TRAVEL_MODE', () => {
   });
 });
 
+describe('FIELDS_BY_TRAVEL_MODE for a stay', () => {
+  it('should give a stay no ticket fields', () => {
+    expect(FIELDS_BY_TRAVEL_MODE.stay).toEqual([]);
+  });
+});
+
 describe('getTravelPayload', () => {
+  it('should send a stay with no travel details, even if ticket fields were filled in before switching', () => {
+    expect(getTravelPayload('stay', { origin: 'LHR', seat: '14A' })).toEqual({ travel_mode: 'stay' });
+  });
+
   it('should send no travel details for an ordinary event', () => {
     expect(getTravelPayload(null, { origin: 'LHR' })).toEqual({ travel_mode: null });
   });
@@ -91,6 +101,10 @@ describe('getTravelChips', () => {
     expect(getTravelChips(null, null, 'VM-2035')).toEqual([{ field: 'booking_reference', value: 'VM-2035' }]);
   });
 
+  it('should give a stay just its booking reference chip', () => {
+    expect(getTravelChips('stay', null, 'HTL-881')).toEqual([{ field: 'booking_reference', value: 'HTL-881' }]);
+  });
+
   it('should give no chips for an ordinary event without a booking reference', () => {
     expect(getTravelChips(null, null, null)).toEqual([]);
   });
@@ -123,6 +137,10 @@ describe('getCalendarCellLabel', () => {
     expect(getCalendarCellLabel('Flight to Rome', 'flight', noRoute)).toBe('Flight to Rome');
   });
 
+  it('should keep the title of a stay, which has no route', () => {
+    expect(getCalendarCellLabel('Hotel Raphael', 'stay', null)).toBe('Hotel Raphael');
+  });
+
   it('should keep the title of an ordinary event', () => {
     expect(getCalendarCellLabel('Museum', null, null)).toBe('Museum');
   });
@@ -150,6 +168,10 @@ describe('getSuggestedTitle', () => {
       key: 'trainTo', values: { destination: 'Paris Gare du Nord' },
     });
     expect(getSuggestedTitle('train', { number: 'ignored for trains' })).toEqual({ key: 'train', values: {} });
+  });
+
+  it('should call a stay just a stay', () => {
+    expect(getSuggestedTitle('stay', { destination: 'Rome' })).toEqual({ key: 'stay', values: {} });
   });
 
   it('should suggest nothing for an ordinary event', () => {

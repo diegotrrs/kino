@@ -377,14 +377,16 @@
       "flightNumber": "Voo {number}",
       "flight": "Voo",
       "trainTo": "Comboio para {destination}",
-      "train": "Comboio"
+      "train": "Comboio",
+      "stay": "Alojamento"
     },
     "card": {
       "flightTicket": "Bilhete de avião",
       "trainTicket": "Bilhete de comboio",
       "copy": "Copiar",
       "copyReference": "Copiar referência da reserva"
-    }
+    },
+    "stay": "Alojamento"
   },
   "calendarMembers": {
     "invite": "Convidar",

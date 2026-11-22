@@ -98,8 +98,8 @@ export type ChecklistItem = {
   updated_at: string | null;
 };
 
-// A flight or a train; events without one (null) are ordinary events
-export type TravelMode = 'flight' | 'train';
+// A flight, a train or a stay (anywhere you sleep: a hotel, hostel, Airbnb...); null is an ordinary event
+export type TravelMode = 'flight' | 'train' | 'stay';
 
 export type TravelField =
   | 'origin'

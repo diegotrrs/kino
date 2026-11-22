@@ -7,14 +7,19 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-TravelMode = Literal["flight", "train"]
+# A stay is anywhere you sleep: a hotel, hostel, Airbnb...
+TravelMode = Literal["flight", "train", "stay"]
 
 # Which ticket fields each travel mode has; anything else is rejected rather than stored.
 # The booking reference isn't one of them: any event can have one, so it lives on the event.
 TRAVEL_FIELDS_BY_MODE: dict[str, frozenset[str]] = {
     "flight": frozenset({"origin", "destination", "number", "terminal", "gate", "seat"}),
     "train": frozenset({"origin", "destination", "coach", "seat"}),
+    "stay": frozenset(),
 }
+
+# The modes that have a ticket (an event_travel_details row); a stay has none
+TICKETED_MODES = frozenset({"flight", "train"})
 
 
 def _clean_text(v: object) -> object:
@@ -92,6 +97,8 @@ def _check_travel(travel_mode: str | None, travel: TravelDetailsIn | None) -> No
         return
     if travel_mode is None:
         raise ValueError("travel needs a travel_mode")
+    if travel_mode not in TICKETED_MODES:
+        raise ValueError(f"a {travel_mode} has no travel details")
     filled = {name for name, value in travel.model_dump().items() if value is not None}
     not_allowed = filled - TRAVEL_FIELDS_BY_MODE[travel_mode]
     if not_allowed:
