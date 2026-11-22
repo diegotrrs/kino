@@ -1,5 +1,6 @@
-import { type Page, expect, test } from '@playwright/test';
-import { createCalendar, getToken, login, resetTestData } from './helpers/api';
+import { type Page, type Request, expect, test } from '@playwright/test';
+import { gunzipSync } from 'node:zlib';
+import { createCalendar, deleteUserById, getToken, login, resetTestData } from './helpers/api';
 
 // Analytics only runs with a PostHog token. CI and normal local runs have none, so @19.1 runs there. To run
 // @19.2+, start the dev server with a dummy NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN in .env.local and run this file
@@ -12,11 +13,46 @@ const hasAnalyticsToken = !!process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN;
 const DESKTOP_CHROME = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36';
 const MOBILE_CHROME = 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36';
 
-type PostHogTraffic = { events: string[]; requests: string[] };
+type CapturedEvent = { event: string; properties: Record<string, unknown> };
+type PostHogTraffic = { events: string[]; requests: string[]; captured: CapturedEvent[] };
+
+// PostHog gzips what it sends; this unpacks a request into its events
+const readEvents = (request: Request): { raw: string; events: CapturedEvent[] } => {
+  const body = request.postDataBuffer();
+  if (!body) {
+    return { raw: '', events: [] };
+  }
+  const isGzip = body[0] === 0x1f && body[1] === 0x8b;
+  const raw = (isGzip ? gunzipSync(body) : body).toString('utf8');
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    const list = Array.isArray(parsed) ? parsed : (parsed as { batch?: unknown[] }).batch ?? [parsed];
+    return { raw, events: list.filter((item): item is CapturedEvent => !!item && typeof item === 'object' && 'event' in item) };
+  } catch {
+    return { raw, events: [] };
+  }
+};
+
+const getUserIdFromSession = async (page: Page): Promise<number> => {
+  const token = (await page.context().cookies()).find((cookie) => cookie.name === 'token')?.value ?? '';
+  return Number(JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()).sub);
+};
+
+const getEventNames = (traffic: PostHogTraffic): string[] => traffic.captured.map((captured) => captured.event);
+
+// The shared login helper reloads straight after login (to force English), which can drop PostHog's queued batch
+// in the test browser, so these tests log in through the form without it
+const logInThroughForm = async (page: Page): Promise<void> => {
+  await page.goto('/login');
+  await page.getByLabel('Email').fill(process.env.E2E_TEST_EMAIL ?? '');
+  await page.getByLabel('Password', { exact: true }).fill(process.env.E2E_TEST_PASSWORD ?? '');
+  await page.getByRole('button', { name: /^login$/i }).click();
+  await page.waitForURL('/home');
+};
 
 // Answers every PostHog request locally, so nothing leaves the machine, and records what would have been sent
 const interceptPostHog = async (page: Page): Promise<PostHogTraffic> => {
-  const traffic: PostHogTraffic = { events: [], requests: [] };
+  const traffic: PostHogTraffic = { events: [], requests: [], captured: [] };
   await page.addInitScript(() => {
     Object.defineProperty(navigator, 'webdriver', { get: () => false });
     Object.defineProperty(navigator, 'userAgentData', {
@@ -32,7 +68,9 @@ const interceptPostHog = async (page: Page): Promise<PostHogTraffic> => {
     const request = route.request();
     traffic.requests.push(`${request.method()} ${new URL(request.url()).pathname}`);
     if (request.method() === 'POST') {
-      traffic.events.push(request.postData() ?? '');
+      const { raw, events } = readEvents(request);
+      traffic.events.push(raw);
+      traffic.captured.push(...events);
     }
     await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
   });
@@ -132,6 +170,63 @@ test.describe('@19. analytics consent', () => {
     await page.reload();
     await expect(page.getByRole('switch', { name: 'Usage analytics' })).toBeChecked();
     expect(await getPostHogIdentityStorage(page)).not.toEqual([]);
+  });
+});
+
+test.describe('@19. analytics identity', () => {
+  test.skip(!hasAnalyticsToken, 'Needs a (dummy) PostHog token; see the note at the top of this file');
+  test.use({ userAgent: DESKTOP_CHROME });
+
+  test('@19.7 should identify a member by id after login, and forget them after log-out', async ({ page }) => {
+    const traffic = await interceptPostHog(page);
+    await page.goto('/');
+    await page.getByRole('region', { name: 'Usage analytics' }).getByRole('button', { name: 'Accept' }).click();
+
+    await logInThroughForm(page);
+    const userId = await getUserIdFromSession(page);
+    await expect.poll(() => getEventNames(traffic)).toContain('user_logged_in');
+    const identify = traffic.captured.find((captured) => captured.event === '$identify');
+    expect(identify?.properties.distinct_id).toBe(String(userId));
+    // The hand-off cookie is used once
+    expect((await page.context().cookies()).map((cookie) => cookie.name)).not.toContain('kino_auth_event');
+    // Never the member's email or name
+    expect(traffic.events.join('\n')).not.toContain(process.env.E2E_TEST_EMAIL ?? '@');
+
+    await page.getByRole('button', { name: 'Menu' }).click();
+    await page.getByRole('menuitem', { name: 'Log out' }).click();
+    await expect(page).toHaveURL(/\/login/);
+    await expect.poll(() => getEventNames(traffic)).toContain('user_logged_out');
+    const loggedOut = traffic.captured.find((captured) => captured.event === 'user_logged_out');
+    expect(loggedOut?.properties.distinct_id).toBe(String(userId));
+    // The next person on this device starts anonymous
+    const distinctIdNow = await page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}').distinct_id, `ph_${process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN}_posthog`);
+    expect(distinctIdNow).not.toBe(String(userId));
+  });
+
+  test('@19.8 should record a sign-up and where it came from', async ({ page, request }) => {
+    const traffic = await interceptPostHog(page);
+    await page.goto('/');
+    await page.getByRole('region', { name: 'Usage analytics' }).getByRole('button', { name: 'Accept' }).click();
+
+    const email = `e2e+analytics+${Date.now()}@kino.com`;
+    await page.goto(`/signup?redirect=${encodeURIComponent('/calendars/create?trip=kyoto-in-autumn')}`);
+    await page.getByLabel('Name').fill('Analytics Signup');
+    await page.getByLabel('Email').fill(email);
+    await page.getByLabel('Password', { exact: true }).fill('securepassword123');
+    await page.getByLabel('Confirm password').fill('securepassword123');
+    await page.getByRole('button', { name: /create account/i }).click();
+    await expect(page).toHaveURL(/\/calendars\/create/);
+    const userId = await getUserIdFromSession(page);
+
+    try {
+      await expect.poll(() => getEventNames(traffic)).toContain('user_signed_up');
+      const signedUp = traffic.captured.find((captured) => captured.event === 'user_signed_up');
+      expect(signedUp?.properties).toMatchObject({ source: 'hot_trip', distinct_id: String(userId) });
+      expect(traffic.events.join('\n')).not.toContain(email);
+      expect(traffic.events.join('\n')).not.toContain('Analytics Signup');
+    } finally {
+      await deleteUserById(request, userId);
+    }
   });
 });
 

@@ -1,5 +1,6 @@
 'use client';
 import { logout }           from '@/app/auth/actions';
+import { logOutOfAnalytics } from '@/lib/analytics/events';
 import { updateLocale }     from '@/app/(app)/settings/actions';
 import { Button }           from '@/components/ui/button';
 import { Wordmark }         from '@/components/wordmark';
@@ -123,7 +124,7 @@ export const TopBar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
             {isLoggedIn && (
               <>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onSelect={() => logout()}>
+                <DropdownMenuItem onSelect={() => { logOutOfAnalytics(); void logout(); }}>
                   {t('logOut')}
                 </DropdownMenuItem>
               </>

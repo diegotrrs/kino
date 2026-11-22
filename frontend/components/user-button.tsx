@@ -1,5 +1,6 @@
 'use client';
 import { logout }           from '@/app/auth/actions';
+import { logOutOfAnalytics } from '@/lib/analytics/events';
 import type { CurrentUser } from '@/components/app-shell';
 import {
   DropdownMenu,
@@ -82,7 +83,7 @@ export const UserButton = ({ user }: UserButtonProps) => {
 
         <DropdownMenuItem
           className='cursor-pointer text-sm'
-          onSelect={() => logout()}
+          onSelect={() => { logOutOfAnalytics(); void logout(); }}
         >
           <LogOut className='mr-2 h-4 w-4' />
           {t('logOut')}

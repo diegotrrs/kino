@@ -78,7 +78,7 @@ These are captured with `track()` right after the action succeeds. **No property
 ### Account
 | Event | When | Properties |
 |---|---|---|
-| `user_signed_up` | First app page after sign-up (cookie hand-off) | `from_hot_trip` (bool), `hot_trip_slug?` |
+| `user_signed_up` | First app page after sign-up (cookie hand-off) | `source` (`hot_trip` \| `shared_calendar` \| `direct`), from where the visitor was heading |
 | `user_logged_in` | First app page after login (cookie hand-off) | — |
 | `user_logged_out` | Log-out clicked, before `reset()` | — |
 | `password_reset_requested` | Forgot-password form succeeds | — |
@@ -190,15 +190,15 @@ These are captured with `track()` right after the action succeeds. **No property
 - [ ] Review with Diego. Then deploy, accept on production, and see a page view in PostHog with a cleaned URL.
 
 ### Phase 2: Journeys
-#### Task 3: Identify, log-out and auth events
+#### Task 3: Identify, log-out and auth events ✅
 - Add `AnalyticsIdentify` to the app shell: `identify(String(user.id))` with `locale`.
 - Add the `kino_auth_event` cookie hand-off for `user_signed_up` and `user_logged_in`.
 - On log-out: `user_logged_out`, then `reset()`.
 
 **Acceptance criteria:**
-- [ ] The anonymous landing visit and the account show up as one person in PostHog.
-- [ ] No email or name is sent anywhere.
-- [ ] The cookie is consumed once.
+- [x] The anonymous landing visit and the account show up as one person in PostHog.
+- [x] No email or name is sent anywhere.
+- [x] The cookie is consumed once.
 
 #### Task 4: The `track()` helper, and calendar and event events
 - Add `lib/analytics/events.ts`: a typed catalogue and `track()`, which does nothing when disabled.
