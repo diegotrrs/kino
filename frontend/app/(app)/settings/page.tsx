@@ -3,6 +3,7 @@ import {
   updateCurrency,
   updateLocale
 }                    from '@/app/(app)/settings/actions';
+import { AnalyticsConsentSetting } from '@/components/analytics/analytics-consent-setting';
 import { Separator } from '@/components/ui/separator';
 import { locales }   from '@/i18n/routing';
 import { cn }        from '@/lib/utils';
@@ -134,6 +135,8 @@ const SettingsPage = () => {
               {t('currency.hint')}
             </p>
           </div>
+
+          <AnalyticsConsentSetting />
 
           <Separator />
 

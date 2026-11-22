@@ -208,7 +208,9 @@
     "subtitle": "Learn more about Kino.",
     "builtBy": "Kino is a calendar app built by",
     "contact": "Got questions or feedback? Reach out at",
-    "inspiredBy": "Inspired by"
+    "inspiredBy": "Inspired by",
+    "privacyTitle": "Privacy",
+    "privacyText": "With your consent, Kino uses PostHog (hosted in the EU) to see which features people use. It never receives calendar names, events, addresses or booking references. You can change your choice in Settings."
   },
   "languages": {
     "en": "English",
@@ -482,5 +484,13 @@
     "label": "Address",
     "placeholder": "e.g. Via del Corso 12, Rome",
     "openInMaps": "Open {address} in Google Maps"
+  },
+  "analytics": {
+    "label": "Usage analytics",
+    "bannerText": "Kino uses PostHog, hosted in the EU, to see which features people use. It never receives what you write: calendar names, events, addresses or booking references. If you accept, it remembers your visits; if you decline, nothing is stored on your device.",
+    "accept": "Accept",
+    "decline": "Decline",
+    "settingsSwitch": "Help improve Kino",
+    "settingsHint": "Lets Kino remember your visits to see how the app is used. It never includes what you write."
   }
 }

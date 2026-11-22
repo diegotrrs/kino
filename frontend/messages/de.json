@@ -208,7 +208,9 @@
     "subtitle": "Erfahre mehr über Kino.",
     "builtBy": "Kino ist eine Kalender-App, entwickelt von",
     "contact": "Fragen oder Feedback? Schreib uns an",
-    "inspiredBy": "Inspiriert von"
+    "inspiredBy": "Inspiriert von",
+    "privacyTitle": "Datenschutz",
+    "privacyText": "Mit deiner Zustimmung nutzt Kino PostHog (mit Sitz in der EU), um zu sehen, welche Funktionen genutzt werden. Es erhält nie Kalendernamen, Termine, Adressen oder Buchungsnummern. Du kannst deine Wahl in den Einstellungen ändern."
   },
   "languages": {
     "en": "English",
@@ -482,5 +484,13 @@
     "label": "Adresse",
     "placeholder": "z. B. Via del Corso 12, Rom",
     "openInMaps": "{address} in Google Maps öffnen"
+  },
+  "analytics": {
+    "label": "Nutzungsstatistik",
+    "bannerText": "Kino nutzt PostHog mit Sitz in der EU, um zu sehen, welche Funktionen genutzt werden. Es erhält nie, was du schreibst: Kalendernamen, Termine, Adressen oder Buchungsnummern. Wenn du zustimmst, merkt es sich deine Besuche; wenn du ablehnst, wird nichts auf deinem Gerät gespeichert.",
+    "accept": "Akzeptieren",
+    "decline": "Ablehnen",
+    "settingsSwitch": "Hilf, Kino zu verbessern",
+    "settingsHint": "Erlaubt Kino, sich deine Besuche zu merken, um zu sehen, wie die App genutzt wird. Enthält nie, was du schreibst."
   }
 }

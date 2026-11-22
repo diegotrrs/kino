@@ -170,15 +170,21 @@ These are captured with `track()` right after the action succeeds. **No property
 - [x] With no token set (dev, CI, e2e), nothing is loaded or sent. The e2e check `@19.1` counts requests to `*.posthog.com` and expects 0.
 - [x] `npm run build`, `npm run lint` and `npm run check` pass.
 
-#### Task 2: Consent banner
+#### Task 2: Consent banner ✅
 - Add a small, translated banner (Accept / Reject) in the root layout, shown only when the token is set and no choice has been made.
 - Accept → `opt_in_capturing()`. Reject → stays cookieless.
 - Settings gets a "Usage analytics" switch to change the choice later.
 - Add a line to the privacy policy or About page.
 
 **Acceptance criteria:**
-- [ ] No PostHog cookie or storage, and no events, before a choice. Events start after Accept. An e2e test uses a test token and intercepts requests to `*.posthog.com`.
-- [ ] Banner text exists in en, es, pt and de, and the banner fits a 390px phone.
+- [x] No PostHog cookie or storage, and no events, before a choice. Events start after Accept. An e2e test uses a test token and intercepts requests to `*.posthog.com`.
+- [x] Banner text exists in en, es, pt and de, and the banner fits a 390px phone.
+
+**How it's tested:**
+- **Without a token (CI and normal runs):** `@19.1`.
+- **With a dummy token, run on its own:** `@19.2`–`@19.6`. Every PostHog request is answered locally.
+- **Bot filter:** PostHog drops events it thinks come from bots (headless Chrome's user agent, client-hint brands, `navigator.webdriver`), so those tests present an ordinary browser.
+- **Mutation-checked:** removing `cookieless_mode`, making Accept do nothing, and making Decline opt in each fail.
 
 ### Checkpoint: Foundation
 - [ ] Review with Diego. Then deploy, accept on production, and see a page view in PostHog with a cleaned URL.

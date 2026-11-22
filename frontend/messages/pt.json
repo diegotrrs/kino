@@ -208,7 +208,9 @@
     "subtitle": "Saiba mais sobre o Kino.",
     "builtBy": "O Kino é uma aplicação de calendário criada por",
     "contact": "Tem perguntas ou feedback? Contacte-nos em",
-    "inspiredBy": "Inspirado em"
+    "inspiredBy": "Inspirado em",
+    "privacyTitle": "Privacidade",
+    "privacyText": "Com o teu consentimento, o Kino usa o PostHog (alojado na UE) para perceber que funcionalidades são usadas. Nunca recebe nomes de calendários, eventos, moradas ou códigos de reserva. Podes mudar a tua escolha nas Definições."
   },
   "languages": {
     "en": "English",
@@ -482,5 +484,13 @@
     "label": "Morada",
     "placeholder": "ex.: Via del Corso 12, Roma",
     "openInMaps": "Abrir {address} no Google Maps"
+  },
+  "analytics": {
+    "label": "Estatísticas de utilização",
+    "bannerText": "O Kino usa o PostHog, alojado na UE, para perceber que funcionalidades são usadas. Nunca recebe o que escreves: nomes de calendários, eventos, moradas ou códigos de reserva. Se aceitares, lembra-se das tuas visitas; se recusares, nada fica guardado no teu dispositivo.",
+    "accept": "Aceitar",
+    "decline": "Recusar",
+    "settingsSwitch": "Ajuda a melhorar o Kino",
+    "settingsHint": "Permite que o Kino se lembre das tuas visitas para perceber como a app é usada. Nunca inclui o que escreves."
   }
 }
