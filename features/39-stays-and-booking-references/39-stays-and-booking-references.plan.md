@@ -96,8 +96,8 @@ T6 Migration step 2 file, e2e 18-stays-and-booking-references, domain terms, fin
 **Estimated scope:** L. Many files, but each change is small and follows the same pattern.
 
 ### Checkpoint: Phase 1
-- [ ] `make check`, build, lint and `npm run check` pass
-- [ ] References work on ordinary events and on flights and trains; visitors never get one
+- [x] `make check`, build, lint and `npm run check` pass
+- [x] References work on ordinary events and on flights and trains; visitors never get one
 - [ ] **Review with Diego**
 
 ### Phase 2: Address and Stay
@@ -180,8 +180,8 @@ T6 Migration step 2 file, e2e 18-stays-and-booking-references, domain terms, fin
 **Estimated scope:** M
 
 ### Checkpoint: Phase 2
-- [ ] `make check`, build, lint and `npm run check` pass
-- [ ] Stays, addresses and references look right on desktop and phone, in two languages
+- [x] `make check`, build, lint and `npm run check` pass
+- [x] Stays, addresses and references look right on desktop and phone, in two languages
 - [ ] **Review with Diego**
 
 ### Phase 3: Finish
