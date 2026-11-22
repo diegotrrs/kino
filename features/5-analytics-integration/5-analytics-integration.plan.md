@@ -22,11 +22,12 @@ It doesn't send any user content: no calendar or event names, no addresses, no b
 
 - **posthog-js on the client only (V1).** It's initialised in `frontend/instrumentation-client.ts`, the Next.js 15.3+ hook PostHog recommends for the App Router; we're on Next 16.1. Events are captured on the client right after a server action succeeds.
   - **posthog-node isn't needed yet.** Every event we want happens in the browser, and client capture respects the consent choice in one place.
-- **EU Cloud, behind a same-domain proxy.**
-  - `next.config.ts` rewrites a neutral path (e.g. `/kp`) to `eu.i.posthog.com` and `eu-assets.i.posthog.com`.
-  - It also needs `skipTrailingSlashRedirect: true`; without it, Next.js answers PostHog's `/e/` and `/flags/` with a 308 redirect.
-  - `api_host: '/kp'`, `ui_host: 'https://eu.posthog.com'`.
-  - Ad blockers catch obvious names like `/analytics` or `/posthog`.
+- **EU Cloud, called directly (no proxy in V1).** `api_host: 'https://eu.i.posthog.com'`, `ui_host: 'https://eu.posthog.com'`.
+  - **Why not a proxy?** Building one in Task 1 showed that PostHog's `next.config` rewrite recipe forwards **every cookie** to the destination, including Kino's `token` login cookie. Every analytics request would have handed PostHog a working session token.
+  - **Calling PostHog directly is safe,** because the browser doesn't send Kino's cookies to another site.
+  - **The cost:** ad blockers drop some visitors.
+  - **A proxy that strips cookies** (our own route, or PostHog's managed proxy on a subdomain) is issue #42.
+- **No feature flags.** `advanced_disable_flags: true` skips the `/flags` call. Remote settings then don't load, so web vitals are switched on in code with `capture_performance: { web_vitals: true }`. Before consent, the only request is PostHog's static web-vitals script.
 - **Off unless configured.** `posthog.init` runs only when `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` is set, and it's set in Vercel's **Production** environment only, not Preview, so PR previews (`*.vercel.app`) send nothing. Local dev, CI and e2e send nothing either, so tests don't pollute the data and the shared e2e user is never tracked. For trying analytics locally, use a separate "Kino (dev)" PostHog project token in `.env.local`, never the production one.
 - **Consent:** `cookieless_mode: 'on_reject'`.
   - **Before the user answers:** nothing is stored and nothing is sent.
@@ -148,12 +149,12 @@ These are captured with `track()` right after the action succeeds. **No property
 ## Task List
 
 ### Phase 1: Foundation
-#### Task 1: Install, proxy and safe init
+#### Task 1: Install and safe init ✅
 - Add `posthog-js@1`.
 - Add `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` to `.env.example`, and to Vercel production only.
-- Add the `next.config.ts` rewrites and `skipTrailingSlashRedirect`.
 - Add `instrumentation-client.ts`. It initialises only when the token is set, with:
-  - EU hosts through the proxy;
+  - EU hosts, called directly;
+  - no feature flags, and web vitals on;
   - the current `defaults` date;
   - `autocapture: false`, `disable_session_recording: true`;
   - `person_profiles: 'identified_only'`, `respect_dnt: true`, `cookieless_mode: 'on_reject'`;
@@ -161,13 +162,13 @@ These are captured with `track()` right after the action succeeds. **No property
 - Add `lib/analytics/clean-url.ts`.
 
 **Acceptance criteria:**
-- [ ] Unit tests for `clean-url`:
+- [x] Unit tests for `clean-url`:
   - calendar UUIDs are replaced in paths and full URLs;
   - the query string is dropped and `utm_*` kept;
   - `/reset-password?token=x` becomes `/reset-password`;
   - trip slugs are kept.
-- [ ] With no token set (dev, CI, e2e), nothing is loaded or sent. An e2e check counts requests to `/kp/` and expects 0.
-- [ ] `npm run build`, `npm run lint` and `npm run check` pass.
+- [x] With no token set (dev, CI, e2e), nothing is loaded or sent. The e2e check `@19.1` counts requests to `*.posthog.com` and expects 0.
+- [x] `npm run build`, `npm run lint` and `npm run check` pass.
 
 #### Task 2: Consent banner
 - Add a small, translated banner (Accept / Reject) in the root layout, shown only when the token is set and no choice has been made.
@@ -176,7 +177,7 @@ These are captured with `track()` right after the action succeeds. **No property
 - Add a line to the privacy policy or About page.
 
 **Acceptance criteria:**
-- [ ] No PostHog cookie or storage, and no events, before a choice. Events start after Accept. An e2e test uses a test token and intercepts requests to the proxy.
+- [ ] No PostHog cookie or storage, and no events, before a choice. Events start after Accept. An e2e test uses a test token and intercepts requests to `*.posthog.com`.
 - [ ] Banner text exists in en, es, pt and de, and the banner fits a 390px phone.
 
 ### Checkpoint: Foundation
@@ -199,7 +200,7 @@ These are captured with `track()` right after the action succeeds. **No property
 
 **Acceptance criteria:**
 - [ ] Unit tests check that `track` sends the given properties, and that wrong names or properties fail type-checking (`tsc`).
-- [ ] e2e, with a test token and an intercepted proxy: creating a calendar and a stay sends `calendar_created` and `event_created { travel_mode: 'stay' }`. No payload contains the calendar name, event title, address or reference.
+- [ ] e2e, with a test token and intercepted `*.posthog.com` requests: creating a calendar and a stay sends `calendar_created` and `event_created { travel_mode: 'stay' }`. No payload contains the calendar name, event title, address or reference.
 
 #### Task 5: The remaining events
 - Planning features, sharing, feedback, settings and Hot Trips, per the tables.
@@ -219,7 +220,8 @@ These are captured with `track()` right after the action succeeds. **No property
 | User content leaks through autocapture or replay | High | Both off in V1; only named events with whitelisted properties |
 | Tracking before consent (GDPR, mostly EU users) | High | `cookieless_mode: 'on_reject'` and a banner; e2e asserts nothing is sent before a choice |
 | Tests or dev pollute the data | Med | Init only with a token, which is only set in Vercel production |
-| Ad blockers drop events | Med | Same-domain proxy on a neutral path |
+| Ad blockers drop events | Med | Accepted for V1. A cookie-stripping proxy is issue #42 |
+| A same-domain proxy leaks Kino's login cookie to PostHog | **High** | No proxy in V1. Found and verified in Task 1: Next.js rewrites forward all cookies |
 | Too few people accept, so the data is thin | Med | Rejected sessions still give cookieless, anonymous counts. Review acceptance after a month |
 
 ## Resolved Questions
@@ -228,5 +230,5 @@ These are captured with `track()` right after the action succeeds. **No property
 2. **Session replay:** off in V1. If it's turned on later, use `maskAllInputs: true` and `maskTextSelector: '*'`.
 3. **Visitors to public calendars:** tracked anonymously, with `calendar_viewed` and `role = visitor`, once they accept the banner. The sharing funnel needs it.
 4. **PostHog project:** Diego creates an **EU Cloud** project and shares its project token. It's public by design, and goes into Vercel's Production environment only.
-5. **Proxy path:** `/kp`.
+5. **Proxy:** none in V1. PostHog's standard rewrite forwards Kino's login cookie. A cookie-stripping proxy is issue #42.
 6. **Building the dashboards:** with a PostHog personal API key, the insights, dashboard, funnels and alert can be created through PostHog's API instead of by hand. The email subscription and the Slack connection still need a few clicks.
