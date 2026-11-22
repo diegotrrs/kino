@@ -487,10 +487,11 @@
   },
   "analytics": {
     "label": "Estadísticas de uso",
-    "bannerText": "Kino usa PostHog, alojado en la UE, para saber qué funciones se usan. Nunca recibe lo que escribes: nombres de calendarios, eventos, direcciones ni códigos de reserva. Si aceptas, recuerda tus visitas; si lo rechazas, solo cuenta visitas anónimas y no guarda nada en tu dispositivo.",
+    "bannerText": "Kino usa PostHog (alojado en la UE) para saber qué funciones se usan, nunca lo que escribes. Acepta para que recuerde tus visitas; si lo rechazas, solo cuenta visitas anónimas.",
     "accept": "Aceptar",
     "decline": "Rechazar",
     "settingsSwitch": "Ayuda a mejorar Kino",
-    "settingsHint": "Permite que Kino recuerde tus visitas para ver cómo se usa la app. Nunca incluye lo que escribes."
+    "settingsHint": "Permite que Kino recuerde tus visitas para ver cómo se usa la app. Nunca incluye lo que escribes.",
+    "learnMore": "Más información"
   }
 }

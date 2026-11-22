@@ -38,7 +38,7 @@ const AboutPage = async () => {
 
           <Separator />
 
-          <div className='space-y-1'>
+          <div id='privacy' className='scroll-mt-20 space-y-1'>
             <h3 className='text-sm font-medium'>{t('privacyTitle')}</h3>
             <p className='text-sm text-muted-foreground'>{t('privacyText')}</p>
           </div>

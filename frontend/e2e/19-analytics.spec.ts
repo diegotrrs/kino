@@ -120,7 +120,9 @@ test.describe('@19. analytics consent', () => {
     const traffic = await interceptPostHog(page);
 
     await page.goto('/');
-    await expect(page.getByRole('region', { name: 'Usage analytics' })).toBeVisible();
+    const banner = page.getByRole('region', { name: 'Usage analytics' });
+    await expect(banner).toBeVisible();
+    await expect(banner.getByRole('link', { name: 'Learn more' })).toHaveAttribute('href', '/about#privacy');
     await page.goto('/login');
     await page.waitForLoadState('networkidle');
 
