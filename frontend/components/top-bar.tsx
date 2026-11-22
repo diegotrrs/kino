@@ -23,6 +23,7 @@ import {
 }                           from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useTheme }         from 'next-themes';
+import { track } from '@/lib/analytics/events';
 import Link                 from 'next/link';
 
 export const TopBar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
@@ -44,7 +45,11 @@ export const TopBar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
           <Button
             variant='ghost'
             size='icon'
-            onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+            onClick={() => {
+              const next = resolvedTheme === 'dark' ? 'light' : 'dark';
+              setTheme(next);
+              track('theme_toggled', { theme: next });
+            }}
             aria-label={t('toggleTheme')}
           >
             {/* Both icons render and CSS picks one: the server can't know the theme, so a JS branch would mismatch */}
@@ -73,7 +78,7 @@ export const TopBar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
               {locales.map((locale) => (
-                <DropdownMenuItem key={locale} onSelect={() => updateLocale(locale)}>
+                <DropdownMenuItem key={locale} onSelect={() => { track('language_changed', { locale }); void updateLocale(locale); }}>
                   <Check className={`h-4 w-4 ${locale === currentLocale ? 'opacity-100' : 'opacity-0'}`} />
                   {tLang(locale)}
                 </DropdownMenuItem>

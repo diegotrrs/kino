@@ -1,5 +1,6 @@
 'use client';
 import { useCopyToClipboard }           from '@/hooks/use-copy-to-clipboard';
+import { track }                        from '@/lib/analytics/events';
 import {
   getRouteLabel,
   getTravelChips,
@@ -43,7 +44,10 @@ const CopyReferenceChip = ({ chip }: { chip: TravelChip }): ReactElement => {
   return (
     <button
       type='button'
-      onClick={() => void copy(chip.value)}
+      onClick={() => {
+        track('booking_reference_copied', { from: 'chip' });
+        void copy(chip.value);
+      }}
       aria-label={t('copyReference', { reference: chip.value })}
       className={cn(
         CHIP,

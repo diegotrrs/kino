@@ -13,6 +13,7 @@ import {
 import { Button }          from '@/components/ui/button';
 import { ToastAction }     from '@/components/ui/toast';
 import { useToast }        from '@/hooks/use-toast';
+import { track }            from '@/lib/analytics/events';
 import { Trash2Icon }      from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useTransition }   from 'react';
@@ -36,6 +37,7 @@ export const EventDeleteButton = ({
     startTransition(async () => {
       try {
         await deleteEvent(eventId);
+        track('event_deleted', { from: 'timeline' });
         toast({
           title: tToast('eventDeleted'),
           action: (

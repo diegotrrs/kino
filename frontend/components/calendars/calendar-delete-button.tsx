@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger
 }                              from '@/components/ui/dropdown-menu';
 import { useToast }            from '@/hooks/use-toast';
+import { track }            from '@/lib/analytics/events';
 import {
   MoreHorizontal,
   Share2,
@@ -60,6 +61,7 @@ export const CalendarDeleteButton = ({
     startTransition(async () => {
       try {
         await deleteCalendar(calendarUuid);
+        track('calendar_deleted');
         setDeleteDialogOpen(false);
         toast({ title: t('deleted') });
         router.push('/home');

@@ -4,6 +4,7 @@ import {
   updateCalendarVisibility
 }                          from '@/app/(app)/calendars/actions';
 import { DateTimePicker }  from '@/components/date-picker';
+import { track } from '@/lib/analytics/events';
 import { Button }          from '@/components/ui/button';
 import {
   Form,
@@ -58,6 +59,11 @@ export const CalendarEditForm = ({ calendarUuid, currentName, isPublic, currentS
       try {
         const startDate = data.startDate ? format(data.startDate, 'yyyy-MM-dd') : undefined;
         await updateCalendar(calendarUuid, data.name, startDate);
+        const changed = [
+          ...(data.name !== currentName ? ['name' as const] : []),
+          ...(startDate !== currentStartDate ? ['start_date' as const] : []),
+        ];
+        track('calendar_updated', { changed });
         toast({ title: t('updated') });
         router.push(`/calendars/${calendarUuid}`);
       } catch {
@@ -70,6 +76,7 @@ export const CalendarEditForm = ({ calendarUuid, currentName, isPublic, currentS
     startVisibilityTransition(async () => {
       try {
         await updateCalendarVisibility(calendarUuid, checked);
+        track('calendar_visibility_changed', { is_public: checked, from: 'settings' });
         toast({ title: checked ? t('nowPublic') : t('nowPrivate') });
       } catch {
         toast({ variant: 'destructive', title: t('visibilityFailed') });

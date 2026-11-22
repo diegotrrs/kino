@@ -2,6 +2,7 @@
 import { toggleFavourite } from '@/app/(app)/calendars/actions';
 import { Button }          from '@/components/ui/button';
 import { useToast }        from '@/hooks/use-toast';
+import { track }            from '@/lib/analytics/events';
 import { Star }            from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import {
@@ -31,6 +32,7 @@ export const CalendarFavouriteButton = ({
       setOptimisticFavourite(next);
       try {
         await toggleFavourite(calendarUuid, next);
+        track('calendar_favourited', { is_favourite: next });
       } catch {
         toast({ variant: 'destructive', title: t('failed') });
       }

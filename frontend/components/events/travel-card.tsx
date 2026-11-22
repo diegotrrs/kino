@@ -87,7 +87,7 @@ export const TravelCard = ({ travelMode, travel, bookingReference, departs, arri
               <span className={PLACE}>{travel.seat}</span>
             </div>
           )}
-          {reference && <ReferenceStub reference={reference} />}
+          {reference && <ReferenceStub reference={reference} trackedFrom='travel_card' />}
         </div>
       )}
     </section>

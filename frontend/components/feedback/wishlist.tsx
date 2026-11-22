@@ -1,6 +1,7 @@
 'use client';
 import { toggleVote } from '@/app/(app)/feedback/actions';
 import { useToast }   from '@/hooks/use-toast';
+import { track } from '@/lib/analytics/events';
 import { ThumbsUp }   from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import {
@@ -44,6 +45,7 @@ export const Wishlist = ({ items }: WishlistProps) => {
       updateOptimistic({ id: item.id, voted });
       try {
         await toggleVote(item.id, item.user_has_voted);
+        track('wishlist_voted', { wishlist_id: item.id, voted });
       } catch {
         toast({ variant: 'destructive', title: t('voteFailed') });
       }

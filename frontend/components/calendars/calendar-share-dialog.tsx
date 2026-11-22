@@ -1,5 +1,6 @@
 'use client';
 import { updateCalendarVisibility } from '@/app/(app)/calendars/actions';
+import { track } from '@/lib/analytics/events';
 import { Button }                   from '@/components/ui/button';
 import {
   Dialog,
@@ -51,6 +52,7 @@ export const CalendarShareDialog = ({
     startTransition(async () => {
       try {
         await updateCalendarVisibility(calendarUuid, checked);
+        track('calendar_visibility_changed', { is_public: checked, from: 'share_dialog' });
         setIsPublic(checked);
         toast({ title: checked ? t('nowPublic') : t('nowPrivate') });
       } catch {
@@ -60,10 +62,12 @@ export const CalendarShareDialog = ({
   }
 
   const handleWhatsApp = () => {
+    track('calendar_share_link_used', { channel: 'whatsapp' });
     window.open(`https://wa.me/?text=${encodeURIComponent(shareUrl)}`, '_blank');
   }
 
   const handleFacebook = () => {
+    track('calendar_share_link_used', { channel: 'messenger' });
     window.open(
       `https://www.facebook.com/dialog/send?link=${encodeURIComponent(shareUrl)}&app_id=0&redirect_uri=${encodeURIComponent(shareUrl)}`,
       '_blank'
@@ -71,6 +75,7 @@ export const CalendarShareDialog = ({
   }
 
   const handleEmail = () => {
+    track('calendar_share_link_used', { channel: 'email' });
     window.open(
       `mailto:?subject=${encodeURIComponent(calendarName)}&body=${encodeURIComponent(shareUrl)}`,
       '_blank'
@@ -79,6 +84,7 @@ export const CalendarShareDialog = ({
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareUrl).then(() => {
+      track('calendar_share_link_used', { channel: 'copy' });
       setCopied(true);
       setTimeout(() => setCopied(false), 3000);
     });

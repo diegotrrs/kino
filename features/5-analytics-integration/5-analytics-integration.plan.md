@@ -200,23 +200,23 @@ These are captured with `track()` right after the action succeeds. **No property
 - [x] No email or name is sent anywhere.
 - [x] The cookie is consumed once.
 
-#### Task 4: The `track()` helper, and calendar and event events
+#### Task 4: The `track()` helper, and calendar and event events ✅ (built together with Task 5)
 - Add `lib/analytics/events.ts`: a typed catalogue and `track()`, which does nothing when disabled.
 - Wire up the Calendars and Events (trip items) tables above.
 
 **Acceptance criteria:**
-- [ ] Unit tests check that `track` sends the given properties, and that wrong names or properties fail type-checking (`tsc`).
-- [ ] e2e, with a test token and intercepted `*.posthog.com` requests: creating a calendar and a stay sends `calendar_created` and `event_created { travel_mode: 'stay' }`. No payload contains the calendar name, event title, address or reference.
+- [x] Unit tests check that `track` sends the given properties, and that wrong names or properties fail type-checking (`tsc`).
+- [x] e2e, with a test token and intercepted `*.posthog.com` requests: creating a calendar and a stay sends `calendar_created` and `event_created { travel_mode: 'stay' }`. No payload contains the calendar name, event title, address or reference.
 
-#### Task 5: The remaining events
+#### Task 5: The remaining events ✅
 - Planning features, sharing, feedback, settings and Hot Trips, per the tables.
 
 **Acceptance criteria:**
-- [ ] Every catalogue event fires once from its trigger (spot-checked in e2e for sharing, checklist and Hot Trips).
+- [x] Every catalogue event fires once from its trigger (spot-checked in e2e for sharing, checklist and Hot Trips).
 
 ### Checkpoint: Complete
 - [ ] Build the dashboard, funnels, alert and subscription in PostHog.
-- [ ] Add to `CLAUDE.md`: "new features add their events to `lib/analytics/events.ts`".
+- [x] Add to `CLAUDE.md`: "new features add their events to `lib/analytics/events.ts`".
 - [ ] Review with Diego.
 
 ## Risks and Mitigations

@@ -173,7 +173,7 @@ export const EventTimelineClient = ({
                         </p>
                       )}
                       <div className='flex flex-wrap gap-3 mt-1'>
-                        <AddressLink address={ev.location} />
+                        <AddressLink address={ev.location} trackedFrom='timeline' />
                         {ev.expenses.length > 0 && (
                           <span className='flex items-center gap-1 text-xs text-muted-foreground'>
                             <ReceiptIcon className='h-3 w-3' />

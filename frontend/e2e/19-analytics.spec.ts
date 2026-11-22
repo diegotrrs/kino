@@ -230,6 +230,84 @@ test.describe('@19. analytics identity', () => {
   });
 });
 
+const acceptAndLogIn = async (page: Page): Promise<void> => {
+  await page.goto('/');
+  await page.getByRole('region', { name: 'Usage analytics' }).getByRole('button', { name: 'Accept' }).click();
+  await logInThroughForm(page);
+};
+
+const getEvent = (traffic: PostHogTraffic, name: string): CapturedEvent | undefined =>
+  traffic.captured.find((captured) => captured.event === name);
+
+test.describe('@19. analytics events', () => {
+  test.skip(!hasAnalyticsToken, 'Needs a (dummy) PostHog token; see the note at the top of this file');
+  test.use({ userAgent: DESKTOP_CHROME });
+
+  test('@19.9 should record a new calendar and a stay without sending any of the text typed into them', async ({ page }) => {
+    const traffic = await interceptPostHog(page);
+    await acceptAndLogIn(page);
+    const calendarName = `Secret Getaway ${Date.now()}`;
+
+    await page.goto('/calendars/create');
+    await page.getByLabel('Name').fill(calendarName);
+    await page.getByRole('button', { name: /^create$/i }).click();
+    await page.waitForURL('/home');
+    await expect.poll(() => getEvent(traffic, 'calendar_created')?.properties).toMatchObject({ source: 'blank', has_start_date: false });
+
+    await page.getByRole('link', { name: calendarName }).click();
+    await expect.poll(() => getEvent(traffic, 'calendar_viewed')?.properties).toMatchObject({ role: 'owner', is_public: false, event_count: 0 });
+    await page.getByRole('button', { name: 'Add Event' }).click();
+    const dialog = page.getByRole('alertdialog');
+    await dialog.getByRole('group', { name: 'Travel' }).getByText('Stay', { exact: true }).click();
+    await dialog.getByLabel('Address', { exact: true }).fill('Via Segreta 7, Roma');
+    await dialog.getByLabel('Booking reference', { exact: true }).fill('HIDE-ME-42');
+    await dialog.getByRole('button', { name: 'Add Event' }).click();
+    await expect(dialog).toBeHidden();
+
+    await expect.poll(() => getEvent(traffic, 'event_created')?.properties).toMatchObject({
+      travel_mode: 'stay', has_address: true, has_booking_reference: true, kept_suggested_title: true, from: 'calendar',
+    });
+    const everythingSent = traffic.events.join('\n');
+    for (const typed of [calendarName, 'Via Segreta', 'HIDE-ME-42']) {
+      expect(everythingSent).not.toContain(typed);
+    }
+  });
+
+  test('@19.10 should record making a calendar public and sharing its link', async ({ page, request, context }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    const traffic = await interceptPostHog(page);
+    await acceptAndLogIn(page);
+    const calendarUuid = await createCalendar(request, await getToken(request), `Share Analytics ${Date.now()}`);
+
+    await page.goto(`/calendars/${calendarUuid}`);
+    await page.getByRole('button', { name: /share calendar/i }).click();
+    await page.getByRole('dialog').getByRole('switch').click();
+    await expect.poll(() => getEvent(traffic, 'calendar_visibility_changed')?.properties).toMatchObject({ is_public: true, from: 'share_dialog' });
+    await page.getByRole('dialog').getByRole('button', { name: 'Copy link' }).click();
+    await expect.poll(() => getEvent(traffic, 'calendar_share_link_used')?.properties).toMatchObject({ channel: 'copy' });
+    expect(traffic.events.join('\n')).not.toContain(calendarUuid);
+  });
+
+  test('@19.11 should record the checklist and a Hot Trip\'s "plan this trip"', async ({ page, request }) => {
+    const traffic = await interceptPostHog(page);
+    await acceptAndLogIn(page);
+    const calendarUuid = await createCalendar(request, await getToken(request), `Checklist Analytics ${Date.now()}`);
+
+    await page.goto(`/calendars/${calendarUuid}`);
+    const panel = page.getByTestId('checklist-panel');
+    await panel.getByLabel('Add to checklist').fill('Pack the secret map');
+    await panel.getByLabel('Add to checklist').press('Enter');
+    await panel.getByRole('checkbox', { name: 'Mark “Pack the secret map” as done' }).check();
+    await expect.poll(() => getEventNames(traffic)).toEqual(expect.arrayContaining(['checklist_item_added', 'checklist_item_completed']));
+    expect(traffic.events.join('\n')).not.toContain('secret map');
+
+    await page.goto('/trips/japan');
+    await page.getByRole('link', { name: /plan your trip to japan/i }).first().click();
+    await expect(page).toHaveURL(/\/calendars\/create/);
+    await expect.poll(() => getEvent(traffic, 'hot_trip_cta_clicked')?.properties).toMatchObject({ hot_trip_slug: 'japan' });
+  });
+});
+
 test.describe('@19. analytics consent on phones', () => {
   test.skip(!hasAnalyticsToken, 'Needs a (dummy) PostHog token; see the note at the top of this file');
   test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, userAgent: MOBILE_CHROME });

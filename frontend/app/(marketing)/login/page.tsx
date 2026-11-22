@@ -4,6 +4,7 @@ import {
   type AuthState
 }                          from '@/app/auth/actions';
 import { Button }          from '@/components/ui/button';
+import { PasswordResetEvent } from '@/components/analytics/password-reset-event';
 import {
   Card,
   CardContent,
@@ -34,6 +35,7 @@ const LoginPage = () => {
 
   return (
     <div className='flex min-h-svh w-full items-center justify-center p-6 md:p-10'>
+      <PasswordResetEvent />
       <div className='w-full max-w-sm'>
         <Card>
           <CardHeader>

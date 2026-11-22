@@ -8,6 +8,7 @@ import {
   groupedTotals
 }                               from '@/components/events/pending-expenses';
 import { Button }               from '@/components/ui/button';
+import { track } from '@/lib/analytics/events';
 import { Input }                from '@/components/ui/input';
 import { Separator }            from '@/components/ui/separator';
 import { useEvents }            from '@/context/events-context';
@@ -92,7 +93,7 @@ export const ExpensesPanel = () => {
         type='button'
         aria-label={t('viewExpenses')}
         data-testid='trip-cost-pill'
-        onClick={() => setExpensesOpen(true)}
+        onClick={() => { setExpensesOpen(true); track('expenses_summary_opened'); }}
         className='grid w-full gap-3 rounded-md border bg-card p-4 text-left transition-colors hover:bg-secondary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
       >
         <span className='flex items-center justify-between font-mono text-[0.65rem] font-medium uppercase tracking-widest text-muted-foreground'>
@@ -148,7 +149,7 @@ export const ExpensesChip = () => {
       type='button'
       aria-label={t('viewExpenses')}
       data-testid='trip-cost-chip'
-      onClick={() => setExpensesOpen(true)}
+      onClick={() => { setExpensesOpen(true); track('expenses_summary_opened'); }}
       className='inline-flex h-7 items-center gap-1.5 rounded-md bg-teal/12 px-2 align-middle font-mono text-[0.7rem] font-medium uppercase tracking-wider text-teal tabular-nums transition-colors hover:bg-teal/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
     >
       <Wallet className='h-3.5 w-3.5 shrink-0' />
@@ -188,6 +189,7 @@ export const ExpensesDrawer = () => {
     setAdding(true);
     try {
       const expense = await addCalendarExpenseAction(calendarUuid, label.trim(), n, currency);
+      track('calendar_expense_added', { currency });
       addExpenseToContext(expense);
       setLabel('');
       setAmount('');

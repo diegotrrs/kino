@@ -1,3 +1,4 @@
+import { HotTripPlanLink } from '@/components/analytics/hot-trip-plan-link';
 import { TripMapWrapper }  from '@/components/trips/trip-map-wrapper';
 import { Button }          from '@/components/ui/button';
 import { Stamp }           from '@/components/ui/stamp';
@@ -91,10 +92,10 @@ const TripPage = async ({
 
         <div className='flex justify-center mb-8'>
           <Button size='lg' asChild>
-            <Link href={`/calendars/create?trip=${trip.slug}`}>
+            <HotTripPlanLink slug={trip.slug}>
               {t('planTrip', { title: trip.title })}
               <ArrowRight className='ml-2 h-4 w-4' />
-            </Link>
+            </HotTripPlanLink>
           </Button>
         </div>
 
@@ -116,10 +117,10 @@ const TripPage = async ({
 
         <div className='flex justify-center mt-10'>
           <Button size='lg' asChild>
-            <Link href={`/calendars/create?trip=${trip.slug}`}>
+            <HotTripPlanLink slug={trip.slug}>
               {t('planTrip', { title: trip.title })}
               <ArrowRight className='ml-2 h-4 w-4' />
-            </Link>
+            </HotTripPlanLink>
           </Button>
         </div>
       </div>

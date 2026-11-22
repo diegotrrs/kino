@@ -1,4 +1,5 @@
 'use client';
+import { track }             from '@/lib/analytics/events';
 import { getGoogleMapsUrl }  from '@/lib/maps';
 import { cn }                from '@/lib/utils';
 import { MapPin }            from 'lucide-react';
@@ -29,7 +30,7 @@ export const AddressField = ({ value, isReadOnly, onChange }: AddressFieldProps)
     return address === '' ? null : (
       <section className='grid gap-2'>
         <span className={SECTION_LABEL}>{t('label')}</span>
-        <AddressLink address={address} className='text-sm' />
+        <AddressLink address={address} trackedFrom='form' className='text-sm' />
       </section>
     );
   }
@@ -52,6 +53,7 @@ export const AddressField = ({ value, isReadOnly, onChange }: AddressFieldProps)
             href={url}
             target='_blank'
             rel='noopener noreferrer'
+            onClick={() => track('address_map_opened', { from: 'form' })}
             aria-label={t('openInMaps', { address })}
             title={t('openInMaps', { address })}
             className={cn(

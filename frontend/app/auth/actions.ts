@@ -204,5 +204,6 @@ export const resetPassword = async (
     return { error: body?.detail ?? 'Invalid or expired link. Please request a new one.' };
   }
 
+  await leaveAuthEvent({ name: 'password_reset_completed' });
   redirect('/login');
 }

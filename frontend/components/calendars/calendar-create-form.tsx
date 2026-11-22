@@ -1,5 +1,6 @@
 'use client';
 import { createCalendar, createTripCalendar } from '@/app/(app)/calendars/actions';
+import { track } from '@/lib/analytics/events';
 import { DateTimePicker }  from '@/components/date-picker';
 import { Button }          from '@/components/ui/button';
 import {
@@ -52,10 +53,12 @@ export const CalendarCreateForm = ({ initialName, tripSlug }: CalendarCreateForm
 
         if (tripSlug) {
           const { uuid } = await createTripCalendar(tripSlug, data.name, startDate);
+          track('calendar_created', { source: 'hot_trip', hot_trip_slug: tripSlug, has_start_date: !!data.startDate });
           toast({ title: t('createdWithItinerary') });
           router.push(`/calendars/${uuid}`);
         } else {
           await createCalendar(data.name, data.startDate ? startDate : undefined);
+          track('calendar_created', { source: 'blank', has_start_date: !!data.startDate });
           toast({ title: t('created') });
           router.push('/home');
         }

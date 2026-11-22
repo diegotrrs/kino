@@ -93,3 +93,14 @@ const t = useTranslations('nav');
 ```
 
 The string passed to `getTranslations` / `useTranslations` is the top-level namespace key in the `messages/<locale>.json` files.
+
+# 6. Analytics (PostHog)
+
+Analytics only runs where `NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN` is set (Vercel Production), and only after the visitor accepts the consent banner.
+
+- **Every event is declared** in `lib/analytics/events.ts` (`AnalyticsEvents`) and sent with `track()`. New features add their events there.
+- **Track after the action succeeds,** never before the server call.
+- **Never put text a user wrote into an event:** no calendar or event names, addresses, booking references, emails or feedback. Use booleans, counts and fixed values instead (`has_address`, `travel_mode`).
+- `lib/analytics/clean-url.ts` strips calendar UUIDs and query strings from every URL before sending.
+- Analytics tests are in `e2e/19-analytics.spec.ts`. Most of them need a dummy token; see the note at the top of the file.
+

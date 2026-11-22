@@ -16,6 +16,7 @@ import {
 import { Button }              from '@/components/ui/button';
 import { Input }               from '@/components/ui/input';
 import { useToast }            from '@/hooks/use-toast';
+import { track }            from '@/lib/analytics/events';
 import type { CalendarMember } from '@/lib/types';
 import { X }                   from 'lucide-react';
 import { useTranslations }     from 'next-intl';
@@ -47,6 +48,7 @@ export const CalendarMembers = ({ calendarUuid, calendarName, members, currentUs
     startTransition(async () => {
       try {
         await inviteToCalendar(calendarUuid, email);
+        track('calendar_member_invited');
         toast({ title: t('inviteSent', { email }) });
         if (emailRef.current) emailRef.current.value = '';
       } catch {
@@ -59,6 +61,7 @@ export const CalendarMembers = ({ calendarUuid, calendarName, members, currentUs
     startTransition(async () => {
       try {
         await removeMember(calendarUuid, userId);
+        track('calendar_member_removed');
         toast({ title: t('removed') });
       } catch {
         toast({ variant: 'destructive', title: t('removeFailed') });

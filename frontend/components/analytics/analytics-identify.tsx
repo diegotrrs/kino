@@ -20,8 +20,9 @@ export const AnalyticsIdentify = ({ userId }: { userId: number }): null => {
       return;
     }
     identifyUser(userId, locale);
+    // A finished password reset lands on the login page instead, which records it (see PasswordResetEvent)
     const authEvent = getAuthEventFromCookies(document.cookie);
-    if (!authEvent) {
+    if (!authEvent || authEvent.name === 'password_reset_completed') {
       return;
     }
     if (authEvent.name === 'user_signed_up') {
