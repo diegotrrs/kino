@@ -3,6 +3,7 @@ import {
   updateCurrency,
   updateLocale
 }                    from '@/app/(app)/settings/actions';
+import { AnalyticsConsentSetting } from '@/components/analytics/analytics-consent-setting';
 import { Separator } from '@/components/ui/separator';
 import { locales }   from '@/i18n/routing';
 import { cn }        from '@/lib/utils';
@@ -17,6 +18,7 @@ import {
   useTranslations
 }                    from 'next-intl';
 import { useTheme }  from 'next-themes';
+import { track } from '@/lib/analytics/events';
 import Link          from 'next/link';
 import {
   useEffect,
@@ -67,7 +69,7 @@ const SettingsPage = () => {
               {appearanceOptions.map(({ value, label, icon: Icon }) => (
                 <button
                   key={value}
-                  onClick={() => setTheme(value)}
+                  onClick={() => { setTheme(value); track('theme_toggled', { theme: value }); }}
                   className={cn(
                     'flex items-center gap-2 rounded-md border px-4 py-2 text-sm transition-colors',
                     mounted && theme === value
@@ -93,7 +95,7 @@ const SettingsPage = () => {
               {locales.map((loc) => (
                 <button
                   key={loc}
-                  onClick={() => updateLocale(loc)}
+                  onClick={() => { track('language_changed', { locale: loc }); void updateLocale(loc); }}
                   className={cn(
                     'flex items-center gap-2 rounded-md border px-4 py-2 text-sm transition-colors',
                     mounted && locale === loc
@@ -118,7 +120,7 @@ const SettingsPage = () => {
               {CURRENCIES.map((c) => (
                 <button
                   key={c}
-                  onClick={() => { setCurrency(c); updateCurrency(c); }}
+                  onClick={() => { setCurrency(c); updateCurrency(c); track('currency_changed', { currency: c }); }}
                   className={cn(
                     'flex items-center gap-2 rounded-md border px-4 py-2 text-sm transition-colors',
                     mounted && currency === c
@@ -134,6 +136,8 @@ const SettingsPage = () => {
               {t('currency.hint')}
             </p>
           </div>
+
+          <AnalyticsConsentSetting />
 
           <Separator />
 

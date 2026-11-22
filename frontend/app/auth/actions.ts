@@ -1,4 +1,12 @@
 'use server';
+import {
+  AUTH_EVENT_COOKIE,
+  AUTH_EVENT_MAX_AGE_SECONDS,
+  type AuthEvent,
+  getAuthEventCookieValue,
+  getSignUpSource
+}                     from '@/lib/analytics/auth-event';
+import { getAnalyticsToken } from '@/lib/analytics/config';
 import { cookies }  from 'next/headers';
 import { redirect } from 'next/navigation';
 import { z }        from 'zod';
@@ -26,6 +34,21 @@ export type AuthState = {
   success?: string;
   // Echoed back on failure so the form can keep what the user typed (React resets the form after an action)
   email?: string;
+};
+
+// Left for the first app page to record (see lib/analytics/auth-event.ts). Readable by the page, so not httpOnly;
+// it only ever holds 'logged_in' or 'signed_up.<source>'.
+const leaveAuthEvent = async (event: AuthEvent): Promise<void> => {
+  if (!getAnalyticsToken()) {
+    return;
+  }
+  const cookieStore = await cookies();
+  cookieStore.set(AUTH_EVENT_COOKIE, getAuthEventCookieValue(event), {
+    maxAge: AUTH_EVENT_MAX_AGE_SECONDS,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+  });
 };
 
 const safeRedirectPath = (raw: FormDataEntryValue | null): string => {
@@ -83,6 +106,7 @@ export const login = async (_prev: AuthState, formData: FormData): Promise<AuthS
     // Best-effort — login still succeeds without locale sync
   }
 
+  await leaveAuthEvent({ name: 'user_logged_in' });
   redirect(safeRedirectPath(formData.get('redirect')));
 }
 
@@ -120,7 +144,9 @@ export const signup = async (_prev: AuthState, formData: FormData): Promise<Auth
     path: '/',
   });
 
-  redirect(safeRedirectPath(formData.get('redirect')));
+  const redirectPath = safeRedirectPath(formData.get('redirect'));
+  await leaveAuthEvent({ name: 'user_signed_up', properties: { source: getSignUpSource(redirectPath) } });
+  redirect(redirectPath);
 }
 
 export const logout = async () => {
@@ -178,5 +204,6 @@ export const resetPassword = async (
     return { error: body?.detail ?? 'Invalid or expired link. Please request a new one.' };
   }
 
+  await leaveAuthEvent({ name: 'password_reset_completed' });
   redirect('/login');
 }

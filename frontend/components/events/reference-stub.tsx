@@ -1,5 +1,6 @@
 'use client';
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard';
+import { track }              from '@/lib/analytics/events';
 import { cn }                 from '@/lib/utils';
 import { useTranslations }    from 'next-intl';
 import type { ReactElement }  from 'react';
@@ -7,7 +8,7 @@ import type { ReactElement }  from 'react';
 export const CARD_LABEL = 'font-mono text-[0.6rem] font-medium uppercase tracking-widest text-muted-foreground';
 
 // The booking reference on a card's tear-off stub, with a full-width Copy button on phones
-export const ReferenceStub = ({ reference }: { reference: string }): ReactElement => {
+export const ReferenceStub = ({ reference, trackedFrom }: { reference: string; trackedFrom: 'travel_card' | 'stay_card' }): ReactElement => {
   const t = useTranslations('travel');
   const { isCopied, copy } = useCopyToClipboard();
 
@@ -17,7 +18,10 @@ export const ReferenceStub = ({ reference }: { reference: string }): ReactElemen
       <span className='font-mono text-lg font-medium leading-none tracking-[0.12em]'>{reference}</span>
       <button
         type='button'
-        onClick={() => void copy(reference)}
+        onClick={() => {
+          track('booking_reference_copied', { from: trackedFrom });
+          void copy(reference);
+        }}
         aria-label={t('copyReference', { reference })}
         className={cn(
           'h-11 w-full rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90',

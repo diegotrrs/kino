@@ -2,6 +2,7 @@
 import { restoreCalendar } from '@/app/(app)/calendars/actions';
 import { Button }          from '@/components/ui/button';
 import { useToast }        from '@/hooks/use-toast';
+import { track }            from '@/lib/analytics/events';
 import { useTranslations } from 'next-intl';
 import { useRouter }       from 'next/navigation';
 import { useTransition }   from 'react';
@@ -20,6 +21,7 @@ export const RestoreCalendarButton = ({ calendarUuid }: RestoreCalendarButtonPro
     startTransition(async () => {
       try {
         await restoreCalendar(calendarUuid);
+        track('calendar_restored');
         toast({ title: t('restored') });
         router.refresh();
       } catch {

@@ -14,6 +14,7 @@ import { AddressLink }        from '@/components/events/address-link';
 import { TravelStrip }        from '@/components/events/travel-strip';
 import { useEvents }          from '@/context/events-context';
 import { useToast }           from '@/hooks/use-toast';
+import { track } from '@/lib/analytics/events';
 import { getEventsOnDay }     from '@/lib/day-events';
 import {
   MAX_DAY_NAME_LENGTH,
@@ -72,8 +73,10 @@ const DayNameField = ({ dateKey, readOnly }: DayNameFieldProps) => {
     try {
       if (name) {
         await setDayName(calendarUuid, dateKey, name);
+        track('day_named');
       } else {
         await removeDayName(calendarUuid, dateKey);
+        track('day_name_removed');
       }
     } catch {
       savedRef.current = previous;
@@ -176,7 +179,7 @@ export const DaySheet = ({ day, events, readOnly, onClose, onAddEvent, onOpenEve
                   >
                     {event.title}
                   </button>
-                  <AddressLink address={event.location} className='self-start' />
+                  <AddressLink address={event.location} trackedFrom='day_sheet' className='self-start' />
                   {(event.travelMode || event.bookingReference) && (
                     <TravelStrip travelMode={event.travelMode} travel={event.travel} bookingReference={event.bookingReference} />
                   )}

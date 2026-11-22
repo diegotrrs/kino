@@ -1,3 +1,4 @@
+import { TrackCalendarView }      from '@/components/analytics/track-calendar-view';
 import Calendar                   from '@/components/calendar-no-ssr';
 import { CalendarShareButton }    from '@/components/calendars/calendar-share-button';
 import {
@@ -201,6 +202,12 @@ const CalendarPage = async ({
       readOnly={readOnly}
       preferredCurrency={preferredCurrency}
     >
+      <TrackCalendarView
+        calendarUuid={String(calendar.uuid)}
+        role={calendar.role === 'owner' || calendar.role === 'editor' ? calendar.role : null}
+        isPublic={calendar.is_public}
+        eventCount={events.length}
+      />
       <ReadOnlyBanner />
       <div className='relative py-4'>
           <div className='flex flex-col w-full items-center'>

@@ -25,6 +25,7 @@ import {
 import { CSS }               from '@dnd-kit/utilities';
 import { useEvents }         from '@/context/events-context';
 import { useToast }          from '@/hooks/use-toast';
+import { track } from '@/lib/analytics/events';
 import { revealWhenKeyboardOpens } from '@/lib/keyboard';
 import {
   applyChecklistChange,
@@ -74,6 +75,9 @@ const useChecklistChange = (): ((item: ChecklistItem, change: ChecklistChange) =
     setChecklist((items) => applyChecklistChange(items ?? [], item.id, change));
     try {
       await updateChecklistItem(calendarUuid, item.id, change);
+      if (change.is_done === true) {
+        track('checklist_item_completed');
+      }
     } catch {
       setChecklist((items) => applyChecklistChange(items ?? [], item.id, previous));
       toast({ variant: 'destructive', title: t('saveFailed') });
@@ -280,6 +284,7 @@ const ChecklistAddField = ({ isInDrawer = false }: ChecklistAddFieldProps) => {
     setChecklist((items) => [...(items ?? []), pendingItem]);
     try {
       const saved = await addChecklistItem(calendarUuid, text);
+      track('checklist_item_added');
       setChecklist((items) => (items ?? []).map((item) => (item.id === pendingItem.id ? saved : item)));
     } catch {
       setChecklist((items) => (items ?? []).filter((item) => item.id !== pendingItem.id));
@@ -336,7 +341,7 @@ const SortableChecklist = ({ items }: { items: ChecklistItem[] }) => {
     onDragCancel: ({ active }) => t('announceCancelled', { text: getText(active.id) }),
   };
 
-  const handleDragEnd = async ({ active, over }: DragEndEvent): Promise<void> => {
+  const handleDragEnd = async ({ active, over, activatorEvent }: DragEndEvent): Promise<void> => {
     if (!over || !calendarUuid) {
       return;
     }
@@ -348,6 +353,8 @@ const SortableChecklist = ({ items }: { items: ChecklistItem[] }) => {
     setChecklist(reordered);
     try {
       await reorderChecklistItems(calendarUuid, reordered.map((item) => item.id));
+      // dnd-kit starts a keyboard move from a keydown, and a drag from a pointer or touch
+      track('checklist_reordered', { via: activatorEvent.type === 'keydown' ? 'keyboard' : 'drag' });
     } catch {
       setChecklist((current) => restoreChecklistOrder(current ?? [], previousIds));
       toast({ variant: 'destructive', title: t('reorderFailed') });

@@ -12,6 +12,7 @@ import {
 }                              from '@/components/ui/popover';
 import { useEvents }           from '@/context/events-context';
 import { useToast }            from '@/hooks/use-toast';
+import { track } from '@/lib/analytics/events';
 import { MAX_DAY_NAME_LENGTH } from '@/lib/day-names';
 import {
   useLocale,
@@ -53,8 +54,10 @@ export const DayNamePopover = ({ dateKey, children }: DayNamePopoverProps) => {
     try {
       if (name) {
         await setDayName(calendarUuid, dateKey, name);
+        track('day_named');
       } else {
         await removeDayName(calendarUuid, dateKey);
+        track('day_name_removed');
       }
     } catch {
       setDayNameLocal(dateKey, current || null);

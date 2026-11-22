@@ -1,4 +1,5 @@
 import './globals.css';
+import { ConsentBanner }        from '@/components/analytics/consent-banner';
 import { ThemeProvider }        from '@/components/theme-provider';
 import { Toaster }              from '@/components/ui/toaster';
 import { defaultLocale, locales } from '@/i18n/routing';
@@ -39,6 +40,7 @@ const RootLayout = async ({ children }: Readonly<{ children: React.ReactNode }>)
           >
             {children}
             <Toaster />
+            <ConsentBanner />
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

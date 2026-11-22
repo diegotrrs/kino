@@ -19,6 +19,7 @@ import {
 import { Button }               from '@/components/ui/button';
 import { useEvents }            from '@/context/events-context';
 import { useToast }             from '@/hooks/use-toast';
+import { track }            from '@/lib/analytics/events';
 import {
   DEFAULT_EVENT_COLOR,
   getRecentColors
@@ -300,6 +301,17 @@ export const EventForm = (props: EventFormProps) => {
             .filter((r): r is PromiseFulfilledResult<EventExpense> => r.status === 'fulfilled')
             .map((r) => r.value);
           addEvent({ ...localEvent, id: String(created.id), links, expenses });
+          track('event_created', {
+            travel_mode: travelMode ?? 'none',
+            has_address: addressToSave !== null,
+            has_booking_reference: bookingReferenceToSave !== null,
+            has_description: description.trim() !== '',
+            is_multi_day: isMultiDayRange,
+            link_count: links.length,
+            expense_count: expenses.length,
+            kept_suggested_title: travelMode !== null && titleToSave === suggestionText,
+            from: calendars ? 'events_page' : 'calendar',
+          });
         } catch {
           toast({
             variant: 'destructive',
@@ -349,6 +361,10 @@ export const EventForm = (props: EventFormProps) => {
             booking_reference: bookingReferenceToSave,
             location: addressToSave,
           });
+          track('event_updated', {
+            travel_mode: travelMode ?? 'none',
+            travel_mode_changed: travelMode !== (editEvent?.travelMode ?? null),
+          });
         } catch (e) {
           console.error(e);
           toast({
@@ -376,6 +392,7 @@ export const EventForm = (props: EventFormProps) => {
     if (calendarId !== undefined) {
       try {
         await deleteEventAction(Number(editEvent.id));
+        track('event_deleted', { from: 'dialog' });
       } catch {
         toast({
           variant: 'destructive',

@@ -1,5 +1,6 @@
 'use client';
 import { useCopyToClipboard }          from '@/hooks/use-copy-to-clipboard';
+import { track }                    from '@/lib/analytics/events';
 import { BOOKING_REFERENCE_MAX_LENGTH } from '@/lib/travel';
 import { cn }                          from '@/lib/utils';
 import { useTranslations }             from 'next-intl';
@@ -48,7 +49,10 @@ export const BookingReferenceField = ({ value, isReadOnly, onChange }: BookingRe
         {reference !== '' && (
           <button
             type='button'
-            onClick={() => void copy(reference)}
+            onClick={() => {
+              track('booking_reference_copied', { from: 'field' });
+              void copy(reference);
+            }}
             aria-label={t('copyReference', { reference })}
             className='h-10 shrink-0 rounded-md border bg-card px-3 text-xs font-medium transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring pointer-coarse:h-11'
           >

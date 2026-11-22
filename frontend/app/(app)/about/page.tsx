@@ -38,6 +38,13 @@ const AboutPage = async () => {
 
           <Separator />
 
+          <div className='space-y-1'>
+            <h3 className='text-sm font-medium'>{t('privacyTitle')}</h3>
+            <p className='text-sm text-muted-foreground'>{t('privacyText')}</p>
+          </div>
+
+          <Separator />
+
           <div className='space-y-2'>
             <h3 className='text-sm font-medium'>{t('inspiredBy')}</h3>
             <div className='flex flex-wrap gap-2'>

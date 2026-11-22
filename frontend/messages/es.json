@@ -208,7 +208,9 @@
     "subtitle": "Aprende más sobre Kino.",
     "builtBy": "Kino es una aplicación de calendario creada por",
     "contact": "¿Tienes preguntas o comentarios? Escríbenos a",
-    "inspiredBy": "Inspirado en"
+    "inspiredBy": "Inspirado en",
+    "privacyTitle": "Privacidad",
+    "privacyText": "Con tu consentimiento, Kino usa PostHog (alojado en la UE) para saber qué funciones se usan. Nunca recibe nombres de calendarios, eventos, direcciones ni códigos de reserva. Puedes cambiar tu elección en Ajustes."
   },
   "languages": {
     "en": "English",
@@ -482,5 +484,13 @@
     "label": "Dirección",
     "placeholder": "p. ej. Via del Corso 12, Roma",
     "openInMaps": "Abrir {address} en Google Maps"
+  },
+  "analytics": {
+    "label": "Estadísticas de uso",
+    "bannerText": "Kino usa PostHog, alojado en la UE, para saber qué funciones se usan. Nunca recibe lo que escribes: nombres de calendarios, eventos, direcciones ni códigos de reserva. Si aceptas, recuerda tus visitas; si lo rechazas, solo cuenta visitas anónimas y no guarda nada en tu dispositivo.",
+    "accept": "Aceptar",
+    "decline": "Rechazar",
+    "settingsSwitch": "Ayuda a mejorar Kino",
+    "settingsHint": "Permite que Kino recuerde tus visitas para ver cómo se usa la app. Nunca incluye lo que escribes."
   }
 }

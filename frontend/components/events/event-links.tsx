@@ -5,6 +5,7 @@ import {
 }                          from '@/app/(app)/events/actions';
 import { Button }          from '@/components/ui/button';
 import { Input }           from '@/components/ui/input';
+import { track }           from '@/lib/analytics/events';
 import type { EventLink }  from '@/lib/types';
 import {
   Link2,
@@ -40,6 +41,7 @@ export const EventLinks = ({ eventId, initialLinks, readOnly = false, onLinksCha
     setIsAdding(true);
     try {
       const newLink = await addEventLink(eventId, url);
+      track('event_link_added');
       updateLinks([...links, newLink]);
       setInputValue('');
     } finally {

@@ -1,3 +1,4 @@
+import { AnalyticsIdentify } from '@/components/analytics/analytics-identify';
 import { DesktopSidebar }  from '@/components/desktop-sidebar';
 import { MobileBottomNav } from '@/components/mobile-bottom-nav';
 import { TopBar }          from '@/components/top-bar';
@@ -33,6 +34,7 @@ export const AppShell = async ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
+      {user && <AnalyticsIdentify userId={user.id} />}
       <TopBar isLoggedIn={isLoggedIn} />
       <DesktopSidebar user={user} isLoggedIn={isLoggedIn} />
       <MobileBottomNav isLoggedIn={isLoggedIn} />

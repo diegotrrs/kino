@@ -52,7 +52,7 @@ export const StayCard = ({ checkIn, checkOut, address, bookingReference, color }
 
         {address && (
           <div className='border-t pt-3'>
-            <AddressLink address={address} className='text-sm' />
+            <AddressLink address={address} trackedFrom='stay_card' className='text-sm' />
           </div>
         )}
       </div>
@@ -65,7 +65,7 @@ export const StayCard = ({ checkIn, checkOut, address, bookingReference, color }
           {/* The perforation's notches, where the stub tears off */}
           <span aria-hidden='true' className='absolute -top-2 -left-2 hidden h-3.5 w-3.5 rounded-full border bg-background sm:block' />
           <span aria-hidden='true' className='absolute -bottom-2 -left-2 hidden h-3.5 w-3.5 rounded-full border bg-background sm:block' />
-          <ReferenceStub reference={bookingReference} />
+          <ReferenceStub reference={bookingReference} trackedFrom='stay_card' />
         </div>
       )}
     </section>

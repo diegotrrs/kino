@@ -14,6 +14,7 @@ import {
 import { Input }           from '@/components/ui/input';
 import { Label }           from '@/components/ui/label';
 import { readAuthEmail }   from '@/lib/auth-email-handoff';
+import { track } from '@/lib/analytics/events';
 import { useTranslations } from 'next-intl';
 import Link                from 'next/link';
 import {
@@ -29,6 +30,12 @@ const ForgotPasswordPage = () => {
   );
   const t = useTranslations('auth.forgotPassword');
   const emailRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (state.success) {
+      track('password_reset_requested');
+    }
+  }, [state.success]);
 
   // Prefill with the email typed on the login page; read after mount since storage only exists in the browser
   useEffect(() => {

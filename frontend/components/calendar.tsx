@@ -7,6 +7,7 @@ import { TravelModeIcon }     from '@/components/events/travel-strip';
 import { useEvents }          from '@/context/events-context';
 import { useMediaQuery }      from '@/hooks/use-media-query';
 import { useToast }           from '@/hooks/use-toast';
+import { track }            from '@/lib/analytics/events';
 import {
   shouldShowNameMarker,
   toDateKey
@@ -169,6 +170,7 @@ const Calendar = () => {
           end_time: format(newEnd, 'HH:mm:ss'),
           color: info.event.backgroundColor,
         });
+        track('event_moved');
       } catch (e) {
         console.error(e);
         info.revert();

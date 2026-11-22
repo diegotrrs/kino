@@ -6,17 +6,16 @@ import {
 }                   from '@radix-ui/react-icons';
 import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
+import { track } from '@/lib/analytics/events';
 
 export const DarkModeToggle = () => {
   const { theme, setTheme } = useTheme();
   const t = useTranslations('topBar');
 
   const ToggleTheme = () => {
-    if (theme == 'dark') {
-      setTheme('light');
-    } else {
-      setTheme('dark');
-    }
+    const next = theme == 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    track('theme_toggled', { theme: next });
   }
 
   return (

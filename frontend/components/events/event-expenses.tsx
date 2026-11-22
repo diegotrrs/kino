@@ -1,5 +1,6 @@
 'use client';
 import { addEventExpense, deleteEventExpense } from '@/app/(app)/events/actions';
+import { track }            from '@/lib/analytics/events';
 import { Button }                              from '@/components/ui/button';
 import { Input }                               from '@/components/ui/input';
 import {
@@ -57,6 +58,7 @@ export const EventExpenses = ({
     setIsAdding(true);
     try {
       const newExpense = await addEventExpense(eventId, label.trim(), n, currency);
+      track('event_expense_added', { currency });
       update([...expenses, newExpense]);
       setLabel('');
       setAmount('');

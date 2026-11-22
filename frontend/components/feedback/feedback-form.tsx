@@ -3,6 +3,7 @@ import { submitFeedback } from '@/app/(app)/feedback/actions';
 import { Button }         from '@/components/ui/button';
 import { Textarea }       from '@/components/ui/textarea';
 import { useToast }       from '@/hooks/use-toast';
+import { track } from '@/lib/analytics/events';
 import { useTranslations } from 'next-intl';
 import {
   useState,
@@ -24,6 +25,7 @@ export const FeedbackForm = () => {
     startTransition(async () => {
       try {
         await submitFeedback(content.trim());
+        track('feedback_submitted');
         setContent('');
         toast({ title: t('sent') });
       } catch {
