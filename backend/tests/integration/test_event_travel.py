@@ -9,18 +9,14 @@ FLIGHT = {
     "terminal": "5",
     "gate": "B32",
     "seat": "14A",
-    "booking_reference": "K7XQ2M",
 }
 TRAIN = {
     "origin": "London St Pancras",
     "destination": "Paris Gare du Nord",
     "coach": "7",
     "seat": "61",
-    "booking_reference": "Q4PL9X",
 }
-EMPTY_TRAVEL = dict.fromkeys(
-    ["origin", "destination", "number", "terminal", "gate", "coach", "seat", "booking_reference"]
-)
+EMPTY_TRAVEL = dict.fromkeys(["origin", "destination", "number", "terminal", "gate", "coach", "seat"])
 
 
 def _create(client, calendar: dict, headers: dict, **fields) -> dict:
@@ -36,7 +32,9 @@ def _list(client, calendar: dict, headers: dict | None = None) -> list[dict]:
 
 class TestCreateTravelEvents:
     def test_flight_round_trips_through_create_get_and_list(self, client, calendar, owner_headers):
-        created = _create(client, calendar, owner_headers, travel_mode="flight", travel=FLIGHT)
+        created = _create(
+            client, calendar, owner_headers, travel_mode="flight", travel=FLIGHT, booking_reference="K7XQ2M"
+        )
 
         fetched = client.get(f"/api/events/{created['id']}", headers=owner_headers).json()
         listed = _list(client, calendar, owner_headers)[0]
@@ -44,6 +42,7 @@ class TestCreateTravelEvents:
         for event in (created, fetched, listed):
             assert event["travel_mode"] == "flight"
             assert event["travel"] == EMPTY_TRAVEL | FLIGHT
+            assert event["booking_reference"] == "K7XQ2M"
 
     def test_train_round_trips(self, client, calendar, owner_headers):
         created = _create(client, calendar, owner_headers, travel_mode="train", travel=TRAIN)
@@ -58,12 +57,29 @@ class TestCreateTravelEvents:
 
         assert created["travel_mode"] is None
         assert created["travel"] is None
+        assert created["booking_reference"] is None
         assert _list(client, calendar, owner_headers)[0]["travel"] is None
+
+    def test_an_ordinary_event_keeps_a_booking_reference_and_address(self, client, calendar, owner_headers):
+        created = _create(
+            client, calendar, owner_headers, title="Vatican Museums",
+            booking_reference=" VM-2035 ", location="<b>Viale Vaticano</b>",
+        )
+
+        fetched = client.get(f"/api/events/{created['id']}", headers=owner_headers).json()
+
+        assert fetched["booking_reference"] == "VM-2035"
+        assert fetched["location"] == "Viale Vaticano"
+        assert fetched["travel"] is None
 
     def test_mismatched_fields_are_rejected_and_nothing_is_created(self, client, calendar, owner_headers):
         payload = {"calendar_id": calendar["id"], "title": "Train", "date": "2035-06-01", "start_time": "07:15:00"}
 
-        for extra in [{"travel": FLIGHT}, {"travel_mode": "train", "travel": {"gate": "B32"}}]:
+        for extra in [
+            {"travel": FLIGHT},
+            {"travel_mode": "train", "travel": {"gate": "B32"}},
+            {"travel_mode": "flight", "travel": {"booking_reference": "K7XQ2M"}},
+        ]:
             res = client.post("/api/events/", json=payload | extra, headers=owner_headers)
             assert res.status_code == 422
 
@@ -72,7 +88,9 @@ class TestCreateTravelEvents:
 
 class TestUpdateTravelEvents:
     def test_moving_a_flight_to_another_day_keeps_its_details(self, client, calendar, owner_headers):
-        created = _create(client, calendar, owner_headers, travel_mode="flight", travel=FLIGHT)
+        created = _create(
+            client, calendar, owner_headers, travel_mode="flight", travel=FLIGHT, booking_reference="K7XQ2M"
+        )
 
         res = client.patch(
             f"/api/events/{created['id']}",
@@ -83,6 +101,17 @@ class TestUpdateTravelEvents:
         assert res.status_code == 200
         assert res.json()["travel_mode"] == "flight"
         assert res.json()["travel"] == EMPTY_TRAVEL | FLIGHT
+        assert res.json()["booking_reference"] == "K7XQ2M"
+
+    def test_the_booking_reference_can_be_changed_and_cleared(self, client, calendar, owner_headers):
+        created = _create(client, calendar, owner_headers, booking_reference="OLD1")
+
+        url = f"/api/events/{created['id']}"
+        changed = client.patch(url, json={"booking_reference": "NEW2"}, headers=owner_headers)
+        cleared = client.patch(url, json={"booking_reference": ""}, headers=owner_headers)
+
+        assert changed.json()["booking_reference"] == "NEW2"
+        assert cleared.json()["booking_reference"] is None
 
     def test_sending_travel_replaces_the_details(self, client, calendar, owner_headers):
         created = _create(client, calendar, owner_headers, travel_mode="flight", travel=FLIGHT)
@@ -101,15 +130,28 @@ class TestBookingReferenceOnPublicCalendars:
         self, client, calendar, owner_headers, other_headers
     ):
         client.patch(f"/api/calendars/{calendar['uuid']}", json={"is_public": True}, headers=owner_headers)
-        _create(client, calendar, owner_headers, travel_mode="flight", travel=FLIGHT)
+        _create(client, calendar, owner_headers, travel_mode="flight", travel=FLIGHT, booking_reference="K7XQ2M")
 
-        anonymous = _list(client, calendar)[0]["travel"]
-        non_member = _list(client, calendar, other_headers)[0]["travel"]
-        owner = _list(client, calendar, owner_headers)[0]["travel"]
+        anonymous = _list(client, calendar)[0]
+        non_member = _list(client, calendar, other_headers)[0]
+        owner = _list(client, calendar, owner_headers)[0]
 
-        assert anonymous == EMPTY_TRAVEL | FLIGHT | {"booking_reference": None}
+        assert anonymous["travel"] == EMPTY_TRAVEL | FLIGHT
+        assert anonymous["booking_reference"] is None
         assert non_member["booking_reference"] is None
         assert owner["booking_reference"] == "K7XQ2M"
+
+    def test_visitors_get_an_ordinary_event_without_its_booking_reference(
+        self, client, calendar, owner_headers, other_headers
+    ):
+        client.patch(f"/api/calendars/{calendar['uuid']}", json={"is_public": True}, headers=owner_headers)
+        _create(client, calendar, owner_headers, booking_reference="VM-2035", location="Viale Vaticano")
+
+        for headers in (None, other_headers):
+            event = _list(client, calendar, headers)[0]
+            assert event["booking_reference"] is None
+            assert event["location"] == "Viale Vaticano"
+        assert _list(client, calendar, owner_headers)[0]["booking_reference"] == "VM-2035"
 
 
 class TestTravelWithLinksAndExpenses:
@@ -149,14 +191,28 @@ class TestChangingTheTravelMode:
         assert _details_row(db_conn, created["id"]) is None
 
     def test_flight_to_train_keeps_shared_fields_and_drops_flight_only_ones(self, client, calendar, owner_headers):
-        created = _create(client, calendar, owner_headers, travel_mode="flight", travel=FLIGHT)
+        created = _create(
+            client, calendar, owner_headers, travel_mode="flight", travel=FLIGHT,
+            booking_reference="K7XQ2M", location="Heathrow T5",
+        )
 
         res = client.patch(f"/api/events/{created['id']}", json={"travel_mode": "train"}, headers=owner_headers)
 
         assert res.json()["travel_mode"] == "train"
-        assert res.json()["travel"] == EMPTY_TRAVEL | {
-            "origin": "LHR", "destination": "FCO", "seat": "14A", "booking_reference": "K7XQ2M",
-        }
+        assert res.json()["travel"] == EMPTY_TRAVEL | {"origin": "LHR", "destination": "FCO", "seat": "14A"}
+        assert res.json()["booking_reference"] == "K7XQ2M"
+        assert res.json()["location"] == "Heathrow T5"
+
+    def test_back_to_an_ordinary_event_keeps_the_reference_and_address(self, client, calendar, owner_headers):
+        created = _create(
+            client, calendar, owner_headers, travel_mode="flight", travel=FLIGHT,
+            booking_reference="K7XQ2M", location="Heathrow T5",
+        )
+
+        res = client.patch(f"/api/events/{created['id']}", json={"travel_mode": None}, headers=owner_headers)
+
+        assert res.json()["booking_reference"] == "K7XQ2M"
+        assert res.json()["location"] == "Heathrow T5"
 
     def test_train_to_flight_drops_the_coach(self, client, calendar, owner_headers):
         created = _create(client, calendar, owner_headers, travel_mode="train", travel=TRAIN)
@@ -176,6 +232,70 @@ class TestChangingTheTravelMode:
         assert _details_row(db_conn, created["id"]) is not None
 
 
+class TestStays:
+    def test_a_stay_round_trips_with_its_address_and_reference_and_no_ticket(
+        self, client, db_conn, calendar, owner_headers
+    ):
+        created = _create(
+            client, calendar, owner_headers, title="Hotel Raphael", travel_mode="stay",
+            booking_reference="HTL-881", location="Largo Febo 2, Roma",
+        )
+
+        fetched = client.get(f"/api/events/{created['id']}", headers=owner_headers).json()
+
+        assert fetched["travel_mode"] == "stay"
+        assert fetched["travel"] is None
+        assert fetched["booking_reference"] == "HTL-881"
+        assert fetched["location"] == "Largo Febo 2, Roma"
+        assert _details_row(db_conn, created["id"]) is None
+
+    def test_travel_details_on_a_stay_are_rejected(self, client, calendar, owner_headers):
+        payload = {"calendar_id": calendar["id"], "title": "Hotel", "date": "2035-06-01", "start_time": "15:00:00"}
+
+        stay_with_a_seat = payload | {"travel_mode": "stay", "travel": {"seat": "1"}}
+
+        res = client.post("/api/events/", json=stay_with_a_seat, headers=owner_headers)
+
+        assert res.status_code == 422
+
+    def test_a_flight_turned_into_a_stay_loses_its_ticket_but_keeps_the_reference_and_address(
+        self, client, db_conn, calendar, owner_headers
+    ):
+        created = _create(
+            client, calendar, owner_headers, travel_mode="flight", travel=FLIGHT,
+            booking_reference="K7XQ2M", location="Heathrow T5",
+        )
+
+        res = client.patch(f"/api/events/{created['id']}", json={"travel_mode": "stay"}, headers=owner_headers)
+
+        assert res.status_code == 200
+        assert res.json()["travel_mode"] == "stay"
+        assert res.json()["travel"] is None
+        assert res.json()["booking_reference"] == "K7XQ2M"
+        assert res.json()["location"] == "Heathrow T5"
+        assert _details_row(db_conn, created["id"]) is None
+
+    def test_a_stay_turned_into_a_flight_gets_an_empty_ticket(self, client, db_conn, calendar, owner_headers):
+        created = _create(client, calendar, owner_headers, travel_mode="stay", booking_reference="HTL-881")
+
+        res = client.patch(f"/api/events/{created['id']}", json={"travel_mode": "flight"}, headers=owner_headers)
+
+        assert res.json()["travel"] == EMPTY_TRAVEL
+        assert res.json()["booking_reference"] == "HTL-881"
+        assert _details_row(db_conn, created["id"]) is not None
+
+    def test_a_stay_survives_delete_and_restore(self, client, calendar, owner_headers):
+        created = _create(client, calendar, owner_headers, travel_mode="stay", booking_reference="HTL-881")
+
+        client.delete(f"/api/calendars/{calendar['uuid']}", headers=owner_headers)
+        client.post(f"/api/calendars/{calendar['uuid']}/restore", headers=owner_headers)
+
+        restored = _list(client, calendar, owner_headers)[0]
+        assert (restored["id"], restored["travel_mode"], restored["booking_reference"]) == (
+            created["id"], "stay", "HTL-881",
+        )
+
+
 def _archived_travel(db_conn, event_ids: list[int]) -> list[dict]:
     with db_conn.cursor() as cur:
         cur.execute(
@@ -187,9 +307,11 @@ def _archived_travel(db_conn, event_ids: list[int]) -> list[dict]:
 
 class TestTravelSurvivesDeleteAndRestore:
     def test_restoring_a_calendar_brings_back_flights_and_trains_unchanged(self, client, calendar, owner_headers):
-        flight = _create(client, calendar, owner_headers, travel_mode="flight", travel=FLIGHT)
-        train = _create(client, calendar, owner_headers, travel_mode="train", travel=TRAIN)
-        ordinary = _create(client, calendar, owner_headers)
+        flight = _create(
+            client, calendar, owner_headers, travel_mode="flight", travel=FLIGHT, booking_reference="K7XQ2M"
+        )
+        train = _create(client, calendar, owner_headers, travel_mode="train", travel=TRAIN, booking_reference="Q4PL9X")
+        ordinary = _create(client, calendar, owner_headers, booking_reference="VM-2035")
 
         assert client.delete(f"/api/calendars/{calendar['uuid']}", headers=owner_headers).status_code == 204
         assert client.post(f"/api/calendars/{calendar['uuid']}/restore", headers=owner_headers).status_code == 204
@@ -201,6 +323,9 @@ class TestTravelSurvivesDeleteAndRestore:
         assert restored[train["id"]]["travel"] == EMPTY_TRAVEL | TRAIN
         assert restored[ordinary["id"]]["travel_mode"] is None
         assert restored[ordinary["id"]]["travel"] is None
+        assert {event_id: event["booking_reference"] for event_id, event in restored.items()} == {
+            flight["id"]: "K7XQ2M", train["id"]: "Q4PL9X", ordinary["id"]: "VM-2035",
+        }
 
     def test_deleting_archives_the_details_and_restoring_empties_the_archive(
         self, client, db_conn, calendar, owner_headers

@@ -54,6 +54,9 @@ import { z }                    from 'zod';
 import { EventDateRangePicker } from './events/event-date-range-picker';
 import { EventExpenses }        from './events/event-expenses';
 import { EventLinks }           from './events/event-links';
+import { AddressField }         from './events/address-field';
+import { BookingReferenceField } from './events/booking-reference-field';
+import { StayCard }             from './events/stay-card';
 import { TravelCard }           from './events/travel-card';
 import { TravelFields }         from './events/travel-fields';
 import {
@@ -137,6 +140,8 @@ export const EventForm = (props: EventFormProps) => {
   );
   const [travelMode, setTravelMode] = useState<TravelMode | null>(() => mode === 'add' ? null : (editEvent?.travelMode ?? null));
   const [travelValues, setTravelValues] = useState(() => getTravelFormValues(mode === 'add' ? null : editEvent?.travel));
+  const [bookingReference, setBookingReference] = useState(() => mode === 'add' ? '' : (editEvent?.bookingReference ?? ''));
+  const [address, setAddress] = useState(() => mode === 'add' ? '' : (editEvent?.location ?? ''));
   const [titleError, setTitleError] = useState(false);
   const [dateOpen, setDateOpen] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
@@ -163,6 +168,8 @@ export const EventForm = (props: EventFormProps) => {
     setColor(localStorage.getItem('lastEventColor') ?? DEFAULT_EVENT_COLOR);
     setTravelMode(null);
     setTravelValues(getTravelFormValues(null));
+    setBookingReference('');
+    setAddress('');
     setIsTitleAuto(true);
     setTitleError(false);
     setDateOpen(false);
@@ -182,6 +189,8 @@ export const EventForm = (props: EventFormProps) => {
     setColor(editEvent?.backgroundColor ?? DEFAULT_EVENT_COLOR);
     setTravelMode(editEvent?.travelMode ?? null);
     setTravelValues(getTravelFormValues(editEvent?.travel));
+    setBookingReference(editEvent?.bookingReference ?? '');
+    setAddress(editEvent?.location ?? '');
     setIsTitleAuto(isSavedTitleAuto(editEvent));
     setTitleError(false);
     setConfirmingDelete(false);
@@ -194,9 +203,17 @@ export const EventForm = (props: EventFormProps) => {
   const formatDay = (d: Date): string =>
     d.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short' }).toUpperCase();
   const formatTime = (d: Date): string => d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  const getStayMoment = (d: Date): { date: string; weekday: string; time: string } => ({
+    date: d.toLocaleDateString(locale, { day: 'numeric', month: 'short' }).toUpperCase(),
+    weekday: d.toLocaleDateString(locale, { weekday: 'short' }).toUpperCase(),
+    time: formatTime(d),
+  });
   const isMultiDayRange = !!start && !!end && start.toDateString() !== end.toDateString();
 
   const travelPayload = getTravelPayload(travelMode, travelValues);
+  // The same value the API stores, so the calendar shows it before a reload
+  const bookingReferenceToSave = bookingReference.trim() || null;
+  const addressToSave = address.trim() || null;
   const suggestionText = getSuggestionText(travelMode, travelValues);
   const isTitleFollowingTicket = !isReadOnly && isTitleAuto && travelMode !== null;
   const shownTitle = isTitleFollowingTicket ? suggestionText : title;
@@ -212,7 +229,7 @@ export const EventForm = (props: EventFormProps) => {
   };
   // The local copy mirrors what the API will store, so the calendar shows it before a reload
   const getLocalTravel = (): TravelDetails | null =>
-    travelMode === null ? null : toTravelDetails(travelPayload.travel);
+    travelMode === null || travelMode === 'stay' ? null : toTravelDetails(travelPayload.travel);
   const localTravel = getLocalTravel();
 
   const handleCancel = () => {
@@ -229,6 +246,8 @@ export const EventForm = (props: EventFormProps) => {
         expenses: editOldEvent.expenses,
         travelMode: editOldEvent.travelMode,
         travel: editOldEvent.travel,
+        bookingReference: editOldEvent.bookingReference,
+        location: editOldEvent.location,
       });
     }
     setConfirmingDelete(false);
@@ -251,6 +270,8 @@ export const EventForm = (props: EventFormProps) => {
         backgroundColor: color,
         travelMode,
         travel: getLocalTravel(),
+        bookingReference: bookingReferenceToSave,
+        location: addressToSave,
       };
 
       if (saveCalendarId !== undefined) {
@@ -265,6 +286,8 @@ export const EventForm = (props: EventFormProps) => {
             end_time: format(end, 'HH:mm:ss'),
             color,
             ...travelPayload,
+            booking_reference: bookingReferenceToSave,
+            location: addressToSave,
           });
           const [linkResults, expenseResults] = await Promise.all([
             Promise.allSettled(pendingUrlsRef.current.map((url) => addEventLink(created.id, url))),
@@ -308,6 +331,8 @@ export const EventForm = (props: EventFormProps) => {
         expenses: currentExpensesRef.current,
         travelMode,
         travel: getLocalTravel(),
+        bookingReference: bookingReferenceToSave,
+        location: addressToSave,
       };
 
       if (calendarId !== undefined) {
@@ -321,6 +346,8 @@ export const EventForm = (props: EventFormProps) => {
             end_time: format(end, 'HH:mm:ss'),
             color,
             ...travelPayload,
+            booking_reference: bookingReferenceToSave,
+            location: addressToSave,
           });
         } catch (e) {
           console.error(e);
@@ -424,13 +451,23 @@ export const EventForm = (props: EventFormProps) => {
             className={cn('w-full resize-none bg-transparent text-sm outline-none placeholder:text-muted-foreground/60', isReadOnly && 'cursor-default')}
           />
 
-          {/* The boarding pass shows what the form holds right now, so it updates while editing */}
-          {mode === 'edit' && travelMode !== null && localTravel && start && end && (
+          {/* The boarding pass and stay card show what the form holds right now, so they update while editing */}
+          {mode === 'edit' && (travelMode === 'flight' || travelMode === 'train') && localTravel && start && end && (
             <TravelCard
               travelMode={travelMode}
               travel={localTravel}
+              bookingReference={bookingReferenceToSave}
               departs={formatTime(start)}
               arrives={formatTime(end)}
+              color={color}
+            />
+          )}
+          {mode === 'edit' && travelMode === 'stay' && start && end && (
+            <StayCard
+              checkIn={getStayMoment(start)}
+              checkOut={getStayMoment(end)}
+              address={addressToSave}
+              bookingReference={bookingReferenceToSave}
               color={color}
             />
           )}
@@ -500,6 +537,8 @@ export const EventForm = (props: EventFormProps) => {
             )}
           </section>
 
+          <AddressField value={address} isReadOnly={isReadOnly} onChange={setAddress} />
+
           <section className='grid gap-2'>
             <span className={SECTION_LABEL}>{t('colour')}</span>
             {isReadOnly ? (
@@ -508,6 +547,8 @@ export const EventForm = (props: EventFormProps) => {
               <EventColorPicker color={color} onChange={setColor} recentColors={getRecentColors(events)} />
             )}
           </section>
+
+          <BookingReferenceField value={bookingReference} isReadOnly={isReadOnly} onChange={setBookingReference} />
 
           {mode === 'edit' ? (
             <EventLinks

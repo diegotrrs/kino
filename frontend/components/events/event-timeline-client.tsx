@@ -1,5 +1,6 @@
 'use client';
 import { EventForm }          from '@/components/event-form';
+import { AddressLink }        from '@/components/events/address-link';
 import { TravelStrip }        from '@/components/events/travel-strip';
 import { EventsProvider }     from '@/context/events-context';
 import { useEvents }          from '@/context/events-context';
@@ -18,7 +19,6 @@ import {
 }                             from 'date-fns';
 import {
   LinkIcon,
-  MapPinIcon,
   ReceiptIcon
 }                             from 'lucide-react';
 import {
@@ -61,6 +61,8 @@ const toCalendarEvent = (ev: Event): CalendarEvent => ({
   expenses:        ev.expenses,
   travelMode:      ev.travel_mode,
   travel:          ev.travel,
+  bookingReference: ev.booking_reference,
+  location:        ev.location,
 });
 
 type EventEditTriggerProps = {
@@ -171,12 +173,7 @@ export const EventTimelineClient = ({
                         </p>
                       )}
                       <div className='flex flex-wrap gap-3 mt-1'>
-                        {ev.location && (
-                          <span className='flex items-center gap-1 text-xs text-muted-foreground'>
-                            <MapPinIcon className='h-3 w-3' />
-                            {ev.location}
-                          </span>
-                        )}
+                        <AddressLink address={ev.location} />
                         {ev.expenses.length > 0 && (
                           <span className='flex items-center gap-1 text-xs text-muted-foreground'>
                             <ReceiptIcon className='h-3 w-3' />
@@ -190,7 +187,9 @@ export const EventTimelineClient = ({
                           </span>
                         )}
                       </div>
-                      {ev.travel_mode && <TravelStrip travelMode={ev.travel_mode} travel={ev.travel} className='mt-2' />}
+                      {(ev.travel_mode || ev.booking_reference) && (
+                        <TravelStrip travelMode={ev.travel_mode} travel={ev.travel} bookingReference={ev.booking_reference} className='mt-2' />
+                      )}
                     </div>
                   </div>
                   {/* Separate div so clicks on the delete button don't open the dialog */}

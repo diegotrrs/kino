@@ -11,6 +11,7 @@ import type {
 }                                       from '@/lib/types';
 import { cn }                           from '@/lib/utils';
 import {
+  BedDouble,
   Plane,
   TrainFront
 }                                       from 'lucide-react';
@@ -19,10 +20,12 @@ import type { ReactElement }            from 'react';
 
 const CHIP = 'inline-flex items-center gap-1 rounded border bg-card px-1.5 py-0.5 font-mono text-[0.7rem] leading-none tabular-nums';
 
-export const TravelModeIcon = ({ travelMode, className }: { travelMode: TravelMode; className?: string }): ReactElement =>
-  travelMode === 'flight'
-    ? <Plane aria-hidden='true' className={className} />
-    : <TrainFront aria-hidden='true' className={className} />;
+const TRAVEL_MODE_ICONS = { flight: Plane, train: TrainFront, stay: BedDouble } as const;
+
+export const TravelModeIcon = ({ travelMode, className }: { travelMode: TravelMode; className?: string }): ReactElement => {
+  const Icon = TRAVEL_MODE_ICONS[travelMode];
+  return <Icon aria-hidden='true' className={className} />;
+};
 
 const ChipValue = ({ chip }: { chip: TravelChip }): ReactElement => {
   const t = useTranslations('travel.chips');
@@ -54,21 +57,25 @@ const CopyReferenceChip = ({ chip }: { chip: TravelChip }): ReactElement => {
 };
 
 type TravelStripProps = {
-  travelMode: TravelMode;
+  travelMode: TravelMode | null | undefined;
   travel: TravelDetails | null | undefined;
+  bookingReference: string | null | undefined;
   className?: string;
 };
 
-export const TravelStrip = ({ travelMode, travel, className }: TravelStripProps): ReactElement => {
+// Flights and trains show their route and ticket; any event with a booking reference shows it to copy
+export const TravelStrip = ({ travelMode, travel, bookingReference, className }: TravelStripProps): ReactElement => {
   const route = getRouteLabel(travel);
-  const chips = getTravelChips(travelMode, travel);
+  const chips = getTravelChips(travelMode, travel, bookingReference);
 
   return (
     <span className={cn('flex flex-wrap items-center gap-1.5', className)} data-testid='travel-strip'>
-      <span className='inline-flex items-center gap-1.5 font-mono text-xs font-medium'>
-        <TravelModeIcon travelMode={travelMode} className='h-3.5 w-3.5 shrink-0' />
-        {route}
-      </span>
+      {travelMode && (
+        <span className='inline-flex items-center gap-1.5 font-mono text-xs font-medium'>
+          <TravelModeIcon travelMode={travelMode} className='h-3.5 w-3.5 shrink-0' />
+          {route}
+        </span>
+      )}
       {chips.map((chip) => (
         chip.field === 'booking_reference'
           ? <CopyReferenceChip key={chip.field} chip={chip} />

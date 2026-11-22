@@ -2,8 +2,9 @@ import type { CreateEventInput, TravelDetails, TravelField, TravelMode } from '@
 
 // The order fields appear in the form and are sent to the API; anything else is rejected by the API
 export const FIELDS_BY_TRAVEL_MODE = {
-  flight: ['origin', 'destination', 'number', 'terminal', 'gate', 'seat', 'booking_reference'],
-  train: ['origin', 'destination', 'coach', 'seat', 'booking_reference'],
+  flight: ['origin', 'destination', 'number', 'terminal', 'gate', 'seat'],
+  train: ['origin', 'destination', 'coach', 'seat'],
+  stay: [],
 } as const satisfies Record<TravelMode, readonly TravelField[]>;
 
 export const TRAVEL_FIELD_MAX_LENGTH: Record<TravelField, number> = {
@@ -14,8 +15,10 @@ export const TRAVEL_FIELD_MAX_LENGTH: Record<TravelField, number> = {
   gate: 10,
   coach: 10,
   seat: 10,
-  booking_reference: 20,
 };
+
+// Any event can have a booking reference, so it isn't a ticket field
+export const BOOKING_REFERENCE_MAX_LENGTH = 20;
 
 const ALL_TRAVEL_FIELDS = Object.keys(TRAVEL_FIELD_MAX_LENGTH) as TravelField[];
 
@@ -32,6 +35,10 @@ export const getTravelPayload = (
   if (travelMode === null) {
     return { travel_mode: null };
   }
+  // A stay has no ticket, so nothing typed into a flight's fields before switching goes with it
+  if (travelMode === 'stay') {
+    return { travel_mode: 'stay' };
+  }
   const filled = FIELDS_BY_TRAVEL_MODE[travelMode]
     .map((field) => [field, values[field]?.trim() ?? ''] as const)
     .filter(([, value]) => value !== '');
@@ -41,21 +48,23 @@ export const getTravelPayload = (
 // The route isn't a chip: it's shown on its own (strip header, month cell, card)
 const ROUTE_FIELDS: ReadonlySet<TravelField> = new Set(['origin', 'destination']);
 
-export type TravelChip = { field: TravelField; value: string };
+export type TravelChip = { field: TravelField | 'booking_reference'; value: string };
 
+// A flight's or train's ticket chips, then the booking reference (any event can have one) last
 export const getTravelChips = (
   travelMode: TravelMode | null | undefined,
   travel: TravelDetails | null | undefined,
+  bookingReference: string | null | undefined,
 ): TravelChip[] => {
-  if (!travelMode || !travel) {
-    return [];
-  }
-  return FIELDS_BY_TRAVEL_MODE[travelMode]
-    .filter((field) => !ROUTE_FIELDS.has(field))
-    .flatMap((field) => {
-      const value = travel[field];
-      return value ? [{ field, value }] : [];
-    });
+  const ticketChips: TravelChip[] = travelMode && travel
+    ? FIELDS_BY_TRAVEL_MODE[travelMode]
+      .filter((field) => !ROUTE_FIELDS.has(field))
+      .flatMap((field) => {
+        const value = travel[field];
+        return value ? [{ field, value }] : [];
+      })
+    : [];
+  return bookingReference ? [...ticketChips, { field: 'booking_reference', value: bookingReference }] : ticketChips;
 };
 
 export const getRouteLabel = (travel: TravelDetails | null | undefined): string | null => {
@@ -83,7 +92,7 @@ export const getCalendarCellLabel = (
 export type SuggestedTitle =
   | { key: 'flightTo' | 'trainTo'; values: { destination: string } }
   | { key: 'flightNumber'; values: { number: string } }
-  | { key: 'flight' | 'train'; values: Record<string, never> };
+  | { key: 'flight' | 'train' | 'stay'; values: Record<string, never> };
 
 // A flight or train doesn't need a typed title: this names it from the ticket (translated by the caller)
 export const getSuggestedTitle = (
@@ -92,6 +101,9 @@ export const getSuggestedTitle = (
 ): SuggestedTitle | null => {
   if (travelMode === null) {
     return null;
+  }
+  if (travelMode === 'stay') {
+    return { key: 'stay', values: {} };
   }
   const destination = values.destination?.trim();
   if (destination) {
@@ -108,6 +120,7 @@ export const getSuggestedTitle = (
 const CARD_DETAIL_FIELDS: Record<TravelMode, readonly TravelField[]> = {
   flight: ['terminal', 'gate'],
   train: ['coach'],
+  stay: [],
 };
 
 export const getTravelCardDetails = (travelMode: TravelMode, travel: TravelDetails): TravelChip[] =>

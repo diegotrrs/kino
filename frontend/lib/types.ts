@@ -63,6 +63,8 @@ export interface Event {
   expenses: EventExpense[];
   travel_mode: TravelMode | null;
   travel: TravelDetails | null;
+  // Any event can have one; null for visitors who aren't members of the calendar
+  booking_reference: string | null;
 }
 
 export interface CreateEventInput {
@@ -77,6 +79,7 @@ export interface CreateEventInput {
   color?: string;
   travel_mode?: TravelMode | null;
   travel?: Partial<TravelDetails>;
+  booking_reference?: string | null;
 }
 
 // A name for one day of a calendar, e.g. "Visit to Vatican" (date is yyyy-MM-dd)
@@ -95,8 +98,8 @@ export type ChecklistItem = {
   updated_at: string | null;
 };
 
-// A flight or a train; events without one (null) are ordinary events
-export type TravelMode = 'flight' | 'train';
+// A flight, a train or a stay (anywhere you sleep: a hotel, hostel, Airbnb...); null is an ordinary event
+export type TravelMode = 'flight' | 'train' | 'stay';
 
 export type TravelField =
   | 'origin'
@@ -105,8 +108,6 @@ export type TravelField =
   | 'terminal'
   | 'gate'
   | 'coach'
-  | 'seat'
-  | 'booking_reference';
+  | 'seat';
 
-// booking_reference is null for visitors who aren't members of the calendar
 export type TravelDetails = Record<TravelField, string | null>;

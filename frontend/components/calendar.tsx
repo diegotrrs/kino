@@ -130,6 +130,8 @@ const Calendar = () => {
       expenses: info.event.extendedProps.expenses,
       travelMode: info.event.extendedProps.travelMode,
       travel: info.event.extendedProps.travel,
+      bookingReference: info.event.extendedProps.bookingReference,
+      location: info.event.extendedProps.location,
     };
 
     openEditDialog(event);
@@ -152,6 +154,8 @@ const Calendar = () => {
       expenses: storedEvent?.expenses,
       travelMode: storedEvent?.travelMode,
       travel: storedEvent?.travel,
+      bookingReference: storedEvent?.bookingReference,
+      location: storedEvent?.location,
     };
 
     if (calendarId !== undefined) {

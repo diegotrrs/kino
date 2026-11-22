@@ -377,14 +377,18 @@
       "flightNumber": "Vuelo {number}",
       "flight": "Vuelo",
       "trainTo": "Tren a {destination}",
-      "train": "Tren"
+      "train": "Tren",
+      "stay": "Alojamiento"
     },
     "card": {
       "flightTicket": "Billete de avión",
       "trainTicket": "Billete de tren",
       "copy": "Copiar",
-      "copyReference": "Copiar código de reserva"
-    }
+      "copyReference": "Copiar código de reserva",
+      "checkIn": "Entrada",
+      "checkOut": "Salida"
+    },
+    "stay": "Alojamiento"
   },
   "calendarMembers": {
     "invite": "Invitar",
@@ -473,5 +477,10 @@
     "add": "Añadir a favoritos",
     "remove": "Quitar de favoritos",
     "failed": "No se pudo actualizar el favorito"
+  },
+  "address": {
+    "label": "Dirección",
+    "placeholder": "p. ej. Via del Corso 12, Roma",
+    "openInMaps": "Abrir {address} en Google Maps"
   }
 }

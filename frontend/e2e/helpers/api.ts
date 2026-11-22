@@ -265,8 +265,9 @@ export const createTravelEvent = async (
   calendarId: number,
   title: string,
   date: string,
-  travelMode: 'flight' | 'train',
-  travel: Record<string, string>,
+  travelMode: 'flight' | 'train' | 'stay' | null,
+  travel: Record<string, string> | null,
+  extra: { booking_reference?: string; location?: string; color?: string } = {},
 ): Promise<number> => {
   const res = await request.post(`${API_URL}/api/events/`, {
     headers: {
@@ -281,6 +282,7 @@ export const createTravelEvent = async (
       end_time: '10:45:00',
       travel_mode: travelMode,
       travel,
+      ...extra,
     },
   });
   if (!res.ok()) {
@@ -290,12 +292,42 @@ export const createTravelEvent = async (
   return id;
 };
 
+type ApiEvent = {
+  id: number;
+  title: string;
+  travel_mode: string | null;
+  travel: Record<string, string | null> | null;
+  booking_reference: string | null;
+  location: string | null;
+};
+
+// A calendar's events as the server has them (as its owner, so booking references are included)
+export const getEventsByCalendar = async (
+  request: APIRequestContext,
+  token: string,
+  calendarUuid: string,
+): Promise<ApiEvent[]> => {
+  const res = await request.get(`${API_URL}/api/events/?calendar_uuid=${calendarUuid}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok()) {
+    throw new Error(`getEventsByCalendar: ${res.status()} ${await res.text()}`);
+  }
+  return res.json();
+};
+
 // The event as the server has it, to tell a saved change from what the form shows
 export const getEventById = async (
   request: APIRequestContext,
   token: string,
   eventId: number,
-): Promise<{ title: string; travel_mode: string | null; travel: Record<string, string | null> | null }> => {
+): Promise<{
+  title: string;
+  travel_mode: string | null;
+  travel: Record<string, string | null> | null;
+  booking_reference: string | null;
+  location: string | null;
+}> => {
   const res = await request.get(`${API_URL}/api/events/${eventId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });

@@ -377,14 +377,18 @@
       "flightNumber": "Voo {number}",
       "flight": "Voo",
       "trainTo": "Comboio para {destination}",
-      "train": "Comboio"
+      "train": "Comboio",
+      "stay": "Alojamento"
     },
     "card": {
       "flightTicket": "Bilhete de avião",
       "trainTicket": "Bilhete de comboio",
       "copy": "Copiar",
-      "copyReference": "Copiar referência da reserva"
-    }
+      "copyReference": "Copiar referência da reserva",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out"
+    },
+    "stay": "Alojamento"
   },
   "calendarMembers": {
     "invite": "Convidar",
@@ -473,5 +477,10 @@
     "add": "Adicionar aos favoritos",
     "remove": "Remover dos favoritos",
     "failed": "Não foi possível atualizar o favorito"
+  },
+  "address": {
+    "label": "Morada",
+    "placeholder": "ex.: Via del Corso 12, Roma",
+    "openInMaps": "Abrir {address} no Google Maps"
   }
 }

@@ -1,6 +1,6 @@
 from psycopg2.extensions import connection
 
-from ..schemas.event import TRAVEL_FIELDS_BY_MODE, EventCreate, EventUpdate
+from ..schemas.event import TICKETED_MODES, TRAVEL_FIELDS_BY_MODE, EventCreate, EventUpdate
 
 # Links, expenses and travel details are each read in their own subquery. Joining links and expenses
 # into one GROUP BY repeated every link once per expense and every expense once per link.
@@ -53,35 +53,35 @@ _TRAVEL_SUBQUERY = """
             'terminal',          t.terminal,
             'gate',              t.gate,
             'coach',             t.coach,
-            'seat',              t.seat,
-            'booking_reference', t.booking_reference
+            'seat',              t.seat
         )
         FROM event_travel_details t
         WHERE t.event_id = e.id
     ) AS travel
 """
 
-TRAVEL_COLUMNS = ("origin", "destination", "number", "terminal", "gate", "coach", "seat", "booking_reference")
+TRAVEL_COLUMNS = ("origin", "destination", "number", "terminal", "gate", "coach", "seat")
 
 
 def set_travel_details(db: connection, event_id: int, travel_mode: str | None, travel: dict | None) -> None:
-    """Replace an event's ticket details, or delete them when it has no travel mode. The caller commits."""
+    """Replace an event's ticket details, or delete them when it has no ticket (an ordinary event or a
+    stay). The caller commits."""
     with db.cursor() as cur:
-        if travel_mode is None:
+        if travel_mode not in TICKETED_MODES:
             cur.execute("DELETE FROM event_travel_details WHERE event_id = %s", (event_id,))
             return
         values = {column: (travel or {}).get(column) for column in TRAVEL_COLUMNS}
         cur.execute(
             """
             INSERT INTO event_travel_details
-                (event_id, origin, destination, number, terminal, gate, coach, seat, booking_reference)
+                (event_id, origin, destination, number, terminal, gate, coach, seat)
             VALUES
                 (%(event_id)s, %(origin)s, %(destination)s, %(number)s, %(terminal)s, %(gate)s,
-                 %(coach)s, %(seat)s, %(booking_reference)s)
+                 %(coach)s, %(seat)s)
             ON CONFLICT (event_id) DO UPDATE SET
                 origin = EXCLUDED.origin, destination = EXCLUDED.destination, number = EXCLUDED.number,
                 terminal = EXCLUDED.terminal, gate = EXCLUDED.gate, coach = EXCLUDED.coach,
-                seat = EXCLUDED.seat, booking_reference = EXCLUDED.booking_reference, updated_at = NOW()
+                seat = EXCLUDED.seat, updated_at = NOW()
             """,
             values | {"event_id": event_id},
         )
@@ -89,7 +89,7 @@ def set_travel_details(db: connection, event_id: int, travel_mode: str | None, t
 
 def keep_travel_details_for_mode(db: connection, event_id: int, travel_mode: str) -> None:
     """After a mode change without new details: make sure the row exists, and clear the fields the new
-    mode doesn't have (a train keeps the route, seat and reference but not the gate). The caller commits."""
+    mode doesn't have (a train keeps the route and seat but not the gate). The caller commits."""
     cleared = [column for column in TRAVEL_COLUMNS if column not in TRAVEL_FIELDS_BY_MODE[travel_mode]]
     set_clause = ", ".join([f"{column} = NULL" for column in cleared] + ["updated_at = NOW()"])
     with db.cursor() as cur:
@@ -156,16 +156,17 @@ def create_event(db: connection, event: EventCreate) -> dict:
             """
             INSERT INTO events
                 (calendar_id, title, description, date, start_time,
-                 end_date, end_time, location, color, travel_mode)
+                 end_date, end_time, location, color, travel_mode, booking_reference)
             VALUES
                 (%(calendar_id)s, %(title)s, %(description)s, %(date)s,
-                 %(start_time)s, %(end_date)s, %(end_time)s, %(location)s, %(color)s, %(travel_mode)s)
+                 %(start_time)s, %(end_date)s, %(end_time)s, %(location)s, %(color)s, %(travel_mode)s,
+                 %(booking_reference)s)
             RETURNING id
             """,
             data,
         )
         event_id = cur.fetchone()["id"]
-    if event.travel_mode is not None:
+    if event.travel_mode in TICKETED_MODES:
         set_travel_details(db, event_id, event.travel_mode, data["travel"])
     db.commit()
     return get_event(db, event_id)
@@ -191,7 +192,7 @@ def update_event(db: connection, event_id: int, event: EventUpdate) -> dict | No
     # (The schema refuses travel without a travel_mode, so travel alone never gets here.)
     if "travel_mode" in update_data:
         travel_mode = update_data["travel_mode"]
-        if travel_mode is None:
+        if travel_mode not in TICKETED_MODES:
             set_travel_details(db, event_id, None, None)
         elif "travel" in event.model_fields_set:
             set_travel_details(db, event_id, travel_mode, travel)

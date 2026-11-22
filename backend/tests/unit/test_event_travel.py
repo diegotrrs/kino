@@ -14,14 +14,12 @@ FLIGHT = {
     "terminal": "5",
     "gate": "B32",
     "seat": "14A",
-    "booking_reference": "K7XQ2M",
 }
 TRAIN = {
     "origin": "London St Pancras",
     "destination": "Paris Gare du Nord",
     "coach": "7",
     "seat": "61",
-    "booking_reference": "Q4PL9X",
 }
 
 
@@ -67,7 +65,7 @@ class TestTravelOnCreate:
 
     @pytest.mark.parametrize(
         "field, length",
-        [("seat", 11), ("number", 11), ("terminal", 11), ("gate", 11), ("booking_reference", 21), ("origin", 61)],
+        [("seat", 11), ("number", 11), ("terminal", 11), ("gate", 11), ("origin", 61)],
     )
     def test_fields_longer_than_their_limit_are_rejected(self, field, length):
         with pytest.raises(ValidationError):
@@ -83,6 +81,61 @@ class TestTravelOnCreate:
 
         assert event.travel.gate is None
         assert event.travel.seat is None
+
+
+    def test_booking_reference_inside_travel_is_rejected(self):
+        with pytest.raises(ValidationError):
+            EventCreate(**_event(travel_mode="flight", travel={"booking_reference": "K7XQ2M"}))
+
+
+class TestBookingReferenceAndAddress:
+    @pytest.mark.parametrize("travel_mode", [None, "flight", "train"])
+    def test_any_event_accepts_a_booking_reference(self, travel_mode):
+        event = EventCreate(**_event(travel_mode=travel_mode, booking_reference="K7XQ2M"))
+
+        assert event.booking_reference == "K7XQ2M"
+
+    def test_booking_reference_longer_than_20_is_rejected(self):
+        with pytest.raises(ValidationError):
+            EventCreate(**_event(booking_reference="x" * 21))
+
+    def test_address_longer_than_255_is_rejected(self):
+        with pytest.raises(ValidationError):
+            EventCreate(**_event(location="x" * 256))
+
+    @pytest.mark.parametrize("field", ["booking_reference", "location"])
+    def test_html_is_stripped_and_blanks_become_null(self, field):
+        cleaned = EventCreate(**_event(**{field: " <b>K7XQ2M</b> "}))
+        blank = EventCreate(**_event(**{field: "   "}))
+
+        assert getattr(cleaned, field) == "K7XQ2M"
+        assert getattr(blank, field) is None
+
+    @pytest.mark.parametrize("field", ["booking_reference", "location"])
+    def test_update_cleans_the_same_way(self, field):
+        update = EventUpdate(**{field: " <i>x</i> "})
+
+        assert getattr(update, field) == "x"
+
+    def test_a_date_only_update_does_not_touch_the_reference(self):
+        assert "booking_reference" not in EventUpdate(date="2035-06-02").model_fields_set
+
+
+class TestStay:
+    def test_a_stay_needs_no_travel_details(self):
+        event = EventCreate(**_event(travel_mode="stay", booking_reference="HTL-881", location="Hotel Raphael"))
+
+        assert event.travel_mode == "stay"
+        assert event.travel is None
+
+    @pytest.mark.parametrize("travel", [{"seat": "12"}, {"origin": "LHR"}, {}])
+    def test_travel_details_are_rejected_on_a_stay(self, travel):
+        with pytest.raises(ValidationError):
+            EventCreate(**_event(travel_mode="stay", travel=travel))
+
+    def test_an_update_to_a_stay_rejects_travel_details(self):
+        with pytest.raises(ValidationError):
+            EventUpdate(travel_mode="stay", travel={"gate": "B32"})
 
 
 class TestTravelOnUpdate:
@@ -104,7 +157,13 @@ def crud():
 
 
 def _listed_flight() -> dict:
-    return {"id": 5, "calendar_id": CALENDAR_ID, "travel_mode": "flight", "travel": dict(FLIGHT)}
+    return {
+        "id": 5,
+        "calendar_id": CALENDAR_ID,
+        "travel_mode": "flight",
+        "travel": dict(FLIGHT),
+        "booking_reference": "K7XQ2M",
+    }
 
 
 class TestBookingReferenceVisibility:
@@ -115,7 +174,7 @@ class TestBookingReferenceVisibility:
 
         events = router.list_events(calendar_uuid="cal-uuid", db=db, current_user=user)
 
-        assert events[0]["travel"]["booking_reference"] == "K7XQ2M"
+        assert events[0]["booking_reference"] == "K7XQ2M"
 
     def test_non_member_of_a_public_calendar_does_not_see_the_booking_reference(self, crud, db, user):
         crud.get_calendar_by_uuid.return_value = {"id": CALENDAR_ID, "is_public": True, "role": None}
@@ -123,7 +182,7 @@ class TestBookingReferenceVisibility:
 
         events = router.list_events(calendar_uuid="cal-uuid", db=db, current_user=user)
 
-        assert events[0]["travel"]["booking_reference"] is None
+        assert events[0]["booking_reference"] is None
         assert events[0]["travel"]["seat"] == "14A"
 
     def test_anonymous_visitor_does_not_see_the_booking_reference(self, crud, db):
@@ -132,12 +191,16 @@ class TestBookingReferenceVisibility:
 
         events = router.list_events(calendar_uuid="cal-uuid", db=db, current_user=None)
 
-        assert events[0]["travel"]["booking_reference"] is None
+        assert events[0]["booking_reference"] is None
 
-    def test_ordinary_events_are_listed_unchanged_for_visitors(self, crud, db):
+    def test_visitors_do_not_see_an_ordinary_events_booking_reference(self, crud, db):
         crud.get_calendar_by_uuid.return_value = {"id": CALENDAR_ID, "is_public": True, "role": None}
-        crud.get_events_by_calendar.return_value = [{"id": 6, "travel_mode": None, "travel": None}]
+        crud.get_events_by_calendar.return_value = [
+            {"id": 6, "travel_mode": None, "travel": None, "booking_reference": "MUSEUM42", "location": "Via Roma 1"}
+        ]
 
         events = router.list_events(calendar_uuid="cal-uuid", db=db, current_user=None)
 
+        assert events[0]["booking_reference"] is None
         assert events[0]["travel"] is None
+        assert events[0]["location"] == "Via Roma 1"

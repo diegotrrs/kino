@@ -7,13 +7,27 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-TravelMode = Literal["flight", "train"]
+# A stay is anywhere you sleep: a hotel, hostel, Airbnb...
+TravelMode = Literal["flight", "train", "stay"]
 
-# Which ticket fields each travel mode has; anything else is rejected rather than stored
+# Which ticket fields each travel mode has; anything else is rejected rather than stored.
+# The booking reference isn't one of them: any event can have one, so it lives on the event.
 TRAVEL_FIELDS_BY_MODE: dict[str, frozenset[str]] = {
-    "flight": frozenset({"origin", "destination", "number", "terminal", "gate", "seat", "booking_reference"}),
-    "train": frozenset({"origin", "destination", "coach", "seat", "booking_reference"}),
+    "flight": frozenset({"origin", "destination", "number", "terminal", "gate", "seat"}),
+    "train": frozenset({"origin", "destination", "coach", "seat"}),
+    "stay": frozenset(),
 }
+
+# The modes that have a ticket (an event_travel_details row); a stay has none
+TICKETED_MODES = frozenset({"flight", "train"})
+
+
+def _clean_text(v: object) -> object:
+    """Strip HTML tags and surrounding spaces; blank text becomes None."""
+    if not isinstance(v, str):
+        return v
+    cleaned = re.sub(r"<[^>]+>", "", v).strip()
+    return cleaned or None
 
 
 class EventExpenseCreate(BaseModel):
@@ -58,16 +72,14 @@ class TravelDetailsIn(BaseModel):
     gate: str | None = Field(None, max_length=10)
     coach: str | None = Field(None, max_length=10)
     seat: str | None = Field(None, max_length=10)
-    booking_reference: str | None = Field(None, max_length=20)
+
+    model_config = {"extra": "forbid"}
 
     # Runs before the length limits, so they apply to the cleaned text
     @field_validator("*", mode="before")
     @classmethod
     def clean_text(cls, v: object) -> object:
-        if not isinstance(v, str):
-            return v
-        cleaned = re.sub(r"<[^>]+>", "", v).strip()
-        return cleaned or None
+        return _clean_text(v)
 
 
 class TravelDetailsOut(BaseModel):
@@ -78,7 +90,6 @@ class TravelDetailsOut(BaseModel):
     gate: str | None = None
     coach: str | None = None
     seat: str | None = None
-    booking_reference: str | None = None
 
 
 def _check_travel(travel_mode: str | None, travel: TravelDetailsIn | None) -> None:
@@ -86,6 +97,8 @@ def _check_travel(travel_mode: str | None, travel: TravelDetailsIn | None) -> No
         return
     if travel_mode is None:
         raise ValueError("travel needs a travel_mode")
+    if travel_mode not in TICKETED_MODES:
+        raise ValueError(f"a {travel_mode} has no travel details")
     filled = {name for name, value in travel.model_dump().items() if value is not None}
     not_allowed = filled - TRAVEL_FIELDS_BY_MODE[travel_mode]
     if not_allowed:
@@ -100,13 +113,19 @@ class EventBase(BaseModel):
     start_time: Time
     end_date: Date | None = None
     end_time: Time | None = None
-    location: str | None = None
+    location: str | None = Field(None, max_length=255)
     color: str = '#AEC6E4'
     travel_mode: TravelMode | None = None
+    booking_reference: str | None = Field(None, max_length=20)
 
 
 class EventCreate(EventBase):
     travel: TravelDetailsIn | None = None
+
+    @field_validator("location", "booking_reference", mode="before")
+    @classmethod
+    def clean_text(cls, v: object) -> object:
+        return _clean_text(v)
 
     @model_validator(mode="after")
     def check_travel(self) -> "EventCreate":
@@ -121,10 +140,16 @@ class EventUpdate(BaseModel):
     start_time: Time | None = None
     end_date: Date | None = None
     end_time: Time | None = None
-    location: str | None = None
+    location: str | None = Field(None, max_length=255)
     color: str | None = None
     travel_mode: TravelMode | None = None
+    booking_reference: str | None = Field(None, max_length=20)
     travel: TravelDetailsIn | None = None
+
+    @field_validator("location", "booking_reference", mode="before")
+    @classmethod
+    def clean_text(cls, v: object) -> object:
+        return _clean_text(v)
 
     @model_validator(mode="after")
     def check_travel(self) -> "EventUpdate":

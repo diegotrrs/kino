@@ -10,6 +10,7 @@ import {
   DialogDescription,
   DialogTitle
 }                             from '@/components/ui/dialog';
+import { AddressLink }        from '@/components/events/address-link';
 import { TravelStrip }        from '@/components/events/travel-strip';
 import { useEvents }          from '@/context/events-context';
 import { useToast }           from '@/hooks/use-toast';
@@ -175,7 +176,10 @@ export const DaySheet = ({ day, events, readOnly, onClose, onAddEvent, onOpenEve
                   >
                     {event.title}
                   </button>
-                  {event.travelMode && <TravelStrip travelMode={event.travelMode} travel={event.travel} />}
+                  <AddressLink address={event.location} className='self-start' />
+                  {(event.travelMode || event.bookingReference) && (
+                    <TravelStrip travelMode={event.travelMode} travel={event.travel} bookingReference={event.bookingReference} />
+                  )}
                 </span>
               </div>
             );
