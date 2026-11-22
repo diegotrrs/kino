@@ -205,6 +205,80 @@ test.describe('@18. stays', () => {
   });
 });
 
+test.describe('@18. the stay card', () => {
+  const STAY = { booking_reference: 'HTL-881', location: 'Largo Febo 2, Roma' };
+
+  test('@18.8 should show a stay\'s check-in, check-out, address and reference in its card', async ({
+    page,
+    request,
+    context,
+  }) => {
+    await recordClipboard(context);
+    await login(page);
+    const token = await getToken(request);
+    const calendarUuid = await createCalendar(request, token, `Stay Card Test ${Date.now()}`);
+    const calendarId = await getCalendarId(request, token, calendarUuid);
+    const title = `Hotel Raphael ${Date.now()}`;
+    await createTravelEvent(request, token, calendarId, title, getToday(), 'stay', null, STAY);
+
+    await page.goto('/events');
+    await page.getByRole('button', { name: title, exact: true }).click();
+    const card = page.getByRole('alertdialog').getByRole('region', { name: 'Stay' });
+    await expect(card).toContainText('Check-in');
+    await expect(card).toContainText('Check-out');
+    // The helper's times: 07:15 to 10:45
+    await expect(card).toContainText('07:15');
+    await expect(card).toContainText('10:45');
+    await expect(card.getByRole('link', { name: 'Open Largo Febo 2, Roma in Google Maps' })).toBeVisible();
+    await expect(card).not.toContainText(/night/i);
+    await card.getByRole('button', { name: 'Copy booking reference HTL-881' }).click();
+    await expect(card).toContainText('Copied');
+    expect(await page.evaluate(() => (window as unknown as { copied: string }).copied)).toBe('HTL-881');
+    // A stay has no boarding pass
+    await expect(page.getByRole('alertdialog').getByTestId('travel-card')).toHaveCount(0);
+  });
+
+  test('@18.9 should show visitors a stay\'s card without its booking reference', async ({ browser, request }) => {
+    const token = await getToken(request);
+    const calendarUuid = await createCalendar(request, token, `Public Stay Test ${Date.now()}`);
+    const calendarId = await getCalendarId(request, token, calendarUuid);
+    const title = `Public hotel ${Date.now()}`;
+    await createTravelEvent(request, token, calendarId, title, getToday(), 'stay', null, STAY);
+    await makeCalendarPublic(request, token, calendarUuid);
+
+    const visitor = await browser.newContext();
+    try {
+      const page = await visitor.newPage();
+      await page.goto(`/calendars/${calendarUuid}`);
+      await page.locator('.fc-event').filter({ hasText: title }).click();
+      const card = page.getByRole('alertdialog').getByRole('region', { name: 'Stay' });
+      await expect(card).toContainText('Check-in');
+      await expect(card.getByRole('link', { name: 'Open Largo Febo 2, Roma in Google Maps' })).toBeVisible();
+      await expect(card).not.toContainText('HTL-881');
+      await expect(card.getByRole('button')).toHaveCount(0);
+    } finally {
+      await visitor.close();
+    }
+  });
+
+  test('@18.10 should show the stay card in the selected language', async ({ page, request }) => {
+    await login(page);
+    const token = await getToken(request);
+    const calendarUuid = await createCalendar(request, token, `Stay i18n Test ${Date.now()}`);
+    const calendarId = await getCalendarId(request, token, calendarUuid);
+    const title = `Hotel en Roma ${Date.now()}`;
+    await createTravelEvent(request, token, calendarId, title, getToday(), 'stay', null, STAY);
+    await page.context().addCookies([{ name: 'locale', value: 'es', domain: 'localhost', path: '/' }]);
+
+    await page.goto(`/calendars/${calendarUuid}`);
+    await page.locator('.fc-event').filter({ hasText: title }).click();
+    const card = page.getByRole('alertdialog').getByRole('region', { name: 'Alojamiento' });
+    await expect(card).toContainText('Entrada');
+    await expect(card).toContainText('Salida');
+    await expect(card.getByRole('button', { name: 'Copiar código de reserva HTL-881' })).toBeVisible();
+  });
+});
+
 test.describe('@18. addresses on phones', () => {
   test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
 

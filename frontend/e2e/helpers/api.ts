@@ -265,7 +265,7 @@ export const createTravelEvent = async (
   calendarId: number,
   title: string,
   date: string,
-  travelMode: 'flight' | 'train' | null,
+  travelMode: 'flight' | 'train' | 'stay' | null,
   travel: Record<string, string> | null,
   extra: { booking_reference?: string; location?: string; color?: string } = {},
 ): Promise<number> => {

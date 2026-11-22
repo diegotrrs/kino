@@ -384,7 +384,9 @@
       "flightTicket": "Flight ticket",
       "trainTicket": "Train ticket",
       "copy": "Copy",
-      "copyReference": "Copy booking reference"
+      "copyReference": "Copy booking reference",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out"
     },
     "stay": "Stay"
   },

@@ -384,7 +384,9 @@
       "flightTicket": "Billete de avión",
       "trainTicket": "Billete de tren",
       "copy": "Copiar",
-      "copyReference": "Copiar código de reserva"
+      "copyReference": "Copiar código de reserva",
+      "checkIn": "Entrada",
+      "checkOut": "Salida"
     },
     "stay": "Alojamiento"
   },

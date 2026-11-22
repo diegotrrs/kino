@@ -152,7 +152,7 @@ T6 Migration step 2 file, e2e 18-stays-and-booking-references, domain terms, fin
 
 **Estimated scope:** M
 
-#### Task 5: Stay — month cell, strip and stay card
+#### Task 5: Stay — month cell, strip and stay card ✅
 
 **Description:**
 - **Month cell:** bed icon + title.
@@ -166,12 +166,12 @@ T6 Migration step 2 file, e2e 18-stays-and-booking-references, domain terms, fin
   Phones get the stacked layout with a full-width 44px copy button. Empty fields are left out, and it works in light and dark.
 
 **Acceptance criteria:**
-- [ ] A stay shows the bed icon and title in the month view, the icon and REF in the timeline and day sheet, and the stay card in the dialog. No number of nights appears anywhere.
-- [ ] The card's Copy copies the reference and its address opens Google Maps. Visitors get the card without the reference.
+- [x] A stay shows the bed icon and title in the month view, the icon and REF in the timeline and day sheet, and the stay card in the dialog. No number of nights appears anywhere.
+- [x] The card's Copy copies the reference and its address opens Google Maps. Visitors get the card without the reference.
 
 **Verification:**
-- [ ] Build and lint
-- [ ] A temporary browser test with screenshots at 1280 and 390px, light and dark, in English and Spanish
+- [x] Build and lint
+- [x] A temporary browser test with screenshots at 1280 and 390px, light and dark, in English and Spanish
 
 **Dependencies:** Tasks 3 and 4
 

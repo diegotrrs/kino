@@ -1,6 +1,9 @@
 'use client';
+import {
+  CARD_LABEL,
+  ReferenceStub
+}                                       from '@/components/events/reference-stub';
 import { TravelModeIcon }               from '@/components/events/travel-strip';
-import { useCopyToClipboard }           from '@/hooks/use-copy-to-clipboard';
 import { getEventTint }                 from '@/lib/event-colors';
 import { getTravelCardDetails }         from '@/lib/travel';
 import type {
@@ -11,7 +14,7 @@ import { cn }                           from '@/lib/utils';
 import { useTranslations }              from 'next-intl';
 import type { ReactElement }            from 'react';
 
-const LABEL = 'font-mono text-[0.6rem] font-medium uppercase tracking-widest text-muted-foreground';
+const LABEL = CARD_LABEL;
 const PLACE = 'font-display text-3xl font-extrabold leading-none tracking-tight sm:text-4xl';
 
 type TravelCardProps = {
@@ -27,7 +30,6 @@ type TravelCardProps = {
 // with a perforated stub on the right; on phones the stub drops below (direction E).
 export const TravelCard = ({ travelMode, travel, bookingReference, departs, arrives, color }: TravelCardProps): ReactElement => {
   const t = useTranslations('travel');
-  const { isCopied, copy } = useCopyToClipboard();
   const details = getTravelCardDetails(travelMode, travel);
   const hasRoute = !!travel.origin || !!travel.destination;
   const reference = bookingReference;
@@ -85,26 +87,7 @@ export const TravelCard = ({ travelMode, travel, bookingReference, departs, arri
               <span className={PLACE}>{travel.seat}</span>
             </div>
           )}
-          {reference && (
-            <div className='flex flex-col gap-2'>
-              <span className={LABEL}>{t('fields.booking_reference')}</span>
-              <span className='font-mono text-lg font-medium leading-none tracking-[0.12em]'>{reference}</span>
-              <button
-                type='button'
-                onClick={() => void copy(reference)}
-                aria-label={t('copyReference', { reference })}
-                className={cn(
-                  'h-11 w-full rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-                  'sm:h-8 sm:w-fit sm:border sm:bg-card sm:text-xs sm:font-medium sm:text-foreground sm:hover:bg-secondary',
-                )}
-              >
-                <span aria-live='polite'>
-                  {isCopied ? t('copied') : <><span className='sm:hidden'>{t('card.copyReference')}</span><span className='hidden sm:inline'>{t('card.copy')}</span></>}
-                </span>
-              </button>
-            </div>
-          )}
+          {reference && <ReferenceStub reference={reference} />}
         </div>
       )}
     </section>
