@@ -1,6 +1,6 @@
 # Spec Delta: 39 — Stays and booking references on every event
 
-Status: approved
+Status: implemented
 GitHub issue #39: *Hotel/Hostal event type*.
 Changes: feature 23, *Flight and train events* (`features/23-flight-train-events/23-flight-train-events.md`, implemented). Everything not mentioned here is inherited from it unchanged.
 

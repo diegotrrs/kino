@@ -186,7 +186,7 @@ T6 Migration step 2 file, e2e 18-stays-and-booking-references, domain terms, fin
 
 ### Phase 3: Finish
 
-#### Task 6: Migration step 2, e2e spec, domain terms, final checks
+#### Task 6: Migration step 2, e2e spec, domain terms, final checks ✅
 
 **Description:**
 - **Step 2:** `backend/migrations/drop_travel_booking_reference.sql`. It copies once more anything where `events.booking_reference IS NULL`, then drops `booking_reference` from both travel tables.
@@ -201,12 +201,12 @@ T6 Migration step 2 file, e2e 18-stays-and-booking-references, domain terms, fin
 - **Spec:** set `Status: implemented`.
 
 **Acceptance criteria:**
-- [ ] Every spec success criterion (1–9) can be ticked.
-- [ ] A throwaway database built from step 1, then step 2, matches `init.sql`.
+- [x] Every spec success criterion (1–9) can be ticked.
+- [x] A throwaway database built from step 1, then step 2, matches `init.sql`.
 
 **Verification:**
-- [ ] Confirm the :8000 backend is on `.env.local`
-- [ ] `make check`; `npm run build && npm run lint && npm run check`
+- [x] Confirm the :8000 backend is on `.env.local`
+- [x] `make check`; `npm run build && npm run lint && npm run check`
 
 **Dependencies:** Tasks 1–5
 
