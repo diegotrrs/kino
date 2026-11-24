@@ -208,6 +208,73 @@ class TestRestoreCalendar:
         assert calendar["id"] in ids
 
 
+class TestCalendarEndDate:
+    def test_end_date_can_be_set_on_create(self, client, owner_headers, track_calendar):
+        res = client.post(
+            "/api/calendars/",
+            json={"name": "Lisbon", "start_date": "2027-03-15", "end_date": "2027-03-21"},
+            headers=owner_headers,
+        )
+
+        assert res.status_code == 201
+        assert res.json()["end_date"] == "2027-03-21"
+        track_calendar(res.json()["id"])
+
+    def test_end_date_is_empty_when_not_given(self, client, calendar, owner_headers):
+        res = client.get(f"/api/calendars/{calendar['uuid']}", headers=owner_headers)
+
+        assert res.json()["end_date"] is None
+
+    def test_end_date_before_start_date_is_rejected_on_create(self, client, owner_headers):
+        res = client.post(
+            "/api/calendars/",
+            json={"name": "Lisbon", "start_date": "2027-03-15", "end_date": "2027-03-14"},
+            headers=owner_headers,
+        )
+
+        assert res.status_code == 400
+
+    def test_owner_can_set_and_clear_end_date(self, client, calendar, owner_headers):
+        url = f"/api/calendars/{calendar['uuid']}"
+
+        set_res = client.patch(url, json={"start_date": "2028-06-01", "end_date": "2028-06-07"}, headers=owner_headers)
+        clear_res = client.patch(url, json={"end_date": None}, headers=owner_headers)
+
+        assert set_res.json()["end_date"] == "2028-06-07"
+        assert clear_res.status_code == 200
+        assert clear_res.json()["end_date"] is None
+        assert clear_res.json()["start_date"] == "2028-06-01"
+
+    def test_moving_start_date_past_end_date_is_rejected(self, client, calendar, owner_headers):
+        url = f"/api/calendars/{calendar['uuid']}"
+        client.patch(url, json={"start_date": "2028-06-01", "end_date": "2028-06-07"}, headers=owner_headers)
+
+        res = client.patch(url, json={"start_date": "2028-06-10"}, headers=owner_headers)
+
+        assert res.status_code == 400
+        assert client.get(url, headers=owner_headers).json()["start_date"] == "2028-06-01"
+
+    def test_end_date_is_listed(self, client, calendar, owner_headers):
+        client.patch(
+            f"/api/calendars/{calendar['uuid']}",
+            json={"start_date": "2028-06-01", "end_date": "2028-06-07"},
+            headers=owner_headers,
+        )
+
+        listed = client.get("/api/calendars/", headers=owner_headers).json()
+
+        assert next(c for c in listed if c["id"] == calendar["id"])["end_date"] == "2028-06-07"
+
+    def test_end_date_survives_delete_and_restore(self, client, calendar, owner_headers):
+        url = f"/api/calendars/{calendar['uuid']}"
+        client.patch(url, json={"start_date": "2028-06-01", "end_date": "2028-06-07"}, headers=owner_headers)
+
+        client.delete(url, headers=owner_headers)
+        client.post(f"{url}/restore", headers=owner_headers)
+
+        assert client.get(url, headers=owner_headers).json()["end_date"] == "2028-06-07"
+
+
 # ---------------------------------------------------------------------------
 # Membership
 # ---------------------------------------------------------------------------

@@ -8,12 +8,14 @@ class CalendarCreate(BaseModel):
     name: str
     created_by: int = 0
     start_date: date | None = None
+    end_date: date | None = None
 
 
 class CalendarUpdate(BaseModel):
     name: str | None = None
     is_public: bool | None = None
     start_date: date | None = None
+    end_date: date | None = None
 
 
 class CalendarFavouriteUpdate(BaseModel):
@@ -27,6 +29,7 @@ class CalendarResponse(BaseModel):
     is_public: bool = False
     created_by: int
     start_date: date
+    end_date: date | None = None
     created_at: datetime
     updated_at: datetime | None = None
     is_favourite: bool = False

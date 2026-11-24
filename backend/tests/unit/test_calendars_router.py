@@ -338,3 +338,87 @@ class TestDayNames:
             router.delete_day_name(calendar_uuid=UUID, day=date(2026, 11, 7), db=db, current_user=user)
 
         assert exc.value.status_code == 404
+
+
+class TestCalendarDateRange:
+    @pytest.fixture(autouse=True)
+    def _frozen_clock(self, time_machine):
+        time_machine.move_to(date(2026, 11, 24), tick=False)
+
+    def test_create_accepts_end_date_on_or_after_start_date(self, crud, db, user):
+        calendar = CalendarCreate(name="Lisbon", start_date=date(2026, 11, 26), end_date=date(2026, 11, 26))
+
+        router.create_calendar(calendar=calendar, db=db, current_user=user)
+
+        crud.create_calendar.assert_called_once()
+
+    def test_create_rejects_end_date_before_start_date(self, crud, db, user):
+        calendar = CalendarCreate(name="Lisbon", start_date=date(2026, 11, 26), end_date=date(2026, 11, 25))
+
+        with pytest.raises(HTTPException) as exc:
+            router.create_calendar(calendar=calendar, db=db, current_user=user)
+
+        assert exc.value.status_code == 400
+        crud.create_calendar.assert_not_called()
+
+    def test_create_without_start_date_rejects_end_date_before_today(self, crud, db, user):
+        calendar = CalendarCreate(name="Lisbon", end_date=date(2026, 11, 23))
+
+        with pytest.raises(HTTPException) as exc:
+            router.create_calendar(calendar=calendar, db=db, current_user=user)
+
+        assert exc.value.status_code == 400
+        crud.create_calendar.assert_not_called()
+
+    def test_update_rejects_end_date_before_stored_start_date(self, crud, resolved_id, db, user):
+        crud.get_user_role.return_value = "owner"
+        crud.get_calendar.return_value = {"start_date": date(2026, 11, 26), "end_date": None}
+
+        with pytest.raises(HTTPException) as exc:
+            router.update_calendar(
+                calendar_uuid=UUID, calendar=CalendarUpdate(end_date=date(2026, 11, 20)), db=db, current_user=user
+            )
+
+        assert exc.value.status_code == 400
+        crud.update_calendar.assert_not_called()
+
+    def test_update_rejects_start_date_moved_past_stored_end_date(self, crud, resolved_id, db, user):
+        crud.get_user_role.return_value = "owner"
+        crud.get_calendar.return_value = {"start_date": date(2026, 11, 26), "end_date": date(2026, 12, 2)}
+
+        with pytest.raises(HTTPException) as exc:
+            router.update_calendar(
+                calendar_uuid=UUID, calendar=CalendarUpdate(start_date=date(2026, 12, 5)), db=db, current_user=user
+            )
+
+        assert exc.value.status_code == 400
+        crud.update_calendar.assert_not_called()
+
+    def test_update_allows_moving_both_dates_together(self, crud, resolved_id, db, user):
+        crud.get_user_role.return_value = "owner"
+        crud.get_calendar.return_value = {"start_date": date(2026, 11, 26), "end_date": date(2026, 12, 2)}
+
+        router.update_calendar(
+            calendar_uuid=UUID,
+            calendar=CalendarUpdate(start_date=date(2026, 12, 5), end_date=date(2026, 12, 9)),
+            db=db,
+            current_user=user,
+        )
+
+        crud.update_calendar.assert_called_once()
+
+    def test_update_allows_clearing_end_date(self, crud, resolved_id, db, user):
+        crud.get_user_role.return_value = "owner"
+        crud.get_calendar.return_value = {"start_date": date(2026, 11, 26), "end_date": date(2026, 12, 2)}
+
+        router.update_calendar(calendar_uuid=UUID, calendar=CalendarUpdate(end_date=None), db=db, current_user=user)
+
+        crud.update_calendar.assert_called_once()
+
+    def test_update_without_dates_skips_the_date_check(self, crud, resolved_id, db, user):
+        crud.get_user_role.return_value = "owner"
+
+        router.update_calendar(calendar_uuid=UUID, calendar=CalendarUpdate(name="Lisboa"), db=db, current_user=user)
+
+        crud.get_calendar.assert_not_called()
+        crud.update_calendar.assert_called_once()

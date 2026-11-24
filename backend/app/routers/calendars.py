@@ -83,12 +83,18 @@ def get_calendar(
     return calendar
 
 
+def _check_date_range(start_date: date, end_date: date | None) -> None:
+    if end_date is not None and end_date < start_date:
+        raise HTTPException(status_code=400, detail="End date can't be before the start date")
+
+
 @router.post("/", response_model=CalendarResponse, status_code=201)
 def create_calendar(
     calendar: CalendarCreate,
     db: connection = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
+    _check_date_range(calendar.start_date or date.today(), calendar.end_date)
     calendar.created_by = current_user["id"]
     return crud.create_calendar(db, calendar)
 
@@ -103,6 +109,14 @@ def update_calendar(
     calendar_id = _get_id_by_uuid(db, calendar_uuid)
     if crud.get_user_role(db, calendar_id, current_user["id"]) != "owner":
         raise HTTPException(status_code=403, detail="Only the owner can edit this calendar")
+    if calendar.model_fields_set & {"start_date", "end_date"}:
+        # A PATCH may change one date only, so check the range against the stored one
+        stored = crud.get_calendar(db, calendar_id)
+        if stored is None:
+            raise HTTPException(status_code=404, detail="Calendar not found")
+        start_date = calendar.start_date or stored["start_date"]
+        end_date = calendar.end_date if "end_date" in calendar.model_fields_set else stored["end_date"]
+        _check_date_range(start_date, end_date)
     updated = crud.update_calendar(db, calendar_id, calendar)
     if updated is None:
         raise HTTPException(status_code=404, detail="Calendar not found")

@@ -96,7 +96,7 @@ jobs:
         run: |
           psql -h localhost -U postgres -d kino -v ON_ERROR_STOP=1 -f init.sql
           # Migrations not yet folded into init.sql, in dependency order
-          for m in add_start_date_to_calendars add_calendar_expenses rename_event_costs_to_event_expenses; do
+          for m in add_start_date_to_calendars add_end_date_to_calendars add_calendar_expenses rename_event_costs_to_event_expenses; do
             psql -h localhost -U postgres -d kino -v ON_ERROR_STOP=1 -f "migrations/$m.sql"
           done
 
