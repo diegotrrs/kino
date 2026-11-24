@@ -124,7 +124,7 @@ Each task leaves the app working. Order: backend first, then what the member see
 - **Verify:** `npm run build`, `npm run lint`, `npm run check`.
 - **Files:** `components/date-picker.tsx`, `components/calendars/calendar-create-form.tsx`, `app/(app)/calendars/actions.ts`, `lib/analytics/events.ts` (+ type test), `messages/*.json`, `e2e/3-calendars.spec.ts`.
 
-### Task 4: Change or clear the end date on Edit Calendar
+### Task 4: Change or clear the end date on Edit Calendar ✅
 
 - **Acceptance:**
   - [ ] Edit Calendar shows the end date, pre-filled. It can be set, changed or cleared.

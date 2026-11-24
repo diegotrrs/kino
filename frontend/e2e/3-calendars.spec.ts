@@ -9,7 +9,8 @@ import {
   getToken,
   login,
   makeCalendarPublic,
-  resetTestData
+  resetTestData,
+  setCalendarDates
 } from './helpers/api';
 
 test.afterAll(async ({ request }) => {
@@ -192,5 +193,25 @@ test.describe('@3. calendars', () => {
 
     await expect(page.getByRole('button', { name: 'Pick a date' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Clear end date' })).toHaveCount(0);
+  });
+  test('@3.13 should set and then clear the end date on Edit Calendar', async ({ page, request }) => {
+    const token = await getToken(request);
+    const uuid = await createCalendar(request, token, `Edit End Date ${Date.now()}`);
+    await setCalendarDates(request, token, uuid, dayOfThisMonth(10), null);
+
+    await page.goto(`/calendars/${uuid}/edit`);
+    await page.getByRole('button', { name: 'Pick a date' }).click();
+    await pickDay(page, dayOfThisMonth(13));
+    await page.getByRole('button', { name: /^save$/i }).click();
+    await page.waitForURL(`/calendars/${uuid}`);
+    await expect(page.getByTestId('trip-pass').getByText(/^4 days$/i)).toBeVisible();
+
+    await page.goto(`/calendars/${uuid}/edit`);
+    await page.getByRole('button', { name: 'Clear end date' }).click();
+    await page.getByRole('button', { name: /^save$/i }).click();
+    await page.waitForURL(`/calendars/${uuid}`);
+    await expect(page.getByTestId('trip-pass').getByText(/^1 day$/i)).toBeVisible();
+
+    await deleteCalendar(request, token, uuid);
   });
 });

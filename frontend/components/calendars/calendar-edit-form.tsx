@@ -3,8 +3,10 @@ import {
   updateCalendar,
   updateCalendarVisibility
 }                          from '@/app/(app)/calendars/actions';
+import { EndDateField }    from '@/components/calendars/end-date-field';
 import { DateTimePicker }  from '@/components/date-picker';
 import { track } from '@/lib/analytics/events';
+import { isEndBeforeStart } from '@/lib/calendar-dates';
 import { Button }          from '@/components/ui/button';
 import {
   Form,
@@ -21,47 +23,60 @@ import { zodResolver }     from '@hookform/resolvers/zod';
 import { format, parseISO } from 'date-fns';
 import { useTranslations } from 'next-intl';
 import { useRouter }       from 'next/navigation';
-import { useTransition }   from 'react';
-import { useForm }         from 'react-hook-form';
+import { useMemo, useTransition } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
 import { z }               from 'zod';
 
-const schema = z.object({
-  name:      z.string().min(1, { message: 'Calendar name is required.' }),
-  startDate: z.date().optional(),
-});
+const getSchema = (endBeforeStartMessage: string) =>
+  z.object({
+    name:      z.string().min(1, { message: 'Calendar name is required.' }),
+    startDate: z.date().optional(),
+    endDate:   z.date().optional(),
+  }).refine((data) => !isEndBeforeStart(data.startDate, data.endDate, new Date()), {
+    message: endBeforeStartMessage,
+    path:    ['endDate'],
+  });
 
-type FormValues = z.infer<typeof schema>;
+type FormValues = z.infer<ReturnType<typeof getSchema>>;
 
 type CalendarEditFormProps = {
   calendarUuid: string;
   currentName: string;
   isPublic: boolean;
   currentStartDate?: string;
+  currentEndDate: string | null;
 }
 
-export const CalendarEditForm = ({ calendarUuid, currentName, isPublic, currentStartDate }: CalendarEditFormProps) => {
+export const CalendarEditForm = ({
+  calendarUuid, currentName, isPublic, currentStartDate, currentEndDate,
+}: CalendarEditFormProps) => {
   const [isPending, startTransition] = useTransition();
   const [isVisibilityPending, startVisibilityTransition] = useTransition();
   const { toast } = useToast();
   const router = useRouter();
   const t = useTranslations('createCalendar');
+  const schema = useMemo(() => getSchema(t('endBeforeStart')), [t]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       name:      currentName,
       startDate: currentStartDate ? parseISO(currentStartDate) : undefined,
+      endDate:   currentEndDate ? parseISO(currentEndDate) : undefined,
     },
   });
+  const startDate = useWatch({ control: form.control, name: 'startDate' });
 
   const onSubmit = (data: FormValues) => {
     startTransition(async () => {
       try {
         const startDate = data.startDate ? format(data.startDate, 'yyyy-MM-dd') : undefined;
-        await updateCalendar(calendarUuid, data.name, startDate);
+        const endDate = data.endDate ? format(data.endDate, 'yyyy-MM-dd') : null;
+        await updateCalendar(calendarUuid, data.name, startDate, endDate);
         const changed = [
           ...(data.name !== currentName ? ['name' as const] : []),
           ...(startDate !== currentStartDate ? ['start_date' as const] : []),
+          ...(endDate !== currentEndDate ? ['end_date' as const] : []),
         ];
         track('calendar_updated', { changed });
         toast({ title: t('updated') });
@@ -115,6 +130,20 @@ export const CalendarEditForm = ({ calendarUuid, currentName, isPublic, currentS
                   displayFormat={{ hour24: 'PP', hour12: 'PP' }}
                   placeholder={t('startDatePlaceholder')}
                 />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name='endDate'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t('endDate')}</FormLabel>
+              <FormControl>
+                <EndDateField value={field.value} onChange={field.onChange} startDate={startDate} />
               </FormControl>
               <FormMessage />
             </FormItem>

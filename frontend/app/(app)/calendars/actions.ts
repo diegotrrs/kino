@@ -178,13 +178,14 @@ export const updateCalendarVisibility = async (
   revalidatePath('/home');
 };
 
-export const updateCalendar = async (uuid: string, name: string, startDate?: string) => {
+// endDate: a date sets it, null clears it
+export const updateCalendar = async (uuid: string, name: string, startDate: string | undefined, endDate: string | null) => {
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
 
   if (!token) redirect('/login');
 
-  const body: Record<string, string> = { name };
+  const body: Record<string, string | null> = { name, end_date: endDate };
   if (startDate) body['start_date'] = startDate;
 
   const res = await fetch(`${API_BASE_URL}/api/calendars/${uuid}`, {

@@ -67,6 +67,7 @@ const EditCalendarPage = async ({
             currentName={calendar.name}
             isPublic={calendar.is_public}
             currentStartDate={calendar.start_date}
+            currentEndDate={calendar.end_date}
           />
 
           <Separator />
