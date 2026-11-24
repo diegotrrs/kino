@@ -8,6 +8,7 @@ import {
   login,
   nameDay,
   resetTestData,
+  setCalendarDates,
   setCalendarStartDate,
 } from './helpers/api';
 
@@ -102,6 +103,29 @@ test.describe('@15. day names', () => {
     await expect(tripEndCell.getByRole('button', { name: '+ Name this day' })).toBeVisible();
     const namedCell = page.locator(`td.fc-daygrid-day[data-date="${nextMonthDay2}"]`);
     await expect(namedCell.getByText('Visit to Bruges')).toBeVisible();
+
+    await deleteCalendar(request, token, calendarUuid);
+  });
+
+  test('@15.5 should show "+ Name this day" on every day up to the end date of a calendar with no events', async ({
+    page,
+    request,
+  }) => {
+    // The 10th to the 13th of this month: four days, all in the month the calendar opens on
+    const now = new Date();
+    const tripStart = toLocalDateKey(new Date(now.getFullYear(), now.getMonth(), 10));
+    const tripEnd = toLocalDateKey(new Date(now.getFullYear(), now.getMonth(), 13));
+    const dayAfterTrip = toLocalDateKey(new Date(now.getFullYear(), now.getMonth(), 14));
+    const token = await getToken(request);
+    const calendarUuid = await createCalendar(request, token, `Day Names End Date Test ${Date.now()}`);
+    await setCalendarDates(request, token, calendarUuid, tripStart, tripEnd);
+
+    await page.goto(`/calendars/${calendarUuid}`);
+
+    const marker = { name: '+ Name this day' };
+    await expect(page.locator(`td.fc-daygrid-day[data-date="${tripEnd}"]`).getByRole('button', marker)).toBeVisible();
+    await expect(page.getByRole('button', marker)).toHaveCount(4);
+    await expect(page.locator(`td.fc-daygrid-day[data-date="${dayAfterTrip}"]`).getByRole('button', marker)).toHaveCount(0);
 
     await deleteCalendar(request, token, calendarUuid);
   });

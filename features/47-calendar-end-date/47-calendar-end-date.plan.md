@@ -97,7 +97,7 @@ Each task leaves the app working. Order: backend first, then what the member see
 - **Verify:** `make check`.
 - **Files:** `migrations/add_end_date_to_calendars.sql`, `.github/workflows/deploy-frontend.yml`, `app/schemas/calendar.py`, `app/crud/calendars.py`, `app/routers/calendars.py`, tests.
 
-### Task 2: The trip's length uses the end date
+### Task 2: The trip's length uses the end date ✅
 
 - **Acceptance:**
   - [ ] `getTripSpan` takes the end date; the trip runs to the later of the end date and the last event.

@@ -20,6 +20,7 @@ type EventsContextType = {
   calendarId?: number;
   calendarUuid?: string;
   initialDate?: Date;
+  tripEndDate?: string | null;
   readOnly: boolean;
   preferredCurrency: string;
   events: CalendarEvent[];
@@ -65,6 +66,7 @@ type EventsProviderProps = {
   calendarId?: number;
   calendarUuid?: string;
   initialDate?: Date;
+  tripEndDate?: string | null;
   serverEvents?: CalendarEvent[];
   serverCalendarExpenses?: CalendarExpense[];
   serverDayNames?: DayName[];
@@ -78,6 +80,7 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
   calendarId,
   calendarUuid,
   initialDate,
+  tripEndDate = null,
   serverEvents,
   serverCalendarExpenses,
   serverDayNames,
@@ -148,6 +151,7 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
         calendarId,
         calendarUuid,
         initialDate,
+        tripEndDate,
         readOnly,
         preferredCurrency,
         events,

@@ -9,6 +9,7 @@ import {
 
 type TripPassProps = {
   startDate: string;
+  endDate: string | null;
   eventDates: string[];
 };
 
@@ -17,10 +18,10 @@ const getToday = (): string => {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 };
 
-export const TripPass = async ({ startDate, eventDates }: TripPassProps) => {
+export const TripPass = async ({ startDate, endDate, eventDates }: TripPassProps) => {
   const [t, locale] = await Promise.all([getTranslations('tripPass'), getLocale()]);
   const today = getToday();
-  const span = getTripSpan(startDate, eventDates, today);
+  const span = getTripSpan(startDate, eventDates, today, endDate);
 
   const formatDay = (isoDate: string): string =>
     new Date(`${isoDate}T12:00:00`).toLocaleDateString(locale, { day: 'numeric', month: 'short' }).toUpperCase();

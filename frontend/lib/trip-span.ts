@@ -11,9 +11,15 @@ const toUtcDay = (isoDate: string): number => Date.parse(`${isoDate.slice(0, 10)
 
 const getDaysBetween = (from: string, to: string): number => Math.round((toUtcDay(to) - toUtcDay(from)) / DAY_MS);
 
-export const getTripSpan = (startDate: string, eventDates: string[], today: string): TripSpan => {
+// The trip runs from the start date to the later of its end date and its last event
+export const getTripSpan = (
+  startDate: string,
+  eventDates: string[],
+  today: string,
+  endDate?: string | null,
+): TripSpan => {
   const start = startDate.slice(0, 10);
-  const end = eventDates
+  const end = [...eventDates, ...(endDate ? [endDate] : [])]
     .map((d) => d.slice(0, 10))
     .reduce((latest, d) => (d > latest ? d : latest), start);
   const totalDays = getDaysBetween(start, end) + 1;

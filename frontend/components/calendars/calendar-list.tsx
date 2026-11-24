@@ -17,10 +17,16 @@ type CalendarListProps = {
   from?: string;
 }
 
-const formatStartDate = (isoDate: string, locale: string): string =>
+const formatListDate = (isoDate: string, locale: string, hasYear: boolean): string =>
   new Date(`${isoDate.slice(0, 10)}T12:00:00`)
-    .toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' })
+    .toLocaleDateString(locale, { day: 'numeric', month: 'short', ...(hasYear ? { year: 'numeric' } : {}) })
     .toUpperCase();
+
+// "26 NOV 2026", or "26 NOV → 2 DEC 2026" when the calendar has an end date
+const getDateLabel = (startDate: string, endDate: string | null, locale: string): string =>
+  endDate
+    ? `${formatListDate(startDate, locale, false)} → ${formatListDate(endDate, locale, true)}`
+    : formatListDate(startDate, locale, true);
 
 export const CalendarList = ({ calendars, from }: CalendarListProps) => {
   const t = useTranslations('calendarList');
@@ -62,7 +68,7 @@ export const CalendarList = ({ calendars, from }: CalendarListProps) => {
             )}
             {calendar.start_date && (
               <span className='ml-auto hidden shrink-0 font-mono text-xs text-muted-foreground tabular-nums sm:inline'>
-                {formatStartDate(calendar.start_date, locale)}
+                {getDateLabel(calendar.start_date, calendar.end_date, locale)}
               </span>
             )}
           </Link>

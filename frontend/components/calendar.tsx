@@ -73,7 +73,7 @@ type DayRenderProps = {
 
 const Calendar = () => {
   const {
-    events, calendarId, initialDate, readOnly, addEvent, deleteEvent, setEventAddOpen, setEventEditOpen, dayNames,
+    events, calendarId, initialDate, tripEndDate, readOnly, addEvent, deleteEvent, setEventAddOpen, setEventEditOpen, dayNames,
   } = useEvents();
   const { toast } = useToast();
 
@@ -95,9 +95,14 @@ const Calendar = () => {
   const locale = useLocale();
   const tToast = useTranslations('toasts');
   const tDaySheet = useTranslations('daySheet');
-  // Trip = calendar start date → last event (same range as the trip ticket); unnamed days in it invite a name
+  // Trip = start date → later of end date and last event (same range as the trip ticket); unnamed days in it invite a name
   const tripSpan = initialDate
-    ? getTripSpan(toDateKey(initialDate), events.map((e) => toDateKey(new Date(e.end ?? e.start))), toDateKey(new Date()))
+    ? getTripSpan(
+      toDateKey(initialDate),
+      events.map((e) => toDateKey(new Date(e.end ?? e.start))),
+      toDateKey(new Date()),
+      tripEndDate,
+    )
     : null;
 
   const openEditDialog = (event: CalendarEvent) => {

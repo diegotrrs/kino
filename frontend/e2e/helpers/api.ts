@@ -240,6 +240,25 @@ export const setCalendarStartDate = async (
   }
 };
 
+export const setCalendarDates = async (
+  request: APIRequestContext,
+  token: string,
+  calendarUuid: string,
+  startDate: string,
+  endDate: string | null,
+): Promise<void> => {
+  const res = await request.patch(`${API_URL}/api/calendars/${calendarUuid}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    data: { start_date: startDate, end_date: endDate },
+  });
+  if (!res.ok()) {
+    throw new Error(`setCalendarDates: ${res.status()} ${await res.text()}`);
+  }
+};
+
 export const nameDay = async (
   request: APIRequestContext,
   token: string,

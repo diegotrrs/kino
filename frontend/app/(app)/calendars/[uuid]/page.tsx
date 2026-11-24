@@ -195,6 +195,7 @@ const CalendarPage = async ({
       calendarId={calendar.id}
       calendarUuid={String(calendar.uuid)}
       initialDate={initialDate}
+      tripEndDate={calendar.end_date}
       serverEvents={events}
       serverCalendarExpenses={calendarExpenses}
       serverDayNames={dayNames}
@@ -243,7 +244,7 @@ const CalendarPage = async ({
                       </Button>
                     )}
                   </div>
-                  <TripPass startDate={calendar.start_date} eventDates={eventDates} />
+                  <TripPass startDate={calendar.start_date} endDate={calendar.end_date} eventDates={eventDates} />
                 </div>
               </div>
               <div className={hasRail ? 'pt-4 lg:grid lg:grid-cols-[minmax(0,1fr)_17rem] lg:items-start lg:gap-6' : 'pt-4'}>

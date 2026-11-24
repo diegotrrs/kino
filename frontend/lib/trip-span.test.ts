@@ -29,6 +29,25 @@ describe('getTripSpan', () => {
     expect(getTripSpan('2027-05-12', ['2027-05-18'], '2027-05-19').currentDay).toBeNull();
   });
 
+  it('should end on the end date when the calendar has one and no events', () => {
+    const span = getTripSpan('2027-05-12', [], '2027-01-01', '2027-05-18');
+
+    expect(span.end).toBe('2027-05-18');
+    expect(span.totalDays).toBe(7);
+  });
+
+  it('should stretch past the end date when an event falls after it', () => {
+    expect(getTripSpan('2027-05-12', ['2027-05-20'], '2027-01-01', '2027-05-18').end).toBe('2027-05-20');
+  });
+
+  it('should keep the end date when every event falls before it', () => {
+    expect(getTripSpan('2027-05-12', ['2027-05-13'], '2027-01-01', '2027-05-18').end).toBe('2027-05-18');
+  });
+
+  it('should end on the last event when the end date is empty', () => {
+    expect(getTripSpan('2027-05-12', ['2027-05-14'], '2027-01-01', null).end).toBe('2027-05-14');
+  });
+
   it('should accept full timestamps and compare by date only', () => {
     expect(getTripSpan('2027-05-12T00:00:00', ['2027-05-13T23:30:00'], '2027-05-13T08:00:00').currentDay).toBe(2);
   });
