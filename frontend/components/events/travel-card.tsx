@@ -3,9 +3,13 @@ import {
   CARD_LABEL,
   ReferenceStub
 }                                       from '@/components/events/reference-stub';
+import { TrackFlightLink }              from '@/components/events/track-flight-link';
 import { TravelModeIcon }               from '@/components/events/travel-strip';
 import { getEventTint }                 from '@/lib/event-colors';
-import { getTravelCardDetails }         from '@/lib/travel';
+import {
+  getFlightTrackingUrl,
+  getTravelCardDetails
+}                                       from '@/lib/travel';
 import type {
   TravelDetails,
   TravelMode
@@ -33,7 +37,9 @@ export const TravelCard = ({ travelMode, travel, bookingReference, departs, arri
   const details = getTravelCardDetails(travelMode, travel);
   const hasRoute = !!travel.origin || !!travel.destination;
   const reference = bookingReference;
-  const hasStub = !!travel.seat || !!reference;
+  const trackingUrl = travelMode === 'flight' ? getFlightTrackingUrl(travel.number) : null;
+  // The stub holds the seat, the reference and Track flight, so any one of them is enough to show it
+  const hasStub = !!travel.seat || !!reference || !!trackingUrl;
 
   return (
     <section
@@ -87,7 +93,10 @@ export const TravelCard = ({ travelMode, travel, bookingReference, departs, arri
               <span className={PLACE}>{travel.seat}</span>
             </div>
           )}
-          {reference && <ReferenceStub reference={reference} trackedFrom='travel_card' />}
+          <div className='mt-auto flex flex-col gap-2'>
+            {reference && <ReferenceStub reference={reference} trackedFrom='travel_card' />}
+            {trackingUrl && travel.number && <TrackFlightLink url={trackingUrl} number={travel.number} />}
+          </div>
         </div>
       )}
     </section>

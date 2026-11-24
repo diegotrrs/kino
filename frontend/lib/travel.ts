@@ -132,3 +132,16 @@ export const getTravelCardDetails = (travelMode: TravelMode, travel: TravelDetai
 // The same shape the API returns: unfilled fields are null, never empty strings
 export const toTravelDetails = (travel: Partial<TravelDetails> | undefined): TravelDetails =>
   Object.fromEntries(ALL_TRAVEL_FIELDS.map((field) => [field, travel?.[field] || null])) as TravelDetails;
+
+// An airline code (2 characters with at least one letter, or 3 letters) then 1–4 digits and an optional
+// letter: BA500, U28001, 3K123, TP1351A
+const FLIGHT_NUMBER = /^([a-z][a-z0-9]|\d[a-z]|[a-z]{3})\d{1,4}[a-z]?$/;
+
+// Flightradar24's page for a flight number; null when the number can't be tracked, so no link is shown
+export const getFlightTrackingUrl = (number: string | null | undefined): string | null => {
+  const code = (number ?? '').replace(/[\s-]/g, '').toLowerCase();
+  if (!FLIGHT_NUMBER.test(code)) {
+    return null;
+  }
+  return `https://www.flightradar24.com/data/flights/${code}`;
+};

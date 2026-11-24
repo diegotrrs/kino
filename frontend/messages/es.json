@@ -377,6 +377,7 @@
       "booking_reference": "RESERVA"
     },
     "copyReference": "Copiar código de reserva {reference}",
+    "trackFlight": "Seguir el vuelo {number} en Flightradar24 (se abre en una pestaña nueva)",
     "copied": "Copiado",
     "suggestedTitle": {
       "flightTo": "Vuelo a {destination}",
@@ -391,6 +392,7 @@
       "trainTicket": "Billete de tren",
       "copy": "Copiar",
       "copyReference": "Copiar código de reserva",
+      "trackFlight": "Seguir vuelo",
       "checkIn": "Entrada",
       "checkOut": "Salida"
     },

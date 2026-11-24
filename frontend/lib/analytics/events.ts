@@ -46,6 +46,7 @@ export type AnalyticsEvents = {
   event_link_added: undefined;
   event_expense_added: { currency: Currency };
   booking_reference_copied: { from: 'chip' | 'travel_card' | 'stay_card' | 'field' };
+  flight_tracked: { from: 'travel_card' };
   address_map_opened: { from: 'timeline' | 'day_sheet' | 'stay_card' | 'form' };
 
   // Planning features

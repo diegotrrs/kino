@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   FIELDS_BY_TRAVEL_MODE,
   getCalendarCellLabel,
+  getFlightTrackingUrl,
   getRouteLabel,
   getSuggestedTitle,
   getTravelCardDetails,
@@ -207,5 +208,32 @@ describe('toTravelDetails', () => {
 
   it('should give all-null details when nothing was filled in', () => {
     expect(Object.values(toTravelDetails(undefined)).every((value) => value === null)).toBe(true);
+  });
+});
+
+describe('getFlightTrackingUrl', () => {
+  it('should link to the flight on Flightradar24 with spaces removed and in lower case', () => {
+    expect(getFlightTrackingUrl('BA 500')).toBe('https://www.flightradar24.com/data/flights/ba500');
+  });
+
+  it('should accept airline codes that contain a digit and numbers with a letter suffix', () => {
+    expect(getFlightTrackingUrl('U2 8001')).toBe('https://www.flightradar24.com/data/flights/u28001');
+    expect(getFlightTrackingUrl('TP1351A')).toBe('https://www.flightradar24.com/data/flights/tp1351a');
+  });
+
+  it('should ignore a dash between the airline code and the number', () => {
+    expect(getFlightTrackingUrl('FR-1234')).toBe('https://www.flightradar24.com/data/flights/fr1234');
+  });
+
+  it('should give no link when there is no flight number', () => {
+    expect(getFlightTrackingUrl(null)).toBeNull();
+    expect(getFlightTrackingUrl(undefined)).toBeNull();
+    expect(getFlightTrackingUrl('   ')).toBeNull();
+  });
+
+  it('should give no link for text that is not a flight number', () => {
+    expect(getFlightTrackingUrl('Window')).toBeNull();
+    expect(getFlightTrackingUrl('12345')).toBeNull();
+    expect(getFlightTrackingUrl('BA/500?x=1')).toBeNull();
   });
 });

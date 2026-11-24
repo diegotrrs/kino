@@ -188,6 +188,33 @@ test.describe('@17. flight and train events', () => {
     await dialog.getByRole('group', { name: 'Travel' }).getByText('Train', { exact: true }).click();
     await expect(dialog.getByLabel('To', { exact: true })).toHaveValue('');
   });
+  test('@17.8 should link a flight to Flightradar24 from its boarding pass, even without a seat or reference', async ({
+    page,
+    request,
+  }) => {
+    const token = await getToken(request);
+    const calendarUuid = await createCalendar(request, token, `Track Flight Test ${Date.now()}`);
+    const calendarId = await getCalendarId(request, token, calendarUuid);
+    // Only a number and a route: before, this flight's pass had no stub at all
+    await createTravelEvent(
+      request, token, calendarId, `Number-only flight ${Date.now()}`, getToday(), 'flight',
+      { origin: 'LHR', destination: 'LIS', number: 'BA 500' },
+    );
+    await createTravelEvent(request, token, calendarId, `Train ${Date.now()}`, getToday(), 'train', TRAIN);
+
+    await page.goto(`/calendars/${calendarUuid}`);
+    await page.locator('.fc-event').filter({ hasText: 'LHR → LIS' }).click();
+    const track = page.getByRole('alertdialog').getByTestId('travel-card')
+      .getByRole('link', { name: 'Track flight BA 500 on Flightradar24 (opens in a new tab)' });
+    await expect(track).toBeVisible();
+    await expect(track).toHaveAttribute('href', 'https://www.flightradar24.com/data/flights/ba500');
+    await expect(track).toHaveAttribute('target', '_blank');
+
+    await page.reload();
+    await page.locator('.fc-event').filter({ hasText: 'London St Pancras → Paris Gare du Nord' }).click();
+    await expect(page.getByRole('alertdialog').getByTestId('travel-card')).toBeVisible();
+    await expect(page.getByRole('alertdialog').getByRole('link', { name: /Track flight/ })).toHaveCount(0);
+  });
 });
 
 test.describe('@17. flight and train events on phones', () => {
@@ -210,5 +237,26 @@ test.describe('@17. flight and train events on phones', () => {
 
     await sheet.getByRole('button', { name: title }).tap();
     await expect(page.getByRole('alertdialog').getByTestId('travel-card')).toBeVisible();
+  });
+  test('@17.9 should show Track flight under Copy reference on a phone', async ({ page, request }) => {
+    const token = await getToken(request);
+    const calendarUuid = await createCalendar(request, token, `Phone Track Flight ${Date.now()}`);
+    const calendarId = await getCalendarId(request, token, calendarUuid);
+    const title = `Phone track ${Date.now()}`;
+    await createTravelEvent(request, token, calendarId, title, getToday(), 'flight', FLIGHT, FLIGHT_REFERENCE);
+
+    await page.goto(`/calendars/${calendarUuid}`);
+    await page.locator(`td.fc-daygrid-day[data-date="${getToday()}"]`).click();
+    await page.getByRole('dialog').getByRole('button', { name: title }).tap();
+    const card = page.getByRole('alertdialog').getByTestId('travel-card');
+    const copy = card.getByRole('button', { name: 'Copy booking reference K7XQ2M' });
+    const track = card.getByRole('link', { name: 'Track flight BA 2490 on Flightradar24 (opens in a new tab)' });
+    await expect(track).toBeVisible();
+
+    // Full width, at least 44 px tall, and below the Copy button
+    const [copyBox, trackBox] = [await copy.boundingBox(), await track.boundingBox()];
+    expect(trackBox?.height).toBeGreaterThanOrEqual(44);
+    expect(trackBox?.width).toBeCloseTo(copyBox?.width ?? 0, 0);
+    expect(trackBox?.y).toBeGreaterThan(copyBox?.y ?? 0);
   });
 });
