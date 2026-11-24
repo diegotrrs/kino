@@ -62,9 +62,9 @@ export const CalendarCreateForm = ({ initialName, tripSlug }: CalendarCreateForm
         const endDate = data.endDate ? format(data.endDate, 'yyyy-MM-dd') : undefined;
 
         if (tripSlug) {
-          const { uuid } = await createTripCalendar(tripSlug, data.name, startDate);
+          const { uuid, hasEndDate } = await createTripCalendar(tripSlug, data.name, startDate);
           track('calendar_created', {
-            source: 'hot_trip', hot_trip_slug: tripSlug, has_start_date: !!data.startDate, has_end_date: true,
+            source: 'hot_trip', hot_trip_slug: tripSlug, has_start_date: !!data.startDate, has_end_date: hasEndDate,
           });
           toast({ title: t('createdWithItinerary') });
           router.push(`/calendars/${uuid}`);

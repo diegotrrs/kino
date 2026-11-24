@@ -115,12 +115,17 @@ export const createTripCalendar = async (
   tripSlug: string,
   name: string,
   startDate: string,
-): Promise<{ uuid: string }> => {
+): Promise<{ uuid: string; hasEndDate: boolean }> => {
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
   if (!token) redirect('/login');
 
-  const body = { name, start_date: startDate };
+  // The trip ends on the last day of the itinerary
+  const stops = getTripBySlug(tripSlug)?.map?.stops ?? [];
+  const totalDays = stops.reduce((sum, stop) => sum + stop.days, 0);
+  const endDate = totalDays > 0 ? addDays(startDate, totalDays - 1) : null;
+
+  const body = { name, start_date: startDate, end_date: endDate };
   const calRes = await fetch(`${API_BASE_URL}/api/calendars/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
@@ -132,9 +137,8 @@ export const createTripCalendar = async (
   }
   const calendar: { id: number; uuid: string } = await calRes.json();
 
-  const trip = getTripBySlug(tripSlug);
-  if (trip?.map?.stops?.length) {
-    const events = buildTripEvents(trip.map.stops, calendar.id, startDate);
+  if (stops.length) {
+    const events = buildTripEvents(stops, calendar.id, startDate);
     await Promise.all(
       events.map((ev) =>
         fetch(`${API_BASE_URL}/api/events/`, {
@@ -147,7 +151,7 @@ export const createTripCalendar = async (
   }
 
   revalidatePath('/home');
-  return { uuid: calendar.uuid };
+  return { uuid: calendar.uuid, hasEndDate: endDate !== null };
 };
 
 export const updateCalendarVisibility = async (

@@ -3,6 +3,7 @@ import {
   test
 } from '@playwright/test';
 import {
+  API_URL,
   getToken,
   login,
   resetTestData,
@@ -79,5 +80,27 @@ test.describe('@13. hot trips', () => {
     await page.getByRole('button', { name: /^create$/i }).click();
     await page.waitForURL('/home');
     await expect(page.getByRole('link', { name })).toBeVisible();
+  });
+  test('@13.10 should end a Hot Trip calendar on the last day of its itinerary', async ({ page, request }) => {
+    await login(page);
+    const token = await getToken(request);
+    await page.goto('/trips/japan');
+    await page.getByRole('link', { name: /plan your trip to japan/i }).first().click();
+    await expect(page).toHaveURL(/\/calendars\/create/);
+    // The itinerary decides the end date, so the form doesn't ask for one
+    await expect(page.getByText('End date (optional)')).toHaveCount(0);
+
+    await page.getByRole('button', { name: /^create$/i }).click();
+    await page.waitForURL(/\/calendars\/[0-9a-f-]{36}$/);
+    const uuid = page.url().split('/').pop();
+    const res = await request.get(`${API_URL}/api/calendars/${uuid}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const calendar = await res.json() as { start_date: string; end_date: string | null };
+
+    // Japan: Tokyo 4 + Nikkō 1 + Hakone 1 + Kyoto 4 + Nara 1 + Osaka 2 + Hiroshima 1 = 14 days
+    const end = new Date(`${calendar.start_date}T12:00:00`);
+    end.setDate(end.getDate() + 13);
+    expect(calendar.end_date).toBe(end.toISOString().split('T')[0]);
   });
 });

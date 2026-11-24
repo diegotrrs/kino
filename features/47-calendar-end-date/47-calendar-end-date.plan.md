@@ -134,7 +134,7 @@ Each task leaves the app working. Order: backend first, then what the member see
 - **Verify:** `npm run build`, `npm run lint`, `npm run check`.
 - **Files:** `components/calendars/calendar-edit-form.tsx`, `app/(app)/calendars/[uuid]/edit/page.tsx`, `app/(app)/calendars/actions.ts`, `messages/*.json`, e2e.
 
-### Task 5: Hot Trips get their end date from the itinerary
+### Task 5: Hot Trips get their end date from the itinerary ✅
 
 - **Acceptance:**
   - [ ] A calendar created from a Hot Trip has `end_date` = start + total itinerary days − 1.
