@@ -259,4 +259,30 @@ test.describe('@17. flight and train events on phones', () => {
     expect(trackBox?.width).toBeCloseTo(copyBox?.width ?? 0, 0);
     expect(trackBox?.y).toBeGreaterThan(copyBox?.y ?? 0);
   });
+  test('@17.10 should make Track flight the coral button on a phone only when there is no Copy reference', async ({
+    page,
+    request,
+  }) => {
+    const token = await getToken(request);
+    const calendarUuid = await createCalendar(request, token, `Phone Track Colour ${Date.now()}`);
+    const calendarId = await getCalendarId(request, token, calendarUuid);
+    const withReference = `With reference ${Date.now()}`;
+    const withoutReference = `Without reference ${Date.now()}`;
+    await createTravelEvent(request, token, calendarId, withReference, getToday(), 'flight', FLIGHT, FLIGHT_REFERENCE);
+    await createTravelEvent(request, token, calendarId, withoutReference, getToday(), 'flight', FLIGHT);
+    const getBackground = async (title: string, role: 'button' | 'link', name: RegExp): Promise<string> => {
+      await page.goto(`/calendars/${calendarUuid}`);
+      await page.locator(`td.fc-daygrid-day[data-date="${getToday()}"]`).click();
+      await page.getByRole('dialog').getByRole('button', { name: title }).tap();
+      const control = page.getByRole('alertdialog').getByTestId('travel-card').getByRole(role, { name });
+      return control.evaluate((el) => getComputedStyle(el).backgroundColor);
+    };
+
+    const coral = await getBackground(withReference, 'button', /^Copy booking reference/);
+    const trackNextToCopy = await getBackground(withReference, 'link', /^Track flight/);
+    const trackAlone = await getBackground(withoutReference, 'link', /^Track flight/);
+
+    expect(trackAlone).toBe(coral);
+    expect(trackNextToCopy).not.toBe(coral);
+  });
 });

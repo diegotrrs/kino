@@ -95,7 +95,7 @@ export const TravelCard = ({ travelMode, travel, bookingReference, departs, arri
           )}
           <div className='mt-auto flex flex-col gap-2'>
             {reference && <ReferenceStub reference={reference} trackedFrom='travel_card' />}
-            {trackingUrl && travel.number && <TrackFlightLink url={trackingUrl} number={travel.number} />}
+            {trackingUrl && travel.number && <TrackFlightLink url={trackingUrl} number={travel.number} isOnlyAction={!reference} />}
           </div>
         </div>
       )}
