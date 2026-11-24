@@ -88,13 +88,14 @@ const buildTripEvents = (
   return events;
 };
 
-export const createCalendar = async (name: string, startDate?: string) => {
+export const createCalendar = async (name: string, startDate?: string, endDate?: string) => {
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
   if (!token) redirect('/login');
 
   const body: Record<string, string> = { name };
   if (startDate) body['start_date'] = startDate;
+  if (endDate) body['end_date'] = endDate;
 
   const res = await fetch(`${API_BASE_URL}/api/calendars/`, {
     method: 'POST',

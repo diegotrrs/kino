@@ -17,9 +17,9 @@ export type AnalyticsEvents = {
   password_reset_completed: undefined;
 
   // Calendars
-  calendar_created: { source: 'blank' | 'hot_trip'; hot_trip_slug?: string; has_start_date: boolean };
+  calendar_created: { source: 'blank' | 'hot_trip'; hot_trip_slug?: string; has_start_date: boolean; has_end_date: boolean };
   calendar_viewed: { role: 'owner' | 'editor' | 'visitor'; is_public: boolean; event_count: number };
-  calendar_updated: { changed: ('name' | 'start_date')[] };
+  calendar_updated: { changed: ('name' | 'start_date' | 'end_date')[] };
   calendar_visibility_changed: { is_public: boolean; from: 'share_dialog' | 'settings' };
   calendar_share_link_used: { channel: 'copy' | 'whatsapp' | 'messenger' | 'email' };
   calendar_member_invited: undefined;

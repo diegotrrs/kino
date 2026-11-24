@@ -752,6 +752,10 @@ type DateTimePickerProps = {
    * By default, the value is `second` which shows all time inputs.
    **/
   granularity?: Granularity;
+  /** Days before this one are greyed out and can't be picked. */
+  minDate?: Date;
+  /** The month the calendar opens on when there's no value yet. */
+  defaultMonth?: Date;
   className?: string;
 } & Pick<
   CalendarProps,
@@ -777,6 +781,8 @@ const DateTimePicker = React.forwardRef<
       displayFormat,
       granularity = 'second',
       placeholder = 'Pick a date',
+      minDate,
+      defaultMonth,
       className,
       ...props
     },
@@ -785,7 +791,7 @@ const DateTimePicker = React.forwardRef<
     // Without an explicit locale, dates follow the app's language
     const appLocale = useLocale();
     const locale = localeProp ?? getDateFnsLocale(appLocale);
-    const [month, setMonth] = React.useState<Date>(value ?? new Date());
+    const [month, setMonth] = React.useState<Date>(value ?? defaultMonth ?? new Date());
     const [open, setOpen] = useState(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -845,7 +851,16 @@ const DateTimePicker = React.forwardRef<
     }
 
     return (
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover
+        open={open}
+        onOpenChange={(isOpen) => {
+          // With no value yet, open on the suggested month (e.g. an end date opens on the start month)
+          if (isOpen && !value && defaultMonth) {
+            setMonth(defaultMonth);
+          }
+          setOpen(isOpen);
+        }}
+      >
         <PopoverTrigger asChild disabled={disabled}>
           <Button
             variant='outline'
@@ -881,6 +896,7 @@ const DateTimePicker = React.forwardRef<
             onMonthChange={setMonth}
             yearRange={yearRange}
             locale={locale}
+            disabled={minDate ? { before: minDate } : undefined}
             {...props}
           />
           {granularity !== 'day' && (

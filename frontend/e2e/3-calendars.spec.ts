@@ -1,5 +1,6 @@
 import {
   expect,
+  type Page,
   test
 } from '@playwright/test';
 import {
@@ -18,6 +19,17 @@ test.afterAll(async ({ request }) => {
 test.beforeEach(async ({ page }) => {
   await login(page);
 });
+
+// yyyy-MM-dd of a day in the current month, matching the date picker's data-day attributes
+const dayOfThisMonth = (day: number): string => {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+};
+
+const pickDay = async (page: Page, isoDay: string): Promise<void> => {
+  await page.locator(`td[data-day="${isoDay}"]:not([data-outside]) button`).click();
+  await page.keyboard.press('Escape');
+};
 
 test.describe('@3. calendars', () => {
   test('@3.1 should display calendars on the home page', async ({ page }) => {
@@ -146,5 +158,39 @@ test.describe('@3. calendars', () => {
     await expect(
       page.getByRole('button', { name: /add event/i })
     ).not.toBeVisible();
+  });
+  test('@3.11 should create a calendar with an end date and show the whole trip before it has events', async ({
+    page,
+  }) => {
+    const name = `End Date Calendar ${Date.now()}`;
+    await page.goto('/calendars/create');
+    await page.getByLabel('Name').fill(name);
+
+    await page.getByRole('button', { name: 'Pick a date' }).first().click();
+    await pickDay(page, dayOfThisMonth(10));
+    await page.getByRole('button', { name: 'Pick a date' }).click();
+    // Days before the start date can't be picked as the end date
+    await expect(page.locator(`td[data-day="${dayOfThisMonth(9)}"]`)).toHaveAttribute('data-disabled', 'true');
+    await pickDay(page, dayOfThisMonth(13));
+
+    await page.getByRole('button', { name: /^create$/i }).click();
+    await page.waitForURL('/home');
+    await page.getByRole('link', { name }).click();
+
+    // The day count on its own, so "Ended 14 days ago" doesn't count
+    await expect(page.getByTestId('trip-pass').getByText(/^4 days$/i)).toBeVisible();
+  });
+
+  test('@3.12 should clear a picked end date before creating the calendar', async ({ page }) => {
+    await page.goto('/calendars/create');
+
+    await page.getByRole('button', { name: 'Pick a date' }).first().click();
+    await pickDay(page, dayOfThisMonth(10));
+    await page.getByRole('button', { name: 'Pick a date' }).click();
+    await pickDay(page, dayOfThisMonth(13));
+    await page.getByRole('button', { name: 'Clear end date' }).click();
+
+    await expect(page.getByRole('button', { name: 'Pick a date' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Clear end date' })).toHaveCount(0);
   });
 });

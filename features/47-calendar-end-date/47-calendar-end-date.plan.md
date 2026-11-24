@@ -111,7 +111,7 @@ Each task leaves the app working. Order: backend first, then what the member see
 - **Verify:** `npm run build`, `npm run lint`, `npm run check`.
 - **Files:** `lib/trip-span.ts` (+ test), `lib/types.ts`, `components/calendars/trip-pass.tsx`, `components/calendar.tsx`, `app/(app)/calendars/[uuid]/page.tsx`, `components/calendars/calendar-list.tsx`, `e2e/helpers/api.ts`.
 
-### Task 3: Pick an end date when creating a calendar
+### Task 3: Pick an end date when creating a calendar ✅
 
 - **Acceptance:**
   - [ ] The Create Calendar form has an optional "End date" below Start date. It opens on the start month, with earlier days disabled.
